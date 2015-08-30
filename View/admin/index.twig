@@ -1,0 +1,125 @@
+{#
+This file is part of EC-CUBE
+
+Copyright(c) 2000-2015 LOCKON CO.,LTD. All Rights Reserved.
+
+http://www.lockon.co.jp/
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+#}
+{#
+[メルマガ管理]-[配信内容設定]-[一覧・検索]画面
+#}
+
+{% extends 'default_frame.twig' %}
+
+{% set menus = ['order', 'admin_coupon'] %}
+
+{% block title %}クーポン管理{% endblock %}
+{% block sub_title %}クーポン内容設定{% endblock %}
+
+{% form_theme searchForm 'Form/bootstrap_3_horizontal_layout.html.twig' %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="{{ app.config.admin_urlpath }}/assets/css/bootstrap-datetimepicker.min.css">
+{% endblock stylesheet %}
+
+{% block javascript %}
+<script src="{{ app.config.admin_urlpath }}/assets/js/vendor/moment.min.js"></script>
+<script src="{{ app.config.admin_urlpath }}/assets/js/vendor/moment-ja.js"></script>
+<script src="{{ app.config.admin_urlpath }}/assets/js/vendor/bootstrap-datetimepicker.min.js"></script>
+
+<script>
+function fnDelete(action) {
+    if (confirm('このクーポンを削除しても宜しいですか？')) {
+        document.search_form.action = action;
+        document.search_form.submit();
+    }
+}
+
+function fnChangeActionSubmit(action) {
+    document.search_form.action = action;
+    document.search_form.submit();
+}
+</script>
+{% endblock javascript %}
+
+{% block main %}
+<form name="search_form" id="search_form" method="post" action="">
+    {{ form_widget(searchForm._token) }}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-header with-arrow">
+                    <h3 class="box-title"><span class="normal"><strong>{{ totalItemCount }} 件</strong> が該当しました</span></h3>
+                </div><!-- /.box-header -->
+                <div class="box-body">
+                    <div class="table_list">
+                        <div class="table-responsive with-border">
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th>クーポンID</th>
+                                    <th>クーポンコード</th>
+                                    <th>クーポン名</th>
+                                    <th>種別</th>
+                                    <th>編集</th>
+                                    <th>状態</th>
+                                    <th>削除</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for Coupon in pagination %}
+                                <tr>
+                                    <td class="coupon_id">{{ Coupon.id }}</td>
+                                    <td class="coupon_cd">{{ Coupon.coupon_cd }}</td>
+                                    <td class="coupon_name">{{ Coupon.coupon_name }}</td>
+                                    {% if Coupon.coupon_type == 1 %}
+                                        <td class="">商品</td>
+                                    {% elseif Coupon.coupon_type == 2 %}
+                                        <td class="">カテゴリ</td>
+                                    {% else %}
+                                        <td class=""></td>
+                                    {% endif %}
+
+                                    <td><a href="?" onclick="fnChangeActionSubmit('{{ url('admin_coupon_edit', { id: Coupon.id }) }}'); return false;">編集</a></td>
+                                    <td>
+                                        <a href="?" onclick="fnChangeActionSubmit('{{ url('admin_coupon_enable', { id: Coupon.id }) }}'); return false;">
+                                        {% if Coupon.enable_flag == 1 %}
+                                            有効
+                                        {% else %}
+                                            無効
+                                        {% endif %}
+                                        </a>
+                                    </td>
+                                    <td><a href="?" onclick="fnDelete('{{ url('admin_coupon_delete', { id: Coupon.id }) }}'); return false;">削除</a></td>
+
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div><!-- /.box-body -->
+            </div><!-- /.box -->
+        </div><!-- /.col -->
+    </div>
+<div class="row">
+    <div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3 text-center btn_area">
+        <a href="{{ url('admin_coupon_new') }}" class="btn btn-primary btn-block btn-lg">クーポンを新規登録</a>
+    </div>
+</div>
+</form>
+{% endblock %}

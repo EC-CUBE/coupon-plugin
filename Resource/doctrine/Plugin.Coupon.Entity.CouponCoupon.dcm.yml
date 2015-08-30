@@ -1,0 +1,65 @@
+Plugin\Coupon\Entity\CouponCoupon:
+    type: entity
+    table: plg_coupon
+    repositoryClass: Plugin\Coupon\Repository\CouponCouponRepository
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            id: true
+            column: coupon_id
+            generator:
+                strategy: AUTO
+    fields:
+        coupon_cd:
+            type: text
+            nullable: true
+        coupon_type:
+            type: integer
+            nullable: true
+        coupon_name:
+            type: text
+            nullable: false
+        discount_type:
+            type: integer
+            nullable: true
+        discount_price:
+            type: decimal
+            nullable: true
+            precision: 10
+            scale: 0
+        discount_rate:
+            type: decimal
+            nullable: true
+            precision: 10
+            scale: 0
+        enable_flag:
+            type: smallint
+            nullable: false
+            unsigned: false
+            default: '0'
+        available_from_date:
+            type: datetime
+            nullable: false
+        available_to_date:
+            type: datetime
+            nullable: false
+        del_flg:
+            type: smallint
+            nullable: false
+            unsigned: false
+            default: '0'
+        create_date:
+            type: datetime
+            nullable: false
+        update_date:
+            type: datetime
+            nullable: false
+    oneToMany:
+        CouponDetails:
+            targetEntity: Plugin\Coupon\Entity\CouponCouponDetail
+            mappedBy: Coupon
+            orderBy:
+                id: ASC
+            cascade: ["persist"]

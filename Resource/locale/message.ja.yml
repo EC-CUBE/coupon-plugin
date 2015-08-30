@@ -1,0 +1,8 @@
+admin.coupon.notfound: クーポンが存在しません。
+admin.coupon.coupon_id.notexists: クーポンIDがありません。
+
+admin.plugin.coupon.regist.success: クーポンを登録しました。
+admin.plugin.coupon.delete.success: クーポンを削除しました。
+admin.plugin.coupon.enable.success: クーポンの状態を変更しました。
+
+admin.plugin.coupon.shopping.notexists: クーポン対象商品はございません。クーポンコードをご確認ください。

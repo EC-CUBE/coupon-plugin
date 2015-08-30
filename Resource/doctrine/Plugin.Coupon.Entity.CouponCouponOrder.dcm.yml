@@ -1,0 +1,39 @@
+Plugin\Coupon\Entity\CouponCouponOrder:
+    type: entity
+    table: plg_coupon_order
+    repositoryClass: Plugin\Coupon\Repository\CouponCouponOrderRepository
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        coupon_id:
+            type: integer
+            nullable: false
+        coupon_cd:
+            type: text
+            nullable: false
+        order_id:
+            type: integer
+            nullable: true
+        pre_order_id:
+            type: text
+            nullable: false
+        order_date:
+            type: datetime
+            nullable: false
+        del_flg:
+            type: smallint
+            nullable: false
+            unsigned: false
+            default: '0'
+        create_date:
+            type: datetime
+            nullable: false
+        update_date:
+            type: datetime
+            nullable: false

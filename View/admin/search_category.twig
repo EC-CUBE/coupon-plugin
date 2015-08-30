@@ -1,0 +1,53 @@
+<script>
+    // 受注明細行を追加する.
+    // 受注明細行のレコード数カウンタ(coupon_details_count)は, edit.twig側で定義している.
+    function fnAddCategoryDetail($row, id, name) {
+        // ================================================================
+        // 商品情報を取得.
+        // ================================================================
+        var list = $('#coupon_detail_list2');
+
+        // prototype templateを取得.
+        var newWidget = list.attr('data-prototype');
+        // レコード数カウンタで置換.
+        newWidget = newWidget.replace(/__name__/g, coupon_details_count);
+        // フォーム入力値をセットm
+        $newWidget = $(newWidget);
+
+        $newWidget.find('#admin_coupon_CouponDetails_' + coupon_details_count + '_Category').val(id);
+        $newWidget.find('#admin_coupon_CouponDetails_' + coupon_details_count + '_category_name').text(name);
+
+        // 明細行に追加.
+        list.append($newWidget);
+
+        // カウンタを更新.
+        coupon_details_count++;
+
+        // モーダル閉じる.
+        $('#searchCategoryModal').modal('hide');
+
+        return false;
+    }
+</script>
+<div class="table-responsive">
+    <table class="table">
+        <tbody>
+        {% for id, name in Categories %}
+                <tr>
+                    <td>
+                        {{ name }}
+                    </td>
+                    <td>
+                    </td>
+                    <td class="text-right">
+                        <button onclick="fnAddCategoryDetail($(this).parent().parent(), {{ id }},  '{{ name }}')" type="button" class="btn btn-default btn-sm">
+                            決定
+                        </button>
+                    </td>
+                </tr>
+            </form>
+        {% endfor %}
+
+        </tbody>
+    </table>
+</div>

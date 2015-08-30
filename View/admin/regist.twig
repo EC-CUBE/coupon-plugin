@@ -1,0 +1,521 @@
+{#
+This file is part of EC-CUBE
+
+Copyright(c) 2000-2015 LOCKON CO.,LTD. All Rights Reserved.
+
+http://www.lockon.co.jp/
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+#}
+{% extends 'default_frame.twig' %}
+
+{% set menus = ['order', 'admin_coupon'] %}
+
+{% block title %}クーポン管理{% endblock %}
+{% block sub_title %}クーポン内容設定{% endblock %}
+
+{% form_theme form 'Form/bootstrap_3_horizontal_layout.html.twig' %}
+{% form_theme searchProductModalForm 'Form/bootstrap_3_horizontal_layout.html.twig' %}
+
+{% block javascript %}
+<script src="//ajaxzip3.github.io/ajaxzip3.js" charset="UTF-8"></script>
+<script>
+$(function() {
+    // ==================================
+    // 商品の追加 ボタンクリック時表示
+    // ==================================
+    $('#showSearchProductModal').on('click', function() {
+            var tbody = $('#searchProductModalList tbody');
+            tbody.children().remove();
+        }
+    );
+
+    // ==================================
+    // カテゴリの追加 ボタンクリック時表示
+    // ==================================
+    $('#showSearchCategoryModal').on('click', function() {
+            var tbody = $('#searchCategoryModalList tbody');
+            tbody.children().remove();
+        }
+    );
+    // ==================================
+    // 商品検索ダイアログ - 検索ボタンクリック時表示
+    // ==================================
+    $('#searchProductModalButton').on('click', function() {
+        var existProductId = "";
+        $(":input[id^=admin_coupon_CouponDetails_][id$=_Product]").each(
+            function(index, elem) {
+                if(existProductId == "") {
+                    existProductId = elem.value;
+                } else {
+                    existProductId = existProductId + "," + elem.value;
+                }
+            }
+        );
+        var tbody = $('#searchProductModalList tbody');
+        tbody.children().remove();
+        $.ajax({
+            type: 'POST',
+            dataType: 'html',
+            data: {
+                'id' : $('#admin_search_product_id').val(),
+                'category_id' : $('#admin_search_product_category_id').val(),
+                'exist_product_id' : existProductId
+            },
+            url: '{{ url('admin_coupon_search_product') }}',
+            success: function(data) {
+                // モーダルに結果を書き出し.
+                $('#searchProductModalList').html(data);
+
+            },
+            error: function() {
+                console.log('search product failed.');
+            }
+        });
+    });
+
+    // ==================================
+    // カテゴリ検索ダイアログ表示
+    // ==================================
+    $('#searchCategoryModalButton').on('click', function() {
+        var existCategoryId = "";
+        $(":input[id^=admin_coupon_CouponDetails_][id$=_Category]").each(
+            function(index, elem) {
+                if(existCategoryId == "") {
+                    existCategoryId = elem.value;
+                } else {
+                    existCategoryId = existCategoryId + "," + elem.value;
+                }
+            }
+        );
+
+        var tbody = $('#searchCategoryModalList tbody');
+        tbody.children().remove();
+        $.ajax({
+            type: 'POST',
+            dataType: 'html',
+            data: {
+                'category_id' : $('#admin_coupon_search_category_category_id').val(),
+                'exist_category_id' : existCategoryId
+            },
+            url: '{{ url('admin_coupon_search_category') }}',
+            success: function(data) {
+                // モーダルに結果を書き出し.
+                $('#searchCategoryModalList').html(data);
+
+            },
+            error: function() {
+                console.log('search product failed.');
+            }
+        });
+    });
+
+    // 受注明細行の行数カウンタ.
+    // 受注登録・編集画面上でグローバルな変数.
+    // search_product.twig/order_detail_prototype.twigで利用しています.
+    coupon_details_count = '{{ form.CouponDetails|length }}';
+
+    // 項目数が多く、入力している項目によってEnter押下時に期待する動作が変わるので、いったん禁止
+    $("input").on("keydown", function(e) {
+        if ((e.which && e.which === 13) || (e.keyCode && e.keyCode === 13)) {
+            return false;
+        } else {
+            return true;
+        }
+    });
+
+    // ==================================
+    // 商品一覧の削除ボタンクリック時の処理
+    // ==================================
+    $("#coupon_detail_list").on("click", ".delete-item", function(){
+        $(this).parents(".item_box").remove();
+        coupon_details_count--;
+    });
+    // ==================================
+    // カテゴリ一覧の削除ボタンクリック時の処理
+    // ==================================
+    $("#coupon_detail_list2").on("click", ".delete-item", function(){
+        $(this).parents(".item_box").remove();
+        coupon_details_count--;
+    });
+    // ==================================
+    // クリック時の処理
+    // ==================================
+    // 値引き額
+    $("#admin_coupon_discount_type_0").on("click", function(){
+        $("#admin_coupon_discount_price").removeAttr('disabled');
+        $("#admin_coupon_discount_rate").attr('disabled', 'disabled');
+    });
+    // 値引率
+    $("#admin_coupon_discount_type_1").on("click", function(){
+        $("#admin_coupon_discount_price").attr('disabled', 'disabled');
+        $("#admin_coupon_discount_rate").removeAttr('disabled');
+    });
+    // クーポン種別 - 商品
+    $("#admin_coupon_coupon_type_0").on("click", function(){
+        if($("#category_area").find(".item_box").length > 0) {
+            if(confirm("登録済みのカテゴリがあります。削除してよろしいですか。")) {
+                $("#category_area").find(".item_box").remove();
+            } else {
+                return false;
+            }
+        }
+        $("#product_area").show();
+        $("#category_area").hide();
+    });
+    // クーポン種別 - カテゴリ
+    $("#admin_coupon_coupon_type_1").on("click", function(){
+        if($("#product_area").find(".item_box").length > 0) {
+            if(confirm("登録済みの商品があります。削除してよろしいですか。")) {
+                $("#product_area").find(".item_box").remove();
+            } else {
+                return false;
+            }
+        }
+        $("#product_area").hide();
+        $("#category_area").show();
+    });
+
+    // ==========================
+    // 初期処理
+    // ==========================
+    // 値引き額
+    if($("#admin_coupon_discount_type_0").prop('checked')) {
+        $("#admin_coupon_discount_price").removeAttr('disabled');
+    } else {
+        $("#admin_coupon_discount_price").attr('disabled', 'disabled');
+    }
+    // 値引率
+    if($("#admin_coupon_discount_type_1").prop('checked')) {
+        $("#admin_coupon_discount_rate").removeAttr('disabled');
+    } else {
+        $("#admin_coupon_discount_rate").attr('disabled', 'disabled');
+    }
+    // クーポン種別 - 商品
+    if($("#admin_coupon_coupon_type_0").prop('checked')) {
+        $("#product_area").show();
+    } else {
+        $("#product_area").hide();
+    }
+    // クーポン種別 - カテゴリ
+    if($("#admin_coupon_coupon_type_1").prop('checked')) {
+        $("#category_area").show();
+    } else {
+        $("#category_area").hide();
+    }
+
+
+});
+var setModeAndSubmit = function(mode, keyname, keyid) {
+    document.form1.mode.value = mode;
+    if(keyname !== undefined && keyname !== "" && keyid !== undefined && keyid !== "") {
+        document.form1[keyname].value = keyid;
+    }
+    document.form1.submit();
+};
+
+</script>
+{% endblock javascript %}
+
+{% block main %}
+<div class="row" id="aside_wrap">
+    <form role="form" name="form1" id="form1" method="post" action="{{ url('admin_coupon_commit') }}">
+    <input type="hidden" name="mode" value="">
+    {{ form_widget(form._token) }}
+        <div class="col-md-9">
+            <div class="box accordion">
+                <div class="box-header toggle active">
+                    <h3 class="box-title">クーポン情報<svg class="cb cb-angle-down icon_down"> <use xlink:href="#cb-angle-down" /></svg></h3>
+                </div><!-- /.box-header -->
+                <div class="box-body accpanel" style="display: block;">
+                    <div class="order_list form-horizontal">
+                        {# クーポンID #}
+                        <div class="form-group" style="display: none;">
+                            {{ form_label(form.id) }}
+                            <div class="col-sm-9 col-lg-10">
+                                {{ form_widget(form.id) }}
+                                {{ form_errors(form.id) }}
+                            </div>
+                        </div>
+                        {# クーポンコード #}
+                        <div class="form-group">
+                            {{ form_label(form.coupon_cd) }}
+                            <div class="col-sm-9 col-lg-10">
+                                {{ form_widget(form.coupon_cd) }}
+                                {{ form_errors(form.coupon_cd) }}
+                            </div>
+                        </div>
+                        {# クーポン名 #}
+                        <div class="form-group">
+                            {{ form_label(form.coupon_name) }}
+                            <div class="col-sm-9 col-lg-10">
+                                {{ form_widget(form.coupon_name) }}
+                                {{ form_errors(form.coupon_name) }}
+                            </div>
+                        </div>
+                        {# クーポン種別 #}
+                        <div class="form-group">
+                            {{ form_label(form.coupon_type) }}
+                            <div class="col-sm-9 col-lg-10">
+                                {{ form_widget(form.coupon_type) }}
+                                {{ form_errors(form.coupon_type) }}
+                            </div>
+                        </div>
+                        {# 値引き種別 #}
+                        <div class="form-group">
+                            {{ form_label(form.discount_type) }}
+                            <div class="col-sm-9 col-lg-10">
+                                {{ form_widget(form.discount_type) }}
+                                {{ form_errors(form.discount_type) }}
+                            </div>
+                        </div>
+                        {# 値引き額 #}
+                        <div class="form-group">
+                            {{ form_label(form.discount_price) }}
+                            <div class="col-sm-9 col-lg-10">
+                                {{ form_widget(form.discount_price) }}
+                                {{ form_errors(form.discount_price) }}
+                            </div>
+                        </div>
+                        {# 値引き率 #}
+                        <div class="form-group">
+                            {{ form_label(form.discount_rate) }}
+                            <div class="col-sm-9 col-lg-10">
+                                {{ form_widget(form.discount_rate) }}
+                                {{ form_errors(form.discount_rate) }}
+                            </div>
+                        </div>
+                        {# 有効期間 #}
+                        <div class="form-group">
+                            {{ form_label(form.available_from_date) }}
+                            <div class="col-sm-9 col-lg-10">
+                                <div class="form-group range">
+                                    {{ form_widget(form.available_from_date) }}～{{ form_widget(form.available_to_date) }}
+                                    {{ form_errors(form.available_from_date) }}
+                                    {{ form_errors(form.available_to_date) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- /.box-body -->
+            </div><!-- /.box -->
+{#
+            // ===================================
+            // 商品一覧
+            // ===================================
+#}
+            <div class="box accordion" id="product_area">
+                <div class="box-header toggle">
+                    <h3 class="box-title">商品情報<svg class="cb cb-angle-down icon_down"> <use xlink:href="#cb-angle-down" /></svg></h3>
+                </div><!-- /.box-header -->
+                <div class="box-body accpanel">
+                    <div class="order_list">
+                        <div class="btn_area">
+                            <ul>
+                                <li><a id="showSearchProductModal" class="btn btn-default btn-block btn-sm" data-toggle="modal" data-target="#searchProductModal">商品の追加</a></li>
+                            </ul>
+                        </div>
+                        <div class="tableish"
+                             id="coupon_detail_list"
+                             data-prototype="
+                                {% filter escape %}
+                                    <div class="item_box">
+                                        <div id="admin_coupon_CouponDetails___name__"><input type="hidden" id="admin_coupon_CouponDetails___name___Product" name="admin_coupon[CouponDetails][__name__][Product]" class="form-control" /></div>
+                                        <input type="hidden" id="admin_coupon_CouponDetails___name___id" name="admin_coupon[CouponDetails][__name__][id]" class="form-control" value="" />
+                                        <div class="item_detail">
+                                            <div class="item_name_area">
+                                                <strong class="item_name">
+                                                    <div id="admin_coupon_CouponDetails___name___product_name"></div>
+                                                </strong><br>
+                                            </div>
+                                        </div>
+                                        <div class="icon_edit">
+                                            <button class="btn btn-default btn-sm delete-item">削除</button>
+                                        </div>
+                                    </div><!-- /.item_box -->
+                                {% endfilter %}
+                                ">
+                            {% set i = 0 %}
+                            {% for couponDetailForm in form.CouponDetails %}
+                                {% if couponDetailForm.vars.value.Product is not null %}
+                                    <div class="item_box">
+                                        {{ form_widget(couponDetailForm.id) }}
+                                        {{ form_widget(couponDetailForm.Product) }}
+                                        <div class="item_detail">
+                                            <div class="item_name_area">
+                                                <strong class="item_name">
+                                                    <div id="admin_coupon_CouponDetails_{{ i }}_product_name">
+                                                        {{ couponDetailForm.vars.value.Product.name }}
+                                                    </div>
+                                                </strong><br>
+                                            </div>
+                                        </div>
+
+                                        <div class="icon_edit">
+                                            <button class="btn btn-default btn-sm delete-item">削除</button>
+                                        </div>
+                                    </div><!-- /.item_box -->
+                                {% endif %}
+                                {% set i = i + 1 %}
+                            {% endfor %}
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+{#
+            // ===================================
+            // カテゴリ一覧
+            // ===================================
+#}
+            <div class="box accordion" id="category_area">
+                <div class="box-header toggle">
+                    <h3 class="box-title">カテゴリ情報<svg class="cb cb-angle-down icon_down"> <use xlink:href="#cb-angle-down" /></svg></h3>
+                </div><!-- /.box-header -->
+                <div class="box-body accpanel">
+                    <div class="order_list">
+                        <div class="btn_area">
+                            <ul>
+                                <li><a id="showSearchCategoryModal" class="btn btn-default btn-block btn-sm" data-toggle="modal" data-target="#searchCategoryModal">カテゴリの追加</a></li>
+                            </ul>
+                        </div>
+                        <div class="tableish"
+                             id="coupon_detail_list2"
+                             data-prototype="
+                                {% filter escape %}
+                                <div class="item_box">
+                                    <input type="hidden" id="admin_coupon_CouponDetails___name___id" name="admin_coupon[CouponDetails][__name__][id]" class="form-control"/>
+                                    <input type="hidden" id="admin_coupon_CouponDetails___name___Category" name="admin_coupon[CouponDetails][__name__][Category]" class="form-control"/>
+                                    <div class="item_detail">
+                                        <div class="item_name_area">
+                                            <strong class="item_name">
+                                                <div id="admin_coupon_CouponDetails___name___category_name">
+                                                </div>
+                                            </strong><br>
+                                        </div>
+                                    </div>
+
+                                    <div class="icon_edit">
+                                        <button class="btn btn-default btn-sm delete-item">削除</button>
+                                    </div>
+                                </div><!-- /.item_box -->
+                                {% endfilter %}
+                                ">
+
+                            {% set i = 0 %}
+                            {% for couponDetailForm in form.CouponDetails %}
+                                {% if couponDetailForm.vars.value.Category is not null %}
+                                    <div class="item_box">
+                                        {{ form_widget(couponDetailForm.id) }}
+                                        {{ form_widget(couponDetailForm.Category) }}
+                                        <div class="item_detail">
+                                            <div class="item_name_area">
+                                                <strong class="item_name">
+                                                    <div id="admin_coupon_CouponDetails_{{ i }}_category_name">
+                                                        {{ couponDetailForm.vars.value.category_full_name }}
+                                                    </div>
+                                                </strong><br>
+                                            </div>
+                                        </div>
+
+                                        <div class="icon_edit">
+                                            <button class="btn btn-default btn-sm delete-item">削除</button>
+                                        </div>
+                                    </div><!-- /.item_box -->
+                                {% endif %}
+                                {% set i = i + 1 %}
+                            {% endfor %}
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+{#
+            // ===================================
+            // 操作部
+            // ===================================
+#}
+            <div class="row hidden-xs hidden-sm">
+                <div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3 text-center btn_area">
+                    <button class="btn btn-primary btn-block btn-lg" onclick="setModeAndSubmit('commit')">登録</button>
+                    {% if form.id is not null %}
+                        <p><a href="{{ url('admin_coupon_list') }}">戻る</a></p>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div><!-- /.col -->
+    </form>
+</div>
+{% endblock %}
+
+{% block modal %}
+
+{#
+// =======================================
+// 商品検索モーダル ダイアログ表示
+// =======================================
+#}
+<div class="modal" id="searchProductModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><svg class="cb cb-close" aria-hidden="true"><use xlink:href="#cb-close"></svg></button>
+                <h4 class="modal-title" id="myModalLabel">商品検索</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    {{ form_widget(searchProductModalForm.id, { attr : { placeholder : '商品名' } } ) }}
+                </div>
+                <div class="form-group">
+                    {{ form_widget(searchProductModalForm.category_id) }}
+                </div>
+                <div class="form-group">
+                    <button type="button" id="searchProductModalButton" class="btn btn-primary" >検索</button>
+                </div>
+                <div class="form-group" id="searchProductModalList">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{#
+// =======================================
+// カテゴリ検索モーダル ダイアログ表示
+// =======================================
+#}
+<div class="modal" id="searchCategoryModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><svg class="cb cb-close" aria-hidden="true"><use xlink:href="#cb-close"></svg></button>
+                <h4 class="modal-title" id="myModalLabel">カテゴリ検索</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    {{ form_widget(searchCategoryModalForm.category_id) }}
+                </div>
+                <div class="form-group">
+                    <button type="button" id="searchCategoryModalButton" class="btn btn-primary" >検索</button>
+                </div>
+                <div class="form-group" id="searchCategoryModalList">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

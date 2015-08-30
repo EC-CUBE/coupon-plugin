@@ -1,0 +1,47 @@
+Plugin\Coupon\Entity\CouponCouponDetail:
+    type: entity
+    table: plg_coupon_detail
+    repositoryClass: Plugin\Coupon\Repository\CouponCouponDetailRepository
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            id: true
+            column: coupon_detail_id
+            generator:
+                strategy: AUTO
+    fields:
+        coupon_type:
+            type: integer
+            nullable: true
+        del_flg:
+            type: smallint
+            nullable: false
+            unsigned: false
+            default: '0'
+        create_date:
+            type: datetime
+            nullable: false
+        update_date:
+            type: datetime
+            nullable: false
+    manyToOne:
+        Coupon:
+            targetEntity: Plugin\Coupon\Entity\CouponCoupon
+            inversedBy: CouponDetail
+            joinColumn:
+                name: coupon_id
+                referencedColumnName: coupon_id
+                nullable: false
+        Product:
+            targetEntity: Eccube\Entity\Product
+            joinColumn:
+                name: product_id
+                referencedColumnName: product_id
+                nullable: false
+        Category:
+            targetEntity: \Eccube\Entity\Category
+            joinColumn:
+                name: category_id
+                referencedColumnName: category_id

@@ -1,0 +1,15 @@
+#
+# Event fock
+#
+
+eccube.event.render.shopping.before:
+    - [onRenderShoppingBefore, NORMAL]
+eccube.event.controller.shopping.after:
+    - [onControllerShoppingAfter, NORMAL]
+eccube.event.controller.shopping_confirm.before:
+    - [onControllerShoppingConfirmBefore, NORMAL]
+
+eccube.event.render.shopping.before:
+    - [onRenderShoppingBefore, NORMAL]
+eccube.event.render.admin_order_edit.before:
+    - [onRenderAdminOrderEditAfter, NORMAL]
