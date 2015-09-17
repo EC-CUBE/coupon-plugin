@@ -293,8 +293,12 @@ class Coupon
         // HTMLを取得し、DOM化
         $crawler = new Crawler($response->getContent());
 
-        // [orm id="dropdown-form"]の最終項目に追加(レイアウトに依存（時間無いのでベタ）)
-        $html  = $crawler->html();
+	    $html = '';
+	    foreach ($crawler as $domElement) {
+	        $domElement->ownerDocument->formatOutput = true;
+	        $html .= $domElement->ownerDocument->saveHTML();
+	    }
+	    $html = html_entity_decode($html, ENT_NOQUOTES, 'UTF-8');
 
         // Formの値を取得する
         $form = $this->getShoppingForm();
@@ -441,5 +445,4 @@ class Coupon
 
         return null;
     }
-
 }

@@ -61,22 +61,6 @@ class Version201507231300 extends AbstractMigration
         $schema->dropSequence('plg_coupon_order_id_seq');
     }
 
-    public function postUp(Schema $schema)
-    {
-
-        $app = new \Eccube\Application();
-        $app->boot();
-        // Insert module information into dtb_gmo_plugin
-        $pluginCode = 'Coupon';
-        $pluginName = 'クーポン';
-        $datetime = date('Y-m-d H:i:s');
-        $insert = "INSERT INTO plg_coupon_plugin(
-                            plugin_code, plugin_name, create_date, update_date)
-                    VALUES ('$pluginCode', '$pluginName', '$datetime', '$datetime'
-                            );";
-        $this->connection->executeUpdate($insert);
-    }
-
     protected function createCouponPlugin(Schema $schema)
     {
         // CREATE TABLE plg_coupon_plugin (
