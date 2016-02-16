@@ -20,11 +20,11 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #}
 <h2 class="heading02">クーポンコード</h2>
-<div class="column">
-    <div style="display:inline-flex">
+<div class="form-inline">
+    <div class="form-group">
         {{ form_widget(form.coupon_cd) }}
         &nbsp&nbsp
-        <button type="submit" class="btn btn-info btn-block" onClick="document.forms['shopping-form'].action='{{ url('shopping') }}';document.forms['shopping-form'].submit();return false;">クーポンを反映</button>
+        <button type="submit" class="btn btn-info" onClick="document.forms['shopping-form'].action='{{ url('shopping') }}';document.forms['shopping-form'].submit();return false;">クーポンを反映</button>
     </div>
     {{ form_errors(form.coupon_cd) }}
 </div>
