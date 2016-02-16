@@ -112,7 +112,8 @@ class CouponSearchModelController
                 $existCategoryIds = explode(",", $existCategoryId);
             }
 
-            $Categories = $app['eccube.repository.category']->getList($categoryId);
+            $Category = $app['eccube.repository.category']->find($categoryId);
+            $Categories = $app['eccube.repository.category']->getList($Category);
 
             if (empty($Categories)) {
                 $app['monolog']->addDebug('search category not found.');

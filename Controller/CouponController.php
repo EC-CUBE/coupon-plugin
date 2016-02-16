@@ -152,8 +152,9 @@ class CouponController
         $builder = $app['form.factory']->createBuilder('admin_coupon', null);
         $form = $builder->getForm();
         $form->handleRequest($request);
+        $data = $form->getData();
 
-        $discountType = $form->getData()['discount_type'];
+        $discountType = $data['discount_type'];
 
         $form = $builder->getForm();
 
