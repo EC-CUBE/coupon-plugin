@@ -23,8 +23,12 @@
 
 namespace Plugin\Coupon\Form\Type;
 
+use Carbon\Carbon;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Validator\Constraints as Assert;
 use Plugin\Coupon\Form\Type;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -44,7 +48,7 @@ class CouponType extends AbstractType
      * Build config type form
      *
      * @param FormBuilderInterface $builder
-     * @param array $options
+     * @param array                $options
      * @return type
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -52,99 +56,118 @@ class CouponType extends AbstractType
         $config = $this->app['config'];
 
         $builder
-        ->add('id', 'text', array(
-            'label' => 'クーポンID',
-            'required' => false,
-            'attr' => array('readonly' => 'readonly'),
-        ))
-        ->add('coupon_cd', 'text', array(
-            'label' => 'クーポンコード',
-            'required' => true,
-            'trim' => true,
-            'constraints' => array(
-                new Assert\NotBlank(),
-                new Assert\Regex(array(
-                    'pattern'  => '/^[a-zA-Z0-9]+$/i'
+            ->add('id', 'text', array(
+                'label' => 'クーポンID',
+                'required' => false,
+                'attr' => array('readonly' => 'readonly'),
+            ))
+            ->add('coupon_cd', 'text', array(
+                'label' => 'クーポンコード',
+                'required' => true,
+                'trim' => true,
+                'constraints' => array(
+                    new Assert\NotBlank(),
+                    new Assert\Regex(array(
+                            'pattern' => '/^[a-zA-Z0-9]+$/i'
+                        )
                     )
+                ),
+            ))
+            ->add('coupon_name', 'text', array(
+                'label' => 'クーポン名',
+                'required' => true,
+                'trim' => true,
+                'constraints' => array(
+                    new Assert\NotBlank(),
+                ),
+            ))
+            ->add('coupon_type', 'choice', array(
+                'choices' => array(1 => '商品', 2 => 'カテゴリ'),
+                'required' => true,
+                'expanded' => true,
+                'multiple' => false,
+                'label' => 'クーポン有効対象',
+                'empty_value' => false,
+                'constraints' => array(
+                    new Assert\NotBlank(),
                 )
-            ),
-        ))
-        ->add('coupon_name', 'text', array(
-            'label' => 'クーポン名',
-            'required' => true,
-            'trim' => true,
-            'constraints' => array(
-                new Assert\NotBlank(),
-            ),
-        ))
-        ->add('coupon_type', 'choice', array(
-            'choices'   => array(1 => '商品', 2 => 'カテゴリ'),
-            'required' => true,
-            'expanded' => true,
-            'multiple' => false,
-            'label' => 'クーポン種別',
-            'empty_value' => false,
-            'constraints' => array(
-                new Assert\NotBlank(),
-            )
-        ))
-        ->add('discount_type', 'choice', array(
-            'choices'   => array(1 => '値引き額', 2 => '値引率'),
-            'required' => true,
-            'expanded' => true,
-            'multiple' => false,
-            'label' => '値引き種別',
-            'constraints' => array(
-                new Assert\NotBlank()
-            ),
-        ))
-        ->add('discount_price', 'money', array(
-            'label' => '値引き額',
-            'required' => false,
-            'currency' => 'JPY',
-            'precision' => 0
-        ))
-        ->add('discount_rate', 'integer', array(
-            'label' => '値引率',
-            'required' => false,
-            'constraints' => array(
-                new Assert\Range(array(
-                    'min' => 0,
-                    'max' => 100,
-                ))
-            ),
-        ))
-        // 有効期間(FROM)
-        ->add('available_from_date', 'date', array(
-            'label' => '有効期間',
-            'required' => true,
-            'input' => 'datetime',
-            'widget' => 'single_text',
-            'format' => 'yyyy-MM-dd',
-            'empty_value' => array('year' => '----', 'month' => '--', 'day' => '--'),
-            'constraints' => array(
-                new Assert\NotBlank()
-            ),
-        ))
-        // 有効期間(TO)
-        ->add('available_to_date', 'date', array(
-            'label' => '有効期間日(TO)',
-            'required' => true,
-            'input' => 'datetime',
-            'widget' => 'single_text',
-            'format' => 'yyyy-MM-dd',
-            'empty_value' => array('year' => '----', 'month' => '--', 'day' => '--'),
-            'constraints' => array(
-                new Assert\NotBlank()
-            ),
-        ))
-        ->add('CouponDetails', 'collection', array(
-            'type' => new CouponDetailType($this->app),
-            'allow_add' => true,
-            'allow_delete' => true,
-            'prototype' => true,
-        ))
-        ->addEventSubscriber(new \Eccube\Event\FormEventSubscriber());
+            ))
+            ->add('discount_type', 'choice', array(
+                'choices' => array(1 => '値引き額', 2 => '値引率'),
+                'required' => true,
+                'expanded' => true,
+                'multiple' => false,
+                'label' => '値引き種別',
+                'constraints' => array(
+                    new Assert\NotBlank()
+                ),
+            ))
+            ->add('discount_price', 'money', array(
+                'label' => '値引き額',
+                'required' => false,
+                'currency' => 'JPY',
+                'precision' => 0
+            ))
+            ->add('discount_rate', 'integer', array(
+                'label' => '値引率',
+                'required' => false,
+                'constraints' => array(
+                    new Assert\Range(array(
+                        'min' => 0,
+                        'max' => 100,
+                    ))
+                ),
+            ))
+            // 有効期間(FROM)
+            ->add('available_from_date', 'date', array(
+                'label' => '有効期間',
+                'required' => true,
+                'input' => 'datetime',
+                'widget' => 'single_text',
+                'format' => 'yyyy-MM-dd',
+                'empty_value' => array('year' => '----', 'month' => '--', 'day' => '--'),
+                'constraints' => array(
+                    new Assert\NotBlank()
+                ),
+            ))
+            // 有効期間(TO)
+            ->add('available_to_date', 'date', array(
+                'label' => '有効期間日(TO)',
+                'required' => true,
+                'input' => 'datetime',
+                'widget' => 'single_text',
+                'format' => 'yyyy-MM-dd',
+                'empty_value' => array('year' => '----', 'month' => '--', 'day' => '--'),
+                'constraints' => array(
+                    new Assert\NotBlank()
+                ),
+            ))
+            ->add('CouponDetails', 'collection', array(
+                'type' => new CouponDetailType($this->app),
+                'allow_add' => true,
+                'allow_delete' => true,
+                'prototype' => true,
+            ))
+            ->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
+                $form = $event->getForm();
+                $data = $form->getData();
+
+                if (!empty($data['available_from_date']) && !empty($data['available_to_date'])) {
+                    $now = Carbon::today();
+                    $fromDate = Carbon::instance($data['available_from_date']);
+                    $toDate = Carbon::instance($data['available_to_date']);
+
+                    if ($now->gt($fromDate)) {
+                        $form['available_from_date']->addError(new FormError('有効期間に誤りがあります。'));
+                    }
+
+                    if ($fromDate->gt($toDate)) {
+                        $form['available_from_date']->addError(new FormError('有効期間に誤りがあります。'));
+                    }
+                }
+
+            })
+            ->addEventSubscriber(new \Eccube\Event\FormEventSubscriber());
     }
 
     /**

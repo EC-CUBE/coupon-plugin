@@ -29,8 +29,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 {% form_theme form 'Form/bootstrap_3_horizontal_layout.html.twig' %}
 {% form_theme searchProductModalForm 'Form/bootstrap_3_horizontal_layout.html.twig' %}
 
+{% block stylesheet %}
+    <link rel="stylesheet" href="{{ app.config.admin_urlpath }}/assets/css/bootstrap-datetimepicker.min.css">
+{% endblock stylesheet %}
+
 {% block javascript %}
-<script src="//ajaxzip3.github.io/ajaxzip3.js" charset="UTF-8"></script>
+<script src="{{ app.config.admin_urlpath }}/assets/js/vendor/moment.min.js"></script>
+<script src="{{ app.config.admin_urlpath }}/assets/js/vendor/moment-ja.js"></script>
+<script src="{{ app.config.admin_urlpath }}/assets/js/vendor/bootstrap-datetimepicker.min.js"></script>
 <script>
 $(function() {
     // ==================================
@@ -216,6 +222,17 @@ $(function() {
         $("#category_area").hide();
     }
 
+    var inputDate = document.createElement('input');
+    inputDate.setAttribute('type', 'date');
+    if (inputDate.type !== 'date') {
+        $('input[id$=_date]').datetimepicker({
+            locale: 'ja',
+            format: 'YYYY-MM-DD',
+            useCurrent: false,
+            showTodayButton: true
+        });
+    }
+
 
 });
 var setModeAndSubmit = function(mode, keyname, keyid) {
@@ -270,6 +287,7 @@ var setModeAndSubmit = function(mode, keyname, keyid) {
                             {{ form_label(form.coupon_type) }}
                             <div class="col-sm-9 col-lg-10">
                                 {{ form_widget(form.coupon_type) }}
+                                <span class="small text-danger">対象商品が含まれている場合、クーポン利用可能になります。</span>
                                 {{ form_errors(form.coupon_type) }}
                             </div>
                         </div>
@@ -278,6 +296,7 @@ var setModeAndSubmit = function(mode, keyname, keyid) {
                             {{ form_label(form.discount_type) }}
                             <div class="col-sm-9 col-lg-10">
                                 {{ form_widget(form.discount_type) }}
+                                <span class="small text-danger">合計金額から値引きされます。</span>
                                 {{ form_errors(form.discount_type) }}
                             </div>
                         </div>
