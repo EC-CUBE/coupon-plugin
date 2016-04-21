@@ -283,9 +283,9 @@ class Coupon
         $Coupon = null;
         $discount = 0;
         $nonMemberEmail = '';
-        if (!$this->app->isGranted('ROLE_USER'))
+        if (!$this->app->isGranted('ROLE_USER')){
             $nonMemberEmail = $this->getNonMember($this->sessionKey)->getEmail();
-        //$OrderBackup = $Order;
+        }
         if(!is_null($couponCd) && strlen($couponCd) > 0) {
             $Coupon = $this->getCouponByCouponCd($couponCd);
             $discount = $service->recalcOrder($Order, $Coupon);
