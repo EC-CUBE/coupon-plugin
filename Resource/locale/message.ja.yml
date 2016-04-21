@@ -6,3 +6,6 @@ admin.plugin.coupon.delete.success: クーポンを削除しました。
 admin.plugin.coupon.enable.success: クーポンの状態を変更しました。
 
 admin.plugin.coupon.shopping.notexists: クーポン対象商品はございません。クーポンコードをご確認ください。
+admin.plugin.coupon.shopping.sameuser: クーポンは使ったことがありますので、このクーポンを利用出来なくなります。
+admin.plugin.coupon.shopping.couponusetime: クーポンの利用回数を超えてしまいました。利用出来なくなります。
+admin.plugin.coupon.shopping.minus: クーポンを使って、トータルの金額がマイナスになりますので、利用できませ。

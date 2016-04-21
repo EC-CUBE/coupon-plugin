@@ -99,6 +99,7 @@ class CouponService
         $coupon->setDiscountRate($data['discount_rate']);
         $coupon->setAvailableFromDate($data['available_from_date']);
         $coupon->setAvailableToDate($data['available_to_date']);
+        $coupon->setCouponUseTime($data['coupon_use_time']);
         $coupon->setUpdateDate($dateTime);
 
         // クーポン情報を更新する
@@ -232,11 +233,13 @@ class CouponService
 
         $coupon->setDiscountPrice($data['discount_price']);
         $coupon->setDiscountRate($data['discount_rate']);
+        $coupon->setCouponUseTime($data['coupon_use_time']);
 
         $coupon->setEnableFlag(Constant::ENABLED);
         $coupon->setDelFlg(Constant::DISABLED);
         $coupon->setCreateDate($dateTime);
         $coupon->setUpdateDate($dateTime);
+
 
         $coupon->setAvailableFromDate($data['available_from_date']);
         $coupon->setAvailableToDate($data['available_to_date']);
@@ -374,7 +377,7 @@ class CouponService
      * @param unknown $Order
      * @param unknown $Coupon
      */
-    public function saveCouponOrder($Order, $Coupon, $couponCd) {
+    public function saveCouponOrder($Order, $Coupon, $couponCd, $nonMemberEmail) {
 
         if(is_null($Order)) {
             return;
@@ -414,6 +417,13 @@ class CouponService
             $CouponOrder->setCouponCd($Coupon->getCouponCd());
         }
 
+        // ログイン済みの場合は, user_id取得
+        if ($this->app->isGranted('ROLE_USER')) {
+            $CouponOrder->setUserId($this->app->user()->getId());
+        }else{
+            $CouponOrder->setEmail($nonMemberEmail);
+        }
+
         $CouponOrder->setUpdateDate(new \DateTime());
 
         $repository->save($CouponOrder);
@@ -425,6 +435,7 @@ class CouponService
      *
      * @param unknown $Order
      * @param unknown $Coupon
+     *
      */
     public function recalcOrder(&$Order, &$Coupon) {
         $discount = 0;
@@ -458,17 +469,13 @@ class CouponService
 
                 // 合計金額の再計算
                 $total = $Order->getTotal() - $discount;
-                $total = $total < 0 ? 0 : $total;
+
+
             }
         }
 
-        // DB登録
-        $Order->setDiscount($discount);
-        $Order->setTotal($total);
-        $Order->setPaymentTotal($total);
-
-        $this->app['orm.em']->flush();
-
+        return $discount;
+        
     }
 
     /**

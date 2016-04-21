@@ -115,6 +115,12 @@ class CouponCoupon extends \Eccube\Entity\AbstractEntity
     private $CouponDetails;
 
     /**
+     *
+     * @var \coupon_use_time
+     */
+    private $coupon_use_time;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -459,4 +465,19 @@ class CouponCoupon extends \Eccube\Entity\AbstractEntity
         return $this->available_to_date;
     }
 
+    /**
+     * @return \coupon_use_time
+     */
+    public function getCouponUseTime()
+    {
+        return $this->coupon_use_time;
+    }
+
+    /**
+     * @param \coupon_use_time $coupon_use_time
+     */
+    public function setCouponUseTime($coupon_use_time)
+    {
+        $this->coupon_use_time = $coupon_use_time;
+    }
 }

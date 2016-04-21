@@ -316,6 +316,14 @@ var setModeAndSubmit = function(mode, keyname, keyid) {
                                 {{ form_errors(form.discount_rate) }}
                             </div>
                         </div>
+                        {# 使用回数 #}
+                        <div class="form-group">
+                            {{ form_label(form.coupon_use_time) }}
+                            <div class="col-sm-9 col-lg-10">
+                                {{ form_widget(form.coupon_use_time) }}
+                                {{ form_errors(form.coupon_use_time) }}
+                            </div>
+                        </div>
                         {# 有効期間 #}
                         <div class="form-group">
                             {{ form_label(form.available_from_date) }}
