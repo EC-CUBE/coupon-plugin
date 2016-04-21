@@ -282,7 +282,9 @@ class Coupon
         $couponCd = $this->getCouponCd($data, $Order->getPreOrderId());
         $Coupon = null;
         $discount = 0;
-        $nonMemberEmail = $this->getNonMember($this->sessionKey)->getEmail();
+        $nonMemberEmail = '';
+        if (!$this->app->isGranted('ROLE_USER'))
+            $nonMemberEmail = $this->getNonMember($this->sessionKey)->getEmail();
         //$OrderBackup = $Order;
         if(!is_null($couponCd) && strlen($couponCd) > 0) {
             $Coupon = $this->getCouponByCouponCd($couponCd);
