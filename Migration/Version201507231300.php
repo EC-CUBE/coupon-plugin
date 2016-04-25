@@ -51,7 +51,6 @@ class Version201507231300 extends AbstractMigration
     public function down(Schema $schema)
     {
         // this down() migration is auto-generated, please modify it to your needs
-
         $schema->dropTable('plg_coupon_plugin');
         $schema->dropSequence('plg_coupon_plugin_plugin_id_seq');
         $schema->dropTable('plg_coupon');
@@ -117,7 +116,6 @@ class Version201507231300 extends AbstractMigration
         ));
 
         $table->setPrimaryKey(array('plugin_id'));
-
     }
 
     /**
@@ -141,8 +139,6 @@ class Version201507231300 extends AbstractMigration
      */
     protected function createCoupon(Schema $schema)
     {
-
-
         $table = $schema->createTable("plg_coupon");
         $table->addColumn('coupon_id', 'integer', array(
             'autoincrement' => true,
@@ -160,10 +156,6 @@ class Version201507231300 extends AbstractMigration
         $table->addColumn('coupon_type', 'integer', array(
             'notnull' => true,
         ));
-
-//        $table->addColumn('coupon_use_time', 'integer', array(
-//            'notnull' => true,
-//        ));
 
         $table->addColumn('discount_type', 'integer', array(
             'notnull' => true,
@@ -216,7 +208,6 @@ class Version201507231300 extends AbstractMigration
         ));
 
         $table->setPrimaryKey(array('coupon_id'));
-
     }
 
     /**
@@ -293,7 +284,6 @@ class Version201507231300 extends AbstractMigration
      * @param Schema $schema
      */
     protected function createCouponOrder(Schema $schema) {
-
         $table = $schema->createTable("plg_coupon_order");
         $table->addColumn('id', 'integer', array(
             'autoincrement' => true,
@@ -308,22 +298,13 @@ class Version201507231300 extends AbstractMigration
             'notnull' => false,
         ));
 
-//        $table->addColumn('user_id', 'integer', array(
-//            'notnull' => false,
-//        ));
-
-//        $table->addColumn('email', 'text', array(
-//            'notnull' => false,
-//        ));
-
-        $table->addColumn('pre_order_id', 'text', array(
-            'notnull' => false,
-        ));
 
         $table->addColumn('order_id', 'integer', array(
             'notnull' => true,
         ));
-        
+        $table->addColumn('pre_order_id', 'text', array(
+            'notnull' => false,
+        ));
         $table->addColumn('order_date', 'datetime', array(
             'notnull' => false,
             'unsigned' => false,
@@ -334,7 +315,6 @@ class Version201507231300 extends AbstractMigration
             'unsigned' => false,
             'default' => 0,
         ));
-
         $table->addColumn('create_date', 'datetime', array(
             'notnull' => true,
             'unsigned' => false,
@@ -343,9 +323,6 @@ class Version201507231300 extends AbstractMigration
             'notnull' => true,
             'unsigned' => false,
         ));
-
         $table->setPrimaryKey(array('id'));
-
-
     }
 }

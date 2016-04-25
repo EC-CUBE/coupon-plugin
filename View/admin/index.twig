@@ -95,8 +95,8 @@ function fnChangeActionSubmit(action) {
                                     {% else %}
                                         <td class=""></td>
                                     {% endif %}
-                                    <td>{{ Coupon.coupon_use_time }}</td>
-                                    <td>{{ Coupon.available_from_date|date('Y-m-d') }} ～ {{ Coupon.available_to_date|date('Y-m-d') }}</td>
+                                    <td>{{ Coupon.coupon_use_time|number_format }}</td>
+                                    <td>{{ Coupon.available_from_date|date_format }} ～ {{ Coupon.available_to_date|date_format }}</td>
 
                                     <td><a href="?" onclick="fnChangeActionSubmit('{{ url('admin_coupon_edit', { id: Coupon.id }) }}'); return false;">編集</a></td>
                                     <td>
