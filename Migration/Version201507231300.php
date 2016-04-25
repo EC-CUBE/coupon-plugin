@@ -29,7 +29,7 @@ use Doctrine\DBAL\Schema\Schema;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-class Version20160420 extends AbstractMigration
+class Version201507231300 extends AbstractMigration
 {
 
     /**
@@ -161,9 +161,9 @@ class Version20160420 extends AbstractMigration
             'notnull' => true,
         ));
 
-        $table->addColumn('coupon_use_time', 'integer', array(
-            'notnull' => true,
-        ));
+//        $table->addColumn('coupon_use_time', 'integer', array(
+//            'notnull' => true,
+//        ));
 
         $table->addColumn('discount_type', 'integer', array(
             'notnull' => true,
@@ -308,13 +308,13 @@ class Version20160420 extends AbstractMigration
             'notnull' => false,
         ));
 
-        $table->addColumn('user_id', 'integer', array(
-            'notnull' => false,
-        ));
+//        $table->addColumn('user_id', 'integer', array(
+//            'notnull' => false,
+//        ));
 
-        $table->addColumn('email', 'text', array(
-            'notnull' => false,
-        ));
+//        $table->addColumn('email', 'text', array(
+//            'notnull' => false,
+//        ));
 
         $table->addColumn('pre_order_id', 'text', array(
             'notnull' => false,

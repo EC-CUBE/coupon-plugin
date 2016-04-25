@@ -25,11 +25,10 @@ namespace Plugin\Coupon;
 
 use Eccube\Event\RenderEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\CssSelector\CssSelector;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Form as Error;
-use Eccube\Common\Constant;
+use Eccube\Service\ShoppingService;
 
 class Coupon
 {
@@ -186,17 +185,6 @@ class Coupon
 
     }
 
-    // =========================================================
-    // shoppingのEvent
-    // =========================================================
-    /**
-     * クーポンの対象商品がある場合は値引き、合計を設定する.
-     * 本タイミングで使用されているクーポンコードを注文クーポン情報に保存する.
-     *
-     */
-    public function onControllerShoppingAfter()
-    {
-    }
 
     /**
      * 注文クーポン情報に受注日付を登録する.
@@ -284,7 +272,7 @@ class Coupon
         $discount = 0;
         $nonMemberEmail = '';
         if (!$this->app->isGranted('ROLE_USER')){
-            $nonMemberEmail = $this->getNonMember($this->sessionKey)->getEmail();
+            $nonMemberEmail = $this->app['eccube.service.shopping']->getNonMember($this->sessionKey)->getEmail();
         }
         if(!is_null($couponCd) && strlen($couponCd) > 0) {
             $Coupon = $this->getCouponByCouponCd($couponCd);
@@ -293,19 +281,19 @@ class Coupon
             $couponUsedOrNot = $this->checkCouponUsedOrNot($couponCd, $nonMemberEmail);
             $checkCouponUseTime = $this->checkCouponUseTime($couponCd);
             if(!$existCoupon) {
-                $formCouponCd->get("coupon_cd")->addError(new Error\FormError('admin.plugin.coupon.shopping.notexists'));
+                $formCouponCd->get("coupon_cd")->addError(new Error\FormError('front.plugin.coupon.shopping.notexists'));
                 $error = true;
             }
             if (!$couponUsedOrNot && $existCoupon) {
-                $formCouponCd->get("coupon_cd")->addError(new Error\FormError('admin.plugin.coupon.shopping.sameuser'));
+                $formCouponCd->get("coupon_cd")->addError(new Error\FormError('front.plugin.coupon.shopping.sameuser'));
                 $error = true;
             }
             if (!$checkCouponUseTime && $existCoupon) {
-                $formCouponCd->get("coupon_cd")->addError(new Error\FormError('admin.plugin.coupon.shopping.couponusetime'));
+                $formCouponCd->get("coupon_cd")->addError(new Error\FormError('front.plugin.coupon.shopping.couponusetime'));
                 $error = true;
             }
             if ($Order->getTotal() <= $discount && $existCoupon) {
-                $formCouponCd->get("coupon_cd")->addError(new Error\FormError('admin.plugin.coupon.shopping.minus'));
+                $formCouponCd->get("coupon_cd")->addError(new Error\FormError('front.plugin.coupon.shopping.minus'));
                 $error = true;
             }
         }
@@ -468,22 +456,5 @@ class Coupon
         }
         return true;
     }
-
-    /**
-     * 非会員情報を取得
-     *
-     * @param $sesisonKey
-     * @return $Customer|null
-     */
-    public function getNonMember($sesisonKey)
-    {
-        // 非会員でも一度会員登録されていればショッピング画面へ遷移
-        $nonMember = $this->app['session']->get($sesisonKey);
-        if (is_null($nonMember)) {
-            return null;
-        }
-        $Customer = $nonMember['customer'];
-        $Customer->setPref($this->app['eccube.repository.master.pref']->find($nonMember['pref']));
-        return $Customer;
-    }
+    
 }

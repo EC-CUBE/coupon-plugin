@@ -4,8 +4,6 @@
 
 eccube.event.render.shopping.before:
     - [onRenderShoppingBefore, NORMAL]
-eccube.event.controller.shopping.after:
-    - [onControllerShoppingAfter, NORMAL]
 eccube.event.controller.shopping_confirm.before:
     - [onControllerShoppingConfirmBefore, NORMAL]
 
