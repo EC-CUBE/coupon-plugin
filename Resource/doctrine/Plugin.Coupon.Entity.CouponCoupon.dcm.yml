@@ -24,6 +24,9 @@ Plugin\Coupon\Entity\CouponCoupon:
         discount_type:
             type: integer
             nullable: true
+        coupon_use_time:
+            type: integer
+            nullable: false
         discount_price:
             type: decimal
             nullable: true

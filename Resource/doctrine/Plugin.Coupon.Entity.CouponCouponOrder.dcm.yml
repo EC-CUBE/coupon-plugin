@@ -17,9 +17,15 @@ Plugin\Coupon\Entity\CouponCouponOrder:
         coupon_cd:
             type: text
             nullable: false
-        order_id:
+        user_id:
             type: integer
             nullable: true
+        email:
+            type: text
+            nullable: false
+        order_id:
+            type: integer
+            nullable: false
         pre_order_id:
             type: text
             nullable: false
@@ -37,3 +43,4 @@ Plugin\Coupon\Entity\CouponCouponOrder:
         update_date:
             type: datetime
             nullable: false
+

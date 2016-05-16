@@ -75,6 +75,8 @@ function fnChangeActionSubmit(action) {
                                     <th>クーポンコード</th>
                                     <th>クーポン名</th>
                                     <th>種別</th>
+                                    <th>利用回数</th>
+                                    <th>有効期間</th>
                                     <th>編集</th>
                                     <th>状態</th>
                                     <th>削除</th>
@@ -93,6 +95,8 @@ function fnChangeActionSubmit(action) {
                                     {% else %}
                                         <td class=""></td>
                                     {% endif %}
+                                    <td>{{ Coupon.coupon_use_time|number_format }}</td>
+                                    <td>{{ Coupon.available_from_date|date_format }} ～ {{ Coupon.available_to_date|date_format }}</td>
 
                                     <td><a href="?" onclick="fnChangeActionSubmit('{{ url('admin_coupon_edit', { id: Coupon.id }) }}'); return false;">編集</a></td>
                                     <td>

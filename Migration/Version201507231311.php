@@ -21,51 +21,35 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-namespace Plugin\Coupon;
+namespace DoctrineMigrations;
 
-use Eccube\Plugin\AbstractPluginManager;
+use Doctrine\DBAL\Migrations\AbstractMigration;
+use Doctrine\DBAL\Schema\Schema;
 
-class PluginManager extends AbstractPluginManager
+/**
+ * Auto-generated Migration: Please modify to your needs!
+ */
+class Version201507231311 extends AbstractMigration
 {
 
     /**
-     * Image folder path (cop source)
-     * @var type
+     * @param Schema $schema
      */
-    protected $imgSrc;
+    public function up(Schema $schema)
+    {
+        // this up() migration is auto-generated, please modify it to your needs
+        $this->addSql("alter table plg_coupon_order             add user_id            integer               ;");
+        $this->addSql("alter table plg_coupon_order             add email               text                   ;");
+        $this->addSql("alter table plg_coupon                   add coupon_use_time    integer              ;");
+    }
+
     /**
-     *Image folder path (copy destination)
-     * @var type
+     * @param Schema $schema
      */
-    protected $imgDst;
-
-    public function __construct()
+    public function down(Schema $schema)
     {
+        // this down() migration is auto-generated, please modify it to your needs
     }
 
-    public function install($config, $app)
-    {
-        $this->migrationSchema($app, __DIR__ . '/Migration', $config['code']);
-    }
-
-    public function uninstall($config, $app)
-    {
-        $this->migrationSchema($app, __DIR__ . '/Migration', $config['code'], 0);
-    }
-
-    public function enable($config, $app)
-    {
-
-    }
-
-    public function disable($config, $app)
-    {
-        
-    }
-
-    public function update($config, $app)
-    {
-
-    }
 
 }

@@ -5,4 +5,7 @@ admin.plugin.coupon.regist.success: クーポンを登録しました。
 admin.plugin.coupon.delete.success: クーポンを削除しました。
 admin.plugin.coupon.enable.success: クーポンの状態を変更しました。
 
-admin.plugin.coupon.shopping.notexists: クーポン対象商品はございません。クーポンコードをご確認ください。
+front.plugin.coupon.shopping.notexists: クーポン対象商品はございません。クーポンコードをご確認ください。
+front.plugin.coupon.shopping.sameuser: このクーポンは既にご利用いただいています。
+front.plugin.coupon.shopping.couponusetime: このクーポンはご利用いただくことができません。
+front.plugin.coupon.shopping.minus: 合計金額を超えるため、このクーポンをご利用いただくことはできません。

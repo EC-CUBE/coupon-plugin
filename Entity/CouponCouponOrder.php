@@ -83,6 +83,18 @@ class CouponCouponOrder extends \Eccube\Entity\AbstractEntity
     private $update_date;
 
     /**
+     *
+     * @var \user_id
+     */
+    private $user_id;
+
+    /**
+     *
+     * @var \email
+     */
+    private $email;
+    
+    /**
      * Constructor
      */
     public function __construct()
@@ -295,6 +307,38 @@ class CouponCouponOrder extends \Eccube\Entity\AbstractEntity
     public function getUpdateDate()
     {
         return $this->update_date;
+    }
+
+    /**
+     * @return \email
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * @param \email $email
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+    }
+
+    /**
+     * @return \user_id
+     */
+    public function getUserId()
+    {
+        return $this->user_id;
+    }
+
+    /**
+     * @param \user_id $user_id
+     */
+    public function setUserId($user_id)
+    {
+        $this->user_id = $user_id;
     }
 
 }

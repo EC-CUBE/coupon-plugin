@@ -127,7 +127,7 @@ class CouponController
         $form->get('discount_type')->setData($coupon->getDiscountType());
         $form->get('discount_price')->setData($coupon->getDiscountPrice());
         $form->get('discount_rate')->setData($coupon->getDiscountRate());
-
+        $form->get('coupon_use_time')->setData($coupon->getCouponUseTime());
         $form->get('available_from_date')->setData($coupon->getAvailableFromDate());
         $form->get('available_to_date')->setData($coupon->getAvailableToDate());
 

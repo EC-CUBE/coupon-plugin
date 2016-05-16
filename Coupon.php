@@ -25,16 +25,20 @@ namespace Plugin\Coupon;
 
 use Eccube\Event\RenderEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\CssSelector\CssSelector;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Form as Error;
-use Eccube\Common\Constant;
+use Eccube\Service\ShoppingService;
 
 class Coupon
 {
 
     private $app;
+
+    /**
+     * @var string 非会員用セッションキー
+     */
+    private $sessionKey = 'eccube.front.shopping.nonmember';
 
     /**
      * コンストラクタ.
@@ -181,68 +185,6 @@ class Coupon
 
     }
 
-    // =========================================================
-    // shoppingのEvent
-    // =========================================================
-    /**
-     * クーポンの対象商品がある場合は値引き、合計を設定する.
-     * 本タイミングで使用されているクーポンコードを注文クーポン情報に保存する.
-     *
-     */
-    public function onControllerShoppingAfter()
-    {
-        // POST以外では処理を行わない
-        if ('POST' !== $this->app['request']->getMethod()) {
-            return;
-        }
-
-        // サービスの取得
-        /** @var Plugin\Coupon\Service\CouponService */
-        $service = $this->app['eccube.plugin.coupon.service.coupon'];
-
-        // 受注データを取得
-        $Order = $this->getOrder();
-
-        // Formのカスタマイズ
-        $form = $this->getShoppingForm();
-        if($form->isValid()) {
-            return;
-        }
-        $data = $form->getData();
-
-        // PreOrderIDを取得する
-        $preOrderId = $this->app['eccube.service.cart']->getPreOrderId();
-
-        // クーポンコードを取得する
-        $couponCd = $this->getCouponCd($data, $preOrderId);
-
-        // クーポンコードが未入力の場合は処理を行わない
-        $Coupon = null;
-        if(!is_null($couponCd) && strlen($couponCd) > 0) {
-            // クーポンコードを検索する
-            // クーポン情報取得時はクーポン詳細情報もセットで取得される
-            $Coupon = $this->getCouponByCouponCd($couponCd);
-        }
-
-        // クーポン受注情報を保存する
-        $service->saveCouponOrder($Order, $Coupon, $data['coupon_cd']);
-
-        // 再度クーポンコードを取得し、クーポン情報を取得する
-        // (クーポンコードが入力から未入力になった場合に対応)
-        // クーポンコードを取得する
-        $couponCd = $this->getCouponCd($data, $preOrderId);
-
-        // クーポンコードが未入力の場合は処理を行わない
-        $Coupon = null;
-        if(!is_null($couponCd) && strlen($couponCd) > 0) {
-            // クーポンコードを検索する
-            // クーポン情報取得時はクーポン詳細情報もセットで取得される
-            $Coupon = $this->getCouponByCouponCd($couponCd);
-        }
-
-        // 合計、値引きを再計算し、dtb_orderデータに登録する
-        $service->recalcOrder($Order, $Coupon);
-    }
 
     /**
      * 注文クーポン情報に受注日付を登録する.
@@ -290,9 +232,10 @@ class Coupon
      * @return mixed
      */
     private function getHtml($request, $response) {
+
         // HTMLを取得し、DOM化
         $crawler = new Crawler($response->getContent());
-
+        $error = false;
 	    $html = '';
 	    foreach ($crawler as $domElement) {
 	        $domElement->ownerDocument->formatOutput = true;
@@ -309,7 +252,6 @@ class Coupon
         if(is_null($Order)) {
             return $html;
         }
-
         // サービスの取得
         $service = $this->app['eccube.plugin.coupon.service.coupon'];
 
@@ -326,11 +268,33 @@ class Coupon
         // クーポンコードを取得する
         $formCouponCd = $this->getShoppingForm(false);
         $couponCd = $this->getCouponCd($data, $Order->getPreOrderId());
+        $Coupon = null;
+        $discount = 0;
+        $nonMemberEmail = '';
+        if (!$this->app->isGranted('ROLE_USER')){
+            $nonMemberEmail = $this->app['eccube.service.shopping']->getNonMember($this->sessionKey)->getEmail();
+        }
         if(!is_null($couponCd) && strlen($couponCd) > 0) {
             $Coupon = $this->getCouponByCouponCd($couponCd);
-
-            if(!$service->existsCouponProduct($Coupon, $Order)) {
-                $formCouponCd->get("coupon_cd")->addError(new Error\FormError('admin.plugin.coupon.shopping.notexists'));
+            $discount = $service->recalcOrder($Order, $Coupon);
+            $existCoupon = $service->existsCouponProduct($Coupon, $Order);
+            $couponUsedOrNot = $this->checkCouponUsedOrNot($couponCd, $nonMemberEmail);
+            $checkCouponUseTime = $this->checkCouponUseTime($couponCd);
+            if(!$existCoupon) {
+                $formCouponCd->get("coupon_cd")->addError(new Error\FormError('front.plugin.coupon.shopping.notexists'));
+                $error = true;
+            }
+            if (!$couponUsedOrNot && $existCoupon) {
+                $formCouponCd->get("coupon_cd")->addError(new Error\FormError('front.plugin.coupon.shopping.sameuser'));
+                $error = true;
+            }
+            if (!$checkCouponUseTime && $existCoupon) {
+                $formCouponCd->get("coupon_cd")->addError(new Error\FormError('front.plugin.coupon.shopping.couponusetime'));
+                $error = true;
+            }
+            if ($Order->getTotal() <= $discount && $existCoupon) {
+                $formCouponCd->get("coupon_cd")->addError(new Error\FormError('front.plugin.coupon.shopping.minus'));
+                $error = true;
             }
         }
         $formCouponCd->get("coupon_cd")->setData($couponCd);
@@ -353,9 +317,20 @@ class Coupon
             // ----------------------------------
             // 値引き項目追加 / 合計金額上書き
             // ----------------------------------
+            if(!$error && $Coupon != null){
+                $total = $Order->getTotal() - $discount;
+                $Order->setDiscount($discount);
+                $Order->setTotal($total);
+                $Order->setPaymentTotal($total);
+                // クーポン受注情報を保存する
+                $service->saveCouponOrder($Order, $Coupon, $couponCd, $nonMemberEmail);
+                // 合計、値引きを再計算し、dtb_orderデータに登録する
+                $this->app['orm.em']->persist($Order);
+                $this->app['orm.em']->flush($Order);
 
-            // 値引き額をマイナス表示にする
-            $Order->setDiscount($Order->getDiscount() * -1);
+                // 値引き額をマイナス表示にする
+                $Order->setDiscount($Order->getDiscount() * -1);
+            }
 
             // このタグを前後に分割し、間に項目を入れ込む
             // 元の合計金額は書き込み済みのため再度書き込みを行う
@@ -442,7 +417,44 @@ class Coupon
         if(!is_null($CouponOrder)) {
             return $CouponOrder->getCouponCd();
         }
-
         return null;
     }
+
+    /**
+     *  ユーザはクーポン１回のみ利用できる
+     * @param unknown $couponCd
+     *  @param unknown $email
+     */
+    private function checkCouponUsedOrNot($couponCd, $email) {
+        if ($this->app->isGranted('ROLE_USER')) {
+            $repository = $this->app['eccube.plugin.coupon.repository.coupon_order'];
+            $userId = $this->app->user()->getId();
+            $result = $repository->findUseCouponMember($couponCd, $userId);
+            if($result != null)
+                return false;
+        }else{
+            $repository = $this->app['eccube.plugin.coupon.repository.coupon_order'];
+            $result = $repository->findUseCouponNonMember($couponCd, $email);
+            if($result != null)
+                return false;
+        }
+        return true;
+    }
+
+    /**
+     *  クーポンの利用回数のチェック
+     * @param unknown $couponCd
+     */
+    private function checkCouponUseTime($couponCd) {
+        $couponOrderRepository = $this->app['eccube.plugin.coupon.repository.coupon_order'];
+        $couponRepository = $this->app['eccube.plugin.coupon.repository.coupon'];
+        $Coupon = $couponRepository->findOneBy(array('coupon_cd' => $couponCd ));
+        if($Coupon != null){
+            $count = $couponOrderRepository->countCouponByCd($couponCd);
+            if($Coupon->getCouponUseTime() <= $count['1'])
+                return false;
+        }
+        return true;
+    }
+    
 }

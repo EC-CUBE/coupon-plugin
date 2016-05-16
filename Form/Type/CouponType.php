@@ -142,6 +142,16 @@ class CouponType extends AbstractType
                     new Assert\NotBlank()
                 ),
             ))
+            ->add('coupon_use_time', 'integer', array(
+                'label' => '利用回数',
+                'required' => true,
+                'constraints' => array(
+                    new Assert\Range(array(
+                        'min' => 1,
+                        'max' => 100000,
+                    ))
+                ),
+            ))
             ->add('CouponDetails', 'collection', array(
                 'type' => new CouponDetailType($this->app),
                 'allow_add' => true,
@@ -157,9 +167,9 @@ class CouponType extends AbstractType
                     $fromDate = Carbon::instance($data['available_from_date']);
                     $toDate = Carbon::instance($data['available_to_date']);
 
-                    if ($now->gt($fromDate)) {
-                        $form['available_from_date']->addError(new FormError('有効期間に誤りがあります。'));
-                    }
+//                    if ($now->gt($fromDate)) {
+//                        $form['available_from_date']->addError(new FormError('有効期間に誤りがあります。'));
+//                    }
 
                     if ($fromDate->gt($toDate)) {
                         $form['available_from_date']->addError(new FormError('有効期間に誤りがあります。'));
