@@ -38,9 +38,16 @@ class Version201507231311 extends AbstractMigration
     public function up(Schema $schema)
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql("alter table plg_coupon_order             add user_id            integer               ;");
-        $this->addSql("alter table plg_coupon_order             add email               text                   ;");
-        $this->addSql("alter table plg_coupon                   add coupon_use_time    integer              ;");
+        $this->addSql("alter table plg_coupon_order add user_id integer");
+        $this->addSql("alter table plg_coupon_order add email text");
+        $this->addSql("alter table plg_coupon_order add discount  decimal not null default 0");
+        $this->addSql("alter table plg_coupon add coupon_use_time integer");
+
+        if ($schema->hasTable('plg_coupon_plugin')) {
+            $schema->dropTable('plg_coupon_plugin');
+            $schema->dropSequence('plg_coupon_plugin_plugin_id_seq');
+        }
+
     }
 
     /**

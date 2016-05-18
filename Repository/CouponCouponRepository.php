@@ -25,9 +25,7 @@
 namespace Plugin\Coupon\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query;
-use Doctrine\ORM\Id\SequenceGenerator;
 use Eccube\Common\Constant;
 
 /**
@@ -39,11 +37,12 @@ use Eccube\Common\Constant;
 class CouponCouponRepository extends EntityRepository
 {
     /**
-    * 検索条件での検索を行う。
-    * s
-    * @param unknown $searchData
-    * @return \Doctrine\ORM\QueryBuilder
-    */
+     * 検索条件での検索を行う。
+     * s
+     *
+     * @param unknown $searchData
+     * @return \Doctrine\ORM\QueryBuilder
+     */
     public function getQueryBuilderBySearchData($searchData)
     {
         $qb = $this->createQueryBuilder('c')
@@ -53,8 +52,8 @@ class CouponCouponRepository extends EntityRepository
         if (!empty($searchData['coupon_cd']) && $searchData['coupon_cd']) {
             if (is_int($searchData['coupon_cd'])) {
                 $qb
-                ->andWhere('c.coupon_cd = :coupon_cd')
-                ->setParameter('coupon_cd', $searchData['coupon_cd']);
+                    ->andWhere('c.coupon_cd = :coupon_cd')
+                    ->setParameter('coupon_cd', $searchData['coupon_cd']);
             }
         }
 
@@ -65,29 +64,32 @@ class CouponCouponRepository extends EntityRepository
     }
 
     /**
-    * find all
-    *
-    * @return type
-    */
+     * find all
+     *
+     * @return type
+     */
     public function findAll()
     {
 
         $query = $this
-        ->getEntityManager()
-        ->createQuery('SELECT m FROM Plugin\Coupon\Entity\CouponCoupon m ORDER BY m.id DESC');
+            ->getEntityManager()
+            ->createQuery('SELECT m FROM Plugin\Coupon\Entity\CouponCoupon m ORDER BY m.id DESC');
         $result = $query
-        ->getResult(Query::HYDRATE_ARRAY);
+            ->getResult(Query::HYDRATE_ARRAY);
 
         return $result;
     }
 
     /**
      * 有効なクーポンを1件取得する
-     * @param unknown $couponCd
-     * @param \DateTime $currenDateTime
-     * @return unknown
+     *
+     * @param $couponCd
+     * @return $result
      */
-    public function findActiveCoupon($couponCd, \DateTime $currenDateTime) {
+    public function findActiveCoupon($couponCd)
+    {
+
+        $currenDateTime = new \DateTime();
 
         // 時分秒を0に設定する
         $currenDateTime->setTime(0, 0, 0);
@@ -113,7 +115,7 @@ class CouponCouponRepository extends EntityRepository
         // 実行
         $result = null;
         $results = $qb->getQuery()->getResult();
-        if(!is_null($results) && count($results) > 0) {
+        if (!is_null($results) && count($results) > 0) {
             $result = $results[0];
         }
 
@@ -122,11 +124,13 @@ class CouponCouponRepository extends EntityRepository
 
     /**
      * 有効なクーポンを全取得する
+     *
      * @param unknown $couponCd
      * @param \DateTime $currenDateTime
      * @return unknown
      */
-    public function findActiveCouponAll(\DateTime $currenDateTime) {
+    public function findActiveCouponAll(\DateTime $currenDateTime)
+    {
 
         // 時分秒を0に設定する
         $currenDateTime->setTime(0, 0, 0);

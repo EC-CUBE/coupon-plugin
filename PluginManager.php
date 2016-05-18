@@ -23,48 +23,95 @@
 
 namespace Plugin\Coupon;
 
+use Eccube\Entity\Master\DeviceType;
+use Eccube\Entity\PageLayout;
 use Eccube\Plugin\AbstractPluginManager;
 
 class PluginManager extends AbstractPluginManager
 {
 
-    /**
-     * Image folder path (cop source)
-     * @var type
-     */
-    protected $imgSrc;
-    /**
-     *Image folder path (copy destination)
-     * @var type
-     */
-    protected $imgDst;
-
-    public function __construct()
-    {
-    }
-
     public function install($config, $app)
     {
-        $this->migrationSchema($app, __DIR__ . '/Migration', $config['code']);
+        $this->migrationSchema($app, __DIR__.'/Migration', $config['code']);
     }
 
     public function uninstall($config, $app)
     {
-        $this->migrationSchema($app, __DIR__ . '/Migration', $config['code'], 0);
+        $this->migrationSchema($app, __DIR__.'/Migration', $config['code'], 0);
+
+        // pagelayoutの削除
+        $this->removePageLayout($app);
     }
 
     public function enable($config, $app)
     {
 
+        // pagelayoutの作成
+        $this->createPageLayout($app);
+
     }
 
     public function disable($config, $app)
     {
-        
+
+        // pagelayoutの削除
+        $this->removePageLayout($app);
+
     }
 
     public function update($config, $app)
     {
+
+        // pagelayoutの作成
+        $this->createPageLayout($app);
+
+    }
+
+
+    /**
+     * クーポン用ページレイアウトを作成
+     *
+     * @param $app
+     * @throws \Exception
+     */
+    private function createPageLayout($app)
+    {
+
+        // ページレイアウトにプラグイン使用時の値を代入
+        $DeviceType = $app['eccube.repository.master.device_type']->find(DeviceType::DEVICE_TYPE_PC);
+
+        /** @var \Eccube\Entity\PageLayout $PageLayout */
+        $PageLayout = $app['eccube.repository.page_layout']->findOrCreate(null, $DeviceType);
+
+        $PageLayout->setEditFlg(PageLayout::EDIT_FLG_DEFAULT);
+        $PageLayout->setName('商品購入/クーポン利用');
+        $PageLayout->setUrl('plugin_shopping_coupon');
+        $PageLayout->setFileName('../../Plugin/Coupon/View/shopping_coupon');
+        $PageLayout->setMetaRobots('noindex');
+
+        // DB登録
+        $app['orm.em']->persist($PageLayout);
+        $app['orm.em']->flush($PageLayout);
+
+    }
+
+
+    /**
+     * クーポン用ページレイアウトを削除
+     *
+     * @param $app
+     * @throws \Exception
+     */
+    private function removePageLayout($app)
+    {
+        // ページ情報の削除
+        $PageLayout = $app['eccube.repository.page_layout']->findOneBy(array('url' => 'plugin_shopping_coupon'));
+
+        if ($PageLayout) {
+            // Blockの削除
+            $app['orm.em']->remove($PageLayout);
+            $app['orm.em']->flush($PageLayout);
+        }
 
     }
 

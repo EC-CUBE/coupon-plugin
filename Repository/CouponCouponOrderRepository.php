@@ -25,9 +25,7 @@
 namespace Plugin\Coupon\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query;
-use Doctrine\ORM\Id\SequenceGenerator;
 
 /**
  * OrderRepository
@@ -39,22 +37,25 @@ class CouponCouponOrderRepository extends EntityRepository
 {
     /**
      * クーポン受注情報を保存する
+     *
      * @param \Plugin\Coupon\Entity\CouponCouponOrder $CouponCouponOrder
      */
     public function save(\Plugin\Coupon\Entity\CouponCouponOrder $CouponCouponOrder)
     {
         $em = $this->getEntityManager();
         $em->persist($CouponCouponOrder);
-        $em->flush();
+        $em->flush($CouponCouponOrder);
 
     }
 
     /**
- * 受注ID(order_id)から使用されたクーポン受注情報を取得する
- * @param unknown $orderId
- * @return unknown
- */
-    public function findUseCouponByOrderId($orderId) {
+     * 受注ID(order_id)から使用されたクーポン受注情報を取得する
+     *
+     * @param unknown $orderId
+     * @return unknown
+     */
+    public function findUseCouponByOrderId($orderId)
+    {
         $qb = $this->createQueryBuilder('c')
             ->select('c')
             ->andWhere('c.del_flg = 0')
@@ -69,20 +70,24 @@ class CouponCouponOrderRepository extends EntityRepository
         try {
             $result = $query->getSingleResult();
 
-        } catch(\Doctrine\Orm\NoResultException $e) {
+        } catch (\Doctrine\Orm\NoResultException $e) {
             $result = null;
 
         }
+
         return $result;
     }
 
     /**
      * MEMBER 同じユーザはクーポンを利用するかどうかチェックのために
-     * @param unknown $couponCd
-     * @param unknown $userId
-     * @return unknown
+     *
+     * @param $couponCd
+     * @param $userId
+     * @return mixed|null
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function findUseCouponMember($couponCd, $userId) {
+    public function findUseCouponMember($couponCd, $userId)
+    {
         $qb = $this->createQueryBuilder('c')
             ->select('c')
             ->andWhere('c.del_flg = 0')
@@ -96,19 +101,22 @@ class CouponCouponOrderRepository extends EntityRepository
         try {
             $result = $query->getSingleResult();
 
-        } catch(\Doctrine\Orm\NoResultException $e) {
+        } catch (\Doctrine\Orm\NoResultException $e) {
             $result = null;
 
         }
+
         return $result;
     }
 
     /**
      * クーポン利用回数のチェックのために
+     *
      * @param unknown $couponCd
      * @return unknown
      */
-    public function countCouponByCd($couponCd) {
+    public function countCouponByCd($couponCd)
+    {
         $qb = $this->createQueryBuilder('c')
             ->select('count(c.coupon_cd)')
             ->andWhere('c.del_flg = 0')
@@ -120,20 +128,23 @@ class CouponCouponOrderRepository extends EntityRepository
         try {
             $count = $query->getSingleResult();
 
-        } catch(\Doctrine\Orm\NoResultException $e) {
+        } catch (\Doctrine\Orm\NoResultException $e) {
             $count = 0;
 
         }
+
         return $count;
     }
 
     /**
      * NON MEMBER 同じユーザはクーポンを利用するかどうかチェックのために
+     *
      * @param unknown $couponCd
      * @param unknown $userId
      * @return unknown
      */
-    public function findUseCouponNonMember($couponCd, $email) {
+    public function findUseCouponNonMember($couponCd, $email)
+    {
         $qb = $this->createQueryBuilder('c')
             ->select('c')
             ->andWhere('c.del_flg = 0')
@@ -147,10 +158,11 @@ class CouponCouponOrderRepository extends EntityRepository
         try {
             $result = $query->getSingleResult();
 
-        } catch(\Doctrine\Orm\NoResultException $e) {
+        } catch (\Doctrine\Orm\NoResultException $e) {
             $result = null;
 
         }
+
         return $result;
     }
 

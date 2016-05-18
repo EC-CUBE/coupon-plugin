@@ -19,9 +19,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #}
-{#
-[メルマガ管理]-[配信内容設定]-[一覧・検索]画面
-#}
 
 {% extends 'default_frame.twig' %}
 
@@ -30,28 +27,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 {% block title %}クーポン管理{% endblock %}
 {% block sub_title %}クーポン内容設定{% endblock %}
 
-{% form_theme searchForm 'Form/bootstrap_3_horizontal_layout.html.twig' %}
-
-{% block stylesheet %}
-<link rel="stylesheet" href="{{ app.config.admin_urlpath }}/assets/css/bootstrap-datetimepicker.min.css">
-{% endblock stylesheet %}
-
 {% block javascript %}
-<script src="{{ app.config.admin_urlpath }}/assets/js/vendor/moment.min.js"></script>
-<script src="{{ app.config.admin_urlpath }}/assets/js/vendor/moment-ja.js"></script>
-<script src="{{ app.config.admin_urlpath }}/assets/js/vendor/bootstrap-datetimepicker.min.js"></script>
-
 <script>
 function fnDelete(action) {
     if (confirm('このクーポンを削除しても宜しいですか？')) {
         document.search_form.action = action;
         document.search_form.submit();
     }
-}
-
-function fnChangeActionSubmit(action) {
-    document.search_form.action = action;
-    document.search_form.submit();
 }
 </script>
 {% endblock javascript %}
@@ -68,14 +50,15 @@ function fnChangeActionSubmit(action) {
                 <div class="box-body">
                     <div class="table_list">
                         <div class="table-responsive with-border">
-                            <table class="table table-striped">
+                            <table class="table table-hover">
                                 <thead>
                                 <tr>
                                     <th>クーポンID</th>
                                     <th>クーポンコード</th>
                                     <th>クーポン名</th>
                                     <th>種別</th>
-                                    <th>利用回数</th>
+                                    <th>値引き</th>
+                                    <th>残利用回数</th>
                                     <th>有効期間</th>
                                     <th>編集</th>
                                     <th>状態</th>
@@ -84,23 +67,30 @@ function fnChangeActionSubmit(action) {
                                 </thead>
                                 <tbody>
                                 {% for Coupon in pagination %}
-                                <tr>
+                                <tr class="{% if Coupon.enable_flag == 0 %}active{% endif %}">
                                     <td class="coupon_id">{{ Coupon.id }}</td>
                                     <td class="coupon_cd">{{ Coupon.coupon_cd }}</td>
                                     <td class="coupon_name">{{ Coupon.coupon_name }}</td>
                                     {% if Coupon.coupon_type == 1 %}
-                                        <td class="">商品</td>
+                                        <td class="coupon_type">商品</td>
                                     {% elseif Coupon.coupon_type == 2 %}
-                                        <td class="">カテゴリ</td>
+                                        <td class="coupon_type">カテゴリ</td>
                                     {% else %}
-                                        <td class=""></td>
+                                        <td class="coupon_type"></td>
+                                    {% endif %}
+                                    {% if Coupon.discount_type == 1 %}
+                                        <td class="coupon_discount">{{ Coupon.discount_price|price }}</td>
+                                    {% elseif Coupon.discount_type == 2 %}
+                                        <td class="coupon_discount">{{ Coupon.discount_rate }} %</td>
+                                    {% else %}
+                                        <td class="coupon_discount"></td>
                                     {% endif %}
                                     <td>{{ Coupon.coupon_use_time|number_format }}</td>
                                     <td>{{ Coupon.available_from_date|date_format }} ～ {{ Coupon.available_to_date|date_format }}</td>
 
-                                    <td><a href="?" onclick="fnChangeActionSubmit('{{ url('admin_coupon_edit', { id: Coupon.id }) }}'); return false;">編集</a></td>
+                                    <td><a href="{{ url('admin_coupon_edit', { id: Coupon.id }) }}">編集</a></td>
                                     <td>
-                                        <a href="?" onclick="fnChangeActionSubmit('{{ url('admin_coupon_enable', { id: Coupon.id }) }}'); return false;">
+                                        <a href="{{ url('admin_coupon_enable', { id: Coupon.id }) }}">
                                         {% if Coupon.enable_flag == 1 %}
                                             有効
                                         {% else %}
@@ -108,7 +98,7 @@ function fnChangeActionSubmit(action) {
                                         {% endif %}
                                         </a>
                                     </td>
-                                    <td><a href="?" onclick="fnDelete('{{ url('admin_coupon_delete', { id: Coupon.id }) }}'); return false;">削除</a></td>
+                                    <td><a href="javascript:;" onclick="fnDelete('{{ url('admin_coupon_delete', { id: Coupon.id}) }}'); return false;">削除</a></td>
 
                                 </tr>
                                 {% endfor %}

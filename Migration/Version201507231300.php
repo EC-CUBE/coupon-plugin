@@ -38,7 +38,6 @@ class Version201507231300 extends AbstractMigration
     public function up(Schema $schema)
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->createCouponPlugin($schema);
         $this->createCoupon($schema);
         $this->createCouponDetail($schema);
         $this->createCouponOrder($schema);
@@ -51,71 +50,12 @@ class Version201507231300 extends AbstractMigration
     public function down(Schema $schema)
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $schema->dropTable('plg_coupon_plugin');
-        $schema->dropSequence('plg_coupon_plugin_plugin_id_seq');
         $schema->dropTable('plg_coupon');
         $schema->dropSequence('plg_coupon_coupon_id_seq');
         $schema->dropTable('plg_coupon_detail');
         $schema->dropSequence('plg_coupon_detail_coupon_detail_id_seq');
         $schema->dropTable('plg_coupon_order');
         $schema->dropSequence('plg_coupon_order_id_seq');
-    }
-
-    protected function createCouponPlugin(Schema $schema)
-    {
-        // CREATE TABLE plg_coupon_plugin (
-        //     plugin_id integer DEFAULT nextval('plg_coupon_plugin_plugin_id_seq'::regclass) NOT NULL,
-        //     plugin_code text NOT NULL,
-        //     plugin_name text NOT NULL,
-        //     sub_data text,
-        //     auto_update_flg smallint DEFAULT 0 NOT NULL,
-        //     del_flg smallint DEFAULT 0 NOT NULL,
-        //     create_date timestamp(0) without time zone NOT NULL,
-        //     update_date timestamp(0) without time zone NOT NULL
-        // );
-        // ALTER TABLE ONLY plg_coupon_plugin
-        // ADD CONSTRAINT plg_coupon_plugin_pkey PRIMARY KEY (plugin_id);
-
-        $table = $schema->createTable("plg_coupon_plugin");
-        $table->addColumn('plugin_id', 'integer', array(
-            'autoincrement' => true,
-        ));
-
-        $table->addColumn('plugin_code', 'text', array(
-            'notnull' => true,
-        ));
-
-        $table->addColumn('plugin_name', 'text', array(
-            'notnull' => true,
-        ));
-
-        $table->addColumn('sub_data', 'text', array(
-            'notnull' => false,
-        ));
-
-        $table->addColumn('auto_update_flg', 'smallint', array(
-            'notnull' => true,
-            'unsigned' => false,
-            'default' => 0,
-        ));
-
-        $table->addColumn('del_flg', 'smallint', array(
-            'notnull' => true,
-            'unsigned' => false,
-            'default' => 0,
-        ));
-
-        $table->addColumn('create_date', 'datetime', array(
-            'notnull' => true,
-            'unsigned' => false,
-        ));
-
-        $table->addColumn('update_date', 'datetime', array(
-            'notnull' => true,
-            'unsigned' => false,
-        ));
-
-        $table->setPrimaryKey(array('plugin_id'));
     }
 
     /**
