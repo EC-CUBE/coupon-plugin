@@ -42,6 +42,12 @@ class Version201507231311 extends AbstractMigration
         $this->addSql("alter table plg_coupon_order add email text");
         $this->addSql("alter table plg_coupon_order add discount  decimal not null default 0");
         $this->addSql("alter table plg_coupon add coupon_use_time integer");
+
+        if ($schema->hasTable('plg_coupon_plugin')) {
+            $schema->dropTable('plg_coupon_plugin');
+            $schema->dropSequence('plg_coupon_plugin_plugin_id_seq');
+        }
+
     }
 
     /**

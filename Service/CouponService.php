@@ -397,13 +397,13 @@ class CouponService
     /**
      * クーポン受注情報を保存する
      *
-     * @param $Order
-     * @param $Coupon
+     * @param Order $Order
+     * @param CouponCoupon $Coupon
      * @param $couponCd
      * @param Customer $Customer
      * @param $discount
      */
-    public function saveCouponOrder($Order, $Coupon, $couponCd, Customer $Customer, $discount)
+    public function saveCouponOrder(Order $Order, CouponCoupon $Coupon, $couponCd, Customer $Customer, $discount)
     {
 
         if (is_null($Order)) {

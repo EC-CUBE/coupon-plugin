@@ -86,10 +86,6 @@ class CouponServiceProvider implements ServiceProviderInterface
         // ============================================================
         // リポジトリの登録
         // ============================================================
-        $app['eccube.plugin.coupon.repository.coupon_plugin'] = $app->share(function () use ($app) {
-            return $app['orm.em']->getRepository('Plugin\Coupon\Entity\CouponPlugin');
-        });
-
         // クーポン情報テーブルリポジトリ
         $app['eccube.plugin.coupon.repository.coupon'] = $app->share(function () use ($app) {
             return $app['orm.em']->getRepository('Plugin\Coupon\Entity\CouponCoupon');
