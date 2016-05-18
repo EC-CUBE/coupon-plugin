@@ -59,6 +59,7 @@ class CouponServiceTest extends EccubeTestCase
             'discount_type' => '1',
             'coupon_use_time' => '1',
             'discount_price' => '1',
+            'discount_rate' => '1',
             'enalbe_flag' => '1',
             'available_from_date' => new \DateTime(),
             'available_to_date' => new \DateTime(),
