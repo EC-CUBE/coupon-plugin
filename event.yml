@@ -4,10 +4,40 @@
 
 eccube.event.render.shopping.before:
     - [onRenderShoppingBefore, NORMAL]
+
 eccube.event.controller.shopping_confirm.before:
     - [onControllerShoppingConfirmBefore, NORMAL]
 
-eccube.event.render.shopping.before:
-    - [onRenderShoppingBefore, NORMAL]
 eccube.event.render.admin_order_edit.before:
     - [onRenderAdminOrderEditAfter, NORMAL]
+
+
+# v3.0.8まで
+eccube.event.controller.shopping_delivery.after:
+    - [onControllerRestoreDiscountAfter, NORMAL]
+
+eccube.event.controller.shopping_payment.after:
+    - [onControllerRestoreDiscountAfter, NORMAL]
+
+eccube.event.controller.shopping_shipping.after:
+    - [onControllerRestoreDiscountAfter, NORMAL]
+
+eccube.event.controller.shopping_shipping_edit.after:
+    - [onControllerRestoreDiscountAfter, NORMAL]
+
+
+# v3.0.9以降
+# 配送先関連
+front.shopping.delivery.complete:
+    - [onRestoreDiscount, NORMAL]
+
+## 支払い方法判定
+front.shopping.payment.complete:
+    - [onRestoreDiscount, NORMAL]
+
+## 配送方法設定
+front.shopping.shipping.complete:
+    - [onRestoreDiscount, NORMAL]
+front.shopping.shipping.edit.complete:
+    - [onRestoreDiscount, NORMAL]
+

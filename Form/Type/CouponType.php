@@ -24,15 +24,15 @@
 namespace Plugin\Coupon\Form\Type;
 
 use Carbon\Carbon;
+use Plugin\Coupon\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Validator\Constraints as Assert;
-use Plugin\Coupon\Form\Type;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\ConstraintViolationList;
 
 class CouponType extends AbstractType
 {
@@ -48,19 +48,14 @@ class CouponType extends AbstractType
      * Build config type form
      *
      * @param FormBuilderInterface $builder
-     * @param array                $options
+     * @param array $options
      * @return type
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $config = $this->app['config'];
+        $app = $this->app;
 
         $builder
-            ->add('id', 'text', array(
-                'label' => 'クーポンID',
-                'required' => false,
-                'attr' => array('readonly' => 'readonly'),
-            ))
             ->add('coupon_cd', 'text', array(
                 'label' => 'クーポンコード',
                 'required' => true,
@@ -111,12 +106,6 @@ class CouponType extends AbstractType
             ->add('discount_rate', 'integer', array(
                 'label' => '値引率',
                 'required' => false,
-                'constraints' => array(
-                    new Assert\Range(array(
-                        'min' => 0,
-                        'max' => 100,
-                    ))
-                ),
             ))
             // 有効期間(FROM)
             ->add('available_from_date', 'date', array(
@@ -146,6 +135,7 @@ class CouponType extends AbstractType
                 'label' => '利用回数',
                 'required' => true,
                 'constraints' => array(
+                    new Assert\NotBlank(),
                     new Assert\Range(array(
                         'min' => 1,
                         'max' => 100000,
@@ -158,18 +148,47 @@ class CouponType extends AbstractType
                 'allow_delete' => true,
                 'prototype' => true,
             ))
-            ->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
+            ->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($app) {
                 $form = $event->getForm();
                 $data = $form->getData();
+
+                if ($data['discount_type'] == 1) {
+                    // 値引き額
+
+                    /** @var ConstraintViolationList $errors */
+                    $errors = $app['validator']->validateValue($data['discount_price'], array(
+                        new Assert\NotBlank(),
+                    ));
+                    if ($errors->count() > 0) {
+                        foreach ($errors as $error) {
+                            $form['discount_price']->addError(new FormError($error->getMessage()));
+                        }
+                    }
+
+                } else if ($data['discount_type'] == 2) {
+                    // 値引率
+
+                    /** @var ConstraintViolationList $errors */
+                    $errors = $app['validator']->validateValue($data['discount_rate'], array(
+                        new Assert\NotBlank(),
+                        new Assert\Range(array(
+                            'min' => 0,
+                            'max' => 100,
+                        )),
+                    ));
+                    if ($errors->count() > 0) {
+                        foreach ($errors as $error) {
+                            $form['discount_rate']->addError(new FormError($error->getMessage()));
+                        }
+                    }
+
+                }
+
 
                 if (!empty($data['available_from_date']) && !empty($data['available_to_date'])) {
                     $now = Carbon::today();
                     $fromDate = Carbon::instance($data['available_from_date']);
                     $toDate = Carbon::instance($data['available_to_date']);
-
-//                    if ($now->gt($fromDate)) {
-//                        $form['available_from_date']->addError(new FormError('有効期間に誤りがあります。'));
-//                    }
 
                     if ($fromDate->gt($toDate)) {
                         $form['available_from_date']->addError(new FormError('有効期間に誤りがあります。'));
@@ -191,11 +210,6 @@ class CouponType extends AbstractType
     }
 
 
-    /**
-     *
-     * @ERROR!!!
-     *
-     */
     public function getName()
     {
         return 'admin_coupon';

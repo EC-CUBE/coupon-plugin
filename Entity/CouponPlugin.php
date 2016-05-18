@@ -13,18 +13,19 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
+namespace Plugin\Coupon\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Information about Gmo module
- * (substitution for dtb_module of Eccube 2)
+ * CouponPlugin
  */
 class CouponPlugin extends \Eccube\Entity\AbstractEntity
 {
@@ -78,16 +79,9 @@ class CouponPlugin extends \Eccube\Entity\AbstractEntity
 
 
     /**
-     * Constructor
-     */
-    public function __construct()
-    {
-    }
-
-    /**
      * Get id
      *
-     * @return integer
+     * @return integer 
      */
     public function getId()
     {
@@ -97,8 +91,8 @@ class CouponPlugin extends \Eccube\Entity\AbstractEntity
     /**
      * Set code
      *
-     * @param  string $code
-     * @return Module
+     * @param string $code
+     * @return CouponPlugin
      */
     public function setCode($code)
     {
@@ -110,7 +104,7 @@ class CouponPlugin extends \Eccube\Entity\AbstractEntity
     /**
      * Get code
      *
-     * @return string
+     * @return string 
      */
     public function getCode()
     {
@@ -120,8 +114,8 @@ class CouponPlugin extends \Eccube\Entity\AbstractEntity
     /**
      * Set name
      *
-     * @param  string $name
-     * @return Module
+     * @param string $name
+     * @return CouponPlugin
      */
     public function setName($name)
     {
@@ -133,7 +127,7 @@ class CouponPlugin extends \Eccube\Entity\AbstractEntity
     /**
      * Get name
      *
-     * @return string
+     * @return string 
      */
     public function getName()
     {
@@ -143,8 +137,8 @@ class CouponPlugin extends \Eccube\Entity\AbstractEntity
     /**
      * Set sub_data
      *
-     * @param  string $subData
-     * @return Module
+     * @param string $subData
+     * @return CouponPlugin
      */
     public function setSubData($subData)
     {
@@ -156,7 +150,7 @@ class CouponPlugin extends \Eccube\Entity\AbstractEntity
     /**
      * Get sub_data
      *
-     * @return string
+     * @return string 
      */
     public function getSubData()
     {
@@ -166,8 +160,8 @@ class CouponPlugin extends \Eccube\Entity\AbstractEntity
     /**
      * Set auto_update_flg
      *
-     * @param  integer $autoUpdateFlg
-     * @return Module
+     * @param integer $autoUpdateFlg
+     * @return CouponPlugin
      */
     public function setAutoUpdateFlg($autoUpdateFlg)
     {
@@ -179,7 +173,7 @@ class CouponPlugin extends \Eccube\Entity\AbstractEntity
     /**
      * Get auto_update_flg
      *
-     * @return integer
+     * @return integer 
      */
     public function getAutoUpdateFlg()
     {
@@ -189,8 +183,8 @@ class CouponPlugin extends \Eccube\Entity\AbstractEntity
     /**
      * Set del_flg
      *
-     * @param  integer $delFlg
-     * @return Module
+     * @param integer $delFlg
+     * @return CouponPlugin
      */
     public function setDelFlg($delFlg)
     {
@@ -202,7 +196,7 @@ class CouponPlugin extends \Eccube\Entity\AbstractEntity
     /**
      * Get del_flg
      *
-     * @return integer
+     * @return integer 
      */
     public function getDelFlg()
     {
@@ -212,8 +206,8 @@ class CouponPlugin extends \Eccube\Entity\AbstractEntity
     /**
      * Set create_date
      *
-     * @param  \DateTime $createDate
-     * @return Module
+     * @param \DateTime $createDate
+     * @return CouponPlugin
      */
     public function setCreateDate($createDate)
     {
@@ -225,7 +219,7 @@ class CouponPlugin extends \Eccube\Entity\AbstractEntity
     /**
      * Get create_date
      *
-     * @return \DateTime
+     * @return \DateTime 
      */
     public function getCreateDate()
     {
@@ -235,8 +229,8 @@ class CouponPlugin extends \Eccube\Entity\AbstractEntity
     /**
      * Set update_date
      *
-     * @param  \DateTime $updateDate
-     * @return Module
+     * @param \DateTime $updateDate
+     * @return CouponPlugin
      */
     public function setUpdateDate($updateDate)
     {
@@ -248,11 +242,10 @@ class CouponPlugin extends \Eccube\Entity\AbstractEntity
     /**
      * Get update_date
      *
-     * @return \DateTime
+     * @return \DateTime 
      */
     public function getUpdateDate()
     {
         return $this->update_date;
     }
-
 }

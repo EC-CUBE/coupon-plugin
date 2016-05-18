@@ -22,89 +22,79 @@
  */
 namespace Plugin\Coupon\Entity;
 
-use Symfony\Component\Validator\Mapping\ClassMetadata;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Coupon
+ * CouponCoupon
  */
 class CouponCoupon extends \Eccube\Entity\AbstractEntity
 {
-
     /**
-     *
      * @var integer
      */
     private $id;
 
     /**
-     *
      * @var string
      */
     private $coupon_cd;
 
     /**
-     *
-     * @var string
-     */
-    private $coupon_name;
-
-    /**
-     *
      * @var integer
      */
     private $coupon_type;
 
     /**
-     *
+     * @var string
+     */
+    private $coupon_name;
+
+    /**
      * @var integer
      */
     private $discount_type;
 
     /**
-     *
+     * @var integer
+     */
+    private $coupon_use_time;
+
+    /**
      * @var string
      */
     private $discount_price;
 
     /**
-     *
      * @var string
      */
     private $discount_rate;
 
     /**
-     *
      * @var integer
      */
     private $enable_flag;
 
     /**
-     *
-     * @var integer
-     */
-    private $del_flg;
-
-    /**
-     *
      * @var \DateTime
      */
     private $available_from_date;
 
     /**
-     *
      * @var \DateTime
      */
     private $available_to_date;
 
     /**
-     *
+     * @var integer
+     */
+    private $del_flg;
+
+    /**
      * @var \DateTime
      */
     private $create_date;
 
     /**
-     *
      * @var \DateTime
      */
     private $update_date;
@@ -113,12 +103,6 @@ class CouponCoupon extends \Eccube\Entity\AbstractEntity
      * @var \Doctrine\Common\Collections\Collection
      */
     private $CouponDetails;
-
-    /**
-     *
-     * @var \coupon_use_time
-     */
-    private $coupon_use_time;
 
     /**
      * Constructor
@@ -131,7 +115,7 @@ class CouponCoupon extends \Eccube\Entity\AbstractEntity
     /**
      * Get id
      *
-     * @return integer
+     * @return integer 
      */
     public function getId()
     {
@@ -139,14 +123,14 @@ class CouponCoupon extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Set id
+     * Set coupon_cd
      *
-     * @param integer $code
-     * @return Module
+     * @param string $couponCd
+     * @return CouponCoupon
      */
-    public function setId($id)
+    public function setCouponCd($couponCd)
     {
-        $this->id = $id;
+        $this->coupon_cd = $couponCd;
 
         return $this;
     }
@@ -154,7 +138,7 @@ class CouponCoupon extends \Eccube\Entity\AbstractEntity
     /**
      * Get coupon_cd
      *
-     * @return string
+     * @return string 
      */
     public function getCouponCd()
     {
@@ -162,35 +146,10 @@ class CouponCoupon extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Set id
-     *
-     * @param
-     *            string coupon_cd
-     * @return Module
-     */
-    public function setCouponCd($coupon_cd)
-    {
-        $this->coupon_cd = $coupon_cd;
-
-        return $this;
-    }
-
-    /**
-     * Get coupon_type
-     *
-     * @return integer
-     */
-    public function getCouponType()
-    {
-        return $this->coupon_type;
-    }
-
-    /**
      * Set coupon_type
      *
-     * @param
-     *            integer
-     * @return Module
+     * @param integer $couponType
+     * @return CouponCoupon
      */
     public function setCouponType($couponType)
     {
@@ -200,21 +159,43 @@ class CouponCoupon extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Get discount_type
+     * Get coupon_type
      *
-     * @return integer
+     * @return integer 
      */
-    public function getDiscountType()
+    public function getCouponType()
     {
-        return $this->discount_type;
+        return $this->coupon_type;
+    }
+
+    /**
+     * Set coupon_name
+     *
+     * @param string $couponName
+     * @return CouponCoupon
+     */
+    public function setCouponName($couponName)
+    {
+        $this->coupon_name = $couponName;
+
+        return $this;
+    }
+
+    /**
+     * Get coupon_name
+     *
+     * @return string 
+     */
+    public function getCouponName()
+    {
+        return $this->coupon_name;
     }
 
     /**
      * Set discount_type
      *
-     * @param
-     *            integer
-     * @return Module
+     * @param integer $discountType
+     * @return CouponCoupon
      */
     public function setDiscountType($discountType)
     {
@@ -224,21 +205,43 @@ class CouponCoupon extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Get discount_price
+     * Get discount_type
      *
-     * @return integer
+     * @return integer 
      */
-    public function getDiscountPrice()
+    public function getDiscountType()
     {
-        return $this->discount_price;
+        return $this->discount_type;
+    }
+
+    /**
+     * Set coupon_use_time
+     *
+     * @param integer $couponUseTime
+     * @return CouponCoupon
+     */
+    public function setCouponUseTime($couponUseTime)
+    {
+        $this->coupon_use_time = $couponUseTime;
+
+        return $this;
+    }
+
+    /**
+     * Get coupon_use_time
+     *
+     * @return integer 
+     */
+    public function getCouponUseTime()
+    {
+        return $this->coupon_use_time;
     }
 
     /**
      * Set discount_price
      *
-     * @param
-     *            integer
-     * @return Module
+     * @param string $discountPrice
+     * @return CouponCoupon
      */
     public function setDiscountPrice($discountPrice)
     {
@@ -248,9 +251,32 @@ class CouponCoupon extends \Eccube\Entity\AbstractEntity
     }
 
     /**
+     * Get discount_price
+     *
+     * @return string 
+     */
+    public function getDiscountPrice()
+    {
+        return $this->discount_price;
+    }
+
+    /**
+     * Set discount_rate
+     *
+     * @param string $discountRate
+     * @return CouponCoupon
+     */
+    public function setDiscountRate($discountRate)
+    {
+        $this->discount_rate = $discountRate;
+
+        return $this;
+    }
+
+    /**
      * Get discount_rate
      *
-     * @return string
+     * @return string 
      */
     public function getDiscountRate()
     {
@@ -258,34 +284,10 @@ class CouponCoupon extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Set discount_rate
-     *
-     * @param
-     *            string
-     * @return Module
-     */
-    public function setDiscountRate($discountRate)
-    {
-        $this->discount_rate = $discountRate;
-        return $this;
-    }
-
-    /**
-     * Get enable_flag
-     *
-     * @return integer
-     */
-    public function getEnableFlag()
-    {
-        return $this->enable_flag;
-    }
-
-    /**
      * Set enable_flag
      *
-     * @param
-     *            integer
-     * @return Module
+     * @param integer $enableFlag
+     * @return CouponCoupon
      */
     public function setEnableFlag($enableFlag)
     {
@@ -295,10 +297,66 @@ class CouponCoupon extends \Eccube\Entity\AbstractEntity
     }
 
     /**
+     * Get enable_flag
+     *
+     * @return integer 
+     */
+    public function getEnableFlag()
+    {
+        return $this->enable_flag;
+    }
+
+    /**
+     * Set available_from_date
+     *
+     * @param \DateTime $availableFromDate
+     * @return CouponCoupon
+     */
+    public function setAvailableFromDate($availableFromDate)
+    {
+        $this->available_from_date = $availableFromDate;
+
+        return $this;
+    }
+
+    /**
+     * Get available_from_date
+     *
+     * @return \DateTime 
+     */
+    public function getAvailableFromDate()
+    {
+        return $this->available_from_date;
+    }
+
+    /**
+     * Set available_to_date
+     *
+     * @param \DateTime $availableToDate
+     * @return CouponCoupon
+     */
+    public function setAvailableToDate($availableToDate)
+    {
+        $this->available_to_date = $availableToDate;
+
+        return $this;
+    }
+
+    /**
+     * Get available_to_date
+     *
+     * @return \DateTime 
+     */
+    public function getAvailableToDate()
+    {
+        return $this->available_to_date;
+    }
+
+    /**
      * Set del_flg
      *
      * @param integer $delFlg
-     * @return Order
+     * @return CouponCoupon
      */
     public function setDelFlg($delFlg)
     {
@@ -310,7 +368,7 @@ class CouponCoupon extends \Eccube\Entity\AbstractEntity
     /**
      * Get del_flg
      *
-     * @return integer
+     * @return integer 
      */
     public function getDelFlg()
     {
@@ -321,7 +379,7 @@ class CouponCoupon extends \Eccube\Entity\AbstractEntity
      * Set create_date
      *
      * @param \DateTime $createDate
-     * @return Module
+     * @return CouponCoupon
      */
     public function setCreateDate($createDate)
     {
@@ -333,7 +391,7 @@ class CouponCoupon extends \Eccube\Entity\AbstractEntity
     /**
      * Get create_date
      *
-     * @return \DateTime
+     * @return \DateTime 
      */
     public function getCreateDate()
     {
@@ -344,7 +402,7 @@ class CouponCoupon extends \Eccube\Entity\AbstractEntity
      * Set update_date
      *
      * @param \DateTime $updateDate
-     * @return Module
+     * @return CouponCoupon
      */
     public function setUpdateDate($updateDate)
     {
@@ -356,7 +414,7 @@ class CouponCoupon extends \Eccube\Entity\AbstractEntity
     /**
      * Get update_date
      *
-     * @return \DateTime
+     * @return \DateTime 
      */
     public function getUpdateDate()
     {
@@ -366,8 +424,8 @@ class CouponCoupon extends \Eccube\Entity\AbstractEntity
     /**
      * Add CouponDetails
      *
-     * @param  \Plugin\OrderPdf\Entity\CouponCouponDetail
-     * @return Coupon
+     * @param \Plugin\Coupon\Entity\CouponCouponDetail $couponDetails
+     * @return CouponCoupon
      */
     public function addCouponDetail(\Plugin\Coupon\Entity\CouponCouponDetail $couponDetails)
     {
@@ -379,7 +437,7 @@ class CouponCoupon extends \Eccube\Entity\AbstractEntity
     /**
      * Remove CouponDetails
      *
-     * @param \Eccube\Entity\OrderDetail $orderDetails
+     * @param \Plugin\Coupon\Entity\CouponCouponDetail $couponDetails
      */
     public function removeCouponDetail(\Plugin\Coupon\Entity\CouponCouponDetail $couponDetails)
     {
@@ -389,95 +447,10 @@ class CouponCoupon extends \Eccube\Entity\AbstractEntity
     /**
      * Get CouponDetails
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return \Doctrine\Common\Collections\Collection 
      */
     public function getCouponDetails()
     {
         return $this->CouponDetails;
-    }
-
-    /**
-     * Set coupon_name
-     *
-     * @param string $coupon_name
-     * @return Module
-     */
-    public function setCouponName($coupon_name)
-    {
-        $this->coupon_name = $coupon_name;
-
-        return $this;
-    }
-
-    /**
-     * Get coupon_name
-     *
-     * @return string
-     */
-    public function getCouponName()
-    {
-        return $this->coupon_name;
-    }
-
-    /**
-     * Set available_from_date
-     *
-     * @param \DateTime $available_from_date
-     * @return Module
-     */
-    public function setAvailableFromDate($available_from_date)
-    {
-        $this->available_from_date = $available_from_date;
-
-        return $this;
-    }
-
-    /**
-     * Get available_from_date
-     *
-     * @return \DateTime
-     */
-    public function getAvailableFromDate()
-    {
-        return $this->available_from_date;
-    }
-
-    /**
-     * Set available_from_date
-     *
-     * @param \DateTime $available_from_date
-     * @return Module
-     */
-    public function setAvailableToDate($available_to_date)
-    {
-        $this->available_to_date = $available_to_date;
-
-        return $this;
-    }
-
-    /**
-     * Get available_to_date
-     *
-     * @return \DateTime
-     */
-    public function getAvailableToDate()
-    {
-        return $this->available_to_date;
-    }
-
-    /**
-     * @return \coupon_use_time
-     */
-    public function getCouponUseTime()
-    {
-        return $this->coupon_use_time;
-    }
-
-    /**
-     * @param \coupon_use_time $coupon_use_time
-     */
-    public function setCouponUseTime($coupon_use_time)
-    {
-        $this->coupon_use_time = $coupon_use_time;
     }
 }

@@ -32,6 +32,13 @@ Plugin\Coupon\Entity\CouponCouponOrder:
         order_date:
             type: datetime
             nullable: false
+        discount:
+            type: decimal
+            nullable: false
+            precision: 10
+            scale: 0
+            options:
+                default: 0
         del_flg:
             type: smallint
             nullable: false

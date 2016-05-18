@@ -28,18 +28,64 @@ use Silex\ServiceProviderInterface;
 
 class CouponServiceProvider implements ServiceProviderInterface
 {
+
     public function register(BaseApplication $app)
     {
         // ============================================================
-        // Setting
-        // [システム設定]-[プラグイン一覧]に設定リンクを表示する
-        //$app->match('/' . $app["config"]["admin_route"] . '/plugin/order_pdf/config', '\\Plugin\\OrderPdf\\Controller\\OrderPdfController::index')->bind('plugin_OrderPdf_config');
+        // コントローラの登録
         // ============================================================
+        $adminRoute = '/'.$app["config"]["admin_route"];
+
+        // クーポンの一覧
+        $app->match($adminRoute.'/coupon', 'Plugin\Coupon\Controller\CouponController::index')->value('id', null)->assert('id', '\d+|')->bind('admin_coupon_list');
+
+        // クーポンの新規先
+        $app->match($adminRoute.'/coupon/new', 'Plugin\Coupon\Controller\CouponController::create')->value('id', null)->assert('id', '\d+|')->bind('admin_coupon_new');
+
+        // クーポンの編集
+        $app->match($adminRoute.'/coupon/edit/{id}', 'Plugin\Coupon\Controller\CouponController::edit')->value('id', null)->assert('id', '\d+|')->bind('admin_coupon_edit');
+
+        // クーポンの新規作成・編集確定
+        $app->match($adminRoute.'/coupon/commit/{id}', 'Plugin\Coupon\Controller\CouponController::commit')->value('id', null)->assert('id', '\d+|')->bind('admin_coupon_commit');
+
+        // クーポンの有効/無効化
+        $app->match($adminRoute.'/coupon/enable/{id}', 'Plugin\Coupon\Controller\CouponController::enable')->value('id', null)->assert('id', '\d+|')->bind('admin_coupon_enable');
+
+        // クーポンの削除
+        $app->match($adminRoute.'/coupon/delete/{id}', 'Plugin\Coupon\Controller\CouponController::delete')->value('id', null)->assert('id', '\d+|')->bind('admin_coupon_delete');
+
+        // 商品検索画面表示
+        $app->post($adminRoute.'/coupon/search/product', 'Plugin\Coupon\Controller\CouponSearchModelController::searchProduct')->bind('admin_coupon_search_product');
+
+        // カテゴリ検索画面表示
+        $app->post($adminRoute.'/coupon/search/category', 'Plugin\Coupon\Controller\CouponSearchModelController::searchCategory')->bind('admin_coupon_search_category');
+
+        $app->match('/shopping/shopping_coupon', 'Plugin\Coupon\Controller\CouponController::shoppingCoupon')->bind('plugin_shopping_coupon');
+
+        // ============================================================
+        // Formの登録
+        // ============================================================
+        // 型登録
+        $app['form.types'] = $app->share($app->extend('form.types', function ($types) use ($app) {
+            $types[] = new \Plugin\Coupon\Form\Type\CouponSearchType($app);
+            $types[] = new \Plugin\Coupon\Form\Type\CouponType($app);
+            $types[] = new \Plugin\Coupon\Form\Type\CouponDetailType($app);
+            $types[] = new \Plugin\Coupon\Form\Type\CouponSearchCategoryType($app);
+            $types[] = new \Plugin\Coupon\Form\Type\CouponType($app);
+            $types[] = new \Plugin\Coupon\Form\Type\CouponUseType($app);
+
+            return $types;
+        }));
+
+        // Form Extension
+        //        $app['form.type.extensions'] = $app->share($app->extend('form.type.extensions', function ($extensions) use ($app) {
+        //            $extensions[] = new ShoppingTypeExtension($app);
+        //            return $extensions;
+        //        }));
 
         // ============================================================
         // リポジトリの登録
         // ============================================================
-        // 不要？
         $app['eccube.plugin.coupon.repository.coupon_plugin'] = $app->share(function () use ($app) {
             return $app['orm.em']->getRepository('Plugin\Coupon\Entity\CouponPlugin');
         });
@@ -59,56 +105,6 @@ class CouponServiceProvider implements ServiceProviderInterface
             return $app['orm.em']->getRepository('Plugin\Coupon\Entity\CouponCouponOrder');
         });
 
-        // ============================================================
-        // コントローラの登録
-        // ============================================================
-        // クーポンの一覧
-        $app->match('/' . $app["config"]["admin_route"] . '/coupon', '\\Plugin\\Coupon\\Controller\CouponController::index')
-            ->value('id', null)->assert('id', '\d+|')
-            ->bind('admin_coupon_list');
-
-        // クーポンの新規先
-        $app->match('/' . $app["config"]["admin_route"] . '/coupon/new', '\\Plugin\\Coupon\\Controller\CouponController::create')
-            ->value('id', null)->assert('id', '\d+|')
-            ->bind('admin_coupon_new');
-
-        // クーポンの編集
-        $app->match('/' . $app["config"]["admin_route"] . '/coupon/edit/{id}', '\\Plugin\\Coupon\\Controller\CouponController::edit')
-            ->value('id', null)->assert('id', '\d+|')
-            ->bind('admin_coupon_edit');
-
-        // クーポンの新規作成・編集確定
-        $app->match('/' . $app["config"]["admin_route"] . '/coupon/commit', '\\Plugin\\Coupon\\Controller\CouponController::commit')
-        ->value('id', null)->assert('id', '\d+|')
-        ->bind('admin_coupon_commit');
-
-        // クーポンの有効/無効化
-        $app->match('/' . $app["config"]["admin_route"] . '/coupon/enable/{id}', '\\Plugin\\Coupon\\Controller\CouponController::enable')
-            ->value('id', null)->assert('id', '\d+|')
-            ->bind('admin_coupon_enable');
-
-        // クーポンの削除
-        $app->match('/' . $app["config"]["admin_route"] . '/coupon/delete/{id}', '\\Plugin\\Coupon\\Controller\CouponController::delete')
-        ->value('id', null)->assert('id', '\d+|')
-        ->bind('admin_coupon_delete');
-
-        // 商品検索画面表示
-        $app->post('/' . $app["config"]["admin_route"] . '/coupon/search/product', '\\Plugin\\Coupon\\Controller\CouponSearchModelController::searchProduct')->bind('admin_coupon_search_product');
-        // カテゴリ検索画面表示
-        $app->post('/' . $app["config"]["admin_route"] . '/coupon/search/category', '\\Plugin\\Coupon\\Controller\CouponSearchModelController::searchCategory')->bind('admin_coupon_search_category');
-
-        // ============================================================
-        // Formの登録
-        // ============================================================
-        // 型登録
-        $app['form.types'] = $app->share($app->extend('form.types', function ($types) use ($app) {
-            $types[] = new \Plugin\Coupon\Form\Type\CouponSearchType($app);
-            $types[] = new \Plugin\Coupon\Form\Type\CouponType($app);
-            $types[] = new \Plugin\Coupon\Form\Type\CouponDetailType($app);
-            $types[] = new \Plugin\Coupon\Form\Type\CouponSearchCategoryType($app);
-            return $types;
-        }));
-
         // -----------------------------
         // サービスの登録
         // -----------------------------
@@ -122,7 +118,7 @@ class CouponServiceProvider implements ServiceProviderInterface
         $app['translator'] = $app->share($app->extend('translator', function ($translator, \Silex\Application $app) {
             $translator->addLoader('yaml', new \Symfony\Component\Translation\Loader\YamlFileLoader());
 
-            $file = __DIR__ . '/../Resource/locale/message.' . $app['locale'] . '.yml';
+            $file = __DIR__.'/../Resource/locale/message.'.$app['locale'].'.yml';
             if (file_exists($file)) {
                 $translator->addResource('yaml', $file, $app['locale']);
             }
@@ -145,6 +141,7 @@ class CouponServiceProvider implements ServiceProviderInterface
                 }
             }
             $config['nav'] = $nav;
+
             return $config;
         }));
 
@@ -153,4 +150,5 @@ class CouponServiceProvider implements ServiceProviderInterface
     public function boot(BaseApplication $app)
     {
     }
+
 }

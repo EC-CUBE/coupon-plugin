@@ -22,56 +22,34 @@
  */
 namespace Plugin\Coupon\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+
 /**
- * Coupon Detail
+ * CouponCouponDetail
  */
 class CouponCouponDetail extends \Eccube\Entity\AbstractEntity
 {
-
     /**
-     *
      * @var integer
      */
     private $id;
 
     /**
-     *
-     * @var string
-     */
-    private $coupon_id;
-
-    /**
-     *
      * @var integer
      */
     private $coupon_type;
 
     /**
-     *
-     * @var \Eccube\Entity\Product
-     */
-    private $Product;
-
-    /**
-     *
-     * @var \Eccube\Entity\Category
-     */
-    private $Category;
-
-    /**
-     *
      * @var integer
      */
     private $del_flg;
 
     /**
-     *
      * @var \DateTime
      */
     private $create_date;
 
     /**
-     *
      * @var \DateTime
      */
     private $update_date;
@@ -82,9 +60,19 @@ class CouponCouponDetail extends \Eccube\Entity\AbstractEntity
     private $Coupon;
 
     /**
+     * @var \Eccube\Entity\Product
+     */
+    private $Product;
+
+    /**
+     * @var \Eccube\Entity\Category
+     */
+    private $Category;
+
+    /**
      * Get id
      *
-     * @return integer
+     * @return integer 
      */
     public function getId()
     {
@@ -105,33 +93,22 @@ class CouponCouponDetail extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Get coupon_id
+     * Set coupon_type
      *
-     * @return string
+     * @param integer $couponType
+     * @return CouponCouponDetail
      */
-    public function getCouponId()
+    public function setCouponType($couponType)
     {
-        return $this->coupon_id;
-    }
-
-    /**
-     * Set coupon_id
-     *
-     * @param
-     *            integer coupon_id
-     * @return Module
-     */
-    public function setCouponId($couponId)
-    {
-        $this->coupon_id = $couponId;
+        $this->coupon_type = $couponType;
 
         return $this;
     }
 
     /**
-     * Get coupon_id
+     * Get coupon_type
      *
-     * @return integer
+     * @return integer 
      */
     public function getCouponType()
     {
@@ -139,71 +116,10 @@ class CouponCouponDetail extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Set coupon_type
-     *
-     * @param
-     *            integer coupon_type
-     * @return Module
-     */
-    public function setCouponType($coupon_type)
-    {
-        $this->coupon_type = $coupon_type;
-
-        return $this;
-    }
-
-    /**
-     * Get Product
-     *
-     * @return \Eccube\Entity\Product
-     */
-    public function getProduct()
-    {
-        return $this->Product;
-    }
-
-    /**
-     * Set Product
-     *
-     * @param \Eccube\Entity\Product $Product
-     * @return Module
-     */
-    public function setProduct($Product)
-    {
-        $this->Product = $Product;
-
-        return $this;
-    }
-
-    /**
-     * Get Categoryd
-     *
-     * @return \Eccube\Entity\Category
-     */
-    public function getCategory()
-    {
-        return $this->Category;
-    }
-
-    /**
-     * Set Categoryd
-     *
-     * @param
-     *            \Eccube\Entity\Category \Eccube\Entity\Category
-     * @return Module
-     */
-    public function setCategory($Category)
-    {
-        $this->Category = $Category;
-
-        return $this;
-    }
-
-    /**
      * Set del_flg
      *
      * @param integer $delFlg
-     * @return Order
+     * @return CouponCouponDetail
      */
     public function setDelFlg($delFlg)
     {
@@ -215,7 +131,7 @@ class CouponCouponDetail extends \Eccube\Entity\AbstractEntity
     /**
      * Get del_flg
      *
-     * @return integer
+     * @return integer 
      */
     public function getDelFlg()
     {
@@ -226,7 +142,7 @@ class CouponCouponDetail extends \Eccube\Entity\AbstractEntity
      * Set create_date
      *
      * @param \DateTime $createDate
-     * @return Module
+     * @return CouponCouponDetail
      */
     public function setCreateDate($createDate)
     {
@@ -238,7 +154,7 @@ class CouponCouponDetail extends \Eccube\Entity\AbstractEntity
     /**
      * Get create_date
      *
-     * @return \DateTime
+     * @return \DateTime 
      */
     public function getCreateDate()
     {
@@ -249,7 +165,7 @@ class CouponCouponDetail extends \Eccube\Entity\AbstractEntity
      * Set update_date
      *
      * @param \DateTime $updateDate
-     * @return Module
+     * @return CouponCouponDetail
      */
     public function setUpdateDate($updateDate)
     {
@@ -261,17 +177,18 @@ class CouponCouponDetail extends \Eccube\Entity\AbstractEntity
     /**
      * Get update_date
      *
-     * @return \DateTime
+     * @return \DateTime 
      */
     public function getUpdateDate()
     {
         return $this->update_date;
     }
+
     /**
-     * Set Order
+     * Set Coupon
      *
-     * @param  \Plugin\Coupon\Entity\CouponCoupon $coupon
-     * @return CouponDetail
+     * @param \Plugin\Coupon\Entity\CouponCoupon $coupon
+     * @return CouponCouponDetail
      */
     public function setCoupon(\Plugin\Coupon\Entity\CouponCoupon $coupon)
     {
@@ -281,14 +198,61 @@ class CouponCouponDetail extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Get Order
+     * Get Coupon
      *
-     * @return \Plugin\Coupon\Entity\CouponCoupon
+     * @return \Plugin\Coupon\Entity\CouponCoupon 
      */
     public function getCoupon()
     {
         return $this->Coupon;
     }
+
+    /**
+     * Set Product
+     *
+     * @param \Eccube\Entity\Product $product
+     * @return CouponCouponDetail
+     */
+    public function setProduct(\Eccube\Entity\Product $product)
+    {
+        $this->Product = $product;
+
+        return $this;
+    }
+
+    /**
+     * Get Product
+     *
+     * @return \Eccube\Entity\Product 
+     */
+    public function getProduct()
+    {
+        return $this->Product;
+    }
+
+    /**
+     * Set Category
+     *
+     * @param \Eccube\Entity\Category $category
+     * @return CouponCouponDetail
+     */
+    public function setCategory(\Eccube\Entity\Category $category = null)
+    {
+        $this->Category = $category;
+
+        return $this;
+    }
+
+    /**
+     * Get Category
+     *
+     * @return \Eccube\Entity\Category 
+     */
+    public function getCategory()
+    {
+        return $this->Category;
+    }
+
 
     /**
      * 親カテゴリ名を含むカテゴリ名を取得する.

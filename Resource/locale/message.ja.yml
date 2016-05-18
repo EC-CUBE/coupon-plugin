@@ -4,6 +4,7 @@ admin.coupon.coupon_id.notexists: クーポンIDがありません。
 admin.plugin.coupon.regist.success: クーポンを登録しました。
 admin.plugin.coupon.delete.success: クーポンを削除しました。
 admin.plugin.coupon.enable.success: クーポンの状態を変更しました。
+admin.plugin.coupon.delete.error: クーポンの削除に失敗しました。
 
 front.plugin.coupon.shopping.notexists: クーポン対象商品はございません。クーポンコードをご確認ください。
 front.plugin.coupon.shopping.sameuser: このクーポンは既にご利用いただいています。

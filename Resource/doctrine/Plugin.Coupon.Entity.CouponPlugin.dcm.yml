@@ -1,7 +1,7 @@
 Plugin\Coupon\Entity\CouponPlugin:
     type: entity
     table: plg_coupon_plugin
-    repositoryClass: Plugin\OrderPdf\Repository\CouponPluginRepository
+    repositoryClass: Plugin\Coupon\Repository\CouponPluginRepository
     id:
         id:
             type: integer
