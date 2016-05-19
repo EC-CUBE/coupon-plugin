@@ -36,11 +36,11 @@ class CouponCouponRepositoryTest extends EccubeTestCase
     public function testFindActiveCouponAll()
     {
 
+        $Coupon = $this->getCoupon();
+
         $coupons = $this->app['eccube.plugin.coupon.repository.coupon']->findActiveCouponAll();
 
         $this->actual = count($coupons);
-
-        $this->expected = 1;
 
         $this->assertGreaterThan(0, $this->actual);
 
