@@ -343,7 +343,7 @@ class Coupon
 
             $total = $Order->getSubtotal() + $Order->getCharge() + $Order->getDeliveryFeeTotal();
             // 合計金額
-            $totalAmount = -$total - $Order->getDiscount();
+            $totalAmount = $total - $Order->getDiscount();
 
             if ($totalAmount < 0) {
                 // 合計金額がマイナスのため、金額を値引き前に戻す
