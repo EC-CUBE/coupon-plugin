@@ -42,7 +42,7 @@ class CouponCouponRepositoryTest extends EccubeTestCase
 
         $this->expected = 1;
 
-        $this->assertGreaterThan(1, $this->actual);
+        $this->assertGreaterThan(0, $this->actual);
 
     }
 
