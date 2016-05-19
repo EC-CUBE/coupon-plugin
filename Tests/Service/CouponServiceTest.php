@@ -88,7 +88,7 @@ class CouponServiceTest extends EccubeTestCase
         /** @var \Plugin\Coupon\Entity\CouponCoupon $Coupon */
         $Coupon = $this->getCoupon();
 
-        $this->actual = $this->app['eccube.plugin.coupon.service.coupon']->deleteCoupon('aaaaa');
+        $this->actual = $this->app['eccube.plugin.coupon.service.coupon']->deleteCoupon(1111111111);
 
         $this->expected = false;
 
