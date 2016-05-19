@@ -24,27 +24,19 @@
 
 namespace Plugin\Coupon\Form\Type;
 
-use \Symfony\Component\Form\AbstractType;
-use \Symfony\Component\Form\Extension\Core\Type;
-use \Symfony\Component\Form\FormBuilderInterface;
-use \Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class CouponSearchCategoryType extends AbstractType
 {
-    public $app;
-
-    public function __construct(\Silex\Application $app)
-    {
-        $this->app = $app;
-    }
 
     /**
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $app = $this->app;
-
         $builder
             ->add('category_id', 'category', array(
                 'label' => 'カテゴリ',
@@ -53,7 +45,7 @@ class CouponSearchCategoryType extends AbstractType
             ))
             ->add('status', 'disp', array(
                 'label' => '種別',
-                'multiple'=> true,
+                'multiple' => true,
                 'required' => false,
             ))
             ->add('create_date_start', 'date', array(
@@ -90,9 +82,7 @@ class CouponSearchCategoryType extends AbstractType
             ))
             ->add('link_status', 'hidden', array(
                 'mapped' => false,
-            ))
-            ->addEventSubscriber(new \Eccube\Event\FormEventSubscriber())
-        ;
+            ));
     }
 
     /**

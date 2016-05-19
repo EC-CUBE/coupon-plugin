@@ -53,7 +53,10 @@ class CouponController
         // クーポン削除時のtokenで使用
         $searchForm = $app['form.factory']->createBuilder('admin_coupon_search')->getForm();
 
-        $pagination = $app['eccube.plugin.coupon.repository.coupon']->findAll();
+        $pagination = $app['eccube.plugin.coupon.repository.coupon']->findBy(
+            array(),
+            array('id' => 'DESC')
+        );
 
         return $app->render('Coupon/View/admin/index.twig', array(
             'searchForm' => $searchForm->createView(),
@@ -471,8 +474,9 @@ class CouponController
 
         if ($Coupon) {
             $count = $app['eccube.plugin.coupon.repository.coupon_order']->countCouponByCd($couponCd);
-            if ($Coupon->getCouponUseTime() <= $count['1'])
+            if ($Coupon->getCouponUseTime() <= $count['1'] || $Coupon->getCouponUseTime() <= 0) {
                 return false;
+            }
         }
 
         return true;

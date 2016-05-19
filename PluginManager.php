@@ -37,10 +37,10 @@ class PluginManager extends AbstractPluginManager
 
     public function uninstall($config, $app)
     {
+        // uninstall時はdisableも同時に動く
+
         $this->migrationSchema($app, __DIR__.'/Migration', $config['code'], 0);
 
-        // pagelayoutの削除
-        $this->removePageLayout($app);
     }
 
     public function enable($config, $app)
