@@ -46,8 +46,12 @@ class PluginManager extends AbstractPluginManager
     public function enable($config, $app)
     {
 
-        // pagelayoutの作成
-        $this->createPageLayout($app);
+        $PageLayout = $app['eccube.repository.page_layout']->findOneBy(array('url' => 'plugin_shopping_coupon'));
+
+        if (is_null($PageLayout)) {
+            // pagelayoutの作成
+            $this->createPageLayout($app);
+        }
 
     }
 
@@ -61,9 +65,14 @@ class PluginManager extends AbstractPluginManager
 
     public function update($config, $app)
     {
+        $this->migrationSchema($app, __DIR__.'/Migration', $config['code']);
 
-        // pagelayoutの作成
-        $this->createPageLayout($app);
+        $PageLayout = $app['eccube.repository.page_layout']->findOneBy(array('url' => 'plugin_shopping_coupon'));
+
+        if (is_null($PageLayout)) {
+            // pagelayoutの作成
+            $this->createPageLayout($app);
+        }
 
     }
 

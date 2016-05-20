@@ -73,12 +73,11 @@ class Coupon
      * 注文クーポン情報に受注日付を登録する.
      *
      */
-    public function onControllerShoppingConfirmBefore()
+    public function onControllerShoppingCompleteBefore()
     {
-        $cartService = $this->app['eccube.service.cart'];
+        $orderId = $this->app['session']->get('eccube.front.shopping.order.id');
 
-        $preOrderId = $cartService->getPreOrderId();
-        if (is_null($preOrderId)) {
+        if (is_null($orderId)) {
             return;
         }
 
@@ -86,7 +85,7 @@ class Coupon
 
         // クーポン受注情報を取得する
         $CouponOrder = $repository->findOneBy(array(
-            'pre_order_id' => $preOrderId
+            'order_id' => $orderId
         ));
 
         if (is_null($CouponOrder)) {
@@ -103,7 +102,7 @@ class Coupon
 
         $Coupon = $this->app['eccube.plugin.coupon.repository.coupon']->findActiveCoupon($CouponOrder->getCouponCd());
 
-        // クーポンの利用回数を減らす(マイナスになっても無視する)
+        // クーポンの発行枚数を減らす(マイナスになっても無視する)
         $Coupon->setCouponUseTime($Coupon->getCouponUseTime() - 1);
         $this->app['orm.em']->flush($Coupon);
     }

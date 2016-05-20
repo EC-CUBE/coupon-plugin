@@ -144,7 +144,7 @@ class CouponCouponOrderRepository extends EntityRepository
 
 
     /**
-     * クーポンの利用回数を検索
+     * クーポンの発行枚数を検索
      *
      * @param $couponCd
      * @return int|mixed

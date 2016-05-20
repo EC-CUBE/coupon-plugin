@@ -376,7 +376,7 @@ class CouponController
                         $error = true;
                     }
 
-                    // クーポンの利用回数チェック
+                    // クーポンの発行枚数チェック
                     $checkCouponUseTime = $this->checkCouponUseTime($formCouponCd, $app);
                     if (!$checkCouponUseTime && $existCoupon) {
                         $form->get("coupon_cd")->addError(new FormError('front.plugin.coupon.shopping.couponusetime'));
@@ -462,7 +462,7 @@ class CouponController
     }
 
     /**
-     *  クーポンの利用回数のチェック
+     *  クーポンの発行枚数のチェック
      *
      * @param $couponCd
      * @param Application $app

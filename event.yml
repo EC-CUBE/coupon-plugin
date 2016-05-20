@@ -5,8 +5,8 @@
 eccube.event.render.shopping.before:
     - [onRenderShoppingBefore, NORMAL]
 
-eccube.event.controller.shopping_confirm.before:
-    - [onControllerShoppingConfirmBefore, NORMAL]
+eccube.event.controller.shopping_complete.before:
+    - [onControllerShoppingCompleteBefore, NORMAL]
 
 eccube.event.render.admin_order_edit.before:
     - [onRenderAdminOrderEditAfter, NORMAL]
