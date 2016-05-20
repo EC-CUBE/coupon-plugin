@@ -30,41 +30,26 @@ use Symfony\Component\Validator\Constraints as Assert;
 class CouponSearchType extends AbstractType
 {
 
-    private $app;
-
-    public function __construct(\Eccube\Application $app)
-    {
-        $this->app = $app;
-    }
-
     /**
-    * Build config type form
-    *
-    * @param FormBuilderInterface $builder
-    * @param array $options
-    * @return type
-    */
+     * Build config type form
+     *
+     * @param FormBuilderInterface $builder
+     * @param array $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $config = $this->app['config'];
 
         $builder
             ->add('id', 'text', array(
                 'label' => 'クーポンID',
                 'required' => false,
             ))
-             ->add('coupon_cd', 'text', array(
+            ->add('coupon_cd', 'text', array(
                 'label' => 'クーポンコード',
                 'required' => false,
-            ))
-            ->addEventSubscriber(new \Eccube\Event\FormEventSubscriber());
+            ));
     }
 
-    /**
-    *
-    * @ERROR!!!
-    *
-    */
     public function getName()
     {
         return 'admin_coupon_search';

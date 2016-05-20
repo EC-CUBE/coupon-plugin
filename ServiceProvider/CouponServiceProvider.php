@@ -67,21 +67,14 @@ class CouponServiceProvider implements ServiceProviderInterface
         // ============================================================
         // 型登録
         $app['form.types'] = $app->share($app->extend('form.types', function ($types) use ($app) {
-            $types[] = new \Plugin\Coupon\Form\Type\CouponSearchType($app);
+            $types[] = new \Plugin\Coupon\Form\Type\CouponSearchType();
             $types[] = new \Plugin\Coupon\Form\Type\CouponType($app);
             $types[] = new \Plugin\Coupon\Form\Type\CouponDetailType($app);
-            $types[] = new \Plugin\Coupon\Form\Type\CouponSearchCategoryType($app);
-            $types[] = new \Plugin\Coupon\Form\Type\CouponType($app);
-            $types[] = new \Plugin\Coupon\Form\Type\CouponUseType($app);
+            $types[] = new \Plugin\Coupon\Form\Type\CouponSearchCategoryType();
+            $types[] = new \Plugin\Coupon\Form\Type\CouponUseType();
 
             return $types;
         }));
-
-        // Form Extension
-        //        $app['form.type.extensions'] = $app->share($app->extend('form.type.extensions', function ($extensions) use ($app) {
-        //            $extensions[] = new ShoppingTypeExtension($app);
-        //            return $extensions;
-        //        }));
 
         // ============================================================
         // リポジトリの登録

@@ -23,14 +23,14 @@
 
 namespace Plugin\Coupon\Form\Type;
 
+use Eccube\Form\DataTransformer;
+use Plugin\Coupon\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
-use Plugin\Coupon\Form\Type;
+
 // use Plugin\Coupon\Form\Type\DataTransformer;
-use Symfony\Component\Form\FormEvents;
-use Eccube\Form\DataTransformer;
 
 class CouponDetailType extends AbstractType
 {
@@ -46,33 +46,32 @@ class CouponDetailType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $config = $this->app['config'];
 
         $builder
-        ->add($builder->create('Product', 'hidden')
-            ->addModelTransformer(new DataTransformer\EntityToIdTransformer(
-                $this->app['orm.em'],
-                '\Eccube\Entity\Product'
-        )))
-        ->add($builder->create('Category', 'hidden')
-            ->addModelTransformer(new DataTransformer\EntityToIdTransformer(
-                $this->app['orm.em'],
-                '\Eccube\Entity\Category'
-        )))
-        ->add('id', 'hidden', array(
-            'label' => 'クーポン詳細ID',
-            'required' => false,
-        ))
-
-        ->addEventSubscriber(new \Eccube\Event\FormEventSubscriber());
+            ->add($builder->create('Product', 'hidden')
+                ->addModelTransformer(new DataTransformer\EntityToIdTransformer(
+                    $this->app['orm.em'],
+                    '\Eccube\Entity\Product'
+                )))
+            ->add($builder->create('Category', 'hidden')
+                ->addModelTransformer(new DataTransformer\EntityToIdTransformer(
+                    $this->app['orm.em'],
+                    '\Eccube\Entity\Category'
+                )))
+            ->add('id', 'hidden', array(
+                'label' => 'クーポン詳細ID',
+                'required' => false,
+            ))
+            ->addEventSubscriber(new \Eccube\Event\FormEventSubscriber());
     }
 
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
             'data_class' => 'Plugin\Coupon\Entity\CouponCouponDetail',
         ));
     }
+
     /**
      * {@inheritdoc}
      */
