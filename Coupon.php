@@ -102,7 +102,7 @@ class Coupon
 
         $Coupon = $this->app['eccube.plugin.coupon.repository.coupon']->findActiveCoupon($CouponOrder->getCouponCd());
 
-        // クーポンの利用回数を減らす(マイナスになっても無視する)
+        // クーポンの発行枚数を減らす(マイナスになっても無視する)
         $Coupon->setCouponUseTime($Coupon->getCouponUseTime() - 1);
         $this->app['orm.em']->flush($Coupon);
     }
