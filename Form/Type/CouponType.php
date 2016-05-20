@@ -194,6 +194,29 @@ class CouponType extends AbstractType
                     }
                 }
 
+                // 既に登録されているクーポンコードは利用できない
+                if (null !== $data->getCouponCd()) {
+                    $qb = $app['eccube.plugin.coupon.repository.coupon']
+                        ->createQueryBuilder('c')
+                        ->select('COUNT(c)')
+                        ->where('c.coupon_cd = :coupon_cd')
+                        ->setParameter('coupon_cd', $data->getCouponCd());
+
+                    // 新規登録時.
+                    if ($data->getId() === null) {
+                        $count = $qb->getQuery()->getSingleScalarResult();
+
+                    // 編集時.
+                    } else {
+                        $qb->andWhere('c.id <> :coupon_id')
+                            ->setParameter('coupon_id', $data->getId());
+                        $count = $qb->getQuery()->getSingleScalarResult();
+                    }
+
+                    if ($count > 0) {
+                        $form['coupon_cd']->addError(new FormError('既に利用されているクーポンコードです。'));
+                    }
+                }
             });
     }
 
