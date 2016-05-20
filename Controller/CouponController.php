@@ -466,20 +466,14 @@ class CouponController
      *
      * @param $couponCd
      * @param Application $app
-     * @return bool
+     * @return bool クーポンの枚数が一枚以上の時にtrueを返す
      */
     private function checkCouponUseTime($couponCd, Application $app)
     {
         $Coupon = $app['eccube.plugin.coupon.repository.coupon']->findOneBy(array('coupon_cd' => $couponCd));
 
-        if ($Coupon) {
-            $count = $app['eccube.plugin.coupon.repository.coupon_order']->countCouponByCd($couponCd);
-            if ($Coupon->getCouponUseTime() <= $count['1'] || $Coupon->getCouponUseTime() <= 0) {
-                return false;
-            }
-        }
-
-        return true;
+        // クーポンの発行枚数は購入完了時に減算される、一枚以上残っていれば利用できる
+        return $Coupon->getCouponUseTime() >= 1;
     }
 
 
