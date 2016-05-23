@@ -213,7 +213,7 @@ class CouponCouponDetail extends \Eccube\Entity\AbstractEntity
      * @param \Eccube\Entity\Product $product
      * @return CouponCouponDetail
      */
-    public function setProduct(\Eccube\Entity\Product $product)
+    public function setProduct(\Eccube\Entity\Product $product = null)
     {
         $this->Product = $product;
 
