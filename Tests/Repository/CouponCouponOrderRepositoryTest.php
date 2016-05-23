@@ -87,7 +87,7 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
 
         $this->app['eccube.plugin.coupon.repository.coupon_order']->save($CouponOrder);
 
-        $CouponOrder1 = $this->app['eccube.plugin.coupon.repository.coupon_order']->findUseCouponNonMember($Coupon->getCouponCd(), $this->Customer->getEmail());
+        $CouponOrder1 = $this->app['eccube.plugin.coupon.repository.coupon_order']->findUseCoupon($Coupon->getCouponCd(), $this->Customer->getEmail());
 
         $this->actual = $CouponOrder1[0]->getDiscount();
 
