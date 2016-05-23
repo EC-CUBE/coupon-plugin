@@ -100,7 +100,7 @@ class CouponCouponOrderRepository extends EntityRepository
         $query = $qb->getQuery();
         $result = null;
         try {
-            $result = $query->getSingleResult();
+            $result = $query->getResult();
 
         } catch (\Doctrine\Orm\NoResultException $e) {
             $result = null;
@@ -132,7 +132,7 @@ class CouponCouponOrderRepository extends EntityRepository
         $query = $qb->getQuery();
         $result = null;
         try {
-            $result = $query->getSingleResult();
+            $result = $query->getResult();
 
         } catch (\Doctrine\Orm\NoResultException $e) {
             $result = null;
