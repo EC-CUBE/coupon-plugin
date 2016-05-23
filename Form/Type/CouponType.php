@@ -151,6 +151,10 @@ class CouponType extends AbstractType
                 $form = $event->getForm();
                 $data = $form->getData();
 
+                if (count($data['CouponDetails']) ==  0) {
+                    $form['coupon_type']->addError(new FormError('クーポン有効対象となる商品情報またはカテゴリ情報を設定してください。'));
+                }
+
                 if ($data['discount_type'] == 1) {
                     // 値引き額
 
