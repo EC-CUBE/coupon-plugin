@@ -176,7 +176,13 @@ class Coupon
      */
     public function onRestoreDiscount(EventArgs $event)
     {
-        $Order = $event->getArgument('Order');
+
+        if ($event->hasArgument('Order')) {
+            $Order = $event->getArgument('Order');
+        } else {
+            $Shipping = $event->getArgument('Shipping');
+            $Order = $Shipping->getOrder();
+        }
 
         $this->restoreDiscount($Order);
 
