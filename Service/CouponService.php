@@ -504,7 +504,7 @@ class CouponService
     }
 
     /**
-     * カート内の商品(ORderDetail)がクーポン対象商品か確認する
+     * カート内の商品(OrderDetail)がクーポン対象商品か確認する
      *
      * @param Order $Order
      * @return bool
@@ -540,6 +540,71 @@ class CouponService
             ));
 
         return $CouponOrder;
+    }
+
+
+    /**
+     *  ユーザはクーポン1回のみ利用できる
+     *
+     * @param $couponCd
+     * @param Customer $Customer
+     * @return bool
+     */
+    public function checkCouponUsedOrNot($couponCd, Customer $Customer)
+    {
+        $repository = $this->app['eccube.plugin.coupon.repository.coupon_order'];
+
+        if ($this->app->isGranted('ROLE_USER')) {
+            $result = $repository->findUseCoupon($couponCd, $Customer->getId());
+        } else {
+            $result = $repository->findUseCoupon($couponCd, $Customer->getEmail());
+        }
+
+        if (!$result) {
+            return false;
+        }
+
+        return true;
+    }
+
+
+    /**
+     *  ユーザはクーポン1回のみ利用できる
+     *
+     * @param $couponCd
+     * @param $orderId
+     * @param Customer $Customer
+     * @return bool
+     */
+    public function checkCouponUsedOrNotBefore($couponCd, $orderId, Customer $Customer)
+    {
+
+        $repository = $this->app['eccube.plugin.coupon.repository.coupon_order'];
+
+        if ($this->app->isGranted('ROLE_USER')) {
+            $CouponOrders = $repository->findUseCouponBefore($couponCd, $orderId, $Customer->getId());
+        } else {
+            $CouponOrders = $repository->findUseCouponBefore($couponCd, $orderId, $Customer->getEmail());
+        }
+
+        if ($CouponOrders) {
+            // 存在すれば既に受注として利用されていないかチェック
+
+            foreach ($CouponOrders as $CouponOrder) {
+                $Order = $this->app['eccube.repository.order']->find($CouponOrder->getOrderId());
+
+                if ($Order) {
+                    if ($Order->getOrderStatus()->getId() != $this->app['config']['order_processing']) {
+                        // 同一のクーポンコードで既に受注データが存在している
+                        return true;
+                    }
+                }
+
+            }
+
+        }
+
+        return false;
     }
 
 

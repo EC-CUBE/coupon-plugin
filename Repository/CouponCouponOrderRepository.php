@@ -80,68 +80,52 @@ class CouponCouponOrderRepository extends EntityRepository
     }
 
     /**
-     * 会員が既にクーポンを利用しているか検索
+     * 会員または非会員が既にクーポンを利用しているか検索
+     * 会員の場合、会員IDで非会員の場合、メールアドレスで検索
      *
      * @param $couponCd
-     * @param $userId
-     * @return mixed|null
-     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @param $param
+     * @return array
      */
-    public function findUseCouponMember($couponCd, $userId)
+    public function findUseCoupon($couponCd, $param)
     {
         $qb = $this->createQueryBuilder('c')
-            ->select('c')
-            ->andWhere('c.del_flg = 0')
             ->andWhere('c.coupon_cd = :coupon_cd')
-            ->andWhere('c.user_id = :user_id')
             ->andWhere('c.order_date IS NOT NULL')
+            ->andWhere('c.user_id = :param OR c.email = :param')
             ->setParameter('coupon_cd', $couponCd)
-            ->setParameter('user_id', $userId);
+            ->setParameter('param', $param);
         $query = $qb->getQuery();
-        $result = null;
-        try {
-            $result = $query->getResult();
 
-        } catch (\Doctrine\Orm\NoResultException $e) {
-            $result = null;
-
-        }
+        $result = $query->getResult();
 
         return $result;
     }
-
 
     /**
-     * 非会員が既にクーポンを利用しているか検索
+     * 会員または非会員が既にクーポンを利用しているか検索
+     * 会員の場合、会員IDで非会員の場合、メールアドレスで検索
      *
      * @param $couponCd
-     * @param $email
-     * @return mixed|null
-     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @param $orderId
+     * @param $param
+     * @return array
      */
-    public function findUseCouponNonMember($couponCd, $email)
+    public function findUseCouponBefore($couponCd, $orderId, $param)
     {
         $qb = $this->createQueryBuilder('c')
-            ->select('c')
-            ->andWhere('c.del_flg = 0')
             ->andWhere('c.coupon_cd = :coupon_cd')
-            ->andWhere('c.email = :email')
-            ->andWhere('c.order_date IS NOT NULL')
+            ->andWhere('c.order_id != :order_id')
+            ->andWhere('c.user_id = :param OR c.email = :param')
             ->setParameter('coupon_cd', $couponCd)
-            ->setParameter('email', $email);
+            ->setParameter('order_id', $orderId)
+            ->setParameter('param', $param);
         $query = $qb->getQuery();
-        $result = null;
-        try {
-            $result = $query->getResult();
 
-        } catch (\Doctrine\Orm\NoResultException $e) {
-            $result = null;
-
-        }
+        $result = $query->getResult();
 
         return $result;
     }
-
 
     /**
      * クーポンの発行枚数を検索

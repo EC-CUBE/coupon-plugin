@@ -369,7 +369,7 @@ class CouponController
                     }
 
                     // クーポンが既に利用されているかチェック
-                    $couponUsedOrNot = $this->checkCouponUsedOrNot($formCouponCd, $Customer, $app);
+                    $couponUsedOrNot = $service->checkCouponUsedOrNot($formCouponCd, $Customer);
                     if ($couponUsedOrNot && $existCoupon) {
                         // 既に存在している
                         $form->get("coupon_cd")->addError(new FormError('front.plugin.coupon.shopping.sameuser'));
@@ -434,31 +434,6 @@ class CouponController
         ));
 
 
-    }
-
-    /**
-     *  ユーザはクーポン1回のみ利用できる
-     *
-     * @param $couponCd
-     * @param Customer $Customer
-     * @param Application $app
-     * @return bool
-     */
-    private function checkCouponUsedOrNot($couponCd, Customer $Customer, Application $app)
-    {
-        $repository = $app['eccube.plugin.coupon.repository.coupon_order'];
-
-        if ($app->isGranted('ROLE_USER')) {
-            $result = $repository->findUseCouponMember($couponCd, $Customer->getId());
-        } else {
-            $result = $repository->findUseCouponNonMember($couponCd, $Customer->getEmail());
-        }
-
-        if (!$result) {
-            return false;
-        }
-
-        return true;
     }
 
     /**

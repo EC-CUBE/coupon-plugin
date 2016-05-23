@@ -105,6 +105,12 @@ class CouponType extends AbstractType
             ->add('discount_rate', 'integer', array(
                 'label' => '値引率',
                 'required' => false,
+                'constraints' => array(
+                    new Assert\Range(array(
+                        'min' => 1,
+                        'max' => 100,
+                    ))
+                ),
             ))
             // 有効期間(FROM)
             ->add('available_from_date', 'date', array(
@@ -137,7 +143,7 @@ class CouponType extends AbstractType
                     new Assert\NotBlank(),
                     new Assert\Range(array(
                         'min' => 1,
-                        'max' => 100000,
+                        'max' => 1000000,
                     ))
                 ),
             ))

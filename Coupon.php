@@ -73,6 +73,43 @@ class Coupon
      * 注文クーポン情報に受注日付を登録する.
      *
      */
+    public function onControllerShoppingConfirmBefore()
+    {
+
+        $cartService = $this->app['eccube.service.cart'];
+
+        $preOrderId = $cartService->getPreOrderId();
+        if (is_null($preOrderId)) {
+            return;
+        }
+
+        $repository = $this->app['eccube.plugin.coupon.repository.coupon_order'];
+        // クーポン受注情報を取得する
+        $CouponOrder = $repository->findOneBy(array(
+            'pre_order_id' => $preOrderId,
+        ));
+
+        if (!$CouponOrder) {
+            return;
+        }
+
+        // クーポンが既に利用されているかチェック
+        $couponUsedOrNot = $this->app['eccube.plugin.coupon.service.coupon']
+            ->checkCouponUsedOrNotBefore($CouponOrder->getCouponCd(), $CouponOrder->getOrderId(), $this->app->user());
+
+        if ($couponUsedOrNot) {
+            $this->app->addError($this->app->trans('front.plugin.coupon.shopping.sameuser'), 'front.request');
+            // 既に存在している
+            header("Location: ".$this->app->url('shopping'));
+            exit;
+        }
+
+    }
+
+    /**
+     * 注文クーポン情報に受注日付を登録する.
+     *
+     */
     public function onControllerShoppingCompleteBefore()
     {
         $orderId = $this->app['session']->get('eccube.front.shopping.order.id');
@@ -88,7 +125,7 @@ class Coupon
             'order_id' => $orderId
         ));
 
-        if (is_null($CouponOrder)) {
+        if (!$CouponOrder) {
             return;
         }
         // 更新対象データ
@@ -367,7 +404,7 @@ class Coupon
 
                 $this->app['orm.em']->flush($Order);
 
-                $this->app->addError('クーポン利用時の合計金額がマイナスになったため、クーポンの利用をキャンセルしました。', 'front.request');
+                $this->app->addError($this->app->trans('front.plugin.coupon.shopping.use.minus'), 'front.request');
             }
         }
 
