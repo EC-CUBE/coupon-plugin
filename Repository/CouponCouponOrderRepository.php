@@ -89,12 +89,23 @@ class CouponCouponOrderRepository extends EntityRepository
      */
     public function findUseCoupon($couponCd, $param)
     {
+
+        $userId = null;
+        $email = null;
+
+        if (is_numeric($param)) {
+            $userId = $param;
+        } else {
+            $email = $param;
+        }
+
         $qb = $this->createQueryBuilder('c')
             ->andWhere('c.coupon_cd = :coupon_cd')
             ->andWhere('c.order_date IS NOT NULL')
-            ->andWhere('c.user_id = :param OR c.email = :param')
+            ->andWhere('c.user_id = :user_id OR c.email = :email')
             ->setParameter('coupon_cd', $couponCd)
-            ->setParameter('param', $param);
+            ->setParameter('user_id', $userId)
+            ->setParameter('email', $email);
         $query = $qb->getQuery();
 
         $result = $query->getResult();
@@ -113,13 +124,24 @@ class CouponCouponOrderRepository extends EntityRepository
      */
     public function findUseCouponBefore($couponCd, $orderId, $param)
     {
+
+        $userId = null;
+        $email = null;
+
+        if (is_numeric($param)) {
+            $userId = $param;
+        } else {
+            $email = $param;
+        }
+
         $qb = $this->createQueryBuilder('c')
             ->andWhere('c.coupon_cd = :coupon_cd')
             ->andWhere('c.order_id != :order_id')
-            ->andWhere('c.user_id = :param OR c.email = :param')
+            ->andWhere('c.user_id = :user_id OR c.email = :email')
             ->setParameter('coupon_cd', $couponCd)
             ->setParameter('order_id', $orderId)
-            ->setParameter('param', $param);
+            ->setParameter('user_id', $userId)
+            ->setParameter('email', $email);
         $query = $qb->getQuery();
 
         $result = $query->getResult();

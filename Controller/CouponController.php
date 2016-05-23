@@ -472,7 +472,7 @@ class CouponController
         // クーポン受注情報を保存する
         $app['eccube.plugin.coupon.service.coupon']->saveCouponOrder($Order, $Coupon, $couponCd, $Customer, $discount);
 
-        // 合計、値引きを再計算し、dtb_orderデータに登録する
+        // 合計、値引きを再計算し、dtb_orderを更新する
         $app['orm.em']->flush($Order);
 
     }

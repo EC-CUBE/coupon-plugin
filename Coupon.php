@@ -70,7 +70,7 @@ class Coupon
     }
 
     /**
-     * 注文クーポン情報に受注日付を登録する.
+     * クーポンが利用されていないかチェック
      *
      */
     public function onControllerShoppingConfirmBefore()
@@ -326,21 +326,30 @@ class Coupon
                 $html = str_replace($beforeHtml, $newHtml, $html);
             }
 
-            if (!$this->supportNewHookPoint()) {
+            if (!version_compare('3.0.10', Constant::VERSION, '<=')) {
                 // 値引き項目を表示
 
-                // このタグを前後に分割し、間に項目を入れ込む
-                // 元の合計金額は書き込み済みのため再度書き込みを行う
-                $parts = $this->app->renderView('Coupon/View/discount_shopping_item.twig', array(
-                    'Order' => $Order,
-                ));
-                $form = $crawler->filter('#confirm_side .total_box')->last()->html();
+                if ($CouponOrder) {
+                    $total = $Order->getTotal() - $CouponOrder->getDiscount();
+                    $Order->setTotal($total);
+                    $Order->setPaymentTotal($total);
 
-                $pos = strrpos($form, '</dl>');
-                if ($pos !== false) {
-                    $oldHtml = substr($form, 0, $pos);
-                    $newHtml = $oldHtml.$parts;
-                    $html = str_replace($form, $newHtml, $html);
+                    // 合計、値引きを再計算し、dtb_orderを更新する
+                    $this->app['orm.em']->flush($Order);
+
+                    // このタグを前後に分割し、間に項目を入れ込む
+                    // 元の合計金額は書き込み済みのため再度書き込みを行う
+                    $parts = $this->app->renderView('Coupon/View/discount_shopping_item.twig', array(
+                        'Order' => $Order,
+                    ));
+                    $form = $crawler->filter('#confirm_side .total_box')->last()->html();
+
+                    $pos = strrpos($form, '</dl>');
+                    if ($pos !== false) {
+                        $oldHtml = substr($form, 0, $pos);
+                        $newHtml = $oldHtml.$parts;
+                        $html = str_replace($form, $newHtml, $html);
+                    }
                 }
             }
 
