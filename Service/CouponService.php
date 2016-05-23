@@ -484,9 +484,12 @@ class CouponService
                     $taxService = $this->app['eccube.service.tax_rule'];
                     $TaxRule = $this->app['eccube.repository.tax_rule']->getByRule();
 
+                    // 値引き前の金額で割引率を算出する
+                    $total = $Order->getSubtotal() + $Order->getCharge() + $Order->getDeliveryFeeTotal();
+
                     // 小数点以下は四捨五入
                     $discount = $taxService->calcTax(
-                        $Order->getTotal(),
+                        $total,
                         $Coupon->getDiscountRate(),
                         $TaxRule->getCalcRule()->getId(),
                         $TaxRule->getTaxAdjust()
