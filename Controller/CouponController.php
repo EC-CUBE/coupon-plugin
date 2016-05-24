@@ -24,6 +24,7 @@
 namespace Plugin\Coupon\Controller;
 
 use Eccube\Application;
+use Eccube\Common\Constant;
 use Eccube\Entity\Customer;
 use Eccube\Entity\Order;
 use Plugin\Coupon\Entity\CouponCoupon;
@@ -66,58 +67,6 @@ class CouponController
     }
 
     /**
-     * クーポンの新規作成
-     *
-     * @param Application $app
-     * @param Request $request
-     * @param $id
-     * @return Response
-     */
-    public function create(Application $app, Request $request, $id)
-    {
-
-        $form = $app['form.factory']->createBuilder('admin_coupon')->getForm();
-
-        // サービスの取得
-        $service = $app['eccube.plugin.coupon.service.coupon'];
-
-        // クーポンコードの発行
-        $form->get('coupon_cd')->setData($service->generateCouponCd());
-
-        return $this->renderRegistView($app, array(
-            'form' => $form->createView(),
-            'id' => null,
-        ));
-    }
-
-    /**
-     * 編集
-     *
-     * @param Application $app
-     * @param Request $request
-     * @param $id
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
-     */
-    public function edit(Application $app, Request $request, $id)
-    {
-        $coupon = $app['eccube.plugin.coupon.repository.coupon']->find($id);
-
-        if (!$coupon) {
-            $app->addError('admin.coupon.notfound', 'admin');
-
-            return $app->redirect($app->url('admin_coupon_list'));
-        }
-
-        $form = $app['form.factory']->createBuilder('admin_coupon', $coupon)->getForm();
-
-        return $this->renderRegistView($app, array(
-            'form' => $form->createView(),
-            'coupon' => $coupon,
-            'id' => $coupon->getId(),
-        ));
-    }
-
-    /**
      * クーポンの新規作成/編集確定
      *
      * @param Application $app
@@ -125,49 +74,69 @@ class CouponController
      * @param $id
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      */
-    public function commit(Application $app, Request $request, $id)
+    public function edit(Application $app, Request $request, $id = null)
     {
 
-        $coupon = null;
-        if ($id) {
-            $coupon = $app['eccube.plugin.coupon.repository.coupon']->find($id);
-
-            if (!$coupon) {
+        $Coupon = null;
+        if (!$id) {
+            // 新規登録
+            $Coupon = new CouponCoupon();
+            $Coupon->setEnableFlag(Constant::ENABLED);
+            $Coupon->setDelFlg(Constant::DISABLED);
+        } else {
+            // 更新
+            $Coupon = $app['eccube.plugin.coupon.repository.coupon']->find($id);
+            if (!$Coupon) {
                 $app->addError('admin.coupon.notfound', 'admin');
 
                 return $app->redirect($app->url('admin_coupon_list'));
             }
         }
 
-        $form = $app['form.factory']->createBuilder('admin_coupon', $coupon)->getForm();
+        $form = $app['form.factory']->createBuilder('admin_coupon', $Coupon)->getForm();
+
+        // クーポンコードの発行
+        if (!$id) {
+            $form->get('coupon_cd')->setData($app['eccube.plugin.coupon.service.coupon']->generateCouponCd());
+        }
+
+
+        $details = array();
+        $CouponDetails = $Coupon->getCouponDetails();
+        foreach ($CouponDetails as $CouponDetail) {
+            $details[] = $CouponDetail;
+        }
+        $form->get('CouponDetails')->setData($details);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $data = $form->getData();
+            /** @var \Plugin\Coupon\Entity\CouponCoupon $Coupon */
+            $Coupon = $form->getData();
 
-            // サービスの取得
-            // @var \Plugin\Coupon\Service\CouponService
-            $service = $app['eccube.plugin.coupon.service.coupon'];
-
-            if (!$coupon) {
-                // =============
-                // 登録処理
-                // =============
-                $status = $service->createCoupon($data);
-            } else {
-                // =============
-                // 更新処理
-                // =============
-                $status = $service->updateCoupon($data);
-                if (!$status) {
-                    $app->addError('admin.coupon.notfound', 'admin');
-
-                    return $app->redirect($app->url('admin_coupon_list'));
-                }
-
+            $CouponDetails = $app['eccube.plugin.coupon.repository.coupon_detail']->findBy(array(
+                'Coupon' => $Coupon,
+            ));
+            foreach ($CouponDetails as $CouponDetail) {
+                $Coupon->removeCouponDetail($CouponDetail);
+                $app['orm.em']->remove($CouponDetail);
             }
+
+            $app['orm.em']->flush(); // Postgres対応
+
+            $CouponDetails = $form->get('CouponDetails')->getData();
+            foreach ($CouponDetails as $CouponDetail) {
+                $CouponDetail->setCoupon($Coupon);
+                $CouponDetail->setCouponType($Coupon->getCouponType());
+                $CouponDetail->setDelFlg(Constant::DISABLED);
+                $Coupon->addCouponDetail($CouponDetail);
+                $app['orm.em']->persist($CouponDetail);
+            }
+
+            $app['orm.em']->persist($Coupon);
+
+            $app['orm.em']->flush();
 
             // 成功時のメッセージを登録する
             $app->addSuccess('admin.plugin.coupon.regist.success', 'admin');
@@ -275,7 +244,7 @@ class CouponController
         );
         $viewParameters += $parameters;
 
-        return $app->render('Coupon/View/admin/regist.twig', $viewParameters);
+        return $app->render('Coupon/View/admin/register.twig', $viewParameters);
     }
 
 

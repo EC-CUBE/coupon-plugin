@@ -148,7 +148,7 @@ class CouponType extends AbstractType
                 ),
             ))
             ->add('CouponDetails', 'collection', array(
-                'type' => new CouponDetailType($this->app),
+                'type' => 'admin_coupon_detail',
                 'allow_add' => true,
                 'allow_delete' => true,
                 'prototype' => true,

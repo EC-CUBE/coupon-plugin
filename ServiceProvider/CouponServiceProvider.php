@@ -39,20 +39,17 @@ class CouponServiceProvider implements ServiceProviderInterface
         // クーポンの一覧
         $app->match($adminRoute.'/coupon', 'Plugin\Coupon\Controller\CouponController::index')->value('id', null)->assert('id', '\d+|')->bind('admin_coupon_list');
 
-        // クーポンの新規先
-        $app->match($adminRoute.'/coupon/new', 'Plugin\Coupon\Controller\CouponController::create')->value('id', null)->assert('id', '\d+|')->bind('admin_coupon_new');
+        // クーポンの新規登録
+        $app->match($adminRoute.'/coupon/new', 'Plugin\Coupon\Controller\CouponController::edit')->value('id', null)->bind('admin_coupon_new');
 
         // クーポンの編集
-        $app->match($adminRoute.'/coupon/edit/{id}', 'Plugin\Coupon\Controller\CouponController::edit')->value('id', null)->assert('id', '\d+|')->bind('admin_coupon_edit');
-
-        // クーポンの新規作成・編集確定
-        $app->match($adminRoute.'/coupon/commit/{id}', 'Plugin\Coupon\Controller\CouponController::commit')->value('id', null)->assert('id', '\d+|')->bind('admin_coupon_commit');
+        $app->match($adminRoute.'/coupon/{id}/edit', 'Plugin\Coupon\Controller\CouponController::edit')->value('id', null)->assert('id', '\d+|')->bind('admin_coupon_edit');
 
         // クーポンの有効/無効化
-        $app->match($adminRoute.'/coupon/enable/{id}', 'Plugin\Coupon\Controller\CouponController::enable')->value('id', null)->assert('id', '\d+|')->bind('admin_coupon_enable');
+        $app->match($adminRoute.'/coupon/{id}/enable', 'Plugin\Coupon\Controller\CouponController::enable')->value('id', null)->assert('id', '\d+|')->bind('admin_coupon_enable');
 
         // クーポンの削除
-        $app->match($adminRoute.'/coupon/delete/{id}', 'Plugin\Coupon\Controller\CouponController::delete')->value('id', null)->assert('id', '\d+|')->bind('admin_coupon_delete');
+        $app->match($adminRoute.'/coupon/{id}/delete', 'Plugin\Coupon\Controller\CouponController::delete')->value('id', null)->assert('id', '\d+|')->bind('admin_coupon_delete');
 
         // 商品検索画面表示
         $app->post($adminRoute.'/coupon/search/product', 'Plugin\Coupon\Controller\CouponSearchModelController::searchProduct')->bind('admin_coupon_search_product');

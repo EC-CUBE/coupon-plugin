@@ -98,7 +98,6 @@ class CouponService
         $coupon->setAvailableFromDate($data['available_from_date']);
         $coupon->setAvailableToDate($data['available_to_date']);
         $coupon->setCouponUseTime($data['coupon_use_time']);
-        $coupon->setUpdateDate($dateTime);
 
         // クーポン情報を更新する
         $em->persist($coupon);
@@ -110,7 +109,6 @@ class CouponService
         foreach ($details as $detail) {
             // クーポン詳細情報を書き換える
             $detail->setDelFlg(Constant::ENABLED);
-            $detail->setUpdateDate($dateTime);
             $em->persist($detail);
         }
 
@@ -123,13 +121,11 @@ class CouponService
                 $couponDetail = $detail;
                 $couponDetail->setCoupon($coupon);
                 $couponDetail->setCouponType($coupon->getCouponType());
-                $couponDetail->setCreateDate($dateTime);
             } else {
                 $couponDetail = $this->app['eccube.plugin.coupon.repository.coupon_detail']->find($detail->getId());
             }
 
             $couponDetail->setDelFlg(Constant::DISABLED);
-            $couponDetail->setUpdateDate($dateTime);
 
             $em->persist($couponDetail);
         }
@@ -157,7 +153,6 @@ class CouponService
 
         // クーポン情報を書き換える
         $coupon->setEnableFlag($coupon->getEnableFlag() == 0 ? 1 : 0);
-        $coupon->setUpdateDate(new \DateTime());
 
         // クーポン情報を登録する
         $em->persist($coupon);
@@ -185,7 +180,6 @@ class CouponService
         }
         // クーポン情報を書き換える
         $coupon->setDelFlg(Constant::ENABLED);
-        $coupon->setUpdateDate($currentDateTime);
 
         // クーポン情報を登録する
         $em->persist($coupon);
@@ -195,7 +189,6 @@ class CouponService
         foreach ($details as $detail) {
             // クーポン詳細情報を書き換える
             $detail->setDelFlg(Constant::ENABLED);
-            $detail->setUpdateDate($currentDateTime);
             $em->persist($detail);
         }
 
@@ -243,8 +236,6 @@ class CouponService
 
         $coupon->setEnableFlag(Constant::ENABLED);
         $coupon->setDelFlg(Constant::DISABLED);
-        $coupon->setCreateDate($dateTime);
-        $coupon->setUpdateDate($dateTime);
 
 
         $coupon->setAvailableFromDate($data['available_from_date']);
@@ -267,8 +258,6 @@ class CouponService
 
         $couponDetail->setCoupon($coupon);
         $couponDetail->setCouponType($coupon->getCouponType());
-        $couponDetail->setUpdateDate($coupon->getUpdateDate());
-        $couponDetail->setCreateDate($coupon->getCreateDate());
 
         $couponDetail->setCategory($detail->getCategory());
         $couponDetail->setProduct($detail->getProduct());
@@ -420,7 +409,6 @@ class CouponService
             $CouponOrder->setPreOrderId($Order->getPreOrderId());
 
             $CouponOrder->setDelFlg(Constant::DISABLED);
-            $CouponOrder->setCreateDate(new \DateTime());
         }
 
         // 更新対象データ
@@ -448,8 +436,6 @@ class CouponService
 
         // 割引金額をセット
         $CouponOrder->setDiscount($discount);
-
-        $CouponOrder->setUpdateDate(new \DateTime());
 
         $repository->save($CouponOrder);
 
