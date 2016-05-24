@@ -103,6 +103,10 @@ class CouponSearchModelController
                 $existCategoryIds = explode(",", $existCategoryId);
             }
 
+            if (empty($categoryId)) {
+                $categoryId = 0;
+            }
+
             $Category = $app['eccube.repository.category']->find($categoryId);
             $Categories = $app['eccube.repository.category']->getList($Category);
 
