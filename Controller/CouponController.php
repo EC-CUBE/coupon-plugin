@@ -244,7 +244,7 @@ class CouponController
         );
         $viewParameters += $parameters;
 
-        return $app->render('Coupon/View/admin/register.twig', $viewParameters);
+        return $app->render('Coupon/View/admin/regist.twig', $viewParameters);
     }
 
 
