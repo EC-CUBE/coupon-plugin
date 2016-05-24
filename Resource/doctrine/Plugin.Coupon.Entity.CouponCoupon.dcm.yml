@@ -65,4 +65,4 @@ Plugin\Coupon\Entity\CouponCoupon:
             mappedBy: Coupon
             orderBy:
                 id: ASC
-            cascade: ["persist"]
+            cascade: ['persist', 'remove']
