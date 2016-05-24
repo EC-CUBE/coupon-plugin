@@ -87,7 +87,7 @@ $(function() {
 
             },
             error: function() {
-                console.log('search product failed.');
+                alert('search product failed.');
             }
         });
     });
@@ -123,14 +123,11 @@ $(function() {
 
             },
             error: function() {
-                console.log('search product failed.');
+                alert('search product failed.');
             }
         });
     });
 
-    // 受注明細行の行数カウンタ.
-    // 受注登録・編集画面上でグローバルな変数.
-    // search_product.twig/order_detail_prototype.twigで利用しています.
     coupon_details_count = '{{ form.CouponDetails|length }}';
 
     // 項目数が多く、入力している項目によってEnter押下時に期待する動作が変わるので、いったん禁止
@@ -345,6 +342,8 @@ $(function() {
                                     <div class="item_box">
                                         <div id="admin_coupon_CouponDetails___name__"><input type="hidden" id="admin_coupon_CouponDetails___name___Product" name="admin_coupon[CouponDetails][__name__][Product]" class="form-control" /></div>
                                         <input type="hidden" id="admin_coupon_CouponDetails___name___id" name="admin_coupon[CouponDetails][__name__][id]" class="form-control" value="" />
+                                        <input type="hidden" id="admin_coupon_CouponDetails___name___coupon_type" name="admin_coupon[CouponDetails][__name__][coupon_type]">
+
                                         <div class="item_detail">
                                             <div class="item_name_area">
                                                 <strong class="item_name">
@@ -408,8 +407,9 @@ $(function() {
                              data-prototype="
                                 {% filter escape %}
                                 <div class="item_box">
-                                    <input type="hidden" id="admin_coupon_CouponDetails___name___id" name="admin_coupon[CouponDetails][__name__][id]" class="form-control"/>
-                                    <input type="hidden" id="admin_coupon_CouponDetails___name___Category" name="admin_coupon[CouponDetails][__name__][Category]" class="form-control"/>
+                                    <input type="hidden" id="admin_coupon_CouponDetails___name___id" name="admin_coupon[CouponDetails][__name__][id]">
+                                    <input type="hidden" id="admin_coupon_CouponDetails___name___Category" name="admin_coupon[CouponDetails][__name__][Category]">
+                                    <input type="hidden" id="admin_coupon_CouponDetails___name___coupon_type" name="admin_coupon[CouponDetails][__name__][coupon_type]">
                                     <div class="item_detail">
                                         <div class="item_name_area">
                                             <strong class="item_name">
