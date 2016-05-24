@@ -121,9 +121,9 @@ class CouponController
             foreach ($CouponDetails as $CouponDetail) {
                 $Coupon->removeCouponDetail($CouponDetail);
                 $app['orm.em']->remove($CouponDetail);
+                $app['orm.em']->flush($CouponDetail); // Postgres対応
             }
 
-            $app['orm.em']->flush(); // Postgres対応
 
             $CouponDetails = $form->get('CouponDetails')->getData();
             foreach ($CouponDetails as $CouponDetail) {
