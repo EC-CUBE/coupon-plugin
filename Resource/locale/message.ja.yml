@@ -10,3 +10,4 @@ front.plugin.coupon.shopping.notexists: クーポン対象商品はございま�
 front.plugin.coupon.shopping.sameuser: このクーポンは既にご利用いただいています。
 front.plugin.coupon.shopping.couponusetime: このクーポンはご利用いただくことができません。
 front.plugin.coupon.shopping.minus: 合計金額を超えるため、このクーポンをご利用いただくことはできません。
+front.plugin.coupon.shopping.use.minus: クーポン利用時の合計金額がマイナスになったため、クーポンの利用をキャンセルしました。

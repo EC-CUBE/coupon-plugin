@@ -70,6 +70,43 @@ class Coupon
     }
 
     /**
+     * クーポンが利用されていないかチェック
+     *
+     */
+    public function onControllerShoppingConfirmBefore()
+    {
+
+        $cartService = $this->app['eccube.service.cart'];
+
+        $preOrderId = $cartService->getPreOrderId();
+        if (is_null($preOrderId)) {
+            return;
+        }
+
+        $repository = $this->app['eccube.plugin.coupon.repository.coupon_order'];
+        // クーポン受注情報を取得する
+        $CouponOrder = $repository->findOneBy(array(
+            'pre_order_id' => $preOrderId,
+        ));
+
+        if (!$CouponOrder) {
+            return;
+        }
+
+        // クーポンが既に利用されているかチェック
+        $couponUsedOrNot = $this->app['eccube.plugin.coupon.service.coupon']
+            ->checkCouponUsedOrNotBefore($CouponOrder->getCouponCd(), $CouponOrder->getOrderId(), $this->app->user());
+
+        if ($couponUsedOrNot) {
+            $this->app->addError($this->app->trans('front.plugin.coupon.shopping.sameuser'), 'front.request');
+            // 既に存在している
+            header("Location: ".$this->app->url('shopping'));
+            exit;
+        }
+
+    }
+
+    /**
      * 注文クーポン情報に受注日付を登録する.
      *
      */
@@ -88,7 +125,7 @@ class Coupon
             'order_id' => $orderId
         ));
 
-        if (is_null($CouponOrder)) {
+        if (!$CouponOrder) {
             return;
         }
         // 更新対象データ
@@ -176,7 +213,13 @@ class Coupon
      */
     public function onRestoreDiscount(EventArgs $event)
     {
-        $Order = $event->getArgument('Order');
+
+        if ($event->hasArgument('Order')) {
+            $Order = $event->getArgument('Order');
+        } else {
+            $Shipping = $event->getArgument('Shipping');
+            $Order = $Shipping->getOrder();
+        }
 
         $this->restoreDiscount($Order);
 
@@ -283,21 +326,30 @@ class Coupon
                 $html = str_replace($beforeHtml, $newHtml, $html);
             }
 
-            if (!$this->supportNewHookPoint()) {
+            if (!version_compare('3.0.10', Constant::VERSION, '<=')) {
                 // 値引き項目を表示
 
-                // このタグを前後に分割し、間に項目を入れ込む
-                // 元の合計金額は書き込み済みのため再度書き込みを行う
-                $parts = $this->app->renderView('Coupon/View/discount_shopping_item.twig', array(
-                    'Order' => $Order,
-                ));
-                $form = $crawler->filter('#confirm_side .total_box')->last()->html();
+                if ($CouponOrder) {
+                    $total = $Order->getTotal() - $CouponOrder->getDiscount();
+                    $Order->setTotal($total);
+                    $Order->setPaymentTotal($total);
 
-                $pos = strrpos($form, '</dl>');
-                if ($pos !== false) {
-                    $oldHtml = substr($form, 0, $pos);
-                    $newHtml = $oldHtml.$parts;
-                    $html = str_replace($form, $newHtml, $html);
+                    // 合計、値引きを再計算し、dtb_orderを更新する
+                    $this->app['orm.em']->flush($Order);
+
+                    // このタグを前後に分割し、間に項目を入れ込む
+                    // 元の合計金額は書き込み済みのため再度書き込みを行う
+                    $parts = $this->app->renderView('Coupon/View/discount_shopping_item.twig', array(
+                        'Order' => $Order,
+                    ));
+                    $form = $crawler->filter('#confirm_side .total_box')->last()->html();
+
+                    $pos = strrpos($form, '</dl>');
+                    if ($pos !== false) {
+                        $oldHtml = substr($form, 0, $pos);
+                        $newHtml = $oldHtml.$parts;
+                        $html = str_replace($form, $newHtml, $html);
+                    }
                 }
             }
 
@@ -361,7 +413,7 @@ class Coupon
 
                 $this->app['orm.em']->flush($Order);
 
-                $this->app->addError('クーポン利用時の合計金額がマイナスになったため、クーポンの利用をキャンセルしました。', 'front.request');
+                $this->app->addError($this->app->trans('front.plugin.coupon.shopping.use.minus'), 'front.request');
             }
         }
 
