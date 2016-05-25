@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/4.1/phpunit.xsd"
+         colors="true"
+         bootstrap="../../../tests/bootstrap.php"
+>
+
+    <!-- テストの場所 -->
+    <testsuites>
+        <testsuite name="EC-CUBE Test Suite">
+            <directory>./Tests</directory>
+        </testsuite>
+    </testsuites>
+
+    <!-- 出力するログファイル    -->
+    <logging>
+        <!--<log type="coverage-clover" target="./reports/coverage.clover"/>-->
+        <log type="coverage-html" target="./reports/coverage.html"/>
+    </logging>
+
+    <!-- カバーレージのターゲット -->
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./</directory>
+            <exclude>
+                <directory suffix=".php">./Migration</directory>
+                <file>./PluginManager.php</file>
+            </exclude>
+        </whitelist>
+    </filter>
+</phpunit>

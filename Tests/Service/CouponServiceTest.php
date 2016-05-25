@@ -351,7 +351,7 @@ class CouponServiceTest extends EccubeTestCase
     public function testGetCouponOrder()
     {
 
-        $this->markTestSkipped();
+//        $this->markTestSkipped();
 
         /** @var \Plugin\Coupon\Entity\CouponCoupon $Coupon */
         $Coupon = $this->getCoupon();
