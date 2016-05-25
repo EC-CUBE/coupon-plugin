@@ -104,7 +104,7 @@ class CouponController
         $details = array();
         $CouponDetails = $Coupon->getCouponDetails();
         foreach ($CouponDetails as $CouponDetail) {
-            $details[] = $CouponDetail;
+            $details[] = clone $CouponDetail;
         }
         $form->get('CouponDetails')->setData($details);
 
@@ -123,7 +123,6 @@ class CouponController
                 $app['orm.em']->remove($CouponDetail);
                 $app['orm.em']->flush($CouponDetail); // Postgres対応
             }
-
 
             $CouponDetails = $form->get('CouponDetails')->getData();
             foreach ($CouponDetails as $CouponDetail) {

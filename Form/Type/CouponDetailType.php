@@ -62,7 +62,9 @@ class CouponDetailType extends AbstractType
                 'label' => 'クーポン詳細ID',
                 'required' => false,
             ))
-            ->addEventSubscriber(new \Eccube\Event\FormEventSubscriber());
+            ->add('coupon_type', 'hidden', array(
+                'required' => false,
+            ));
     }
 
     public function configureOptions(OptionsResolver $resolver)

@@ -1,6 +1,4 @@
 <script>
-    // 受注明細行を追加する.
-    // 受注明細行のレコード数カウンタ(coupon_details_count)は, edit.twig側で定義している.
     function fnAddCategoryDetail($row, id, name) {
         // ================================================================
         // 商品情報を取得.
@@ -10,12 +8,15 @@
         // prototype templateを取得.
         var newWidget = list.attr('data-prototype');
         // レコード数カウンタで置換.
-        newWidget = newWidget.replace(/__name__/g, coupon_details_count);
+        var cnt = coupon_details_count + 1;
+        newWidget = newWidget.replace(/__name__/g, cnt);
+
         // フォーム入力値をセットm
         $newWidget = $(newWidget);
 
-        $newWidget.find('#admin_coupon_CouponDetails_' + coupon_details_count + '_Category').val(id);
-        $newWidget.find('#admin_coupon_CouponDetails_' + coupon_details_count + '_category_name').text(name);
+        $newWidget.find('#admin_coupon_CouponDetails_' + cnt + '_Category').val(id);
+        $newWidget.find('#admin_coupon_CouponDetails_' + cnt + '_category_name').text(name);
+        $newWidget.find('#admin_coupon_CouponDetails_' + cnt + '_coupon_type').val(2);
 
         // 明細行に追加.
         list.append($newWidget);
