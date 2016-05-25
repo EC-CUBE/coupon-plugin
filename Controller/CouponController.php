@@ -352,7 +352,7 @@ class CouponController
                     }
 
                     // 合計金額より値引き額の方が高いかチェック
-                    if ($Order->getTotal() <= $discount && $existCoupon) {
+                    if ($Order->getTotal() < $discount && $existCoupon) {
                         $form->get("coupon_cd")->addError(new FormError('front.plugin.coupon.shopping.minus'));
                         $error = true;
                     }
