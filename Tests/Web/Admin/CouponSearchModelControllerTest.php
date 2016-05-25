@@ -30,10 +30,11 @@ class CouponSearchModelControllerTest extends CouponCommon
     public function testSearchProduct_ExitProduct()
     {
         $Coupon = $this->createCouponDetail();
+        $CouponDetail = $Coupon->getCouponDetails();
         $this->client->request('POST',
             $this->app->url('admin_coupon_search_product'),
             array(
-                'exist_product_id' => $Coupon->getCouponDetails()[0]->getProduct()->getId(),
+                'exist_product_id' => $CouponDetail[0]->getProduct()->getId(),
             ), array(),
             array('HTTP_X-Requested-With' => 'XMLHttpRequest')
         );
