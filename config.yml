@@ -1,11 +1,8 @@
 name: Coupon
 event: Coupon
 code: Coupon
-version: 1.0.1
+version: 1.0.2
 service:
     - CouponServiceProvider
 orm.path:
     - /Resource/doctrine
-#form:
-#    onSetData:
-#        Form\Type\PaymentFragmentForm
