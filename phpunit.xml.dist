@@ -26,6 +26,7 @@
             <exclude>
                 <directory suffix=".php">./Migration</directory>
                 <file>./PluginManager.php</file>
+                <file>./Coupon.php</file>
             </exclude>
         </whitelist>
     </filter>

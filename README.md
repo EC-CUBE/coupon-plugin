@@ -13,3 +13,9 @@
   入力されたクーポンコードに対応する商品がカゴ中にあれば、割引適用
     割引 = 小計 + 手数料 + 送料 - (クーポン設定額 or 割引率から求めた値）
     ※尚、率で算定した場合の端数処理は「共通税率設定>課税規則」に準じるようにしています。
+
+# PHPUnit Code Coverage
+1. In eccube 3 root folder, run:
+    - vendor\bin\phpunit --configuration app\Plugin\Coupon
+2. Or in plugin folder:
+    - ..\..\..\vendor\bin\phpunit
