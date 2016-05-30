@@ -40,6 +40,11 @@ class Coupon
     /** @var \Eccube\Application */
     private $app;
 
+    /**
+     * @var string 非会員用セッションキー
+     */
+    private $sessionKey = 'eccube.front.shopping.nonmember';
+
     public function __construct($app)
     {
         $this->app = $app;
@@ -93,9 +98,15 @@ class Coupon
             return;
         }
 
+        if ($this->app->isGranted('ROLE_USER')) {
+            $Customer = $this->app->user();
+        } else {
+            $Customer = $this->app['eccube.service.shopping']->getNonMember($this->sessionKey);
+        }
+
         // クーポンが既に利用されているかチェック
         $couponUsedOrNot = $this->app['eccube.plugin.coupon.service.coupon']
-            ->checkCouponUsedOrNotBefore($CouponOrder->getCouponCd(), $CouponOrder->getOrderId(), $this->app->user());
+            ->checkCouponUsedOrNotBefore($CouponOrder->getCouponCd(), $CouponOrder->getOrderId(), $Customer);
 
         if ($couponUsedOrNot) {
             $this->app->addError($this->app->trans('front.plugin.coupon.shopping.sameuser'), 'front.request');
