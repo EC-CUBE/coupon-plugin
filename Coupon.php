@@ -57,6 +57,10 @@ class Coupon
      */
     public function onRenderShoppingBefore(FilterResponseEvent $event)
     {
+        // check new support hook point
+        if ($this->supportNewHookPoint()) {
+            return;
+        }
 
         $request = $event->getRequest();
         $response = $event->getResponse();
@@ -123,36 +127,10 @@ class Coupon
      */
     public function onControllerShoppingCompleteBefore()
     {
-        $orderId = $this->app['session']->get('eccube.front.shopping.order.id');
-
-        if (is_null($orderId)) {
+        if ($this->supportNewHookPoint()) {
             return;
         }
-
-        $repository = $this->app['eccube.plugin.coupon.repository.coupon_order'];
-
-        // クーポン受注情報を取得する
-        $CouponOrder = $repository->findOneBy(array(
-            'order_id' => $orderId
-        ));
-
-        if (!$CouponOrder) {
-            return;
-        }
-        // 更新対象データ
-
-        $now = new \DateTime();
-
-        $CouponOrder->setOrderDate($now);
-        $CouponOrder->setUpdateDate($now);
-
-        $repository->save($CouponOrder);
-
-        $Coupon = $this->app['eccube.plugin.coupon.repository.coupon']->findActiveCoupon($CouponOrder->getCouponCd());
-
-        // クーポンの発行枚数を減らす(マイナスになっても無視する)
-        $Coupon->setCouponUseTime($Coupon->getCouponUseTime() - 1);
-        $this->app['orm.em']->flush($Coupon);
+        $this->doShoppingCompleteBefore();
     }
 
     /**
@@ -460,5 +438,77 @@ class Coupon
         return version_compare('3.0.9', Constant::VERSION, '<=');
     }
 
+    /**
+     * New hook point support in version >= 3.0.9
+     * Shopping index render view
+     * @param \Eccube\Event\TemplateEvent $event
+     */
+    public function onShoppingIndex(\Eccube\Event\TemplateEvent $event)
+    {
+        $parameters = $event->getParameters();
 
+        // Order
+        $Order = $this->getOrder();
+        if (is_null($Order)) {
+            return;
+        }
+
+        // content
+        $source = $event->getSource();
+        // position
+        $search = '<div class="extra-form column">';
+        // template need addition
+        $parts = $this->app['twig']->getLoader()->getSource('Coupon\View\coupon_shopping_item.twig');
+        $replace = $parts.$search;
+        $source = str_replace($search, $replace, $source);
+        $event->setSource($source);
+
+        // Coupon order service
+        $CouponOrder = $this->app['eccube.plugin.coupon.service.coupon']->getCouponOrder($Order->getPreOrderId());
+        $parameters['CouponOrder'] = $CouponOrder;
+        $event->setParameters($parameters);
+    }
+
+    /**
+     * New hook point support in version >= 3.0.9
+     * Shopping complete before render
+     */
+    public function onShoppingConfirmComplete(\Eccube\Event\EventArgs $event)
+    {
+        $this->doShoppingCompleteBefore();
+    }
+
+    /**
+     * Do shopping complete
+     */
+    private function doShoppingCompleteBefore()
+    {
+        $orderId = $this->app['session']->get('eccube.Front.shopping.order.id');
+        if (is_null($orderId)) {
+            return;
+        }
+
+        $repository = $this->app['eccube.plugin.coupon.repository.coupon_order'];
+
+        // クーポン受注情報を取得する
+        $CouponOrder = $repository->findOneBy(array(
+            'order_id' => $orderId
+        ));
+        if (is_null($CouponOrder)) {
+            return;
+        }
+        // 更新対象データ
+
+        $now = new \DateTime();
+
+        $CouponOrder->setOrderDate($now);
+        $CouponOrder->setUpdateDate($now);
+
+        $repository->save($CouponOrder);
+
+        $Coupon = $this->app['eccube.plugin.coupon.repository.coupon']->findActiveCoupon($CouponOrder->getCouponCd());
+        // クーポンの発行枚数を減らす(マイナスになっても無視する)
+        $Coupon->setCouponUseTime($Coupon->getCouponUseTime() - 1);
+        $this->app['orm.em']->flush($Coupon);
+    }
 }
