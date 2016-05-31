@@ -260,10 +260,10 @@ class Coupon
         $parentNode = null;
         $operationNode = null;
         for ($i = 0; $i < $Elements->length; $i++) {
-            if (@$Elements->item($i)->attributes->getNamedItem('class')->nodeValue == "col-md-9") {
+            if (@$Elements->item($i)->attributes->getNamedItem('class')->nodeValue == "col-md-12") {
                 // 親ノードを保持する
                 $parentNode = $Elements->item($i);
-            } else if (@$Elements->item($i)->attributes->getNamedItem('class')->nodeValue == "row hidden-xs hidden-sm") {
+            } else if (@$Elements->item($i)->attributes->getNamedItem('class')->nodeValue == "row btn_area") {
                 // 操作部ノードを保持する
                 $operationNode = $Elements->item($i);
             }
@@ -280,18 +280,11 @@ class Coupon
             $template = $dom->createDocumentFragment();
             $template->appendXML($insert);
 
-
             // ChildNodeの途中には追加ができないため、一旦操作部を削除する
             // その後、クーポン情報、操作部の順にappendする
 
-            // 操作部のノードを削除
-            $parentNode->removeChild($operationNode);
-
-            // クーポン情報のノードを追加
-            $parentNode->appendChild($template);
-
-            // 操作部のノードを削除
-            $parentNode->appendChild($operationNode);
+            // Insert coupon template before operationNode
+            $parentNode->insertBefore($template, $operationNode);
 
             $response->setContent($dom->saveHTML());
         }
