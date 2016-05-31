@@ -141,6 +141,9 @@ class Coupon
      */
     public function onRenderAdminOrderEditAfter(FilterResponseEvent $event)
     {
+        if ($this->supportNewHookPoint()) {
+            return;
+        }
         $app = &$this->app;
 
         $request = $event->getRequest();
@@ -453,11 +456,11 @@ class Coupon
             return;
         }
 
-        // content
+        // Content
         $source = $event->getSource();
-        // position
+        // Position
         $search = '<div class="extra-form column">';
-        // template need addition
+        // Template need addition (twig)
         $parts = $this->app['twig']->getLoader()->getSource('Coupon\View\coupon_shopping_item.twig');
         $replace = $parts.$search;
         $source = str_replace($search, $replace, $source);
@@ -472,6 +475,8 @@ class Coupon
     /**
      * New hook point support in version >= 3.0.9
      * Shopping complete before render
+     *
+     * @param \Eccube\Event\EventArgs $event
      */
     public function onShoppingConfirmComplete(\Eccube\Event\EventArgs $event)
     {
@@ -483,7 +488,7 @@ class Coupon
      */
     private function doShoppingCompleteBefore()
     {
-        $orderId = $this->app['session']->get('eccube.Front.shopping.order.id');
+        $orderId = $this->app['session']->get('eccube.front.shopping.order.id');
         if (is_null($orderId)) {
             return;
         }
@@ -510,5 +515,48 @@ class Coupon
         // クーポンの発行枚数を減らす(マイナスになっても無視する)
         $Coupon->setCouponUseTime($Coupon->getCouponUseTime() - 1);
         $this->app['orm.em']->flush($Coupon);
+    }
+
+    /**
+     * New hook point support in version >= 3.0.9
+     * Admin Order Edit page
+     *
+     * @param \Eccube\Event\TemplateEvent $event
+     */
+    public function onAdminOrderEdit(\Eccube\Event\TemplateEvent $event)
+    {
+        $parameters = $event->getParameters();
+        $orderId = $parameters['id'];
+        if (is_null($orderId)) {
+            return;
+        }
+        // クーポン受注情報を取得する
+        $repCouponOrder = $this->app['eccube.plugin.coupon.repository.coupon_order'];
+
+        // クーポン受注情報を取得する
+        $CouponOrder = $repCouponOrder->findUseCouponByOrderId($orderId);
+        if (is_null($CouponOrder)) {
+            return;
+        }
+
+        // クーポン受注情報からクーポン情報を取得する
+        $repCoupon = $this->app['eccube.plugin.coupon.repository.coupon'];
+        $Coupon = $repCoupon->find($CouponOrder->getCouponId());
+        if (is_null($Coupon)) {
+            return;
+        }
+
+        // Content
+        $source = $event->getSource();
+        // Position
+        $search = '<div id="detail__insert_button" class="row btn_area">';
+        // Template need addition (html)
+        $parts  = $this->app->renderView('Coupon/View/admin/order_edit_coupon.twig', array(
+            'form' => $Coupon
+        ));
+
+        $replace = $parts.$search;
+        $source  = str_replace($search, $replace, $source);
+        $event->setSource($source);
     }
 }
