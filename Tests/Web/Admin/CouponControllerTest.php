@@ -10,7 +10,6 @@ namespace Plugin\Coupon\Tests\Web\Admin;
 
 
 use Eccube\Common\Constant;
-use Plugin\Coupon\Tests\Web\CouponCommon;
 
 class CouponControllerTest extends CouponCommon
 {
@@ -36,6 +35,13 @@ class CouponControllerTest extends CouponCommon
         $this->verify();
     }
 
+    public function testEditRender_IdIncorrect()
+    {
+        $this->client->request('GET', $this->app->url('admin_coupon_edit', array('id' => 999999)));
+
+        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('admin_coupon_list')));
+    }
+
     public function testEditRender()
     {
         $Coupon = $this->createCouponDetail();
@@ -50,42 +56,20 @@ class CouponControllerTest extends CouponCommon
         $this->verify();
     }
 
-    public function testEditRender_IdIncorrect()
-    {
-        $this->client->request('GET', $this->app->url('admin_coupon_edit', array('id' => 999999)));
-
-        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('admin_coupon_list')));
-    }
-
-    public function testCommit()
+    public function testCommit_Render()
     {
         $Coupon = $this->createCouponDetail();
-        $coupon_cd = $this->app['eccube.plugin.coupon.service.coupon']->generateCouponCd();
-        $crawler = $this->client->request('GET', $this->app->url('admin_coupon_edit', array('id'=> $Coupon->getId())));
-        $form = $this->getForm($crawler, $coupon_cd);
+        $this->client->request('GET', $this->app->url('admin_coupon_commit', array('id'=> $Coupon->getId())));
 
-        $this->client->submit($form);
-
-        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('admin_coupon_list')));
-
-        $this->expected = $coupon_cd;
-        $this->actual = $Coupon->getCouponCd();
-        $this->verify();
+        $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
 
-    public function testCommit_IdIncorrect()
-    {
-        $this->client->request('POST', $this->app->url('admin_coupon_commit', array('id'=> 999999)));
-
-        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('admin_coupon_list')));
-    }
-
-    public function testCommit_New()
+    public function testCommit_Create()
     {
         $fake = $this->getFaker();
-        $coupon_cd = $this->app['eccube.plugin.coupon.service.coupon']->generateCouponCd();
+        $couponCd = $this->app['eccube.plugin.coupon.service.coupon']->generateCouponCd();
         $crawler = $this->client->request('GET', $this->app->url('admin_coupon_new'));
-        $form = $this->getForm($crawler, $coupon_cd);
+        $form = $this->getForm($crawler, $couponCd);
         $current = new \DateTime();
         $form['admin_coupon[coupon_name]'] = $fake->word;
         $form['admin_coupon[coupon_type]'] = 1;
@@ -100,12 +84,27 @@ class CouponControllerTest extends CouponCommon
         $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('admin_coupon_list')));
     }
 
-    public function testCommit_Render()
+    public function testCommit_Edit_IdIncorrect()
+    {
+        $this->client->request('POST', $this->app->url('admin_coupon_commit', array('id'=> 999999)));
+
+        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('admin_coupon_list')));
+    }
+
+    public function testCommit_Edit()
     {
         $Coupon = $this->createCouponDetail();
-        $this->client->request('GET', $this->app->url('admin_coupon_commit', array('id'=> $Coupon->getId())));
+        $couponCd = $this->app['eccube.plugin.coupon.service.coupon']->generateCouponCd();
+        $crawler = $this->client->request('GET', $this->app->url('admin_coupon_edit', array('id'=> $Coupon->getId())));
+        $form = $this->getForm($crawler, $couponCd);
 
-        $this->assertTrue($this->client->getResponse()->isSuccessful());
+        $this->client->submit($form);
+
+        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('admin_coupon_list')));
+
+        $this->expected = $couponCd;
+        $this->actual = $Coupon->getCouponCd();
+        $this->verify();
     }
 
     public function testEnable()

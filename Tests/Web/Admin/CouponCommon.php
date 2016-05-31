@@ -6,7 +6,7 @@
  * Time: 4:44 PM
  */
 
-namespace Plugin\Coupon\Tests\Web;
+namespace Plugin\Coupon\Tests\Web\Admin;
 
 
 use Eccube\Common\Constant;
@@ -35,7 +35,7 @@ class CouponCommon extends AbstractAdminWebTestCase
         $CouponDetail->setCouponType($Coupon->getCouponType());
         $CouponDetail->setUpdateDate($Coupon->getUpdateDate());
         $CouponDetail->setCreateDate($Coupon->getCreateDate());
-        $CouponDetail->setDelFlg(Constant::ENABLED);
+        $CouponDetail->setDelFlg(Constant::DISABLED);
 
         $Categories = $Product->getProductCategories();
 
@@ -52,7 +52,6 @@ class CouponCommon extends AbstractAdminWebTestCase
 
         return $Coupon;
     }
-
 
     protected function createCoupon($couponType = 1, $discountType = 1)
     {

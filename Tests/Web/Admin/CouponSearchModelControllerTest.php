@@ -8,9 +8,6 @@
 
 namespace Plugin\Coupon\Tests\Web\Admin;
 
-
-use Plugin\Coupon\Tests\Web\CouponCommon;
-
 class CouponSearchModelControllerTest extends CouponCommon
 {
     public function testSearchProduct()
@@ -27,7 +24,7 @@ class CouponSearchModelControllerTest extends CouponCommon
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
 
-    public function testSearchProduct_ExitProduct()
+    public function testSearchProduct_ExistProduct()
     {
         $Coupon = $this->createCouponDetail();
         $CouponDetail = $Coupon->getCouponDetails();
@@ -55,7 +52,7 @@ class CouponSearchModelControllerTest extends CouponCommon
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
 
-    public function testSearchCategory_ExitCategory()
+    public function testSearchCategory_ExistCategory()
     {
         $this->client->request('POST',
             $this->app->url('admin_coupon_search_category'),

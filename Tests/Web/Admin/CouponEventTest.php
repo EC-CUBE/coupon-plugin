@@ -8,9 +8,6 @@
 
 namespace Plugin\Coupon\Tests\Web\Admin;
 
-
-use Plugin\Coupon\Tests\Web\CouponCommon;
-
 class CouponEventTest extends CouponCommon
 {
     public function testOnRenderAdminOrderEditAfter()
