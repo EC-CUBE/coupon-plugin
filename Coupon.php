@@ -63,86 +63,30 @@ class Coupon
     /**
      * New hook point support in version >= 3.0.9
      * Shopping complete before render
-     *
-     * @param \Eccube\Event\EventArgs $event
      */
-    public function onShoppingCompleteInit(\Eccube\Event\EventArgs $event)
+    public function onShoppingCompleteInit()
     {
-        $orderId = $this->app['session']->get('eccube.front.shopping.order.id');
-        if (is_null($orderId)) {
-            return;
-        }
-
-        $repository = $this->app['eccube.plugin.coupon.repository.coupon_order'];
-
-        // クーポン受注情報を取得する
-        $CouponOrder = $repository->findOneBy(array(
-            'order_id' => $orderId
-        ));
-        if (is_null($CouponOrder)) {
-            return;
-        }
-        // 更新対象データ
-
-        $now = new \DateTime();
-
-        $CouponOrder->setOrderDate($now);
-        $CouponOrder->setUpdateDate($now);
-
-        $repository->save($CouponOrder);
-
-        $Coupon = $this->app['eccube.plugin.coupon.repository.coupon']->findActiveCoupon($CouponOrder->getCouponCd());
-        // クーポンの発行枚数を減らす(マイナスになっても無視する)
-        $Coupon->setCouponUseTime($Coupon->getCouponUseTime() - 1);
-        $this->app['orm.em']->flush($Coupon);
+        $this->legacyEvent->onControllerShoppingCompleteBefore();
     }
 
     /**
      * New hook point support in version >= 3.0.9
      * Admin Order Edit page
      *
-     * @param \Eccube\Event\TemplateEvent $event
+     * @param FilterResponseEvent $event
      */
     public function onAdminOrderEdit(FilterResponseEvent $event)
     {
         $this->legacyEvent->onRenderAdminOrderEditAfter($event);
     }
 
+    /**
+     * New hook point support in version >= 3.0.9
+     * Shopping confirm before
+     */
     public function onShoppingConfirmInit()
     {
-        $cartService = $this->app['eccube.service.cart'];
-
-        $preOrderId = $cartService->getPreOrderId();
-        if (is_null($preOrderId)) {
-            return;
-        }
-
-        $repository = $this->app['eccube.plugin.coupon.repository.coupon_order'];
-        // クーポン受注情報を取得する
-        $CouponOrder = $repository->findOneBy(array(
-            'pre_order_id' => $preOrderId,
-        ));
-
-        if (!$CouponOrder) {
-            return;
-        }
-
-        if ($this->app->isGranted('ROLE_USER')) {
-            $Customer = $this->app->user();
-        } else {
-            $Customer = $this->app['eccube.service.shopping']->getNonMember($this->sessionKey);
-        }
-
-        // クーポンが既に利用されているかチェック
-        $couponUsedOrNot = $this->app['eccube.plugin.coupon.service.coupon']
-            ->checkCouponUsedOrNotBefore($CouponOrder->getCouponCd(), $CouponOrder->getOrderId(), $Customer);
-
-        if ($couponUsedOrNot) {
-            $this->app->addError($this->app->trans('front.plugin.coupon.shopping.sameuser'), 'front.request');
-            // 既に存在している
-            header("Location: ".$this->app->url('shopping'));
-            exit;
-        }
+        $this->legacyEvent->onControllerShoppingConfirmBefore();
     }
 
     /**
@@ -229,23 +173,5 @@ class Coupon
     private function supportNewHookPoint()
     {
         return version_compare('3.0.9', Constant::VERSION, '<=');
-    }
-
-    /**
-     * 受注データを取得
-     *
-     * @return null|object
-     */
-    private function getOrder()
-    {
-        // 受注データを取得
-
-        $preOrderId = $this->app['eccube.service.cart']->getPreOrderId();
-        $Order = $this->app['eccube.repository.order']->findOneBy(array(
-            'pre_order_id' => $preOrderId,
-            'OrderStatus' => $this->app['config']['order_processing']
-        ));
-
-        return $Order;
     }
 }
