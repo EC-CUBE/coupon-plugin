@@ -46,6 +46,8 @@ front.shopping.shipping.edit.complete:
 # new hook point
 Shopping/index.twig:
     - [onShoppingIndex, NORMAL]
+front.shopping.confirm.initialize:
+    - [onShoppingConfirmInit, NORMAL]
 front.shopping.confirm.complete:
     - [onShoppingConfirmComplete, NORMAL]
 Admin/Order/edit.twig:

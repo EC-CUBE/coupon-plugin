@@ -84,41 +84,10 @@ class Coupon
      */
     public function onControllerShoppingConfirmBefore()
     {
-
-        $cartService = $this->app['eccube.service.cart'];
-
-        $preOrderId = $cartService->getPreOrderId();
-        if (is_null($preOrderId)) {
+        if ($this->supportNewHookPoint()) {
             return;
         }
-
-        $repository = $this->app['eccube.plugin.coupon.repository.coupon_order'];
-        // クーポン受注情報を取得する
-        $CouponOrder = $repository->findOneBy(array(
-            'pre_order_id' => $preOrderId,
-        ));
-
-        if (!$CouponOrder) {
-            return;
-        }
-
-        if ($this->app->isGranted('ROLE_USER')) {
-            $Customer = $this->app->user();
-        } else {
-            $Customer = $this->app['eccube.service.shopping']->getNonMember($this->sessionKey);
-        }
-
-        // クーポンが既に利用されているかチェック
-        $couponUsedOrNot = $this->app['eccube.plugin.coupon.service.coupon']
-            ->checkCouponUsedOrNotBefore($CouponOrder->getCouponCd(), $CouponOrder->getOrderId(), $Customer);
-
-        if ($couponUsedOrNot) {
-            $this->app->addError($this->app->trans('front.plugin.coupon.shopping.sameuser'), 'front.request');
-            // 既に存在している
-            header("Location: ".$this->app->url('shopping'));
-            exit;
-        }
-
+        $this->onShoppingConfirm();
     }
 
     /**
@@ -558,5 +527,47 @@ class Coupon
         $replace = $parts.$search;
         $source  = str_replace($search, $replace, $source);
         $event->setSource($source);
+    }
+
+    public function onShoppingConfirmInit()
+    {
+        $this->onShoppingConfirm();
+    }
+
+    private function onShoppingConfirm()
+    {
+        $cartService = $this->app['eccube.service.cart'];
+
+        $preOrderId = $cartService->getPreOrderId();
+        if (is_null($preOrderId)) {
+            return;
+        }
+
+        $repository = $this->app['eccube.plugin.coupon.repository.coupon_order'];
+        // クーポン受注情報を取得する
+        $CouponOrder = $repository->findOneBy(array(
+            'pre_order_id' => $preOrderId,
+        ));
+
+        if (!$CouponOrder) {
+            return;
+        }
+
+        if ($this->app->isGranted('ROLE_USER')) {
+            $Customer = $this->app->user();
+        } else {
+            $Customer = $this->app['eccube.service.shopping']->getNonMember($this->sessionKey);
+        }
+
+        // クーポンが既に利用されているかチェック
+        $couponUsedOrNot = $this->app['eccube.plugin.coupon.service.coupon']
+            ->checkCouponUsedOrNotBefore($CouponOrder->getCouponCd(), $CouponOrder->getOrderId(), $Customer);
+
+        if ($couponUsedOrNot) {
+            $this->app->addError($this->app->trans('front.plugin.coupon.shopping.sameuser'), 'front.request');
+            // 既に存在している
+            header("Location: ".$this->app->url('shopping'));
+            exit;
+        }
     }
 }
