@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #}
 <dl>
 <dt>値引き</dt>
-<dd>{{ Order.discount|price }}</dd>
+<dd>{{ (0 - Order.discount)|price}}</dd>
 {# 元の合計金額は書き込み済みのため再度書き込みを行う #}
 <div class="total_amount">
 <p class="total_price">合計 <strong class="text-primary">{{ Order.total|price }}<span class="small">税込</span></strong></p>

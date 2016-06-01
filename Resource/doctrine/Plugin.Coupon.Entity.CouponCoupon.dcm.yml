@@ -50,9 +50,9 @@ Plugin\Coupon\Entity\CouponCoupon:
             nullable: false
         del_flg:
             type: smallint
-            nullable: false
-            unsigned: false
-            default: '0'
+            options:
+                unsigned: true
+                default: 0
         create_date:
             type: datetime
             nullable: false
@@ -65,4 +65,4 @@ Plugin\Coupon\Entity\CouponCoupon:
             mappedBy: Coupon
             orderBy:
                 id: ASC
-            cascade: ["persist"]
+            cascade: ['persist', 'remove']

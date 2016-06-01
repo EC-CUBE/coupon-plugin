@@ -87,7 +87,7 @@ $(function() {
 
             },
             error: function() {
-                console.log('search product failed.');
+                alert('search product failed.');
             }
         });
     });
@@ -123,14 +123,11 @@ $(function() {
 
             },
             error: function() {
-                console.log('search product failed.');
+                alert('search product failed.');
             }
         });
     });
 
-    // 受注明細行の行数カウンタ.
-    // 受注登録・編集画面上でグローバルな変数.
-    // search_product.twig/order_detail_prototype.twigで利用しています.
     coupon_details_count = '{{ form.CouponDetails|length }}';
 
     // 項目数が多く、入力している項目によってEnter押下時に期待する動作が変わるので、いったん禁止
@@ -235,20 +232,12 @@ $(function() {
 
 
 });
-var setModeAndSubmit = function(mode, keyname, keyid) {
-    document.form1.mode.value = mode;
-    if(keyname !== undefined && keyname !== "" && keyid !== undefined && keyid !== "") {
-        document.form1[keyname].value = keyid;
-    }
-    document.form1.submit();
-};
-
 </script>
 {% endblock javascript %}
 
 {% block main %}
 <div class="row" id="aside_wrap">
-    <form role="form" name="form1" id="form1" method="post" action="{{ url('admin_coupon_commit', {'id': id}) }}">
+    <form role="form" name="form1" id="form1" method="post" action="">
     <input type="hidden" name="mode" value="">
     {{ form_widget(form._token) }}
         <div class="col-md-9">
@@ -353,6 +342,8 @@ var setModeAndSubmit = function(mode, keyname, keyid) {
                                     <div class="item_box">
                                         <div id="admin_coupon_CouponDetails___name__"><input type="hidden" id="admin_coupon_CouponDetails___name___Product" name="admin_coupon[CouponDetails][__name__][Product]" class="form-control" /></div>
                                         <input type="hidden" id="admin_coupon_CouponDetails___name___id" name="admin_coupon[CouponDetails][__name__][id]" class="form-control" value="" />
+                                        <input type="hidden" id="admin_coupon_CouponDetails___name___coupon_type" name="admin_coupon[CouponDetails][__name__][coupon_type]">
+
                                         <div class="item_detail">
                                             <div class="item_name_area">
                                                 <strong class="item_name">
@@ -416,8 +407,9 @@ var setModeAndSubmit = function(mode, keyname, keyid) {
                              data-prototype="
                                 {% filter escape %}
                                 <div class="item_box">
-                                    <input type="hidden" id="admin_coupon_CouponDetails___name___id" name="admin_coupon[CouponDetails][__name__][id]" class="form-control"/>
-                                    <input type="hidden" id="admin_coupon_CouponDetails___name___Category" name="admin_coupon[CouponDetails][__name__][Category]" class="form-control"/>
+                                    <input type="hidden" id="admin_coupon_CouponDetails___name___id" name="admin_coupon[CouponDetails][__name__][id]">
+                                    <input type="hidden" id="admin_coupon_CouponDetails___name___Category" name="admin_coupon[CouponDetails][__name__][Category]">
+                                    <input type="hidden" id="admin_coupon_CouponDetails___name___coupon_type" name="admin_coupon[CouponDetails][__name__][coupon_type]">
                                     <div class="item_detail">
                                         <div class="item_name_area">
                                             <strong class="item_name">
@@ -470,10 +462,8 @@ var setModeAndSubmit = function(mode, keyname, keyid) {
 #}
             <div class="row hidden-xs hidden-sm">
                 <div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3 text-center btn_area">
-                    <button class="btn btn-primary btn-block btn-lg" onclick="setModeAndSubmit('commit')">登録</button>
-                    {#{% if form.id is not null %}#}
-                        <p><a href="{{ url('admin_coupon_list') }}">戻る</a></p>
-                    {#{% endif %}#}
+                    <button type="submit" class="btn btn-primary btn-block btn-lg">登録</button>
+                     <p><a href="{{ url('admin_coupon_list') }}">戻る</a></p>
                 </div>
             </div>
 

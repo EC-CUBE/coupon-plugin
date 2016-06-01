@@ -36,9 +36,7 @@ class CouponCouponRepositoryTest extends EccubeTestCase
     public function testFindActiveCouponAll()
     {
 
-//        $this->markTestSkipped();
-
-        $Coupon = $this->getCoupon();
+        $this->getCoupon();
 
         $coupons = $this->app['eccube.plugin.coupon.repository.coupon']->findActiveCouponAll();
 

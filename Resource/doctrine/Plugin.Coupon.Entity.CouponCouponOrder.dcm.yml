@@ -41,9 +41,9 @@ Plugin\Coupon\Entity\CouponCouponOrder:
                 default: 0
         del_flg:
             type: smallint
-            nullable: false
-            unsigned: false
-            default: '0'
+            options:
+                unsigned: true
+                default: 0
         create_date:
             type: datetime
             nullable: false

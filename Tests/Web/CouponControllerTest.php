@@ -9,11 +9,11 @@ use Plugin\Coupon\Entity\CouponCouponDetail;
 use Symfony\Component\DomCrawler\Crawler;
 
 /**
- * Class ConponControllerTest
+ * Class CouponControllerTest
  *
  * @package Plugin\Coupon\Tests\Web
  */
-class ConponControllerTest extends AbstractWebTestCase
+class CouponControllerTest extends AbstractWebTestCase
 {
 
     protected $Customer;
@@ -203,6 +203,7 @@ class ConponControllerTest extends AbstractWebTestCase
         return $form;
 
     }
+
 
 
 

@@ -1,170 +1,165 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: lqdung
- * Date: 5/23/2016
- * Time: 4:21 PM
- */
 
 namespace Plugin\Coupon\Tests\Web\Admin;
 
-
 use Eccube\Common\Constant;
+use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;
+use Plugin\Coupon\Entity\CouponCoupon;
+use Plugin\Coupon\Entity\CouponCouponDetail;
 
-class CouponControllerTest extends CouponCommon
+/**
+ * Class CouponControllerTest
+ *
+ * @package Plugin\Coupon\Tests\Web\Admin
+ */
+class CouponControllerTest extends AbstractAdminWebTestCase
 {
+
+    protected $Customer;
+
+    public function setUp()
+    {
+        parent::setUp();
+        $this->Customer = $this->createCustomer();
+    }
+
+    public function tearDown()
+    {
+        parent::tearDown();
+    }
+
     public function testIndex()
     {
+
         $crawler = $this->client->request('GET', $this->app->url('admin_coupon_list'));
+
         $this->assertTrue($this->client->getResponse()->isSuccessful());
 
-        $this->expected = 'クーポン管理クーポン内容設定';
-        $this->actual = $crawler->filter('h1.page-header')->text();
-
-        $this->verify();
     }
 
-    public function testCreateRender()
+
+    public function testIndexList()
     {
+
+        $this->getCoupon();
+
+        $crawler = $this->client->request('GET', $this->app->url('admin_coupon_list'));
+
+        $this->assertTrue($this->client->getResponse()->isSuccessful());
+
+        $this->expected = '1 件';
+        $this->actual = $crawler->filter('.box-title strong')->text();
+
+         $this->verify();
+
+    }
+
+
+    public function testEditNew()
+    {
+
         $crawler = $this->client->request('GET', $this->app->url('admin_coupon_new'));
-        $this->assertTrue($this->client->getResponse()->isSuccessful());
-
-        $this->expected = 'クーポン情報';
-        $this->actual = $crawler->filter('.container-fluid .box-title')->text();
-
-        $this->verify();
-    }
-
-    public function testEditRender_IdIncorrect()
-    {
-        $this->client->request('GET', $this->app->url('admin_coupon_edit', array('id' => 999999)));
-
-        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('admin_coupon_list')));
-    }
-
-    public function testEditRender()
-    {
-        $Coupon = $this->createCouponDetail();
-        $crawler = $this->client->request('GET', $this->app->url('admin_coupon_edit', array('id' => $Coupon->getId())));
 
         $this->assertTrue($this->client->getResponse()->isSuccessful());
 
-        $this->actual = true;
-        $this->expected = 'クーポン情報';
-        $this->actual = $crawler->filter('.container-fluid .box-title')->text();
-
-        $this->verify();
     }
 
-    public function testCommit_Render()
+
+    public function testEdit()
     {
-        $Coupon = $this->createCouponDetail();
-        $this->client->request('GET', $this->app->url('admin_coupon_commit', array('id'=> $Coupon->getId())));
+
+        $Coupon = $this->getCoupon();
+
+        $crawler = $this->client->request('GET', $this->app->url('admin_coupon_edit', array('idaa' => $Coupon->getId())));
+
+        dump($crawler->html());
 
         $this->assertTrue($this->client->getResponse()->isSuccessful());
+
     }
 
-    public function testCommit_Create()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private function getCoupon($couponType = 1, $discountType = 1)
     {
-        $fake = $this->getFaker();
-        $couponCd = $this->app['eccube.plugin.coupon.service.coupon']->generateCouponCd();
-        $crawler = $this->client->request('GET', $this->app->url('admin_coupon_new'));
-        $form = $this->getForm($crawler, $couponCd);
-        $current = new \DateTime();
-        $form['admin_coupon[coupon_name]'] = $fake->word;
-        $form['admin_coupon[coupon_type]'] = 1;
-        $form['admin_coupon[discount_type]'] = 1;
-        $form['admin_coupon[discount_price]'] = 10;
-        $form['admin_coupon[coupon_use_time]'] = 10;
-        $form['admin_coupon[available_from_date]'] = $current->setDate(2016,1,1)->format('Y-m-d');
-        $form['admin_coupon[available_to_date]'] = $current->format('Y-m-d');
+        $data = $this->getTestData($couponType, $discountType);
 
-        $this->client->submit($form);
+        $this->app['eccube.plugin.coupon.service.coupon']->createCoupon($data);
 
-        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('admin_coupon_list')));
+        /** @var \Plugin\Coupon\Entity\CouponCoupon $Coupon */
+        $Coupon = $this->app['eccube.plugin.coupon.repository.coupon']->findOneBy(array('coupon_cd' => 'aaaaaaaa'));
+
+
+        $Product = $this->app['eccube.repository.product']->find(1);
+
+        $CouponDetail = new CouponCouponDetail();
+
+        $CouponDetail->setCoupon($Coupon);
+        $CouponDetail->setCouponType($Coupon->getCouponType());
+        $CouponDetail->setUpdateDate($Coupon->getUpdateDate());
+        $CouponDetail->setCreateDate($Coupon->getCreateDate());
+        $CouponDetail->setDelFlg(Constant::ENABLED);
+
+        $Categories = $Product->getProductCategories();
+
+        /** @var \Eccube\Entity\ProductCategory $Category */
+        $ProductCategory = $Categories[0];
+
+        $CouponDetail->setCategory($ProductCategory->getCategory());
+
+        $CouponDetail->setProduct($Product);
+
+        $Coupon->addCouponDetail($CouponDetail);
+
+        return $Coupon;
     }
 
-    public function testCommit_Edit_IdIncorrect()
+
+    private function getTestData($couponType = 1, $discountType = 1)
     {
-        $this->client->request('POST', $this->app->url('admin_coupon_commit', array('id'=> 999999)));
 
-        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('admin_coupon_list')));
+        $Coupon = new CouponCoupon();
+
+        $date1 = new \DateTime();
+        $date2 = new \DateTime();
+
+        $Coupon->setCouponCd('aaaaaaaa');
+        $Coupon->setCouponType($couponType);
+        $Coupon->setCouponName('クーポン');
+        $Coupon->setDiscountType($discountType);
+        $Coupon->setCouponUseTime(1);
+        $Coupon->setDiscountPrice(100);
+        $Coupon->setDiscountRate(10);
+        $Coupon->setEnableFlag(1);
+        $d1 = $date1->setDate(2016, 1, 1);
+        $Coupon->setAvailableFromDate($d1);
+        $d2 = $date2->setDate(2016, 12, 31);
+        $Coupon->setAvailableToDate($d2);
+
+        return $Coupon;
+
     }
 
-    public function testCommit_Edit()
-    {
-        $Coupon = $this->createCouponDetail();
-        $couponCd = $this->app['eccube.plugin.coupon.service.coupon']->generateCouponCd();
-        $crawler = $this->client->request('GET', $this->app->url('admin_coupon_edit', array('id'=> $Coupon->getId())));
-        $form = $this->getForm($crawler, $couponCd);
-
-        $this->client->submit($form);
-
-        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('admin_coupon_list')));
-
-        $this->expected = $couponCd;
-        $this->actual = $Coupon->getCouponCd();
-        $this->verify();
-    }
-
-    public function testEnable()
-    {
-        $Coupon = $this->createCouponDetail();
-        $status_old = $Coupon->getEnableFlag();
-        $this->client->request('GET', $this->app->url('admin_coupon_enable', array('id'=> $Coupon->getId())));
-
-        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('admin_coupon_list')));
-
-        $this->actual = $Coupon->getEnableFlag();
-        $this->expected = ($status_old == 0) ? 1 : 0;
-        $this->verify();
-    }
-
-    public function testEnable_IdIncorrect()
-    {
-        $this->client->request('GET', $this->app->url('admin_coupon_enable', array('id'=> 999999)));
-
-        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('admin_coupon_list')));
-    }
-
-    public function testDelete()
-    {
-        $Coupon = $this->createCouponDetail();
-        $form =  array(
-            '_token' => 'dummy',
-        );
-        $this->client->request('POST',
-            $this->app->url('admin_coupon_delete', array('id'=> $Coupon->getId())),
-            array('admin_coupon_search' => $form)
-        );
-
-        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('admin_coupon_list')));
-
-        $this->actual = $Coupon->getDelFlg();
-        $this->expected = Constant::ENABLED;
-        $this->verify();
-
-        foreach ($Coupon->getCouponDetails() as $detail) {
-            $this->actual = $detail->getDelFlg();
-            $this->verify();
-        }
-    }
-
-    public function testDelete_IdIncorrect()
-    {
-        $Coupon = $this->createCouponDetail();
-        $form =  array(
-            '_token' => 'dummy',
-        );
-        $this->client->request('POST',
-            $this->app->url('admin_coupon_delete', array('id'=> 999999)),
-            array('admin_coupon_search' => $form)
-        );
-
-        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('admin_coupon_list')));
-
-        $this->actual = $Coupon->getDelFlg();
-        $this->expected = Constant::DISABLED;
-        $this->verify();
-    }
 }

@@ -7,6 +7,7 @@ use Eccube\Entity\OrderDetail;
 use Eccube\Tests\EccubeTestCase;
 use Plugin\Coupon\Entity\CouponCoupon;
 use Plugin\Coupon\Entity\CouponCouponDetail;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 /**
  * Class CouponServiceTest
@@ -212,8 +213,6 @@ class CouponServiceTest extends EccubeTestCase
     public function testSaveCouponOrder()
     {
 
-        $this->markTestSkipped();
-
         /** @var \Plugin\Coupon\Entity\CouponCoupon $Coupon */
         $Coupon = $this->getCoupon();
 
@@ -222,6 +221,12 @@ class CouponServiceTest extends EccubeTestCase
         $Order = $this->createOrder($Customer);
 
         $discount = 200;
+
+        $this->app['security.token_storage']->setToken(
+            new UsernamePasswordToken(
+                $Customer, null, 'customer', $Customer->getRoles()
+            )
+        );
 
         $this->app['eccube.plugin.coupon.service.coupon']->saveCouponOrder($Order, $Coupon, $Coupon->getCouponCd(), $Customer, $discount);
 
@@ -351,8 +356,6 @@ class CouponServiceTest extends EccubeTestCase
     public function testGetCouponOrder()
     {
 
-        $this->markTestSkipped();
-
         /** @var \Plugin\Coupon\Entity\CouponCoupon $Coupon */
         $Coupon = $this->getCoupon();
 
@@ -361,6 +364,12 @@ class CouponServiceTest extends EccubeTestCase
         $Order = $this->createOrder($Customer);
 
         $discount = 200;
+
+        $this->app['security.token_storage']->setToken(
+            new UsernamePasswordToken(
+                $Customer, null, 'customer', $Customer->getRoles()
+            )
+        );
 
         $this->app['eccube.plugin.coupon.service.coupon']->saveCouponOrder($Order, $Coupon, $Coupon->getCouponCd(), $Customer, $discount);
 

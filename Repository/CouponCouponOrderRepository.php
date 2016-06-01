@@ -80,68 +80,74 @@ class CouponCouponOrderRepository extends EntityRepository
     }
 
     /**
-     * 会員が既にクーポンを利用しているか検索
+     * 会員または非会員が既にクーポンを利用しているか検索
+     * 会員の場合、会員IDで非会員の場合、メールアドレスで検索
      *
      * @param $couponCd
-     * @param $userId
-     * @return mixed|null
-     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @param $param
+     * @return array
      */
-    public function findUseCouponMember($couponCd, $userId)
+    public function findUseCoupon($couponCd, $param)
     {
-        $qb = $this->createQueryBuilder('c')
-            ->select('c')
-            ->andWhere('c.del_flg = 0')
-            ->andWhere('c.coupon_cd = :coupon_cd')
-            ->andWhere('c.user_id = :user_id')
-            ->andWhere('c.order_date IS NOT NULL')
-            ->setParameter('coupon_cd', $couponCd)
-            ->setParameter('user_id', $userId);
-        $query = $qb->getQuery();
-        $result = null;
-        try {
-            $result = $query->getSingleResult();
 
-        } catch (\Doctrine\Orm\NoResultException $e) {
-            $result = null;
+        $userId = null;
+        $email = null;
 
+        if (is_numeric($param)) {
+            $userId = $param;
+        } else {
+            $email = $param;
         }
 
-        return $result;
-    }
-
-
-    /**
-     * 非会員が既にクーポンを利用しているか検索
-     *
-     * @param $couponCd
-     * @param $email
-     * @return mixed|null
-     * @throws \Doctrine\ORM\NonUniqueResultException
-     */
-    public function findUseCouponNonMember($couponCd, $email)
-    {
         $qb = $this->createQueryBuilder('c')
-            ->select('c')
-            ->andWhere('c.del_flg = 0')
             ->andWhere('c.coupon_cd = :coupon_cd')
-            ->andWhere('c.email = :email')
             ->andWhere('c.order_date IS NOT NULL')
+            ->andWhere('c.user_id = :user_id OR c.email = :email')
             ->setParameter('coupon_cd', $couponCd)
+            ->setParameter('user_id', $userId)
             ->setParameter('email', $email);
         $query = $qb->getQuery();
-        $result = null;
-        try {
-            $result = $query->getSingleResult();
 
-        } catch (\Doctrine\Orm\NoResultException $e) {
-            $result = null;
-
-        }
+        $result = $query->getResult();
 
         return $result;
     }
 
+    /**
+     * 会員または非会員が既にクーポンを利用しているか検索
+     * 会員の場合、会員IDで非会員の場合、メールアドレスで検索
+     *
+     * @param $couponCd
+     * @param $orderId
+     * @param $param
+     * @return array
+     */
+    public function findUseCouponBefore($couponCd, $orderId, $param)
+    {
+
+        $userId = null;
+        $email = null;
+
+        if (is_numeric($param)) {
+            $userId = $param;
+        } else {
+            $email = $param;
+        }
+
+        $qb = $this->createQueryBuilder('c')
+            ->andWhere('c.coupon_cd = :coupon_cd')
+            ->andWhere('c.order_id != :order_id')
+            ->andWhere('c.user_id = :user_id OR c.email = :email')
+            ->setParameter('coupon_cd', $couponCd)
+            ->setParameter('order_id', $orderId)
+            ->setParameter('user_id', $userId)
+            ->setParameter('email', $email);
+        $query = $qb->getQuery();
+
+        $result = $query->getResult();
+
+        return $result;
+    }
 
     /**
      * クーポンの発行枚数を検索
