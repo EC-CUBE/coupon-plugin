@@ -48,8 +48,8 @@ Shopping/index.twig:
     - [onShoppingIndex, NORMAL]
 front.shopping.confirm.initialize:
     - [onShoppingConfirmInit, NORMAL]
-front.shopping.confirm.complete:
-    - [onShoppingConfirmComplete, NORMAL]
+front.shopping.complete.initialize:
+    - [onShoppingCompleteInit, NORMAL]
 Admin/Order/edit.twig:
     - [onAdminOrderEdit, NORMAL]
 

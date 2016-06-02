@@ -58,12 +58,45 @@ class Coupon
         $parts = $this->app['twig']->getLoader()->getSource('Coupon\View\coupon_shopping_item.twig');
         $replace = $parts.$search;
         $source = str_replace($search, $replace, $source);
+
+        if (version_compare('3.0.9', Constant::VERSION, '==')) {
+            $CouponOrder = $this->app['eccube.plugin.coupon.service.coupon']->getCouponOrder($Order->getPreOrderId());
+            if ($CouponOrder) {
+                $total = $Order->getTotal() - $CouponOrder->getDiscount();
+                $Order->setTotal($total);
+                $Order->setPaymentTotal($total);
+
+                // 合計、値引きを再計算し、dtb_orderを更新する
+                $this->app['orm.em']->flush($Order);
+
+                $search = '<div id="summary_box__result"';
+                $pos = strpos($source, $search);
+                if ($pos !== false) {
+                    $before = substr($source, 0, $pos);
+                    $after = substr($source, $pos);
+                    $pos2 = strpos($after, '</div>');
+                    if ($pos2 !== false) {
+                        // Remove old template
+                        $end = substr($after, $pos2+6);
+                        // このタグを前後に分割し、間に項目を入れ込む
+                        // 元の合計金額は書き込み済みのため再度書き込みを行う
+                        $parts = $this->app->renderView('Coupon/View/discount_shopping_item.twig', array(
+                            'Order' => $Order,
+                        ));
+                        // new template
+                        $source = $before.$parts.$end;
+                    }
+                }
+            }
+        }
         $event->setSource($source);
 
         // Coupon order service
         $CouponOrder = $this->app['eccube.plugin.coupon.service.coupon']->getCouponOrder($Order->getPreOrderId());
         $parameters['CouponOrder'] = $CouponOrder;
         $event->setParameters($parameters);
+
+
     }
 
     /**
@@ -72,7 +105,7 @@ class Coupon
      *
      * @param \Eccube\Event\EventArgs $event
      */
-    public function onShoppingConfirmComplete(\Eccube\Event\EventArgs $event)
+    public function onShoppingCompleteInit(\Eccube\Event\EventArgs $event)
     {
         $orderId = $this->app['session']->get('eccube.front.shopping.order.id');
         if (is_null($orderId)) {
