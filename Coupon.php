@@ -264,7 +264,7 @@ class Coupon
         $parentNodeValue = 'col-md-12';
         $operationNodeValue = 'row btn_area';
         // for old version (<= 3.0.4)
-        if (version_compare('3.0.4', Constant::VERSION, '>=')) {
+        if (version_compare(Constant::VERSION, '3.0.4', '<=')) {
             $parentNodeValue = 'col-md-9';
             $operationNodeValue = 'row hidden-xs hidden-sm';
         }
