@@ -44,12 +44,12 @@ front.shopping.shipping.edit.complete:
     - [onRestoreDiscount, NORMAL]
 
 # new hook point
-Shopping/index.twig:
+eccube.event.route.shopping.response:
     - [onShoppingIndex, NORMAL]
 front.shopping.confirm.initialize:
     - [onShoppingConfirmInit, NORMAL]
 front.shopping.complete.initialize:
     - [onShoppingCompleteInit, NORMAL]
-Admin/Order/edit.twig:
+eccube.event.route.admin_order_edit.response:
     - [onAdminOrderEdit, NORMAL]
 

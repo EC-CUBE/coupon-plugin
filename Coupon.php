@@ -1,9 +1,24 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: lqdung
- * Date: 6/1/2016
- * Time: 3:56 PM
+/*
+ * This file is part of EC-CUBE
+ *
+ * Copyright(c) 2000-2015 LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
 namespace Plugin\Coupon;
@@ -38,65 +53,11 @@ class Coupon
     /**
      * New hook point support in version >= 3.0.9
      * Shopping index render view
-     * @param \Eccube\Event\TemplateEvent $event
+     * @param FilterResponseEvent $event
      */
-    public function onShoppingIndex(\Eccube\Event\TemplateEvent $event)
+    public function onShoppingIndex(FilterResponseEvent $event)
     {
-        $parameters = $event->getParameters();
-
-        // Order
-        $Order = $this->getOrder();
-        if (is_null($Order)) {
-            return;
-        }
-
-        // Content
-        $source = $event->getSource();
-        // Position
-        $search = '<div class="extra-form column">';
-        // Template need addition (twig)
-        $parts = $this->app['twig']->getLoader()->getSource('Coupon\View\coupon_shopping_item.twig');
-        $replace = $parts.$search;
-        $source = str_replace($search, $replace, $source);
-
-        if (version_compare('3.0.9', Constant::VERSION, '==')) {
-            $CouponOrder = $this->app['eccube.plugin.coupon.service.coupon']->getCouponOrder($Order->getPreOrderId());
-            if ($CouponOrder) {
-                $total = $Order->getTotal() - $CouponOrder->getDiscount();
-                $Order->setTotal($total);
-                $Order->setPaymentTotal($total);
-
-                // 合計、値引きを再計算し、dtb_orderを更新する
-                $this->app['orm.em']->flush($Order);
-
-                $search = '<div id="summary_box__result"';
-                $pos = strpos($source, $search);
-                if ($pos !== false) {
-                    $before = substr($source, 0, $pos);
-                    $after = substr($source, $pos);
-                    $pos2 = strpos($after, '</div>');
-                    if ($pos2 !== false) {
-                        // Remove old template
-                        $end = substr($after, $pos2+6);
-                        // このタグを前後に分割し、間に項目を入れ込む
-                        // 元の合計金額は書き込み済みのため再度書き込みを行う
-                        $parts = $this->app->renderView('Coupon/View/discount_shopping_item.twig', array(
-                            'Order' => $Order,
-                        ));
-                        // new template
-                        $source = $before.$parts.$end;
-                    }
-                }
-            }
-        }
-        $event->setSource($source);
-
-        // Coupon order service
-        $CouponOrder = $this->app['eccube.plugin.coupon.service.coupon']->getCouponOrder($Order->getPreOrderId());
-        $parameters['CouponOrder'] = $CouponOrder;
-        $event->setParameters($parameters);
-
-
+        $this->legacyEvent->onRenderShoppingBefore($event);
     }
 
     /**
@@ -142,41 +103,9 @@ class Coupon
      *
      * @param \Eccube\Event\TemplateEvent $event
      */
-    public function onAdminOrderEdit(\Eccube\Event\TemplateEvent $event)
+    public function onAdminOrderEdit(FilterResponseEvent $event)
     {
-        $parameters = $event->getParameters();
-        $orderId = $parameters['id'];
-        if (is_null($orderId)) {
-            return;
-        }
-        // クーポン受注情報を取得する
-        $repCouponOrder = $this->app['eccube.plugin.coupon.repository.coupon_order'];
-
-        // クーポン受注情報を取得する
-        $CouponOrder = $repCouponOrder->findUseCouponByOrderId($orderId);
-        if (is_null($CouponOrder)) {
-            return;
-        }
-
-        // クーポン受注情報からクーポン情報を取得する
-        $repCoupon = $this->app['eccube.plugin.coupon.repository.coupon'];
-        $Coupon = $repCoupon->find($CouponOrder->getCouponId());
-        if (is_null($Coupon)) {
-            return;
-        }
-
-        // Content
-        $source = $event->getSource();
-        // Position
-        $search = '<div id="detail__insert_button" class="row btn_area">';
-        // Template need addition (html)
-        $parts  = $this->app->renderView('Coupon/View/admin/order_edit_coupon.twig', array(
-            'form' => $Coupon
-        ));
-
-        $replace = $parts.$search;
-        $source  = str_replace($search, $replace, $source);
-        $event->setSource($source);
+        $this->legacyEvent->onRenderAdminOrderEditAfter($event);
     }
 
     public function onShoppingConfirmInit()
