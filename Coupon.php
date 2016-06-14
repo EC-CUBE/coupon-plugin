@@ -259,11 +259,21 @@ class Coupon
         $Elements = $dom->getElementsByTagName("*");
         $parentNode = null;
         $operationNode = null;
+
+        // for new version (> 3.0.4)
+        $parentNodeValue = 'col-md-12';
+        $operationNodeValue = 'row btn_area';
+        // for old version (<= 3.0.4)
+        if (version_compare(Constant::VERSION, '3.0.4', '<=')) {
+            $parentNodeValue = 'col-md-9';
+            $operationNodeValue = 'row hidden-xs hidden-sm';
+        }
+
         for ($i = 0; $i < $Elements->length; $i++) {
-            if (@$Elements->item($i)->attributes->getNamedItem('class')->nodeValue == "col-md-9") {
+            if (@$Elements->item($i)->attributes->getNamedItem('class')->nodeValue == $parentNodeValue) {
                 // 親ノードを保持する
                 $parentNode = $Elements->item($i);
-            } else if (@$Elements->item($i)->attributes->getNamedItem('class')->nodeValue == "row hidden-xs hidden-sm") {
+            } else if (@$Elements->item($i)->attributes->getNamedItem('class')->nodeValue == $operationNodeValue) {
                 // 操作部ノードを保持する
                 $operationNode = $Elements->item($i);
             }
@@ -271,7 +281,6 @@ class Coupon
 
         // 親ノード、操作部（登録ボタン、戻るリンク）ノードが取得できた場合のみクーポン情報を表示する
         if (!is_null($parentNode) && !is_null($operationNode)) {
-
             // 追加するクーポン情報のHTMLを取得する.
             $insert = $this->app->renderView('Coupon/View/admin/order_edit_coupon.twig', array(
                 'form' => $Coupon
@@ -280,18 +289,10 @@ class Coupon
             $template = $dom->createDocumentFragment();
             $template->appendXML($insert);
 
-
             // ChildNodeの途中には追加ができないため、一旦操作部を削除する
             // その後、クーポン情報、操作部の順にappendする
-
-            // 操作部のノードを削除
-            $parentNode->removeChild($operationNode);
-
-            // クーポン情報のノードを追加
-            $parentNode->appendChild($template);
-
-            // 操作部のノードを削除
-            $parentNode->appendChild($operationNode);
+            // Insert coupon template before operationNode
+            $parentNode->insertBefore($template, $operationNode);
 
             $response->setContent($dom->saveHTML());
         }
