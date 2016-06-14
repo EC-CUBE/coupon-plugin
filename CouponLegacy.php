@@ -259,11 +259,20 @@ class CouponLegacy
         $Elements = $dom->getElementsByTagName("*");
         $parentNode = null;
         $operationNode = null;
+
+        // for new version (> 3.0.4)
+        $parentNodeValue = 'col-md-12';
+        $operationNodeValue = 'row btn_area';
+        // for old version (<= 3.0.4)
+        if (version_compare(Constant::VERSION, '3.0.4', '<=')) {
+            $parentNodeValue = 'col-md-9';
+            $operationNodeValue = 'row hidden-xs hidden-sm';
+        }
         for ($i = 0; $i < $Elements->length; $i++) {
-            if (@$Elements->item($i)->attributes->getNamedItem('class')->nodeValue == "col-md-9") {
+            if (@$Elements->item($i)->attributes->getNamedItem('class')->nodeValue == $parentNodeValue) {
                 // 親ノードを保持する
                 $parentNode = $Elements->item($i);
-            } else if (@$Elements->item($i)->attributes->getNamedItem('class')->nodeValue == "row hidden-xs hidden-sm") {
+            } else if (@$Elements->item($i)->attributes->getNamedItem('class')->nodeValue == $operationNodeValue) {
                 // 操作部ノードを保持する
                 $operationNode = $Elements->item($i);
             }
