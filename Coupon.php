@@ -82,7 +82,7 @@ class Coupon
 
     /**
      * New hook point support in version >= 3.0.9
-     * Shopping confirm before
+     * Shopping confirm on request
      */
     public function onShoppingConfirmInit()
     {
