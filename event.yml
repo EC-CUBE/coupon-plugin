@@ -14,7 +14,6 @@ eccube.event.controller.shopping_complete.before:
 eccube.event.render.admin_order_edit.before:
     - [onRenderAdminOrderEditAfter, NORMAL]
 
-
 # v3.0.8まで
 eccube.event.controller.shopping_delivery.after:
     - [onControllerRestoreDiscountAfter, NORMAL]
@@ -43,4 +42,14 @@ front.shopping.shipping.complete:
     - [onRestoreDiscount, NORMAL]
 front.shopping.shipping.edit.complete:
     - [onRestoreDiscount, NORMAL]
+
+# new hook point
+eccube.event.route.shopping.response:
+    - [onShoppingIndex, NORMAL]
+eccube.event.route.shopping_confirm.controller:
+    - [onShoppingConfirmInit, NORMAL]
+eccube.event.route.shopping_complete.controller:
+    - [onShoppingCompleteInit, NORMAL]
+eccube.event.route.admin_order_edit.response:
+    - [onAdminOrderEdit, NORMAL]
 
