@@ -1,4 +1,13 @@
 <?php
+/**
+ * This file is part of EC-CUBE
+ *
+ * Copyright(c) 2000-2015 LOCKON CO.,LTD. All Rights Reserved.
+ * http://www.lockon.co.jp/
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace Plugin\Coupon\Tests\Web\Admin;
 
@@ -40,7 +49,7 @@ class CouponControllerTest extends AbstractAdminWebTestCase
 
     public function testIndexList()
     {
-
+        $this->deleteAllRows(array('plg_coupon'));
         $this->getCoupon();
 
         $crawler = $this->client->request('GET', $this->app->url('admin_coupon_list'));
@@ -53,7 +62,6 @@ class CouponControllerTest extends AbstractAdminWebTestCase
          $this->verify();
 
     }
-
 
     public function testEditNew()
     {
@@ -72,35 +80,9 @@ class CouponControllerTest extends AbstractAdminWebTestCase
 
         $crawler = $this->client->request('GET', $this->app->url('admin_coupon_edit', array('idaa' => $Coupon->getId())));
 
-        dump($crawler->html());
-
         $this->assertTrue($this->client->getResponse()->isSuccessful());
 
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     private function getCoupon($couponType = 1, $discountType = 1)
     {
@@ -139,7 +121,6 @@ class CouponControllerTest extends AbstractAdminWebTestCase
 
     private function getTestData($couponType = 1, $discountType = 1)
     {
-
         $Coupon = new CouponCoupon();
 
         $date1 = new \DateTime();
@@ -159,7 +140,5 @@ class CouponControllerTest extends AbstractAdminWebTestCase
         $Coupon->setAvailableToDate($d2);
 
         return $Coupon;
-
     }
-
 }
