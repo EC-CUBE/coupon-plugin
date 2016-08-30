@@ -78,7 +78,7 @@ class Coupon
      * クーポンが利用されていないかチェック
      *
      */
-    public function onControllerShoppingConfirmBefore()
+    public function onControllerShoppingConfirmBefore($event = null)
     {
 
         $cartService = $this->app['eccube.service.cart'];
@@ -111,8 +111,14 @@ class Coupon
         if ($couponUsedOrNot) {
             $this->app->addError($this->app->trans('front.plugin.coupon.shopping.sameuser'), 'front.request');
             // 既に存在している
-            header("Location: ".$this->app->url('shopping'));
-            exit;
+            if (is_null($event)) {
+                header("Location: ".$this->app->url('shopping'));
+                exit;
+            } else {
+                $response = $this->redirect($this->app->url('shopping'));
+                $event->setResponse($response);
+                return;
+            }
         }
 
     }
