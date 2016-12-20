@@ -1,7 +1,7 @@
 name: Coupon
 event: Coupon
 code: Coupon
-version: 1.0.2
+version: 1.0.3
 service:
     - CouponServiceProvider
 orm.path:
