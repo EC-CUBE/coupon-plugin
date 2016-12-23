@@ -26,7 +26,6 @@ namespace Plugin\Coupon;
 use Eccube\Common\Constant;
 use Eccube\Entity\Order;
 use Eccube\Event\EventArgs;
-use Eccube\Event\RenderEvent;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Form as Error;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,7 +33,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class Coupon
+class Event
 {
 
     /** @var \Eccube\Application */
@@ -57,21 +56,16 @@ class Coupon
      */
     public function onRenderShoppingBefore(FilterResponseEvent $event)
     {
-
         $request = $event->getRequest();
         $response = $event->getResponse();
-
         // 受注データを取得
         $Order = $this->getOrder();
         if (is_null($Order)) {
             return;
         }
-
         // クーポン関連項目を追加する
         $response->setContent($this->getHtmlShopping($request, $response, $Order));
-
         $event->setResponse($response);
-
     }
 
     /**
@@ -80,20 +74,16 @@ class Coupon
      */
     public function onControllerShoppingConfirmBefore($event = null)
     {
-
         $cartService = $this->app['eccube.service.cart'];
-
         $preOrderId = $cartService->getPreOrderId();
         if (is_null($preOrderId)) {
             return;
         }
-
         $repository = $this->app['eccube.plugin.coupon.repository.coupon_order'];
         // クーポン受注情報を取得する
         $CouponOrder = $repository->findOneBy(array(
             'pre_order_id' => $preOrderId,
         ));
-
         if (!$CouponOrder) {
             return;
         }
@@ -103,7 +93,6 @@ class Coupon
         } else {
             $Customer = $this->app['eccube.service.shopping']->getNonMember($this->sessionKey);
         }
-
         // クーポンが既に利用されているかチェック
         $couponUsedOrNot = $this->app['eccube.plugin.coupon.service.coupon']
             ->checkCouponUsedOrNotBefore($CouponOrder->getCouponCd(), $CouponOrder->getOrderId(), $Customer);
@@ -120,7 +109,6 @@ class Coupon
                 return;
             }
         }
-
     }
 
     /**
@@ -130,32 +118,23 @@ class Coupon
     public function onControllerShoppingCompleteBefore()
     {
         $orderId = $this->app['session']->get('eccube.front.shopping.order.id');
-
         if (is_null($orderId)) {
             return;
         }
-
         $repository = $this->app['eccube.plugin.coupon.repository.coupon_order'];
-
         // クーポン受注情報を取得する
         $CouponOrder = $repository->findOneBy(array(
             'order_id' => $orderId
         ));
-
         if (!$CouponOrder) {
             return;
         }
         // 更新対象データ
-
         $now = new \DateTime();
-
         $CouponOrder->setOrderDate($now);
         $CouponOrder->setUpdateDate($now);
-
         $repository->save($CouponOrder);
-
         $Coupon = $this->app['eccube.plugin.coupon.repository.coupon']->findActiveCoupon($CouponOrder->getCouponCd());
-
         // クーポンの発行枚数を減らす(マイナスになっても無視する)
         $Coupon->setCouponUseTime($Coupon->getCouponUseTime() - 1);
         $this->app['orm.em']->flush($Coupon);
@@ -199,8 +178,6 @@ class Coupon
         // 編集画面にクーポン表示を追加する
         $this->getHtmlOrderEdit($request, $response, $Coupon);
     }
-
-
     /**
      * 配送先や支払い方法変更時の合計金額と値引きの差額チェック
      * v3.0.8までで使用
@@ -221,7 +198,6 @@ class Coupon
         $this->restoreDiscount($Order);
     }
 
-
     /**
      * 配送先や支払い方法変更時の合計金額と値引きの差額チェック
      * v3.0.9以降で使用
@@ -230,21 +206,14 @@ class Coupon
      */
     public function onRestoreDiscount(EventArgs $event)
     {
-
         if ($event->hasArgument('Order')) {
             $Order = $event->getArgument('Order');
         } else {
             $Shipping = $event->getArgument('Shipping');
             $Order = $Shipping->getOrder();
         }
-
         $this->restoreDiscount($Order);
-
     }
-
-    // =========================================================
-    // クラス内メソッド
-    // =========================================================
 
     /**
      * 受注情報編集画面にクーポン情報を追加する
@@ -279,7 +248,7 @@ class Coupon
             if (@$Elements->item($i)->attributes->getNamedItem('class')->nodeValue == $parentNodeValue) {
                 // 親ノードを保持する
                 $parentNode = $Elements->item($i);
-            } else if (@$Elements->item($i)->attributes->getNamedItem('class')->nodeValue == $operationNodeValue) {
+            } elseif (@$Elements->item($i)->attributes->getNamedItem('class')->nodeValue == $operationNodeValue) {
                 // 操作部ノードを保持する
                 $operationNode = $Elements->item($i);
             }
@@ -289,7 +258,7 @@ class Coupon
         if (!is_null($parentNode) && !is_null($operationNode)) {
             // 追加するクーポン情報のHTMLを取得する.
             $insert = $this->app->renderView('Coupon/View/admin/order_edit_coupon.twig', array(
-                'form' => $Coupon
+                'form' => $Coupon,
             ));
 
             $template = $dom->createDocumentFragment();
@@ -302,9 +271,7 @@ class Coupon
 
             $response->setContent($dom->saveHTML());
         }
-
     }
-
 
     /**
      * ご注文内容のご確認画面のHTMLを取得し、関連項目を書き込む

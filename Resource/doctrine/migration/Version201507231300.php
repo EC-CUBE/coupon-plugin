@@ -25,56 +25,111 @@ namespace DoctrineMigrations;
 
 use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\ORM\Tools\SchemaTool;
+use Eccube\Application;
+use Doctrine\ORM\EntityManager;
+use Plugin\Coupon\Util\Version;
 
 /**
- * Auto-generated Migration: Please modify to your needs!
+ * Version201507231300
  */
 class Version201507231300 extends AbstractMigration
 {
+    /**
+     * @var string coupon table name
+     */
+    const COUPON = 'plg_coupon';
 
     /**
+     * @var string coupon detail table
+     */
+    const COUPON_DETAIL = 'plg_coupon_detail';
+
+    /**
+     * @var string coupon order table
+     */
+    const COUPON_ORDER = 'plg_coupon_order';
+
+    /**
+     * @var array plugin entity
+     */
+    protected $entities = array(
+        'Plugin\Coupon\Entity\CouponCoupon',
+        'Plugin\Coupon\Entity\CouponCouponDetail',
+        'Plugin\Coupon\Entity\CouponCouponOrder',
+    );
+
+    protected $sequence = array(
+        'plg_coupon_coupon_id_seq',
+        'plg_coupon_detail_coupon_detail_id_seq',
+        'plg_coupon_order_id_seq',
+    );
+
+    /**
+     * Up method
      * @param Schema $schema
      */
     public function up(Schema $schema)
     {
-        // this up() migration is auto-generated, please modify it to your needs
-        $this->createCoupon($schema);
-        $this->createCouponDetail($schema);
-        $this->createCouponOrder($schema);
-
+        if (Version::isSupportGetInstanceFunction()) {
+            $this->createCouponDb($schema);
+        } else {
+            $this->createCoupon($schema);
+            $this->createCouponDetail($schema);
+            $this->createCouponOrder($schema);
+        }
     }
 
     /**
+     * Down method
      * @param Schema $schema
      */
     public function down(Schema $schema)
     {
-        // this down() migration is auto-generated, please modify it to your needs
-        $schema->dropTable('plg_coupon');
-        $schema->dropSequence('plg_coupon_coupon_id_seq');
-        $schema->dropTable('plg_coupon_detail');
-        $schema->dropSequence('plg_coupon_detail_coupon_detail_id_seq');
-        $schema->dropTable('plg_coupon_order');
-        $schema->dropSequence('plg_coupon_order_id_seq');
+        if (Version::isSupportGetInstanceFunction()) {
+            $app = Application::getInstance();
+            $meta = $this->getMetadata($app['orm.em']);
+            $tool = new SchemaTool($app['orm.em']);
+            $schemaFromMetadata = $tool->getSchemaFromMetadata($meta);
+            // テーブル削除
+            foreach ($schemaFromMetadata->getTables() as $table) {
+                if ($schema->hasTable($table->getName())) {
+                    $schema->dropTable($table->getName());
+                }
+            }
+            // シーケンス削除
+            foreach ($schemaFromMetadata->getSequences() as $sequence) {
+                if ($schema->hasSequence($sequence->getName())) {
+                    $schema->dropSequence($sequence->getName());
+                }
+            }
+        } else {
+            if ($schema->hasTable(self::COUPON)) {
+                $schema->dropTable(self::COUPON);
+                $schema->dropSequence('plg_coupon_coupon_id_seq');
+            }
+            if ($schema->hasTable(self::COUPON_DETAIL)) {
+                $schema->dropTable(self::COUPON_DETAIL);
+                $schema->dropSequence('plg_coupon_detail_coupon_detail_id_seq');
+            }
+            if ($schema->hasTable(self::COUPON_ORDER)) {
+                $schema->dropTable(self::COUPON_ORDER);
+                $schema->dropSequence('plg_coupon_order_id_seq');
+            }
+        }
+
+        if ($this->connection->getDatabasePlatform()->getName() == 'postgresql') {
+            foreach ($this->sequence as $sequence) {
+                if ($schema->hasSequence($sequence)) {
+                    $schema->dropSequence($sequence);
+                }
+            }
+        }
     }
+
 
     /**
      * クーポン情報テーブル作成
-     * create sequence plg_coupon_coupon_id_seq
-     * create table plg_coupon(
-     *     coupon_id integer NOT NULL PRIMARY KEY,
-     *     coupon_cd text NOT NULL,
-     *     coupon_type integer NOT NULL,
-     *     discount_type integer NOT NULL,
-     *     discount_price numeric(10,0) DEFAULT NULL::numeric,
-     *     discount_rate numeric(10,0) DEFAULT NULL::numeric,
-     *     enable_flag smallint DEFAULT 0 NOT NULL,
-     *     available_from_date timestamp(0) without time zone,
-     *     available_to_date timestamp(0) without time zone
-     *     del_flg smallint DEFAULT 0 NOT NULL,
-     *     create_date timestamp(0) without time zone NOT NULL,
-     *     update_date timestamp(0) without time zone NOT NULL
-     * )
      * @param Schema $schema
      */
     protected function createCoupon(Schema $schema)
@@ -118,6 +173,17 @@ class Version201507231300 extends AbstractMigration
             'default' => 1,
         ));
 
+        $table->addColumn('coupon_member', 'smallint', array(
+            'notnull' => false,
+            'unsigned' => false,
+            'default' => 0,
+        ));
+
+        $table->addColumn('coupon_lower_limit', 'decimal', array(
+            'notnull' => false,
+            'unsigned' => false,
+            'default' => 0,
+        ));
         // 有効期間 開始日付
         $table->addColumn('available_from_date', 'datetime', array(
             'notnull' => false,
@@ -152,17 +218,6 @@ class Version201507231300 extends AbstractMigration
 
     /**
      * クーポン詳細情報テーブル作成
-     * create sequence plg_coupon_detail_coupon_detail_id_seq;
-     * create table plg_coupon_detail(
-     *     coupon_detail_id integer NOT NULL PRIMARY KEY,
-     *     coupon_id integer NOT NULL,
-     *     coupon_type integer NOT NULL,
-     *     product_id integer,
-     *     category_id integer,
-     *     del_flg smallint DEFAULT 0 NOT NULL,
-     *     create_date timestamp(0) without time zone NOT NULL,
-     *     update_date timestamp(0) without time zone NOT NULL
-     * )
      * @param Schema $schema
      */
     protected function createCouponDetail(Schema $schema)
@@ -186,7 +241,7 @@ class Version201507231300 extends AbstractMigration
         ));
 
         $table->addColumn('category_id', 'integer', array(
-            'notnull' => false
+            'notnull' => false,
         ));
 
         $table->addColumn('del_flg', 'smallint', array(
@@ -210,20 +265,10 @@ class Version201507231300 extends AbstractMigration
 
     /**
      * 注文クーポン情報テーブルの作成
-     * CREATE TABLE plg_coupon_order (
-     *     id integer DEFAULT nextval('plg_coupon_order_id_seq'::regclass) NOT NULL PRIMARY KEY,
-     *     order_id integer NOT NULL,
-     *     pre_order_id text,
-     *     order_date timestamp(0) without time zone DEFAULT NULL::timestamp without time zone,
-     *     coupon_id integer,
-     *     coupon_cd text,
-     *     del_flg smallint DEFAULT 0 NOT NULL,
-     *     create_date timestamp(0) without time zone NOT NULL,
-     *     update_date timestamp(0) without time zone NOT NULL
-     * );
      * @param Schema $schema
      */
-    protected function createCouponOrder(Schema $schema) {
+    protected function createCouponOrder(Schema $schema)
+    {
         $table = $schema->createTable("plg_coupon_order");
         $table->addColumn('id', 'integer', array(
             'autoincrement' => true,
@@ -238,13 +283,14 @@ class Version201507231300 extends AbstractMigration
             'notnull' => false,
         ));
 
-
         $table->addColumn('order_id', 'integer', array(
             'notnull' => true,
         ));
+
         $table->addColumn('pre_order_id', 'text', array(
             'notnull' => false,
         ));
+
         $table->addColumn('order_date', 'datetime', array(
             'notnull' => false,
             'unsigned' => false,
@@ -255,14 +301,56 @@ class Version201507231300 extends AbstractMigration
             'unsigned' => false,
             'default' => 0,
         ));
+
+        $table->addColumn('coupon_cancel', 'smallint', array(
+            'notnull' => false,
+            'unsigned' => false,
+            'default' => 0,
+        ));
+
         $table->addColumn('create_date', 'datetime', array(
             'notnull' => true,
             'unsigned' => false,
         ));
+
         $table->addColumn('update_date', 'datetime', array(
             'notnull' => true,
             'unsigned' => false,
         ));
+
         $table->setPrimaryKey(array('id'));
+    }
+
+    /**
+     * create all table of coupon
+     * @param Schema $schema
+     */
+    protected function createCouponDb(Schema $schema)
+    {
+        $app = Application::getInstance();
+        $em = $app['orm.em'];
+        $classes = array();
+        foreach ($this->entities as $entity) {
+            $classes[] = $em->getMetadataFactory()->getMetadataFor($entity);
+        }
+        $tool = new SchemaTool($em);
+        $tool->createSchema($classes);
+    }
+
+    /**
+     * Get metadata.
+     *
+     * @param EntityManager $em
+     *
+     * @return array
+     */
+    protected function getMetadata(EntityManager $em)
+    {
+        $meta = array();
+        foreach ($this->entities as $entity) {
+            $meta[] = $em->getMetadataFactory()->getMetadataFor($entity);
+        }
+
+        return $meta;
     }
 }

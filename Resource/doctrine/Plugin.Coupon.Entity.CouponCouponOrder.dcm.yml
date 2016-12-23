@@ -44,6 +44,11 @@ Plugin\Coupon\Entity\CouponCouponOrder:
             options:
                 unsigned: true
                 default: 0
+        coupon_cancel:
+            type: smallint
+            nullable: true
+            unsigned: false
+            default: '0'
         create_date:
             type: datetime
             nullable: false

@@ -54,19 +54,16 @@ class CouponService
     {
         // クーポン詳細情報を生成する
         $coupon = $this->newCoupon($data);
-
         $em = $this->app['orm.em'];
-
         // クーポン情報を登録する
         $em->persist($coupon);
-
+        $em->flush($coupon);
         // クーポン詳細情報を登録する
         foreach ($data['CouponDetails'] as $detail) {
             $couponDetail = $this->newCouponDetail($coupon, $detail);
             $em->persist($couponDetail);
+            $em->flush($couponDetail);
         }
-
-        $em->flush();
 
         return true;
     }
@@ -79,9 +76,7 @@ class CouponService
      */
     public function updateCoupon($data)
     {
-        $dateTime = new \DateTime();
         $em = $this->app['orm.em'];
-
         // クーポン情報を取得する
         $coupon = $this->app['eccube.plugin.coupon.repository.coupon']->find($data['id']);
         if (is_null($coupon)) {
@@ -124,13 +119,10 @@ class CouponService
             } else {
                 $couponDetail = $this->app['eccube.plugin.coupon.repository.coupon_detail']->find($detail->getId());
             }
-
             $couponDetail->setDelFlg(Constant::DISABLED);
-
             $em->persist($couponDetail);
+            $em->flush($couponDetail);
         }
-
-        $em->flush();
 
         return true;
     }
@@ -144,20 +136,16 @@ class CouponService
     public function enableCoupon($couponId)
     {
         $em = $this->app['orm.em'];
-
         // クーポン情報を取得する
         $coupon = $this->app['eccube.plugin.coupon.repository.coupon']->find($couponId);
         if (is_null($coupon)) {
             return false;
         }
-
         // クーポン情報を書き換える
         $coupon->setEnableFlag($coupon->getEnableFlag() == 0 ? 1 : 0);
-
         // クーポン情報を登録する
         $em->persist($coupon);
-
-        $em->flush();
+        $em->flush($coupon);
 
         return true;
     }
@@ -170,9 +158,7 @@ class CouponService
      */
     public function deleteCoupon($couponId)
     {
-        $currentDateTime = new \DateTime();
         $em = $this->app['orm.em'];
-
         // クーポン情報を取得する
         $coupon = $this->app['eccube.plugin.coupon.repository.coupon']->find($couponId);
         if (is_null($coupon)) {
@@ -180,19 +166,17 @@ class CouponService
         }
         // クーポン情報を書き換える
         $coupon->setDelFlg(Constant::ENABLED);
-
         // クーポン情報を登録する
         $em->persist($coupon);
-
+        $em->flush($coupon);
         // クーポン詳細情報を取得する
         $details = $coupon->getCouponDetails();
         foreach ($details as $detail) {
             // クーポン詳細情報を書き換える
             $detail->setDelFlg(Constant::ENABLED);
             $em->persist($detail);
+            $em->flush($detail);
         }
-
-        $em->flush();
 
         return true;
     }
@@ -205,7 +189,6 @@ class CouponService
      */
     public function generateCouponCd($length = 12)
     {
-
         $couponCd = substr(base_convert(md5(uniqid()), 16, 36), 0, $length);
 
         return $couponCd;
@@ -219,25 +202,16 @@ class CouponService
      */
     protected function newCoupon($data)
     {
-        $dateTime = new \DateTime();
-
-
         $coupon = new \Plugin\Coupon\Entity\CouponCoupon();
-
         $coupon->setCouponCd($data['coupon_cd']);
         $coupon->setCouponName($data['coupon_name']);
-
         $coupon->setCouponType($data['coupon_type']);
         $coupon->setDiscountType($data['discount_type']);
-
         $coupon->setDiscountPrice($data['discount_price']);
         $coupon->setDiscountRate($data['discount_rate']);
         $coupon->setCouponUseTime($data['coupon_use_time']);
-
         $coupon->setEnableFlag(Constant::ENABLED);
         $coupon->setDelFlg(Constant::DISABLED);
-
-
         $coupon->setAvailableFromDate($data['available_from_date']);
         $coupon->setAvailableToDate($data['available_to_date']);
 
@@ -253,15 +227,11 @@ class CouponService
      */
     protected function newCouponDetail(\Plugin\Coupon\Entity\CouponCoupon $coupon, \Plugin\Coupon\Entity\CouponCouponDetail $detail)
     {
-
         $couponDetail = new \Plugin\Coupon\Entity\CouponCouponDetail();
-
         $couponDetail->setCoupon($coupon);
         $couponDetail->setCouponType($coupon->getCouponType());
-
         $couponDetail->setCategory($detail->getCategory());
         $couponDetail->setProduct($detail->getProduct());
-
         $couponDetail->setDelFlg(Constant::DISABLED);
 
         return $couponDetail;
@@ -277,12 +247,12 @@ class CouponService
     public function existsCouponProduct(CouponCoupon $Coupon, Order $Order)
     {
         $applyDiscountFlg = false;
-        if (!is_null($Coupon)) {
+        if (!$Coupon) {
             // 対象商品の存在確認
             if ($Coupon->getCouponType() == 1) {
                 // 商品の場合
                 $applyDiscountFlg = $this->containsProduct($Coupon, $Order);
-            } else if ($Coupon->getCouponType() == 2) {
+            } elseif ($Coupon->getCouponType() == 2) {
                 // カテゴリの場合
                 $applyDiscountFlg = $this->containsCategory($Coupon, $Order);
             }
@@ -371,7 +341,7 @@ class CouponService
 
         // 親カテゴリをテーブルから取得
         $ParentCategory = $this->app['eccube.repository.category']->find($Category->getParent());
-        if (is_null($ParentCategory)) {
+        if ($ParentCategory) {
             return false;
         }
 
@@ -389,25 +359,21 @@ class CouponService
      */
     public function saveCouponOrder(Order $Order, CouponCoupon $Coupon, $couponCd, Customer $Customer, $discount)
     {
-
-        if (is_null($Order)) {
+        if ($Order) {
             return;
         }
 
         $repository = $this->app['eccube.plugin.coupon.repository.coupon_order'];
-
         // クーポン受注情報を取得する
         $CouponOrder = $repository->findOneBy(array(
-            'pre_order_id' => $Order->getPreOrderId()
+            'pre_order_id' => $Order->getPreOrderId(),
         ));
 
         if (is_null($CouponOrder)) {
             // 未登録の場合
             $CouponOrder = new \Plugin\Coupon\Entity\CouponCouponOrder();
-
             $CouponOrder->setOrderId($Order->getId());
             $CouponOrder->setPreOrderId($Order->getPreOrderId());
-
             $CouponOrder->setDelFlg(Constant::DISABLED);
         }
 
@@ -436,9 +402,7 @@ class CouponService
 
         // 割引金額をセット
         $CouponOrder->setDiscount($discount);
-
         $repository->save($CouponOrder);
-
     }
 
     /**
@@ -452,13 +416,8 @@ class CouponService
     public function recalcOrder(Order $Order, CouponCoupon $Coupon)
     {
         $discount = 0;
-
-        // ------------------------------------------
-        // クーポンコードが存在する場合
-        // カートに入っている商品の値引き額を設定する
-        // ------------------------------------------
+        // クーポンコードが存在する場合カートに入っている商品の値引き額を設定する
         if ($Coupon) {
-
             // 対象商品の存在確認.
             // 割引対象商品が存在する場合は値引き額を取得する
             if ($this->existsCouponProduct($Coupon, $Order)) {
@@ -469,10 +428,8 @@ class CouponService
                     // 課税区分の取得
                     $taxService = $this->app['eccube.service.tax_rule'];
                     $TaxRule = $this->app['eccube.repository.tax_rule']->getByRule();
-
                     // 値引き前の金額で割引率を算出する
                     $total = $Order->getSubtotal() + $Order->getCharge() + $Order->getDeliveryFeeTotal();
-
                     // 小数点以下は四捨五入
                     $discount = $taxService->calcTax(
                         $total,
@@ -481,12 +438,10 @@ class CouponService
                         $TaxRule->getTaxAdjust()
                     );
                 }
-
             }
         }
 
         return $discount;
-
     }
 
     /**
@@ -497,10 +452,8 @@ class CouponService
      */
     public function isOrderInActiveCoupon(Order $Order)
     {
-
         // 有効なクーポン一覧を取得する
         $Coupons = $this->app['eccube.plugin.coupon.repository.coupon']->findActiveCouponAll();
-
         // 有効なクーポンを持つ商品の存在を確認する
         foreach ($Coupons as $Coupon) {
             if ($this->existsCouponProduct($Coupon, $Order)) {
@@ -564,9 +517,7 @@ class CouponService
      */
     public function checkCouponUsedOrNotBefore($couponCd, $orderId, Customer $Customer)
     {
-
         $repository = $this->app['eccube.plugin.coupon.repository.coupon_order'];
-
         if ($this->app->isGranted('ROLE_USER')) {
             $CouponOrders = $repository->findUseCouponBefore($couponCd, $orderId, $Customer->getId());
         } else {
@@ -575,23 +526,18 @@ class CouponService
 
         if ($CouponOrders) {
             // 存在すれば既に受注として利用されていないかチェック
-
             foreach ($CouponOrders as $CouponOrder) {
                 $Order = $this->app['eccube.repository.order']->find($CouponOrder->getOrderId());
-
                 if ($Order) {
                     if ($Order->getOrderStatus()->getId() != $this->app['config']['order_processing']) {
                         // 同一のクーポンコードで既に受注データが存在している
                         return true;
                     }
                 }
-
             }
-
         }
 
         return false;
     }
-
 
 }

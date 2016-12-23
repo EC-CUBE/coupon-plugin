@@ -25,7 +25,8 @@
 namespace Plugin\Coupon\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Query;
+use Plugin\Coupon\Entity\CouponCouponOrder;
+use Doctrine\Orm\NoResultException;
 
 /**
  * CouponCouponOrderRepository
@@ -38,22 +39,21 @@ class CouponCouponOrderRepository extends EntityRepository
     /**
      * クーポン受注情報を保存する
      *
-     * @param \Plugin\Coupon\Entity\CouponCouponOrder $CouponCouponOrder
+     * @param CouponCouponOrder $CouponCouponOrder
      */
-    public function save(\Plugin\Coupon\Entity\CouponCouponOrder $CouponCouponOrder)
+    public function save(CouponCouponOrder $CouponCouponOrder)
     {
         $em = $this->getEntityManager();
         $em->persist($CouponCouponOrder);
         $em->flush($CouponCouponOrder);
-
     }
 
     /**
      * 受注ID(order_id)から使用されたクーポン受注情報を取得する
      *
-     * @param $orderId
+     * @param string $orderId
      * @return mixed|null
-     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws NoResultException
      */
     public function findUseCouponByOrderId($orderId)
     {
@@ -64,16 +64,13 @@ class CouponCouponOrderRepository extends EntityRepository
             ->andWhere('c.coupon_id IS NOT NULL')
             ->andWhere('c.order_id = :order_id')
             ->setParameter('order_id', $orderId);
-
         $query = $qb->getQuery();
 
         $result = null;
         try {
             $result = $query->getSingleResult();
-
-        } catch (\Doctrine\Orm\NoResultException $e) {
+        } catch (NoResultException $e) {
             $result = null;
-
         }
 
         return $result;
@@ -83,8 +80,8 @@ class CouponCouponOrderRepository extends EntityRepository
      * 会員または非会員が既にクーポンを利用しているか検索
      * 会員の場合、会員IDで非会員の場合、メールアドレスで検索
      *
-     * @param $couponCd
-     * @param $param
+     * @param string $couponCd
+     * @param string $param
      * @return array
      */
     public function findUseCoupon($couponCd, $param)
@@ -107,7 +104,6 @@ class CouponCouponOrderRepository extends EntityRepository
             ->setParameter('user_id', $userId)
             ->setParameter('email', $email);
         $query = $qb->getQuery();
-
         $result = $query->getResult();
 
         return $result;
@@ -117,9 +113,9 @@ class CouponCouponOrderRepository extends EntityRepository
      * 会員または非会員が既にクーポンを利用しているか検索
      * 会員の場合、会員IDで非会員の場合、メールアドレスで検索
      *
-     * @param $couponCd
-     * @param $orderId
-     * @param $param
+     * @param string $couponCd
+     * @param string $orderId
+     * @param string $param
      * @return array
      */
     public function findUseCouponBefore($couponCd, $orderId, $param)
@@ -143,7 +139,6 @@ class CouponCouponOrderRepository extends EntityRepository
             ->setParameter('user_id', $userId)
             ->setParameter('email', $email);
         $query = $qb->getQuery();
-
         $result = $query->getResult();
 
         return $result;
@@ -152,9 +147,9 @@ class CouponCouponOrderRepository extends EntityRepository
     /**
      * クーポンの発行枚数を検索
      *
-     * @param $couponCd
+     * @param string $couponCd
      * @return int|mixed
-     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws NoResultException
      */
     public function countCouponByCd($couponCd)
     {
@@ -166,17 +161,12 @@ class CouponCouponOrderRepository extends EntityRepository
             ->setParameter('coupon_cd', $couponCd);
 
         $query = $qb->getQuery();
-
         try {
             $count = $query->getSingleResult();
-
-        } catch (\Doctrine\Orm\NoResultException $e) {
+        } catch (NoResultException $e) {
             $count = 0;
-
         }
 
         return $count;
     }
-
-
 }

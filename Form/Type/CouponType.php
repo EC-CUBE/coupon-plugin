@@ -24,7 +24,6 @@
 namespace Plugin\Coupon\Form\Type;
 
 use Carbon\Carbon;
-use Plugin\Coupon\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
@@ -33,22 +32,33 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\ConstraintViolationList;
+use Eccube\Application;
 
+/**
+ * Class CouponType
+ */
 class CouponType extends AbstractType
 {
 
+    /**
+     * @var Application $app
+     */
     private $app;
 
-    public function __construct(\Eccube\Application $app)
+    /**
+     * CouponType constructor.
+     * @param Application $app
+     */
+    public function __construct(Application $app)
     {
         $this->app = $app;
     }
 
     /**
-     * Build config type form
+     * buildForm
      *
      * @param FormBuilderInterface $builder
-     * @param array $options
+     * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -61,10 +71,7 @@ class CouponType extends AbstractType
                 'trim' => true,
                 'constraints' => array(
                     new Assert\NotBlank(),
-                    new Assert\Regex(array(
-                            'pattern' => '/^[a-zA-Z0-9]+$/i'
-                        )
-                    )
+                    new Assert\Regex(array('pattern' => '/^[a-zA-Z0-9]+$/i')),
                 ),
             ))
             ->add('coupon_name', 'text', array(
@@ -76,7 +83,8 @@ class CouponType extends AbstractType
                 ),
             ))
             ->add('coupon_type', 'choice', array(
-                'choices' => array(1 => '商品', 2 => 'カテゴリ'),
+                'choices' => array(1 => '商品', 2 => 'カテゴリ', 3 => '全商品'),
+                'data' => 1,
                 'required' => true,
                 'expanded' => true,
                 'multiple' => false,
@@ -84,23 +92,42 @@ class CouponType extends AbstractType
                 'empty_value' => false,
                 'constraints' => array(
                     new Assert\NotBlank(),
-                )
+                ),
+            ))
+            ->add('coupon_member', 'choice', array(
+                'choices' => array(1 => 'YES', 0 => 'NO'),
+                'data' => 0,
+                'required' => true,
+                'expanded' => true,
+                'multiple' => false,
+                'label' => '会員のみクーポン',
+                'empty_value' => false,
+                'constraints' => array(
+                    new Assert\NotBlank(),
+                ),
             ))
             ->add('discount_type', 'choice', array(
                 'choices' => array(1 => '値引き額', 2 => '値引率'),
+                'data' => 1,
                 'required' => true,
                 'expanded' => true,
                 'multiple' => false,
                 'label' => '値引き種別',
                 'constraints' => array(
-                    new Assert\NotBlank()
+                    new Assert\NotBlank(),
                 ),
+            ))
+            ->add('coupon_lower_limit', 'money', array(
+                'label' => '下限金額',
+                'required' => false,
+                'currency' => 'JPY',
+                'precision' => 0,
             ))
             ->add('discount_price', 'money', array(
                 'label' => '値引き額',
                 'required' => false,
                 'currency' => 'JPY',
-                'precision' => 0
+                'precision' => 0,
             ))
             ->add('discount_rate', 'integer', array(
                 'label' => '値引率',
@@ -109,7 +136,7 @@ class CouponType extends AbstractType
                     new Assert\Range(array(
                         'min' => 1,
                         'max' => 100,
-                    ))
+                    )),
                 ),
             ))
             // 有効期間(FROM)
@@ -121,7 +148,7 @@ class CouponType extends AbstractType
                 'format' => 'yyyy-MM-dd',
                 'empty_value' => array('year' => '----', 'month' => '--', 'day' => '--'),
                 'constraints' => array(
-                    new Assert\NotBlank()
+                    new Assert\NotBlank(),
                 ),
             ))
             // 有効期間(TO)
@@ -133,7 +160,7 @@ class CouponType extends AbstractType
                 'format' => 'yyyy-MM-dd',
                 'empty_value' => array('year' => '----', 'month' => '--', 'day' => '--'),
                 'constraints' => array(
-                    new Assert\NotBlank()
+                    new Assert\NotBlank(),
                 ),
             ))
             ->add('coupon_use_time', 'integer', array(
@@ -144,11 +171,11 @@ class CouponType extends AbstractType
                     new Assert\Range(array(
                         'min' => 1,
                         'max' => 1000000,
-                    ))
+                    )),
                 ),
             ))
             ->add('CouponDetails', 'collection', array(
-                'type' => 'admin_coupon_detail',
+                'type' => 'admin_plugin_coupon_detail',
                 'allow_add' => true,
                 'allow_delete' => true,
                 'prototype' => true,
@@ -174,7 +201,7 @@ class CouponType extends AbstractType
                         }
                     }
 
-                } else if ($data['discount_type'] == 2) {
+                } elseif ($data['discount_type'] == 2) {
                     // 値引率
 
                     /** @var ConstraintViolationList $errors */
@@ -231,6 +258,7 @@ class CouponType extends AbstractType
     }
 
     /**
+     * configureOptions
      * {@inheritdoc}
      */
     public function configureOptions(OptionsResolver $resolver)
@@ -241,8 +269,12 @@ class CouponType extends AbstractType
     }
 
 
+    /**
+     * getName
+     * @return string
+     */
     public function getName()
     {
-        return 'admin_coupon';
+        return 'admin_plugin_coupon';
     }
 }

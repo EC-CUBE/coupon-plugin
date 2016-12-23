@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #}
 {% extends 'default_frame.twig' %}
 
-{% set menus = ['order', 'admin_coupon'] %}
+{% set menus = ['order', 'admin_plugin_coupon'] %}
 
 {% block title %}クーポン管理{% endblock %}
 {% block sub_title %}クーポン内容設定{% endblock %}
@@ -80,14 +80,14 @@ $(function() {
                 'category_id' : $('#admin_search_product_category_id').val(),
                 'exist_product_id' : existProductId
             },
-            url: '{{ url('admin_coupon_search_product') }}',
+            url: '{{ url('admin_plugin_coupon_search_product') }}',
             success: function(data) {
                 // モーダルに結果を書き出し.
                 $('#searchProductModalList').html(data);
 
             },
             error: function() {
-                alert('search product failed.');
+                console.log('search product failed.');
             }
         });
     });
@@ -116,14 +116,14 @@ $(function() {
                 'category_id' : $('#admin_coupon_search_category_category_id').val(),
                 'exist_category_id' : existCategoryId
             },
-            url: '{{ url('admin_coupon_search_category') }}',
+            url: '{{ url('admin_plugin_coupon_search_category') }}',
             success: function(data) {
                 // モーダルに結果を書き出し.
                 $('#searchCategoryModalList').html(data);
 
             },
             error: function() {
-                alert('search product failed.');
+                console.log('search product failed.');
             }
         });
     });
@@ -157,17 +157,17 @@ $(function() {
     // クリック時の処理
     // ==================================
     // 値引き額
-    $("#admin_coupon_discount_type_0").on("click", function(){
+    $("#admin_plugin_coupon_discount_type_0").on("click", function(){
         $("#admin_coupon_discount_price").removeAttr('disabled');
         $("#admin_coupon_discount_rate").attr('disabled', 'disabled');
     });
     // 値引率
-    $("#admin_coupon_discount_type_1").on("click", function(){
+    $("#admin_plugin_coupon_discount_type_1").on("click", function(){
         $("#admin_coupon_discount_price").attr('disabled', 'disabled');
         $("#admin_coupon_discount_rate").removeAttr('disabled');
     });
     // クーポン種別 - 商品
-    $("#admin_coupon_coupon_type_0").on("click", function(){
+    $("#admin_plugin_coupon_coupon_type_0").on("click", function(){
         if($("#category_area").find(".item_box").length > 0) {
             if(confirm("登録済みのカテゴリがあります。削除してよろしいですか。")) {
                 $("#category_area").find(".item_box").remove();
@@ -179,7 +179,7 @@ $(function() {
         $("#category_area").hide();
     });
     // クーポン種別 - カテゴリ
-    $("#admin_coupon_coupon_type_1").on("click", function(){
+    $("#admin_plugin_coupon_coupon_type_1").on("click", function(){
         if($("#product_area").find(".item_box").length > 0) {
             if(confirm("登録済みの商品があります。削除してよろしいですか。")) {
                 $("#product_area").find(".item_box").remove();
@@ -195,25 +195,26 @@ $(function() {
     // 初期処理
     // ==========================
     // 値引き額
-    if($("#admin_coupon_discount_type_0").prop('checked')) {
-        $("#admin_coupon_discount_price").removeAttr('disabled');
+    $("#admin_plugin_coupon_discount_rate").attr('disabled', 'disabled');
+    if($("#admin_plugin_coupon_discount_type_0").prop('checked')) {
+        $("#admin_plugin_coupon_discount_price").removeAttr('disabled');
     } else {
-        $("#admin_coupon_discount_price").attr('disabled', 'disabled');
+        $("#admin_plugin_coupon_discount_price").attr('disabled', 'disabled');
     }
     // 値引率
-    if($("#admin_coupon_discount_type_1").prop('checked')) {
-        $("#admin_coupon_discount_rate").removeAttr('disabled');
+    if($("#admin_plugin_coupon_discount_type_1").prop('checked')) {
+        $("#admin_plugin_coupon_discount_rate").removeAttr('disabled');
     } else {
-        $("#admin_coupon_discount_rate").attr('disabled', 'disabled');
+        $("#admin_plugin_coupon_discount_rate").attr('disabled', 'disabled');
     }
     // クーポン種別 - 商品
-    if($("#admin_coupon_coupon_type_0").prop('checked')) {
+    if($("#admin_plugin_coupon_coupon_type_0").prop('checked')) {
         $("#product_area").show();
     } else {
         $("#product_area").hide();
     }
     // クーポン種別 - カテゴリ
-    if($("#admin_coupon_coupon_type_1").prop('checked')) {
+    if($("#admin_plugin_coupon_coupon_type_1").prop('checked')) {
         $("#category_area").show();
     } else {
         $("#category_area").hide();
@@ -272,6 +273,14 @@ $(function() {
                                 {{ form_errors(form.coupon_type) }}
                             </div>
                         </div>
+                        {# 会員のみクーポン #}
+                        <div class="form-group">
+                            {{ form_label(form.coupon_member) }}
+                            <div class="col-sm-9 col-lg-10">
+                                {{ form_widget(form.coupon_member) }}
+                                {{ form_errors(form.coupon_member) }}
+                            </div>
+                        </div>
                         {# 値引き種別 #}
                         <div class="form-group">
                             {{ form_label(form.discount_type) }}
@@ -303,6 +312,14 @@ $(function() {
                             <div class="col-sm-9 col-lg-10">
                                 {{ form_widget(form.coupon_use_time) }}
                                 {{ form_errors(form.coupon_use_time) }}
+                            </div>
+                        </div>
+                        {# 下限金額 #}
+                        <div class="form-group">
+                            {{ form_label(form.coupon_lower_limit) }}
+                            <div class="col-sm-9 col-lg-10">
+                                {{ form_widget(form.coupon_lower_limit) }}
+                                {{ form_errors(form.coupon_lower_limit) }}
                             </div>
                         </div>
                         {# 有効期間 #}
@@ -463,7 +480,7 @@ $(function() {
             <div class="row hidden-xs hidden-sm">
                 <div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3 text-center btn_area">
                     <button type="submit" class="btn btn-primary btn-block btn-lg">登録</button>
-                     <p><a href="{{ url('admin_coupon_list') }}">戻る</a></p>
+                     <p><a href="{{ url('admin_plugin_coupon_list') }}">戻る</a></p>
                 </div>
             </div>
 

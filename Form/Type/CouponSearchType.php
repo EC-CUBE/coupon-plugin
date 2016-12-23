@@ -27,14 +27,17 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * Class CouponSearchType
+ */
 class CouponSearchType extends AbstractType
 {
 
     /**
-     * Build config type form
+     * buildForm
      *
      * @param FormBuilderInterface $builder
-     * @param array $options
+     * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -50,8 +53,12 @@ class CouponSearchType extends AbstractType
             ));
     }
 
+    /**
+     * getName
+     * @return string
+     */
     public function getName()
     {
-        return 'admin_coupon_search';
+        return 'admin_plugin_coupon_search';
     }
 }

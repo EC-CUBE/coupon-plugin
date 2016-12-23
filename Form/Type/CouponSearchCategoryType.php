@@ -25,15 +25,19 @@
 namespace Plugin\Coupon\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * Class CouponSearchCategoryType
+ */
 class CouponSearchCategoryType extends AbstractType
 {
-
     /**
-     * {@inheritdoc}
+     * buildForm
+     *
+     * @param FormBuilderInterface $builder
+     * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -86,10 +90,11 @@ class CouponSearchCategoryType extends AbstractType
     }
 
     /**
-     * {@inheritdoc}
+     * getName
+     * @return string
      */
     public function getName()
     {
-        return 'admin_coupon_search_category';
+        return 'admin_plugin_coupon_search_category';
     }
 }

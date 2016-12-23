@@ -42,6 +42,16 @@ Plugin\Coupon\Entity\CouponCoupon:
             nullable: false
             unsigned: false
             default: '0'
+        coupon_member:
+            type: smallint
+            nullable: true
+            unsigned: false
+            default: '0'
+        coupon_lower_limit:
+            type: decimal
+            nullable: true
+            precision: 10
+            scale: 0
         available_from_date:
             type: datetime
             nullable: false

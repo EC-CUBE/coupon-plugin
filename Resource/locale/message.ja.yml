@@ -1,5 +1,5 @@
-admin.coupon.notfound: クーポンが存在しません。
-admin.coupon.coupon_id.notexists: クーポンIDがありません。
+admin.plugin.coupon.notfound: クーポンが存在しません。
+admin.plugin.coupon.coupon_id.notexists: クーポンIDがありません。
 
 admin.plugin.coupon.regist.success: クーポンを登録しました。
 admin.plugin.coupon.delete.success: クーポンを削除しました。

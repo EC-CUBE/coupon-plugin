@@ -90,6 +90,18 @@ class CouponCoupon extends \Eccube\Entity\AbstractEntity
     private $del_flg;
 
     /**
+     * @var integer
+     */
+    private $coupon_member;
+
+    /**
+     * @var integer
+     */
+    private $coupon_lower_limit;
+
+
+
+    /**
      * @var \DateTime
      */
     private $create_date;
@@ -276,7 +288,7 @@ class CouponCoupon extends \Eccube\Entity\AbstractEntity
     /**
      * Get discount_rate
      *
-     * @return string 
+     * @return string
      */
     public function getDiscountRate()
     {
@@ -452,5 +464,37 @@ class CouponCoupon extends \Eccube\Entity\AbstractEntity
     public function getCouponDetails()
     {
         return $this->CouponDetails;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCouponMember()
+    {
+        return $this->coupon_member;
+    }
+
+    /**
+     * @param int $couponMember
+     */
+    public function setCouponMember($couponMember)
+    {
+        $this->coupon_member = $couponMember;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCouponLowerLimit()
+    {
+        return $this->coupon_lower_limit;
+    }
+
+    /**
+     * @param int $couponLowerLimit
+     */
+    public function setCouponLowerLimit($couponLowerLimit)
+    {
+        $this->coupon_lower_limit = $couponLowerLimit;
     }
 }

@@ -24,40 +24,47 @@
 namespace Plugin\Coupon\Form\Type;
 
 use Eccube\Form\DataTransformer;
-use Plugin\Coupon\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 
-// use Plugin\Coupon\Form\Type\DataTransformer;
-
+/**
+ * Class CouponDetailType
+ */
 class CouponDetailType extends AbstractType
 {
+    /**
+     * @var \Eccube\Application $app
+     */
     protected $app;
 
+    /**
+     * CouponDetailType constructor.
+     * @param \Eccube\Application $app
+     */
     public function __construct($app)
     {
         $this->app = $app;
     }
 
     /**
-     * {@inheritdoc}
+     * buildForm
+     *
+     * @param FormBuilderInterface $builder
+     * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-
         $builder
-            ->add($builder->create('Product', 'hidden')
-                ->addModelTransformer(new DataTransformer\EntityToIdTransformer(
-                    $this->app['orm.em'],
-                    '\Eccube\Entity\Product'
-                )))
-            ->add($builder->create('Category', 'hidden')
-                ->addModelTransformer(new DataTransformer\EntityToIdTransformer(
-                    $this->app['orm.em'],
-                    '\Eccube\Entity\Category'
-                )))
+            ->add(
+                $builder->create('Product', 'hidden')
+                    ->addModelTransformer(new DataTransformer\EntityToIdTransformer($this->app['orm.em'], '\Eccube\Entity\Product'))
+            )
+            ->add(
+                $builder->create('Category', 'hidden')
+                    ->addModelTransformer(new DataTransformer\EntityToIdTransformer($this->app['orm.em'], '\Eccube\Entity\Category'))
+            )
             ->add('id', 'hidden', array(
                 'label' => 'クーポン詳細ID',
                 'required' => false,
@@ -67,6 +74,10 @@ class CouponDetailType extends AbstractType
             ));
     }
 
+    /**
+     * configureOptions
+     * @param OptionsResolver $resolver
+     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
@@ -75,11 +86,12 @@ class CouponDetailType extends AbstractType
     }
 
     /**
-     * {@inheritdoc}
+     * getName
+     *  @return string
      */
     public function getName()
     {
-        return 'admin_coupon_detail';
+        return 'admin_plugin_coupon_detail';
     }
 
 

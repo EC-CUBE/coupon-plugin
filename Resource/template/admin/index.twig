@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 {% extends 'default_frame.twig' %}
 
-{% set menus = ['order', 'admin_coupon'] %}
+{% set menus = ['order', 'admin_plugin_coupon'] %}
 
 {% block title %}クーポン管理{% endblock %}
 {% block sub_title %}クーポン内容設定{% endblock %}
@@ -88,9 +88,9 @@ function fnDelete(action) {
                                     <td>{{ Coupon.coupon_use_time|number_format }}</td>
                                     <td>{{ Coupon.available_from_date|date_format }} ～ {{ Coupon.available_to_date|date_format }}</td>
 
-                                    <td><a href="{{ url('admin_coupon_edit', { id: Coupon.id }) }}">編集</a></td>
+                                    <td><a href="{{ url('admin_plugin_coupon_edit', { id: Coupon.id }) }}">編集</a></td>
                                     <td>
-                                        <a href="{{ url('admin_coupon_enable', { id: Coupon.id }) }}">
+                                        <a href="{{ url('admin_plugin_coupon_enable', { id: Coupon.id }) }}">
                                         {% if Coupon.enable_flag == 1 %}
                                             有効
                                         {% else %}
@@ -98,7 +98,7 @@ function fnDelete(action) {
                                         {% endif %}
                                         </a>
                                     </td>
-                                    <td><a href="javascript:;" onclick="fnDelete('{{ url('admin_coupon_delete', { id: Coupon.id}) }}'); return false;">削除</a></td>
+                                    <td><a href="javascript:;" onclick="fnDelete('{{ url('admin_plugin_coupon_delete', { id: Coupon.id}) }}'); return false;">削除</a></td>
 
                                 </tr>
                                 {% endfor %}
@@ -112,7 +112,7 @@ function fnDelete(action) {
     </div>
 <div class="row">
     <div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3 text-center btn_area">
-        <a href="{{ url('admin_coupon_new') }}" class="btn btn-primary btn-block btn-lg">クーポンを新規登録</a>
+        <a href="{{ url('admin_plugin_coupon_new') }}" class="btn btn-primary btn-block btn-lg">クーポンを新規登録</a>
     </div>
 </div>
 </form>

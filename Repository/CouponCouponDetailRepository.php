@@ -25,7 +25,6 @@
 namespace Plugin\Coupon\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Query;
 
 /**
  * CouponCouponDetailRepository
