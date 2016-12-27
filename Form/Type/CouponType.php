@@ -1,24 +1,11 @@
 <?php
 /*
- * This file is part of EC-CUBE
+ * This file is part of the Coupon plugin
  *
- * Copyright(c) 2000-2015 LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
  *
- * http://www.lockon.co.jp/
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace Plugin\Coupon\Form\Type;
@@ -63,7 +50,6 @@ class CouponType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $app = $this->app;
-
         $builder
             ->add('coupon_cd', 'text', array(
                 'label' => 'クーポンコード',
@@ -84,7 +70,6 @@ class CouponType extends AbstractType
             ))
             ->add('coupon_type', 'choice', array(
                 'choices' => array(1 => '商品', 2 => 'カテゴリ', 3 => '全商品'),
-                'data' => 1,
                 'required' => true,
                 'expanded' => true,
                 'multiple' => false,
@@ -96,7 +81,6 @@ class CouponType extends AbstractType
             ))
             ->add('coupon_member', 'choice', array(
                 'choices' => array(1 => 'YES', 0 => 'NO'),
-                'data' => 0,
                 'required' => true,
                 'expanded' => true,
                 'multiple' => false,
@@ -108,7 +92,6 @@ class CouponType extends AbstractType
             ))
             ->add('discount_type', 'choice', array(
                 'choices' => array(1 => '値引き額', 2 => '値引率'),
-                'data' => 1,
                 'required' => true,
                 'expanded' => true,
                 'multiple' => false,
@@ -183,14 +166,12 @@ class CouponType extends AbstractType
             ->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($app) {
                 $form = $event->getForm();
                 $data = $form->getData();
-
-                if (count($data['CouponDetails']) ==  0) {
+                if (count($data['CouponDetails']) ==  0 && $data['coupon_type'] != 3) {
                     $form['coupon_type']->addError(new FormError('クーポン有効対象となる商品情報またはカテゴリ情報を設定してください。'));
                 }
 
                 if ($data['discount_type'] == 1) {
                     // 値引き額
-
                     /** @var ConstraintViolationList $errors */
                     $errors = $app['validator']->validateValue($data['discount_price'], array(
                         new Assert\NotBlank(),
@@ -200,10 +181,8 @@ class CouponType extends AbstractType
                             $form['discount_price']->addError(new FormError($error->getMessage()));
                         }
                     }
-
                 } elseif ($data['discount_type'] == 2) {
                     // 値引率
-
                     /** @var ConstraintViolationList $errors */
                     $errors = $app['validator']->validateValue($data['discount_rate'], array(
                         new Assert\NotBlank(),
@@ -217,15 +196,11 @@ class CouponType extends AbstractType
                             $form['discount_rate']->addError(new FormError($error->getMessage()));
                         }
                     }
-
                 }
-
-
                 if (!empty($data['available_from_date']) && !empty($data['available_to_date'])) {
                     $now = Carbon::today();
                     $fromDate = Carbon::instance($data['available_from_date']);
                     $toDate = Carbon::instance($data['available_to_date']);
-
                     if ($fromDate->gt($toDate)) {
                         $form['available_from_date']->addError(new FormError('有効期間に誤りがあります。'));
                     }
@@ -242,14 +217,10 @@ class CouponType extends AbstractType
                     // 新規登録時.
                     if ($data->getId() === null) {
                         $count = $qb->getQuery()->getSingleScalarResult();
-
-                    // 編集時.
                     } else {
-                        $qb->andWhere('c.id <> :coupon_id')
-                            ->setParameter('coupon_id', $data->getId());
+                        $qb->andWhere('c.id <> :coupon_id')->setParameter('coupon_id', $data->getId());
                         $count = $qb->getQuery()->getSingleScalarResult();
                     }
-
                     if ($count > 0) {
                         $form['coupon_cd']->addError(new FormError('既に利用されているクーポンコードです。'));
                     }

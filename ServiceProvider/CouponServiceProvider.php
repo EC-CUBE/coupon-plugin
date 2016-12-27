@@ -1,24 +1,11 @@
 <?php
 /*
- * This file is part of EC-CUBE
+ * This file is part of the Coupon plugin
  *
- * Copyright(c) 2000-2015 LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
  *
- * http://www.lockon.co.jp/
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace Plugin\Coupon\ServiceProvider;
@@ -46,28 +33,36 @@ class CouponServiceProvider implements ServiceProviderInterface
     {
         // 管理画面定義
         $admin = $app['controllers_factory'];
+        //Frontend
+        $front = $app['controllers_factory'];
         // 強制SSL
         if ($app['config']['force_ssl'] == Constant::ENABLED) {
             $admin->requireHttps();
+            $front->requireHttps();
         }
 
         // クーポンの一覧
-        $admin->match('/plugin/coupon', 'Plugin\Coupon\Controller\CouponController::index')->value('id', null)->assert('id', '\d+|')->bind('admin_plugin_coupon_list');
+        $admin->match('/plugin/coupon', 'Plugin\Coupon\Controller\CouponController::index')->value('id', null)->assert('id', '\d+|')->bind('plugin_coupon_list');
         // クーポンの新規登録
-        $admin->match('/plugin/coupon/new', 'Plugin\Coupon\Controller\CouponController::edit')->value('id', null)->bind('admin_plugin_coupon_new');
+        $admin->match('/plugin/coupon/new', 'Plugin\Coupon\Controller\CouponController::edit')->value('id', null)->bind('plugin_coupon_new');
         // クーポンの編集
-        $admin->match('/plugin/coupon/{id}/edit', 'Plugin\Coupon\Controller\CouponController::edit')->value('id', null)->assert('id', '\d+|')->bind('admin_plugin_coupon_edit');
+        $admin->match('/plugin/coupon/{id}/edit', 'Plugin\Coupon\Controller\CouponController::edit')->value('id', null)->assert('id', '\d+|')->bind('plugin_coupon_edit');
         // クーポンの有効/無効化
-        $admin->match('/plugin/coupon/{id}/enable', 'Plugin\Coupon\Controller\CouponController::enable')->value('id', null)->assert('id', '\d+|')->bind('admin_plugin_coupon_enable');
+        $admin->match('/plugin/coupon/{id}/enable', 'Plugin\Coupon\Controller\CouponController::enable')->value('id', null)->assert('id', '\d+|')->bind('plugin_coupon_enable');
         // クーポンの削除
-        $admin->match('/plugin/coupon/{id}/delete', 'Plugin\Coupon\Controller\CouponController::delete')->value('id', null)->assert('id', '\d+|')->bind('admin_plugin_coupon_delete');
+        $admin->match('/plugin/coupon/{id}/delete', 'Plugin\Coupon\Controller\CouponController::delete')->value('id', null)->assert('id', '\d+|')->bind('plugin_coupon_delete');
         // 商品検索画面表示
-        $admin->post('/plugin/coupon/search/product', 'Plugin\Coupon\Controller\CouponSearchModelController::searchProduct')->bind('admin_plugin_coupon_search_product');
+        $admin->post('/plugin/coupon/search/product', 'Plugin\Coupon\Controller\CouponSearchModelController::searchProduct')->bind('plugin_coupon_search_product');
         // カテゴリ検索画面表示
-        $admin->post('/plugin/coupon/search/category', 'Plugin\Coupon\Controller\CouponSearchModelController::searchCategory')->bind('admin_plugin_coupon_search_category');
-        $admin->match('/plugin/shopping/shopping_coupon', 'Plugin\Coupon\Controller\CouponController::shoppingCoupon')->bind('front_plugin_shopping_coupon');
+        $admin->post('/plugin/coupon/search/category', 'Plugin\Coupon\Controller\CouponSearchModelController::searchCategory')->bind('plugin_coupon_search_category');
+        //product search dialog paginator
+        $admin->match('/plugin/coupon/search/product/page/{page_no}', 'Plugin\Coupon\Controller\CouponSearchModelController::searchProduct')
+            ->assert('page_no', '\d+')->bind('plugin_coupon_search_product_page');
 
         $app->mount('/'.trim($app['config']['admin_route'], '/').'/', $admin);
+
+        $front->match('/plugin/coupon/shopping/shopping_coupon', 'Plugin\Coupon\Controller\CouponController::shoppingCoupon')->bind('plugin_coupon_shopping');
+        $app->mount('', $front);
 
         // Formの登録
         $app['form.types'] = $app->share($app->extend('form.types', function ($types) use ($app) {
@@ -108,9 +103,9 @@ class CouponServiceProvider implements ServiceProviderInterface
         // メニュー登録
         // ============================================================
         $app['config'] = $app->share($app->extend('config', function ($config) {
-            $addNavi['id'] = "admin_plugin_coupon";
+            $addNavi['id'] = "plugin_coupon";
             $addNavi['name'] = "クーポン";
-            $addNavi['url'] = "admin_plugin_coupon_list";
+            $addNavi['url'] = "plugin_coupon_list";
 
             $nav = $config['nav'];
             foreach ($nav as $key => $val) {
