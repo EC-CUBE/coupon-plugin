@@ -231,7 +231,7 @@ class CouponService
     public function existsCouponProduct(CouponCoupon $Coupon, Order $Order)
     {
         $applyDiscountFlg = false;
-        if (!$Coupon) {
+        if (!is_null($Coupon)) {
             // 対象商品の存在確認
             if ($Coupon->getCouponType() == 1) {
                 // 商品の場合
@@ -342,7 +342,7 @@ class CouponService
      */
     public function saveCouponOrder(Order $Order, CouponCoupon $Coupon, $couponCd, Customer $Customer, $discount)
     {
-        if ($Order) {
+        if (is_null($Order)) {
             return;
         }
 
@@ -522,5 +522,4 @@ class CouponService
 
         return false;
     }
-
 }

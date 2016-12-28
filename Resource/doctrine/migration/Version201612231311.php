@@ -38,9 +38,11 @@ class Version201612231311 extends AbstractMigration
      */
     public function up(Schema $schema)
     {
-        $this->addSql("alter table plg_coupon add coupon_member SMALLINT DEFAULT 0");
-        $this->addSql("alter table plg_coupon add coupon_lower_limit");
-        $this->addSql("alter table plg_coupon_order add coupon_cancel_flg SMALLINT DEFAULT 0");
+        if (!Version::isSupportGetInstanceFunction()) {
+            $this->addSql("alter table plg_coupon add coupon_member SMALLINT DEFAULT 0");
+            $this->addSql("alter table plg_coupon add coupon_lower_limit");
+            $this->addSql("alter table plg_coupon_order add coupon_cancel_flg SMALLINT DEFAULT 0");
+        }
     }
 
     /**

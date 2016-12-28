@@ -19,6 +19,8 @@ use Plugin\Coupon\Form\Type\CouponDetailType;
 use Plugin\Coupon\Form\Type\CouponSearchCategoryType;
 use Plugin\Coupon\Form\Type\CouponUseType;
 use Plugin\Coupon\Service\CouponService;
+use Plugin\Coupon\Event\Event;
+use Plugin\Coupon\Event\EventLegacy;
 
 /**
  * Class CouponServiceProvider
@@ -63,6 +65,14 @@ class CouponServiceProvider implements ServiceProviderInterface
 
         $front->match('/plugin/coupon/shopping/shopping_coupon', 'Plugin\Coupon\Controller\CouponController::shoppingCoupon')->bind('plugin_coupon_shopping');
         $app->mount('', $front);
+
+        // イベントの追加
+        $app['eccube.plugin.coupon.event'] = $app->share(function () use ($app) {
+            return new Event($app);
+        });
+        $app['eccube.plugin.coupon.event.legacy'] = $app->share(function () use ($app) {
+            return new EventLegacy($app);
+        });
 
         // Formの登録
         $app['form.types'] = $app->share($app->extend('form.types', function ($types) use ($app) {

@@ -30,6 +30,19 @@ eccube.event.controller.shopping_shipping_edit.after:
 
 
 # v3.0.9以降
+# new hook point
+Shopping/index.twig:
+   - [onRenderShoppingIndex, NORMAL]
+
+Shopping/complete.twig:
+    - [onRenderShoppingComplete, NORMAL]
+
+front.shopping.confirm.initialize:
+    - [onShoppingConfirmInit, NORMAL]
+
+admin.order.edit.index.initialize:
+    - [onAdminOrderEditInit, NORMAL]
+
 # 配送先関連
 front.shopping.delivery.complete:
     - [onRestoreDiscount, NORMAL]
@@ -41,6 +54,6 @@ front.shopping.payment.complete:
 ## 配送方法設定
 front.shopping.shipping.complete:
     - [onRestoreDiscount, NORMAL]
+
 front.shopping.shipping.edit.complete:
     - [onRestoreDiscount, NORMAL]
-

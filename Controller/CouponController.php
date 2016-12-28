@@ -267,7 +267,6 @@ class CouponController
                 }
                 // クーポン情報を取得
                 $Coupon = $app['eccube.plugin.coupon.repository.coupon']->findActiveCoupon($formCouponCd);
-
                 if ($Coupon) {
                     // 既に登録済みのクーポンコードを一旦削除
                     $this->removeCouponOrder($Order, $app);
@@ -327,7 +326,7 @@ class CouponController
             }
         }
 
-        return $app->render('Coupon/Resource/default/shopping_coupon.twig', array(
+        return $app->render('Coupon/Resource/template/default/shopping_coupon.twig', array(
             'form' => $form->createView(),
             'Order' => $Order,
         ));

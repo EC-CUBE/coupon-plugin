@@ -113,7 +113,12 @@ class CouponSearchModelController
             }
 
             // カテゴリーの一覧を作成する
-            $list = $this->getCategoryList($Categories, $existCategoryIds);
+            $list = array();
+            if ($categoryId != 0 && !in_array($categoryId, $existCategoryIds)) {
+                $name = $Category->getName();
+                $list += array($Category->getId() => $name);
+            }
+            $list += $this->getCategoryList($Categories, $existCategoryIds);
 
             return $app->render('Coupon/Resource/template/admin/search_category.twig', array(
                 'Categories' => $list,

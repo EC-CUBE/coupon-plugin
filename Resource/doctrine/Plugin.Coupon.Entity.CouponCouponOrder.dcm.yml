@@ -22,7 +22,7 @@ Plugin\Coupon\Entity\CouponCouponOrder:
             nullable: true
         email:
             type: text
-            nullable: false
+            nullable: true
         order_id:
             type: integer
             nullable: false
@@ -31,7 +31,7 @@ Plugin\Coupon\Entity\CouponCouponOrder:
             nullable: false
         order_date:
             type: datetime
-            nullable: false
+            nullable: true
         discount:
             type: decimal
             nullable: false

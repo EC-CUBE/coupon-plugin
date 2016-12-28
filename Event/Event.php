@@ -10,27 +10,44 @@
 
 namespace Plugin\Coupon\Event;
 
+use Eccube\Application;
 use Eccube\Common\Constant;
 use Eccube\Entity\Order;
 use Eccube\Event\EventArgs;
-use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Form as Error;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\Validator\Constraints as Assert;
+use Plugin\Coupon\Util\Version;
+use Eccube\Event\TemplateEvent;
 
+/**
+ * Class Event
+ */
 class Event
 {
-
-    /** @var \Eccube\Application */
+    /**
+     * @var Application
+     */
     private $app;
+
+    /**
+     * position for insert in twig file.
+     *
+     * @var string
+     */
+    const COUPON_TAG = '<!--# counpon-plugin-tag #-->';
 
     /**
      * @var string 非会員用セッションキー
      */
     private $sessionKey = 'eccube.front.shopping.nonmember';
 
+    /**
+     * Event constructor.
+     * @param Application $app
+     */
     public function __construct($app)
     {
         $this->app = $app;
@@ -41,34 +58,66 @@ class Event
      *
      * @param FilterResponseEvent $event
      */
-    public function onRenderShoppingBefore(FilterResponseEvent $event)
+    public function onRenderShoppingIndex(TemplateEvent $event)
     {
-
-        $request = $event->getRequest();
-        $response = $event->getResponse();
-
-        // 受注データを取得
-        $Order = $this->getOrder();
-        if (is_null($Order)) {
+        log_info('Coupon trigger onRenderShoppingIndex start');
+        $app = $this->app;
+        $parameters = $event->getParameters();
+        // ProductIDがない場合、レンダリングしない
+        if (is_null($parameters['Order'])) {
             return;
         }
 
-        // クーポン関連項目を追加する
-        $response->setContent($this->getHtmlShopping($request, $response, $Order));
-
-        $event->setResponse($response);
-
+        // 登録がない、レンダリングをしない
+        $Order = $parameters['Order'];
+        // クーポンが未入力でクーポン情報が存在すればクーポン情報を削除
+        $CouponOrder = $this->app['eccube.plugin.coupon.service.coupon']->getCouponOrder($Order->getPreOrderId());
+        // twigコードを挿入
+        $snipet = $app['twig']->getLoader()->getSource('Coupon/Resource/template/default/coupon_shopping_item.twig');
+        $source = $event->getSource();
+        //find coupon mark
+        if (strpos($source, self::COUPON_TAG)) {
+            log_info('Render coupon with ', array('COUPON_TAG' => self::COUPON_TAG));
+            $search = self::COUPON_TAG;
+            $replace = $snipet.$search;
+        } else {
+            //regular expression for get free area div
+            $search = '<h2 class="heading02">お問い合わせ欄</h2>';
+            $replace = $snipet.$search;
+        }
+        $source = str_replace($search, $replace, $source);
+        //add discount(値引き) layout for version < 3.0.10
+        if (!Version::isSupportDisplayDiscount()) {
+            // 値引き項目を表示
+            if ($CouponOrder) {
+                $total = $Order->getTotal() - $CouponOrder->getDiscount();
+                $Order->setTotal($total);
+                $Order->setPaymentTotal($total);
+                // 合計、値引きを再計算し、dtb_orderを更新する
+                $this->app['orm.em']->flush($Order);
+                // このタグを前後に分割し、間に項目を入れ込む
+                // 元の合計金額は書き込み済みのため再度書き込みを行う
+                $snipet = $app['twig']->getLoader()->getSource('Coupon/Resource/template/default/coupon_shopping_item.twig');
+                $search = '<div id="summary_box__result" class="total_amount">';
+                $replace = $search.$snipet;
+                $source = str_replace($search, $replace, $source);
+                $parameters['Order'] = $Order;
+            }
+        }
+        $event->setSource($source);
+        //set parameter for twig files
+        $parameters['CouponOrder'] = $CouponOrder;
+        $event->setParameters($parameters);
+        log_info('Coupon trigger onRenderShoppingIndex finish');
     }
 
     /**
      * クーポンが利用されていないかチェック
      *
      */
-    public function onControllerShoppingConfirmBefore($event = null)
+    public function onShoppingConfirmInit()
     {
-
         $cartService = $this->app['eccube.service.cart'];
-
         $preOrderId = $cartService->getPreOrderId();
         if (is_null($preOrderId)) {
             return;
@@ -91,57 +140,40 @@ class Event
         }
 
         // クーポンが既に利用されているかチェック
-        $couponUsedOrNot = $this->app['eccube.plugin.coupon.service.coupon']
-            ->checkCouponUsedOrNotBefore($CouponOrder->getCouponCd(), $CouponOrder->getOrderId(), $Customer);
-
+        $couponUsedOrNot = $this->app['eccube.plugin.coupon.service.coupon']->checkCouponUsedOrNotBefore($CouponOrder->getCouponCd(), $CouponOrder->getOrderId(), $Customer);
         if ($couponUsedOrNot) {
             $this->app->addError($this->app->trans('front.plugin.coupon.shopping.sameuser'), 'front.request');
             // 既に存在している
-            if (is_null($event)) {
-                header("Location: ".$this->app->url('shopping'));
-                exit;
-            } else {
-                $response = $this->redirect($this->app->url('shopping'));
-                $event->setResponse($response);
-                return;
-            }
+            header("Location: ".$this->app->url('shopping'));
+            exit;
         }
-
     }
 
     /**
      * 注文クーポン情報に受注日付を登録する.
      *
      */
-    public function onControllerShoppingCompleteBefore()
+    public function onRenderShoppingComplete()
     {
         $orderId = $this->app['session']->get('eccube.front.shopping.order.id');
-
         if (is_null($orderId)) {
             return;
         }
-
         $repository = $this->app['eccube.plugin.coupon.repository.coupon_order'];
-
         // クーポン受注情報を取得する
         $CouponOrder = $repository->findOneBy(array(
             'order_id' => $orderId
         ));
-
-        if (!$CouponOrder) {
+        if (!is_null($CouponOrder)) {
             return;
         }
         // 更新対象データ
 
         $now = new \DateTime();
-
         $CouponOrder->setOrderDate($now);
         $CouponOrder->setUpdateDate($now);
-
         $repository->save($CouponOrder);
-
         $Coupon = $this->app['eccube.plugin.coupon.repository.coupon']->findActiveCoupon($CouponOrder->getCouponCd());
-
         // クーポンの発行枚数を減らす(マイナスになっても無視する)
         $Coupon->setCouponUseTime($Coupon->getCouponUseTime() - 1);
         $this->app['orm.em']->flush($Coupon);
@@ -153,60 +185,32 @@ class Event
      *
      * @param FilterResponseEvent $event
      */
-    public function onRenderAdminOrderEditAfter(FilterResponseEvent $event)
+    public function onAdminOrderEditInit(EventArgs $event)
     {
         $app = &$this->app;
-
         $request = $event->getRequest();
         $response = $event->getResponse();
-
         // 受注IDを取得する
         $orderId = $request->get('id');
         if (is_null($orderId)) {
             return;
         }
-
         // クーポン受注情報を取得する
         $repCouponOrder = $this->app['eccube.plugin.coupon.repository.coupon_order'];
-
         // クーポン受注情報を取得する
         $CouponOrder = $repCouponOrder->findUseCouponByOrderId($orderId);
         if (is_null($CouponOrder)) {
             return;
         }
-
         // クーポン受注情報からクーポン情報を取得する
         $repCoupon = $this->app['eccube.plugin.coupon.repository.coupon'];
         $Coupon = $repCoupon->find($CouponOrder->getCouponId());
         if (is_null($Coupon)) {
             return;
         }
-
         // 編集画面にクーポン表示を追加する
         $this->getHtmlOrderEdit($request, $response, $Coupon);
     }
-
-
-    /**
-     * 配送先や支払い方法変更時の合計金額と値引きの差額チェック
-     * v3.0.8までで使用
-     *
-     */
-    public function onControllerRestoreDiscountAfter()
-    {
-        if ($this->supportNewHookPoint()) {
-            return;
-        }
-
-        // 受注データを取得
-        $Order = $this->getOrder();
-        if (!$Order) {
-            return;
-        }
-
-        $this->restoreDiscount($Order);
-    }
-
 
     /**
      * 配送先や支払い方法変更時の合計金額と値引きの差額チェック
@@ -216,16 +220,13 @@ class Event
      */
     public function onRestoreDiscount(EventArgs $event)
     {
-
         if ($event->hasArgument('Order')) {
             $Order = $event->getArgument('Order');
         } else {
             $Shipping = $event->getArgument('Shipping');
             $Order = $Shipping->getOrder();
         }
-
         $this->restoreDiscount($Order);
-
     }
 
     // =========================================================
@@ -277,110 +278,14 @@ class Event
             $insert = $this->app->renderView('Coupon/View/admin/order_edit_coupon.twig', array(
                 'form' => $Coupon
             ));
-
             $template = $dom->createDocumentFragment();
             $template->appendXML($insert);
-
             // ChildNodeの途中には追加ができないため、一旦操作部を削除する
             // その後、クーポン情報、操作部の順にappendする
             // Insert coupon template before operationNode
             $parentNode->insertBefore($template, $operationNode);
-
             $response->setContent($dom->saveHTML());
         }
-
-    }
-
-
-    /**
-     * ご注文内容のご確認画面のHTMLを取得し、関連項目を書き込む
-     * お支払方法の下に下記の項目を追加する.(id=confirm_main )
-     * ・クーポンコードボタン
-     * 送料のの下に下記の項目を追加する.(class=total_box total_amountの上)
-     * ・値引き表示
-     *
-     * @param Request $request
-     * @param Response $response
-     * @param Order $Order
-     * @return mixed|string
-     */
-    private function getHtmlShopping(Request $request, Response $response, Order $Order)
-    {
-
-        // HTMLを取得し、DOM化
-        $crawler = new Crawler($response->getContent());
-        $html = $this->getHtml($crawler);
-
-        try {
-
-            // クーポンが未入力でクーポン情報が存在すればクーポン情報を削除
-            $CouponOrder = $this->app['eccube.plugin.coupon.service.coupon']->getCouponOrder($Order->getPreOrderId());
-
-            $parts = $this->app->renderView('Coupon/View/coupon_shopping_item.twig', array(
-                'CouponOrder' => $CouponOrder,
-            ));
-
-            // このタグを前後に分割し、間に項目を入れ込む
-            $beforeHtml = $crawler->filter('#confirm_main')->last()->html();
-            $pos = strrpos($beforeHtml, '<h2 class="heading02">');
-            if ($pos !== false) {
-                $oldHtml = substr($beforeHtml, 0, $pos);
-                $afterHtml = substr($beforeHtml, $pos);
-                $newHtml = $oldHtml.$parts.$afterHtml;
-                $html = str_replace($beforeHtml, $newHtml, $html);
-            }
-
-            if (!version_compare('3.0.10', Constant::VERSION, '<=')) {
-                // 値引き項目を表示
-
-                if ($CouponOrder) {
-                    $total = $Order->getTotal() - $CouponOrder->getDiscount();
-                    $Order->setTotal($total);
-                    $Order->setPaymentTotal($total);
-
-                    // 合計、値引きを再計算し、dtb_orderを更新する
-                    $this->app['orm.em']->flush($Order);
-
-                    // このタグを前後に分割し、間に項目を入れ込む
-                    // 元の合計金額は書き込み済みのため再度書き込みを行う
-                    $parts = $this->app->renderView('Coupon/View/discount_shopping_item.twig', array(
-                        'Order' => $Order,
-                    ));
-                    $form = $crawler->filter('#confirm_side .total_box')->last()->html();
-
-                    $pos = strrpos($form, '</dl>');
-                    if ($pos !== false) {
-                        $oldHtml = substr($form, 0, $pos);
-                        $newHtml = $oldHtml.$parts;
-                        $html = str_replace($form, $newHtml, $html);
-                    }
-                }
-            }
-
-        } catch (\InvalidArgumentException $e) {
-            // no-op
-        }
-
-        return $html;
-
-    }
-
-    /**
-     * 受注データを取得
-     *
-     * @return null|object
-     */
-    private function getOrder()
-    {
-        // 受注データを取得
-
-        $preOrderId = $this->app['eccube.service.cart']->getPreOrderId();
-        $Order = $this->app['eccube.repository.order']->findOneBy(array(
-            'pre_order_id' => $preOrderId,
-            'OrderStatus' => $this->app['config']['order_processing']
-        ));
-
-        return $Order;
     }
 
     /**
@@ -390,68 +295,24 @@ class Event
      */
     private function restoreDiscount(Order $Order)
     {
-
         // クーポンが未入力でクーポン情報が存在すればクーポン情報を削除
         $CouponOrder = $this->app['eccube.plugin.coupon.service.coupon']->getCouponOrder($Order->getPreOrderId());
-
         if ($CouponOrder) {
-
             $total = $Order->getSubtotal() + $Order->getCharge() + $Order->getDeliveryFeeTotal();
             // 合計金額
             $totalAmount = $total - $Order->getDiscount();
-
             if ($totalAmount < 0) {
                 // 合計金額がマイナスのため、金額を値引き前に戻す
-
                 $this->app['orm.em']->remove($CouponOrder);
                 $this->app['orm.em']->flush($CouponOrder);
-
                 $discount = $Order->getDiscount() - $CouponOrder->getDiscount();
-
                 $Order->setDiscount($discount);
-
                 $total = $total - $discount;
-
                 $Order->setTotal($total);
                 $Order->setPaymentTotal($total);
-
                 $this->app['orm.em']->flush($Order);
-
                 $this->app->addError($this->app->trans('front.plugin.coupon.shopping.use.minus'), 'front.request');
             }
         }
-
     }
-
-
-    /**
-     * 解析用HTMLを取得
-     *
-     * @param Crawler $crawler
-     * @return string
-     */
-    private function getHtml(Crawler $crawler)
-    {
-        $html = '';
-        /** @var \DOMElement $domElement */
-        foreach ($crawler as $domElement) {
-            $domElement->ownerDocument->formatOutput = true;
-            $html .= $domElement->ownerDocument->saveHTML();
-        }
-
-        return html_entity_decode($html, ENT_NOQUOTES, 'UTF-8');
-    }
-
-
-    /**
-     * v3.0.9以降のフックポイントに対応しているのか
-     *
-     * @return bool
-     */
-    private function supportNewHookPoint()
-    {
-        return version_compare('3.0.9', Constant::VERSION, '<=');
-    }
-
-
 }

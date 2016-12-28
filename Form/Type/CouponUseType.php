@@ -33,6 +33,15 @@ class CouponUseType extends AbstractType
                 'required' => false,
                 'trim' => true,
                 'mapped' => false,
+            ))
+            ->add('coupon_use', 'choice', array(
+                'choices' => array(1 => 'クーポンを利用する', 0 => 'クーポンを利用'),
+                'required' => true,
+                'expanded' => true,
+                'multiple' => false,
+                'label' => '',
+                'data' => 1,
+                'empty_value' => false,
             ));
     }
 

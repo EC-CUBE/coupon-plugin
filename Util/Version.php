@@ -46,7 +46,20 @@ class Version
      *
      * @return bool|int|mixed|void
      */
-    public static function isSupport($version = '3.0.9', $operation = '>=')
+    public static function isSupportNewHookPoint($version = '3.0.9', $operation = '>=')
+    {
+        return version_compare(Constant::VERSION, $version, $operation);
+    }
+
+    /**
+     * Check support in version Ec cube
+     *
+     * @param string $version
+     * @param string $operation
+     *
+     * @return bool|int|mixed|void
+     */
+    public static function isSupportDisplayDiscount($version = '3.0.10', $operation = '>=')
     {
         return version_compare(Constant::VERSION, $version, $operation);
     }

@@ -67,6 +67,11 @@ class CouponCouponOrder extends \Eccube\Entity\AbstractEntity
     private $del_flg;
 
     /**
+     * @var integer
+     */
+    private $coupon_cancel;
+
+    /**
      * @var \DateTime
      */
     private $create_date;
@@ -292,6 +297,22 @@ class CouponCouponOrder extends \Eccube\Entity\AbstractEntity
     public function getDelFlg()
     {
         return $this->del_flg;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCouponCancel()
+    {
+        return $this->coupon_cancel;
+    }
+
+    /**
+     * @param int $coupon_cancel
+     */
+    public function setCouponCancel($coupon_cancel)
+    {
+        $this->coupon_cancel = $coupon_cancel;
     }
 
     /**
