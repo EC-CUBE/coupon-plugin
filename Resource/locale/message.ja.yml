@@ -11,3 +11,5 @@ front.plugin.coupon.shopping.sameuser: このクーポンは既にご利用い�
 front.plugin.coupon.shopping.couponusetime: このクーポンはご利用いただくことができません。
 front.plugin.coupon.shopping.minus: 合計金額を超えるため、このクーポンをご利用いただくことはできません。
 front.plugin.coupon.shopping.use.minus: クーポン利用時の合計金額がマイナスになったため、クーポンの利用をキャンセルしました。
+front.plugin.coupon.shopping.member: このクーポンは会員のみクーポンです。
+front.plugin.coupon.shopping.lowerlimit: このクーポンの下限金額より低いです。

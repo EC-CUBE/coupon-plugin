@@ -1,7 +1,7 @@
-Plugin\Coupon\Entity\CouponCoupon:
+Plugin\Coupon\Entity\Coupon:
     type: entity
     table: plg_coupon
-    repositoryClass: Plugin\Coupon\Repository\CouponCouponRepository
+    repositoryClass: Plugin\Coupon\Repository\CouponRepository
     id:
         id:
             type: integer
@@ -71,7 +71,7 @@ Plugin\Coupon\Entity\CouponCoupon:
             nullable: false
     oneToMany:
         CouponDetails:
-            targetEntity: Plugin\Coupon\Entity\CouponCouponDetail
+            targetEntity: Plugin\Coupon\Entity\CouponDetail
             mappedBy: Coupon
             orderBy:
                 id: ASC

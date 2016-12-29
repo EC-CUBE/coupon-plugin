@@ -235,7 +235,7 @@ class CouponType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Plugin\Coupon\Entity\CouponCoupon',
+            'data_class' => 'Plugin\Coupon\Entity\Coupon',
         ));
     }
 

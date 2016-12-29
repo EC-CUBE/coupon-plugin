@@ -14,7 +14,8 @@ use Eccube\Application;
 use Eccube\Common\Constant;
 use Eccube\Entity\Customer;
 use Eccube\Entity\Order;
-use Plugin\Coupon\Entity\CouponCoupon;
+use Plugin\Coupon\Entity\Coupon;
+use Plugin\Coupon\Service\CouponService;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -67,7 +68,7 @@ class CouponController
         $Coupon = null;
         if (!$id) {
             // 新規登録
-            $Coupon = new CouponCoupon();
+            $Coupon = new Coupon();
             $Coupon->setEnableFlag(Constant::ENABLED);
             $Coupon->setDelFlg(Constant::DISABLED);
         } else {
@@ -242,8 +243,10 @@ class CouponController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             // サービスの取得
+            /* @var $service CouponService */
             $service = $app['eccube.plugin.coupon.service.coupon'];
             $formCouponCd = $form->get('coupon_cd')->getData();
+            $formCouponCancel = $form->get('coupon_use')->getData();
             // ---------------------------------
             // クーポンコード入力項目追加
             // ----------------------------------
@@ -252,30 +255,52 @@ class CouponController
                 return $app->redirect($app->url('shopping'));
             }
 
-            if (empty($formCouponCd) && $couponCd) {
+            if ($formCouponCancel == 0 && $couponCd) {
                 // 画面上のクーポンコードが入力されておらず、既にクーポンコードが登録されていればクーポンを無効にする
                 $this->removeCouponOrder($Order, $app);
+
                 return $app->redirect($app->url('shopping'));
             } else {
                 // クーポンコードが入力されている
                 $discount = 0;
                 $error = false;
+                // クーポン情報を取得
+                /* @var $Coupon Coupon */
+                $Coupon = $app['eccube.plugin.coupon.repository.coupon']->findActiveCoupon($formCouponCd);
                 if ($app->isGranted('ROLE_USER')) {
                     $Customer = $app->user();
                 } else {
                     $Customer = $app['eccube.service.shopping']->getNonMember($this->sessionKey);
+                    if ($Coupon) {
+                        if ($Coupon->getCouponMember()) {
+                            $form->get("coupon_cd")->addError(new FormError('front.plugin.coupon.shopping.member'));
+                            $error = true;
+                        }
+                    }
                 }
-                // クーポン情報を取得
-                $Coupon = $app['eccube.plugin.coupon.repository.coupon']->findActiveCoupon($formCouponCd);
-                if ($Coupon) {
+                if ($Coupon && !$error) {
+                    $lowerLimit = $Coupon->getCouponLowerLimit();
                     // 既に登録済みのクーポンコードを一旦削除
                     $this->removeCouponOrder($Order, $app);
-                    // 値引き額を取得
-                    $discount = $service->recalcOrder($Order, $Coupon);
                     // 対象クーポンが存在しているかチェック
-                    $existCoupon = $service->existsCouponProduct($Coupon, $Order);
+                    $couponProducts = $service->existsCouponProduct($Coupon, $Order);
+                    $checkLowerLimit = $service->isLowerLimitCoupon($couponProducts, $lowerLimit);
+                    // 値引き額を取得
+                    $discount = $service->recalcOrder($Order, $Coupon, $couponProducts);
+
+                    if (is_null($couponProducts)) {
+                        $existCoupon = false;
+                    } else {
+                        $existCoupon = true;
+                    }
+
                     if (!$existCoupon) {
                         $form->get("coupon_cd")->addError(new FormError('front.plugin.coupon.shopping.notexists'));
+                        $error = true;
+                    }
+
+                    if (!$checkLowerLimit) {
+                        $form->get("coupon_cd")->addError(new FormError('front.plugin.coupon.shopping.lowerlimit'));
                         $error = true;
                     }
 
@@ -299,7 +324,7 @@ class CouponController
                         $form->get("coupon_cd")->addError(new FormError('front.plugin.coupon.shopping.minus'));
                         $error = true;
                     }
-                } else {
+                } elseif (!$Coupon) {
                     $form->get("coupon_cd")->addError(new FormError('front.plugin.coupon.shopping.notexists'));
                 }
                 // ----------------------------------
@@ -346,18 +371,17 @@ class CouponController
         return $Coupon->getCouponUseTime() >= 1;
     }
 
-
     /**
      * クーポン情報に登録
      *
      * @param Order $Order
-     * @param CouponCoupon $Coupon
+     * @param Coupon $Coupon
      * @param $couponCd
      * @param Customer $Customer
      * @param $discount
      * @param Application $app
      */
-    private function setCouponOrder(Order $Order, CouponCoupon $Coupon, $couponCd, Customer $Customer, $discount, Application $app)
+    private function setCouponOrder(Order $Order, Coupon $Coupon, $couponCd, Customer $Customer, $discount, Application $app)
     {
         $total = $Order->getTotal() - $discount;
         $Order->setDiscount($Order->getDiscount() + $discount);

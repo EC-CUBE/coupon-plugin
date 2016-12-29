@@ -11,12 +11,10 @@
 namespace Plugin\Coupon\Event;
 
 use Eccube\Application;
-use Eccube\Common\Constant;
 use Eccube\Entity\Order;
 use Eccube\Event\EventArgs;
+use Plugin\Coupon\Entity\Coupon;
 use Symfony\Component\Form as Error;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\Validator\Constraints as Assert;
 use Plugin\Coupon\Util\Version;
@@ -117,6 +115,7 @@ class Event
      */
     public function onShoppingConfirmInit()
     {
+        log_info('Coupon trigger onShoppingConfirmInit start');
         $cartService = $this->app['eccube.service.cart'];
         $preOrderId = $cartService->getPreOrderId();
         if (is_null($preOrderId)) {
@@ -147,14 +146,15 @@ class Event
             header("Location: ".$this->app->url('shopping'));
             exit;
         }
+        log_info('Coupon trigger onShoppingConfirmInit end');
     }
 
     /**
      * 注文クーポン情報に受注日付を登録する.
-     *
      */
     public function onRenderShoppingComplete()
     {
+        log_info('Coupon trigger onRenderShoppingComplete start');
         $orderId = $this->app['session']->get('eccube.front.shopping.order.id');
         if (is_null($orderId)) {
             return;
@@ -164,11 +164,10 @@ class Event
         $CouponOrder = $repository->findOneBy(array(
             'order_id' => $orderId
         ));
-        if (!is_null($CouponOrder)) {
+        if (is_null($CouponOrder)) {
             return;
         }
         // 更新対象データ
-
         $now = new \DateTime();
         $CouponOrder->setOrderDate($now);
         $CouponOrder->setUpdateDate($now);
@@ -177,39 +176,52 @@ class Event
         // クーポンの発行枚数を減らす(マイナスになっても無視する)
         $Coupon->setCouponUseTime($Coupon->getCouponUseTime() - 1);
         $this->app['orm.em']->flush($Coupon);
+        log_info('Coupon trigger onRenderShoppingComplete start');
     }
 
     /**
      * [order/{id}/edit]表示の時のEvent Fock.
      * クーポン関連項目を追加する
      *
-     * @param FilterResponseEvent $event
+     * @param TemplateEvent $event
      */
-    public function onAdminOrderEditInit(EventArgs $event)
+    public function onRenderAdminOrderEdit(TemplateEvent $event)
     {
-        $app = &$this->app;
-        $request = $event->getRequest();
-        $response = $event->getResponse();
-        // 受注IDを取得する
-        $orderId = $request->get('id');
-        if (is_null($orderId)) {
+        log_info('Coupon trigger onRenderAdminOrderEdit start');
+        $app = $this->app;
+        $parameters = $event->getParameters();
+        // ProductIDがない場合、レンダリングしない
+        if (is_null($parameters['Order'])) {
             return;
         }
+        $Order = $parameters['Order'];
         // クーポン受注情報を取得する
         $repCouponOrder = $this->app['eccube.plugin.coupon.repository.coupon_order'];
         // クーポン受注情報を取得する
-        $CouponOrder = $repCouponOrder->findUseCouponByOrderId($orderId);
+        $CouponOrder = $repCouponOrder->findUseCouponByOrderId($Order->getId());
         if (is_null($CouponOrder)) {
             return;
         }
         // クーポン受注情報からクーポン情報を取得する
         $repCoupon = $this->app['eccube.plugin.coupon.repository.coupon'];
+        /* @var $Coupon Coupon */
         $Coupon = $repCoupon->find($CouponOrder->getCouponId());
         if (is_null($Coupon)) {
             return;
         }
-        // 編集画面にクーポン表示を追加する
-        $this->getHtmlOrderEdit($request, $response, $Coupon);
+        // twigコードを挿入
+        $snipet = $app['twig']->getLoader()->getSource('Coupon/Resource/template/admin/order_edit_coupon.twig');
+        $source = $event->getSource();
+        //find coupon mark
+        $search = '<div id="detail__insert_button" class="row btn_area">';
+        $replace = $snipet.$search;
+        $source = str_replace($search, $replace, $source);
+        $event->setSource($source);
+        //set parameter for twig files
+        $parameters['coupon_cd'] = $Coupon->getCouponCd();
+        $parameters['coupon_name'] = $Coupon->getCouponName();
+        $event->setParameters($parameters);
+        log_info('Coupon trigger onRenderAdminOrderEdit finish');
     }
 
     /**
@@ -220,6 +232,7 @@ class Event
      */
     public function onRestoreDiscount(EventArgs $event)
     {
+        log_info('Coupon trigger onRestoreDiscount start');
         if ($event->hasArgument('Order')) {
             $Order = $event->getArgument('Order');
         } else {
@@ -227,65 +240,51 @@ class Event
             $Order = $Shipping->getOrder();
         }
         $this->restoreDiscount($Order);
+        log_info('Coupon trigger onRestoreDiscount end');
     }
 
-    // =========================================================
-    // クラス内メソッド
-    // =========================================================
-
     /**
-     * 受注情報編集画面にクーポン情報を追加する
+     * Hook point add coupon information to mypage history
      *
-     * @param Request $request
-     * @param Response $response
-     * @param $Coupon
+     * @param TemplateEvent $event
      */
-    private function getHtmlOrderEdit(Request $request, Response $response, $Coupon)
+    public function onRenderMypageHistory(TemplateEvent $event)
     {
-        $source = $response->getContent();
-        libxml_use_internal_errors(true);
-        $dom = new \DOMDocument();
-        $dom->loadHTML('<?xml encoding="UTF-8">'.$source);
-        $dom->encoding = "UTF-8";
-
-        /** @var DOMNodeList */
-        $Elements = $dom->getElementsByTagName("*");
-        $parentNode = null;
-        $operationNode = null;
-
-        // for new version (> 3.0.4)
-        $parentNodeValue = 'col-md-12';
-        $operationNodeValue = 'row btn_area';
-        // for old version (<= 3.0.4)
-        if (version_compare(Constant::VERSION, '3.0.4', '<=')) {
-            $parentNodeValue = 'col-md-9';
-            $operationNodeValue = 'row hidden-xs hidden-sm';
+        log_info('Coupon trigger onRenderMypageHistory start');
+        $app = $this->app;
+        $parameters = $event->getParameters();
+        // ProductIDがない場合、レンダリングしない
+        if (is_null($parameters['Order'])) {
+            return;
         }
-
-        for ($i = 0; $i < $Elements->length; $i++) {
-            if (@$Elements->item($i)->attributes->getNamedItem('class')->nodeValue == $parentNodeValue) {
-                // 親ノードを保持する
-                $parentNode = $Elements->item($i);
-            } else if (@$Elements->item($i)->attributes->getNamedItem('class')->nodeValue == $operationNodeValue) {
-                // 操作部ノードを保持する
-                $operationNode = $Elements->item($i);
-            }
+        $Order = $parameters['Order'];
+        // クーポン受注情報を取得する
+        $repCouponOrder = $this->app['eccube.plugin.coupon.repository.coupon_order'];
+        // クーポン受注情報を取得する
+        $CouponOrder = $repCouponOrder->findUseCouponByOrderId($Order->getId());
+        if (is_null($CouponOrder)) {
+            return;
         }
-
-        // 親ノード、操作部（登録ボタン、戻るリンク）ノードが取得できた場合のみクーポン情報を表示する
-        if (!is_null($parentNode) && !is_null($operationNode)) {
-            // 追加するクーポン情報のHTMLを取得する.
-            $insert = $this->app->renderView('Coupon/View/admin/order_edit_coupon.twig', array(
-                'form' => $Coupon
-            ));
-            $template = $dom->createDocumentFragment();
-            $template->appendXML($insert);
-            // ChildNodeの途中には追加ができないため、一旦操作部を削除する
-            // その後、クーポン情報、操作部の順にappendする
-            // Insert coupon template before operationNode
-            $parentNode->insertBefore($template, $operationNode);
-            $response->setContent($dom->saveHTML());
+        // クーポン受注情報からクーポン情報を取得する
+        $repCoupon = $this->app['eccube.plugin.coupon.repository.coupon'];
+        /* @var $Coupon Coupon */
+        $Coupon = $repCoupon->find($CouponOrder->getCouponId());
+        if (is_null($Coupon)) {
+            return;
         }
+        // twigコードを挿入
+        $snipet = $app['twig']->getLoader()->getSource('Coupon/Resource/template/default/mypage_history_coupon.twig');
+        $source = $event->getSource();
+        //find coupon mark
+        $search = '<h2 class="heading02">お問い合わせ</h2>';
+        $replace = $snipet.$search;
+        $source = str_replace($search, $replace, $source);
+        $event->setSource($source);
+        //set parameter for twig files
+        $parameters['coupon_cd'] = $Coupon->getCouponCd();
+        $parameters['coupon_name'] = $Coupon->getCouponName();
+        $event->setParameters($parameters);
+        log_info('Coupon trigger onRenderMypageHistory finish');
     }
 
     /**

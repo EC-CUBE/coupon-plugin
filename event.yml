@@ -5,6 +5,9 @@
 eccube.event.render.shopping.before:
     - [onRenderShoppingBefore, NORMAL]
 
+eccube.event.render.mypage_history.before:
+    - [onRenderMypageHistoryBefore, NORMAL]
+
 eccube.event.controller.shopping_confirm.before:
     - [onControllerShoppingConfirmBefore, NORMAL]
 
@@ -34,14 +37,17 @@ eccube.event.controller.shopping_shipping_edit.after:
 Shopping/index.twig:
    - [onRenderShoppingIndex, NORMAL]
 
-Shopping/complete.twig:
+Mypage/history.twig:
+    - [onRenderMypageHistory, NORMAL]
+
+front.shopping.complete.initialize:
     - [onRenderShoppingComplete, NORMAL]
 
 front.shopping.confirm.initialize:
     - [onShoppingConfirmInit, NORMAL]
 
-admin.order.edit.index.initialize:
-    - [onAdminOrderEditInit, NORMAL]
+Admin/Order/edit.twig:
+    - [onRenderAdminOrderEdit, NORMAL]
 
 # 配送先関連
 front.shopping.delivery.complete:

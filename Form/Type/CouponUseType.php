@@ -18,7 +18,6 @@ use Symfony\Component\Form\FormBuilderInterface;
  */
 class CouponUseType extends AbstractType
 {
-
     /**
      * buildForm
      *
@@ -35,7 +34,7 @@ class CouponUseType extends AbstractType
                 'mapped' => false,
             ))
             ->add('coupon_use', 'choice', array(
-                'choices' => array(1 => 'クーポンを利用する', 0 => 'クーポンを利用'),
+                'choices' => array(1 => 'クーポンを利用する。', 0 => 'クーポンを利用しない。'),
                 'required' => true,
                 'expanded' => true,
                 'multiple' => false,

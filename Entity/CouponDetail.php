@@ -10,11 +10,14 @@
 namespace Plugin\Coupon\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Eccube\Entity\AbstractEntity;
+use Eccube\Entity\Product;
+use Eccube\Entity\Category;
 
 /**
- * CouponCouponDetail
+ * CouponDetail
  */
-class CouponCouponDetail extends \Eccube\Entity\AbstractEntity
+class CouponDetail extends AbstractEntity
 {
     /**
      * @var integer
@@ -42,17 +45,17 @@ class CouponCouponDetail extends \Eccube\Entity\AbstractEntity
     private $update_date;
 
     /**
-     * @var \Plugin\Coupon\Entity\CouponCoupon
+     * @var Coupon
      */
     private $Coupon;
 
     /**
-     * @var \Eccube\Entity\Product
+     * @var Product
      */
     private $Product;
 
     /**
-     * @var \Eccube\Entity\Category
+     * @var Category
      */
     private $Category;
 
@@ -70,7 +73,7 @@ class CouponCouponDetail extends \Eccube\Entity\AbstractEntity
      * Set id
      *
      * @param integer $code
-     * @return Module
+     * @return CouponDetail
      */
     public function setId($id)
     {
@@ -83,7 +86,7 @@ class CouponCouponDetail extends \Eccube\Entity\AbstractEntity
      * Set coupon_type
      *
      * @param integer $couponType
-     * @return CouponCouponDetail
+     * @return CouponDetail
      */
     public function setCouponType($couponType)
     {
@@ -106,7 +109,7 @@ class CouponCouponDetail extends \Eccube\Entity\AbstractEntity
      * Set del_flg
      *
      * @param integer $delFlg
-     * @return CouponCouponDetail
+     * @return CouponDetail
      */
     public function setDelFlg($delFlg)
     {
@@ -129,7 +132,7 @@ class CouponCouponDetail extends \Eccube\Entity\AbstractEntity
      * Set create_date
      *
      * @param \DateTime $createDate
-     * @return CouponCouponDetail
+     * @return CouponDetail
      */
     public function setCreateDate($createDate)
     {
@@ -152,7 +155,7 @@ class CouponCouponDetail extends \Eccube\Entity\AbstractEntity
      * Set update_date
      *
      * @param \DateTime $updateDate
-     * @return CouponCouponDetail
+     * @return CouponDetail
      */
     public function setUpdateDate($updateDate)
     {
@@ -174,10 +177,10 @@ class CouponCouponDetail extends \Eccube\Entity\AbstractEntity
     /**
      * Set Coupon
      *
-     * @param \Plugin\Coupon\Entity\CouponCoupon $coupon
-     * @return CouponCouponDetail
+     * @param Coupon $coupon
+     * @return CouponDetail
      */
-    public function setCoupon(\Plugin\Coupon\Entity\CouponCoupon $coupon)
+    public function setCoupon(Coupon $coupon)
     {
         $this->Coupon = $coupon;
 
@@ -187,7 +190,7 @@ class CouponCouponDetail extends \Eccube\Entity\AbstractEntity
     /**
      * Get Coupon
      *
-     * @return \Plugin\Coupon\Entity\CouponCoupon 
+     * @return Coupon
      */
     public function getCoupon()
     {
@@ -197,10 +200,10 @@ class CouponCouponDetail extends \Eccube\Entity\AbstractEntity
     /**
      * Set Product
      *
-     * @param \Eccube\Entity\Product $product
-     * @return CouponCouponDetail
+     * @param Product $product
+     * @return CouponDetail
      */
-    public function setProduct(\Eccube\Entity\Product $product = null)
+    public function setProduct(Product $product = null)
     {
         $this->Product = $product;
 
@@ -210,7 +213,7 @@ class CouponCouponDetail extends \Eccube\Entity\AbstractEntity
     /**
      * Get Product
      *
-     * @return \Eccube\Entity\Product 
+     * @return Product
      */
     public function getProduct()
     {
@@ -220,10 +223,10 @@ class CouponCouponDetail extends \Eccube\Entity\AbstractEntity
     /**
      * Set Category
      *
-     * @param \Eccube\Entity\Category $category
-     * @return CouponCouponDetail
+     * @param Category $category
+     * @return CouponDetail
      */
-    public function setCategory(\Eccube\Entity\Category $category = null)
+    public function setCategory(Category $category = null)
     {
         $this->Category = $category;
 
@@ -233,7 +236,7 @@ class CouponCouponDetail extends \Eccube\Entity\AbstractEntity
     /**
      * Get Category
      *
-     * @return \Eccube\Entity\Category 
+     * @return Category
      */
     public function getCategory()
     {

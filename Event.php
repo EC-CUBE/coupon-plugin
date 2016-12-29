@@ -38,7 +38,7 @@ class Event
     /**
      * クーポン関連項目を追加する
      *
-     * @param FilterResponseEvent $event
+     * @param TemplateEvent $event
      */
     public function onRenderShoppingIndex(TemplateEvent $event)
     {
@@ -67,11 +67,11 @@ class Event
      * [order/{id}/edit]表示の時のEvent Fock.
      * クーポン関連項目を追加する
      *
-     * @param FilterResponseEvent $event
+     * @param TemplateEvent $event
      */
-    public function onAdminOrderEditInit(EventArgs $event)
+    public function onRenderAdminOrderEdit(TemplateEvent $event)
     {
-        $this->app['eccube.plugin.coupon.event']->onAdminOrderEditInit($event);
+        $this->app['eccube.plugin.coupon.event']->onRenderAdminOrderEdit($event);
     }
 
     /**
@@ -86,6 +86,16 @@ class Event
     }
 
     /**
+     * Hook point add coupon information to mypage history
+     *
+     * @param TemplateEvent $event
+     */
+    public function onRenderMypageHistory(TemplateEvent $event)
+    {
+        $this->app['eccube.plugin.coupon.event']->onRenderMypageHistory($event);
+    }
+
+    /**
      * クーポン関連項目を追加する
      *
      * @param FilterResponseEvent $event
@@ -97,6 +107,20 @@ class Event
             return;
         }
         $this->app['eccube.plugin.coupon.event.legacy']->onRenderShoppingBefore($event);
+    }
+
+    /**
+     * Hook point add coupon information to mypage history
+     *
+     * @param FilterResponseEvent $event
+     */
+    public function onRenderMypageHistoryBefore(FilterResponseEvent $event)
+    {
+        //current version >= 3.0.9
+        if (Version::isSupportNewHookPoint()) {
+            return;
+        }
+        $this->app['eccube.plugin.coupon.event.legacy']->onRenderMypageHistoryBefore($event);
     }
 
     /**

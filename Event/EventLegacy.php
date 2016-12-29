@@ -166,6 +166,15 @@ class EventLegacy
         $this->getHtmlOrderEdit($request, $response, $Coupon);
     }
 
+    /**
+     * Hook point add coupon information to mypage history
+     *
+     * @param FilterResponseEvent $event
+     */
+    public function onRenderMypageHistoryBefore(FilterResponseEvent $event)
+    {
+
+    }
 
     /**
      * 配送先や支払い方法変更時の合計金額と値引きの差額チェック

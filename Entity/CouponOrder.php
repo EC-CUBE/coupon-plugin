@@ -10,11 +10,12 @@
 namespace Plugin\Coupon\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Eccube\Entity\AbstractEntity;
 
 /**
- * CouponCouponOrder
+ * CouponOrder
  */
-class CouponCouponOrder extends \Eccube\Entity\AbstractEntity
+class CouponOrder extends AbstractEntity
 {
     /**
      * @var integer
@@ -96,7 +97,7 @@ class CouponCouponOrder extends \Eccube\Entity\AbstractEntity
      * Set coupon_id
      *
      * @param integer $couponId
-     * @return CouponCouponOrder
+     * @return CouponOrder
      */
     public function setCouponId($couponId)
     {
@@ -119,7 +120,7 @@ class CouponCouponOrder extends \Eccube\Entity\AbstractEntity
      * Set coupon_cd
      *
      * @param string $couponCd
-     * @return CouponCouponOrder
+     * @return CouponOrder
      */
     public function setCouponCd($couponCd)
     {
@@ -142,7 +143,7 @@ class CouponCouponOrder extends \Eccube\Entity\AbstractEntity
      * Set user_id
      *
      * @param integer $userId
-     * @return CouponCouponOrder
+     * @return CouponOrder
      */
     public function setUserId($userId)
     {
@@ -165,7 +166,7 @@ class CouponCouponOrder extends \Eccube\Entity\AbstractEntity
      * Set email
      *
      * @param string $email
-     * @return CouponCouponOrder
+     * @return CouponOrder
      */
     public function setEmail($email)
     {
@@ -188,7 +189,7 @@ class CouponCouponOrder extends \Eccube\Entity\AbstractEntity
      * Set order_id
      *
      * @param integer $orderId
-     * @return CouponCouponOrder
+     * @return CouponOrder
      */
     public function setOrderId($orderId)
     {
@@ -211,7 +212,7 @@ class CouponCouponOrder extends \Eccube\Entity\AbstractEntity
      * Set pre_order_id
      *
      * @param string $preOrderId
-     * @return CouponCouponOrder
+     * @return CouponOrder
      */
     public function setPreOrderId($preOrderId)
     {
@@ -234,7 +235,7 @@ class CouponCouponOrder extends \Eccube\Entity\AbstractEntity
      * Set order_date
      *
      * @param \DateTime $orderDate
-     * @return CouponCouponOrder
+     * @return CouponOrder
      */
     public function setOrderDate($orderDate)
     {
@@ -257,7 +258,7 @@ class CouponCouponOrder extends \Eccube\Entity\AbstractEntity
      * Set discount
      *
      * @param string $discount
-     * @return CouponCouponOrder
+     * @return CouponOrder
      */
     public function setDiscount($discount)
     {
@@ -280,7 +281,7 @@ class CouponCouponOrder extends \Eccube\Entity\AbstractEntity
      * Set del_flg
      *
      * @param integer $delFlg
-     * @return CouponCouponOrder
+     * @return CouponOrder
      */
     public function setDelFlg($delFlg)
     {
@@ -319,7 +320,7 @@ class CouponCouponOrder extends \Eccube\Entity\AbstractEntity
      * Set create_date
      *
      * @param \DateTime $createDate
-     * @return CouponCouponOrder
+     * @return CouponOrder
      */
     public function setCreateDate($createDate)
     {
@@ -342,7 +343,7 @@ class CouponCouponOrder extends \Eccube\Entity\AbstractEntity
      * Set update_date
      *
      * @param \DateTime $updateDate
-     * @return CouponCouponOrder
+     * @return CouponOrder
      */
     public function setUpdateDate($updateDate)
     {
