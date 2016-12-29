@@ -11,6 +11,7 @@
 namespace Plugin\Coupon\Controller;
 
 use Eccube\Application;
+use Eccube\Entity\Category;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception as HttpException;
 
@@ -86,7 +87,7 @@ class CouponSearchModelController
      * カテゴリ検索画面を表示する
      *
      * @param Application $app
-     * @param Request $request
+     * @param Request     $request
      * @return \Symfony\Component\HttpFoundation\Response|null
      */
     public function searchCategory(Application $app, Request $request)
@@ -131,8 +132,8 @@ class CouponSearchModelController
     /**
      * カテゴリーの一覧を作成する
      *
-     * @param $Categories
-     * @param $existCategoryIds
+     * @param Category $Categories
+     * @param int $existCategoryIds
      * @return array
      */
     protected function getCategoryList($Categories, &$existCategoryIds)
@@ -157,7 +158,7 @@ class CouponSearchModelController
     /**
      * 親カテゴリ名を含むカテゴリ名を取得する.
      *
-     * @param $Category
+     * @param Category $Category
      * @return string
      */
     protected function getCategoryFullName($Category)

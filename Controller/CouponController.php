@@ -94,7 +94,7 @@ class CouponController
         $form->get('CouponDetails')->setData($details);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var \Plugin\Coupon\Entity\CouponCoupon $Coupon */
+            /** @var \Plugin\Coupon\Entity\Coupon $Coupon */
             $Coupon = $form->getData();
             $CouponDetails = $app['eccube.plugin.coupon.repository.coupon_detail']->findBy(array(
                 'Coupon' => $Coupon,
@@ -159,8 +159,8 @@ class CouponController
      * クーポンの削除
      *
      * @param Application $app
-     * @param Request $request
-     * @param $id
+     * @param Request     $request
+     * @param int         $id
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function delete(Application $app, Request $request, $id)
@@ -211,12 +211,11 @@ class CouponController
         return $app->render('Coupon/Resource/template/admin/regist.twig', $viewParameters);
     }
 
-
     /**
      * クーポン入力、登録画面
      *
      * @param Application $app
-     * @param Request $request
+     * @param Request     $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      */
     public function shoppingCoupon(Application $app, Request $request)

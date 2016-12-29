@@ -15,7 +15,6 @@ use Eccube\Entity\Order;
 use Eccube\Event\EventArgs;
 use Plugin\Coupon\Entity\Coupon;
 use Symfony\Component\Form as Error;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\Validator\Constraints as Assert;
 use Plugin\Coupon\Util\Version;
 use Eccube\Event\TemplateEvent;
@@ -54,7 +53,7 @@ class Event
     /**
      * クーポン関連項目を追加する
      *
-     * @param FilterResponseEvent $event
+     * @param TemplateEvent $event
      */
     public function onRenderShoppingIndex(TemplateEvent $event)
     {
@@ -111,7 +110,6 @@ class Event
 
     /**
      * クーポンが利用されていないかチェック
-     *
      */
     public function onShoppingConfirmInit()
     {

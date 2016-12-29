@@ -57,7 +57,6 @@ class EventLegacy
 
     /**
      * クーポンが利用されていないかチェック
-     *
      */
     public function onControllerShoppingConfirmBefore($event = null)
     {
@@ -104,7 +103,6 @@ class EventLegacy
 
     /**
      * 注文クーポン情報に受注日付を登録する.
-     *
      */
     public function onControllerShoppingCompleteBefore()
     {
@@ -173,13 +171,11 @@ class EventLegacy
      */
     public function onRenderMypageHistoryBefore(FilterResponseEvent $event)
     {
-
     }
 
     /**
      * 配送先や支払い方法変更時の合計金額と値引きの差額チェック
      * v3.0.8までで使用
-     *
      */
     public function onControllerRestoreDiscountAfter()
     {
@@ -222,7 +218,7 @@ class EventLegacy
     /**
      * 受注情報編集画面にクーポン情報を追加する
      *
-     * @param Request $request
+     * @param Request  $request
      * @param Response $response
      * @param $Coupon
      */
