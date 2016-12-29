@@ -157,7 +157,7 @@ if (function_exists('log_debug') === false) {
 
 if (function_exists('eccube_log_init') === false) {
     /**
-     * Init log function for ec-cube <= 3.0.8
+     * Init log function for ec-cube <= 3.0.8.
      *
      * @param object $app
      */

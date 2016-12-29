@@ -13,10 +13,9 @@ namespace Plugin\Coupon\Controller;
 use Eccube\Application;
 use Eccube\Entity\Category;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception as HttpException;
 
 /**
- * Class CouponSearchModelController
+ * Class CouponSearchModelController.
  */
 class CouponSearchModelController
 {
@@ -63,7 +62,7 @@ class CouponSearchModelController
         $existProductId = $request->get('exist_product_id');
         if (strlen($existProductId > 0)) {
             $qb->andWhere($qb->expr()->notin('p.id', ':existProductId'))
-                ->setParameter('existProductId', explode(",", $existProductId));
+                ->setParameter('existProductId', explode(',', $existProductId));
         }
 
         /** @var \Knp\Component\Pager\Pagination\SlidingPagination $pagination */
@@ -84,10 +83,11 @@ class CouponSearchModelController
     }
 
     /**
-     * カテゴリ検索画面を表示する
+     * カテゴリ検索画面を表示する.
      *
      * @param Application $app
      * @param Request     $request
+     *
      * @return \Symfony\Component\HttpFoundation\Response|null
      */
     public function searchCategory(Application $app, Request $request)
@@ -99,7 +99,7 @@ class CouponSearchModelController
 
             $existCategoryIds = array(0);
             if (strlen($existCategoryId > 0)) {
-                $existCategoryIds = explode(",", $existCategoryId);
+                $existCategoryIds = explode(',', $existCategoryId);
             }
 
             if (empty($categoryId)) {
@@ -130,10 +130,11 @@ class CouponSearchModelController
     }
 
     /**
-     * カテゴリーの一覧を作成する
+     * カテゴリーの一覧を作成する.
      *
      * @param Category $Categories
-     * @param int $existCategoryIds
+     * @param int      $existCategoryIds
+     *
      * @return array
      */
     protected function getCategoryList($Categories, &$existCategoryIds)
@@ -159,12 +160,13 @@ class CouponSearchModelController
      * 親カテゴリ名を含むカテゴリ名を取得する.
      *
      * @param Category $Category
+     *
      * @return string
      */
     protected function getCategoryFullName($Category)
     {
         if (is_null($Category)) {
-            return "";
+            return '';
         }
         $fulName = $Category->getName();
         // 親カテゴリがない場合はカテゴリ名を返す.
@@ -174,7 +176,7 @@ class CouponSearchModelController
         // 親カテゴリ名を結合する
         $ParentCategory = $Category->getParent();
         while (!is_null($ParentCategory)) {
-            $fulName = $ParentCategory->getName()."　＞　".$fulName;
+            $fulName = $ParentCategory->getName().'　＞　'.$fulName;
             $ParentCategory = $ParentCategory->getParent();
         }
 

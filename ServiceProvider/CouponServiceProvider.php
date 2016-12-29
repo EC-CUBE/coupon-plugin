@@ -23,8 +23,7 @@ use Plugin\Coupon\Event\Event;
 use Plugin\Coupon\Event\EventLegacy;
 
 /**
- * Class CouponServiceProvider
- * @package Plugin\Coupon\ServiceProvider
+ * Class CouponServiceProvider.
  */
 class CouponServiceProvider implements ServiceProviderInterface
 {
@@ -113,13 +112,13 @@ class CouponServiceProvider implements ServiceProviderInterface
         // メニュー登録
         // ============================================================
         $app['config'] = $app->share($app->extend('config', function ($config) {
-            $addNavi['id'] = "plugin_coupon";
-            $addNavi['name'] = "クーポン";
-            $addNavi['url'] = "plugin_coupon_list";
+            $addNavi['id'] = 'plugin_coupon';
+            $addNavi['name'] = 'クーポン';
+            $addNavi['url'] = 'plugin_coupon_list';
 
             $nav = $config['nav'];
             foreach ($nav as $key => $val) {
-                if ("order" == $val["id"]) {
+                if ('order' == $val['id']) {
                     $nav[$key]['child'][] = $addNavi;
                 }
             }
@@ -140,5 +139,4 @@ class CouponServiceProvider implements ServiceProviderInterface
     public function boot(BaseApplication $app)
     {
     }
-
 }

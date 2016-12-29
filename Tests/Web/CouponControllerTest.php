@@ -17,13 +17,10 @@ use Plugin\Coupon\Entity\CouponCouponDetail;
 use Symfony\Component\DomCrawler\Crawler;
 
 /**
- * Class CouponControllerTest
- *
- * @package Plugin\Coupon\Tests\Web
+ * Class CouponControllerTest.
  */
 class CouponControllerTest extends AbstractWebTestCase
 {
-
     protected $Customer;
 
     public function setUp()
@@ -39,7 +36,6 @@ class CouponControllerTest extends AbstractWebTestCase
 
     public function testRoutingShoppingCoupon()
     {
-
         $this->routingShopping();
 
         $crawler = $this->client->request('GET', $this->app->url('plugin_shopping_coupon'));
@@ -50,8 +46,6 @@ class CouponControllerTest extends AbstractWebTestCase
         $this->actual = $crawler->filter('h1.page-heading')->text();
 
         $this->verify();
-
-
     }
 
     public function testRoutingShoppingCouponNot()
@@ -63,7 +57,6 @@ class CouponControllerTest extends AbstractWebTestCase
 
     public function testShoppingCouponPost()
     {
-
         $this->routingShopping();
 
         $crawler = $this->client->request('GET', $this->app->url('plugin_shopping_coupon'));
@@ -74,12 +67,10 @@ class CouponControllerTest extends AbstractWebTestCase
         $crawler = $this->client->submit($form);
 
         $this->assertTrue($this->client->getResponse()->isRedirection());
-
     }
 
     public function testShoppingCouponPostError()
     {
-
         $this->routingShopping();
 
         $crawler = $this->client->request('GET', $this->app->url('plugin_shopping_coupon'));
@@ -93,10 +84,8 @@ class CouponControllerTest extends AbstractWebTestCase
         $this->assertFalse($this->client->getResponse()->isRedirection());
     }
 
-
     public function testShoppingCoupon()
     {
-
         $this->routingShopping();
 
         $crawler = $this->client->request('GET', $this->app->url('plugin_shopping_coupon'));
@@ -116,13 +105,10 @@ class CouponControllerTest extends AbstractWebTestCase
         $this->actual = $crawler->filter('strong.text-danger')->text();
 
         $this->verify();
-
     }
-
 
     public function testShoppingCouponDiscountType1()
     {
-
         $this->routingShopping();
 
         $crawler = $this->client->request('GET', $this->app->url('plugin_shopping_coupon'));
@@ -140,7 +126,7 @@ class CouponControllerTest extends AbstractWebTestCase
 
         $Order = $this->app['eccube.repository.order']->findOneBy(
             array(
-                'Customer' => $this->Customer
+                'Customer' => $this->Customer,
             )
         );
 
@@ -149,12 +135,10 @@ class CouponControllerTest extends AbstractWebTestCase
         $this->expected = $Order->getDiscount();
 
         $this->verify();
-
     }
 
     public function testShoppingCouponDiscountType2()
     {
-
         $this->routingShopping();
 
         $crawler = $this->client->request('GET', $this->app->url('plugin_shopping_coupon'));
@@ -172,20 +156,18 @@ class CouponControllerTest extends AbstractWebTestCase
 
         $Order = $this->app['eccube.repository.order']->findOneBy(
             array(
-                'Customer' => $this->Customer
+                'Customer' => $this->Customer,
             )
         );
 
-        $CouponOrder = $this->app['eccube.plugin.coupon.repository.coupon_order']->findOneBy(array('pre_order_id' =>$Order->getPreOrderId()));
+        $CouponOrder = $this->app['eccube.plugin.coupon.repository.coupon_order']->findOneBy(array('pre_order_id' => $Order->getPreOrderId()));
 
         $this->actual = $CouponOrder->getDiscount();
 
         $this->expected = $Order->getDiscount();
 
         $this->verify();
-
     }
-
 
     private function routingShopping()
     {
@@ -196,26 +178,17 @@ class CouponControllerTest extends AbstractWebTestCase
         $this->Customer = $this->logIn();
 
         $this->client->request('GET', $this->app->url('shopping'));
-
     }
-
 
     private function getForm(Crawler $crawler, $couponCd = '')
     {
-
         $form = $crawler->selectButton('登録する')->form();
 
         $form['shopping_coupon[coupon_cd]'] = $couponCd;
         $form['shopping_coupon[_token]'] = 'dummy';
 
         return $form;
-
     }
-
-
-
-
-
 
     private function getCoupon($couponType = 1, $discountType = 1)
     {
@@ -225,7 +198,6 @@ class CouponControllerTest extends AbstractWebTestCase
 
         /** @var \Plugin\Coupon\Entity\CouponCoupon $Coupon */
         $Coupon = $this->app['eccube.plugin.coupon.repository.coupon']->findOneBy(array('coupon_cd' => 'aaaaaaaa'));
-
 
         $Product = $this->app['eccube.repository.product']->find(1);
 
@@ -251,10 +223,8 @@ class CouponControllerTest extends AbstractWebTestCase
         return $Coupon;
     }
 
-
     private function getTestData($couponType = 1, $discountType = 1)
     {
-
         $Coupon = new CouponCoupon();
 
         $date1 = new \DateTime();
@@ -274,7 +244,5 @@ class CouponControllerTest extends AbstractWebTestCase
         $Coupon->setAvailableToDate($d2);
 
         return $Coupon;
-
     }
-
 }

@@ -16,16 +16,12 @@ use Plugin\Coupon\Entity\CouponCoupon;
 use Plugin\Coupon\Entity\CouponCouponDetail;
 
 /**
- * Class CouponCouponRepositoryTest
- *
- * @package Plugin\Coupon\Tests\Repository
+ * Class CouponCouponRepositoryTest.
  */
 class CouponCouponRepositoryTest extends EccubeTestCase
 {
-
     public function testFindActiveCoupon()
     {
-
         $Coupon = $this->getCoupon();
 
         $couponCd = 'aaaaaaaa';
@@ -37,13 +33,10 @@ class CouponCouponRepositoryTest extends EccubeTestCase
         $this->expected = $couponCd;
 
         $this->verify();
-
-
     }
 
     public function testFindActiveCouponAll()
     {
-
         $this->getCoupon();
 
         $coupons = $this->app['eccube.plugin.coupon.repository.coupon']->findActiveCouponAll();
@@ -51,9 +44,7 @@ class CouponCouponRepositoryTest extends EccubeTestCase
         $this->actual = count($coupons);
 
         $this->assertGreaterThan(0, $this->actual);
-
     }
-
 
     private function getCoupon($couponType = 1)
     {
@@ -87,10 +78,8 @@ class CouponCouponRepositoryTest extends EccubeTestCase
         return $Coupon;
     }
 
-
     private function getTestData($couponType = 1)
     {
-
         $Coupon = new CouponCoupon();
 
         $date1 = new \DateTime();
@@ -110,8 +99,5 @@ class CouponCouponRepositoryTest extends EccubeTestCase
         $Coupon->setAvailableToDate($d2);
 
         return $Coupon;
-
     }
-
-
 }

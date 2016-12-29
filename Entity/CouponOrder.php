@@ -7,23 +7,23 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace Plugin\Coupon\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use Eccube\Entity\AbstractEntity;
 
 /**
- * CouponOrder
+ * CouponOrder.
  */
 class CouponOrder extends AbstractEntity
 {
     /**
-     * @var integer
+     * @var int
      */
     private $id;
 
     /**
-     * @var integer
+     * @var int
      */
     private $coupon_id;
 
@@ -33,7 +33,7 @@ class CouponOrder extends AbstractEntity
     private $coupon_cd;
 
     /**
-     * @var integer
+     * @var int
      */
     private $user_id;
 
@@ -43,7 +43,7 @@ class CouponOrder extends AbstractEntity
     private $email;
 
     /**
-     * @var integer
+     * @var int
      */
     private $order_id;
 
@@ -63,12 +63,12 @@ class CouponOrder extends AbstractEntity
     private $discount = 0;
 
     /**
-     * @var integer
+     * @var int
      */
     private $del_flg;
 
     /**
-     * @var integer
+     * @var int
      */
     private $coupon_cancel;
 
@@ -82,11 +82,10 @@ class CouponOrder extends AbstractEntity
      */
     private $update_date;
 
-
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer 
+     * @return int
      */
     public function getId()
     {
@@ -94,9 +93,10 @@ class CouponOrder extends AbstractEntity
     }
 
     /**
-     * Set coupon_id
+     * Set coupon_id.
      *
-     * @param integer $couponId
+     * @param int $couponId
+     *
      * @return CouponOrder
      */
     public function setCouponId($couponId)
@@ -107,9 +107,9 @@ class CouponOrder extends AbstractEntity
     }
 
     /**
-     * Get coupon_id
+     * Get coupon_id.
      *
-     * @return integer 
+     * @return int
      */
     public function getCouponId()
     {
@@ -117,9 +117,10 @@ class CouponOrder extends AbstractEntity
     }
 
     /**
-     * Set coupon_cd
+     * Set coupon_cd.
      *
      * @param string $couponCd
+     *
      * @return CouponOrder
      */
     public function setCouponCd($couponCd)
@@ -130,9 +131,9 @@ class CouponOrder extends AbstractEntity
     }
 
     /**
-     * Get coupon_cd
+     * Get coupon_cd.
      *
-     * @return string 
+     * @return string
      */
     public function getCouponCd()
     {
@@ -140,9 +141,10 @@ class CouponOrder extends AbstractEntity
     }
 
     /**
-     * Set user_id
+     * Set user_id.
      *
-     * @param integer $userId
+     * @param int $userId
+     *
      * @return CouponOrder
      */
     public function setUserId($userId)
@@ -153,9 +155,9 @@ class CouponOrder extends AbstractEntity
     }
 
     /**
-     * Get user_id
+     * Get user_id.
      *
-     * @return integer 
+     * @return int
      */
     public function getUserId()
     {
@@ -163,9 +165,10 @@ class CouponOrder extends AbstractEntity
     }
 
     /**
-     * Set email
+     * Set email.
      *
      * @param string $email
+     *
      * @return CouponOrder
      */
     public function setEmail($email)
@@ -176,9 +179,9 @@ class CouponOrder extends AbstractEntity
     }
 
     /**
-     * Get email
+     * Get email.
      *
-     * @return string 
+     * @return string
      */
     public function getEmail()
     {
@@ -186,9 +189,10 @@ class CouponOrder extends AbstractEntity
     }
 
     /**
-     * Set order_id
+     * Set order_id.
      *
-     * @param integer $orderId
+     * @param int $orderId
+     *
      * @return CouponOrder
      */
     public function setOrderId($orderId)
@@ -199,9 +203,9 @@ class CouponOrder extends AbstractEntity
     }
 
     /**
-     * Get order_id
+     * Get order_id.
      *
-     * @return integer 
+     * @return int
      */
     public function getOrderId()
     {
@@ -209,9 +213,10 @@ class CouponOrder extends AbstractEntity
     }
 
     /**
-     * Set pre_order_id
+     * Set pre_order_id.
      *
      * @param string $preOrderId
+     *
      * @return CouponOrder
      */
     public function setPreOrderId($preOrderId)
@@ -222,9 +227,9 @@ class CouponOrder extends AbstractEntity
     }
 
     /**
-     * Get pre_order_id
+     * Get pre_order_id.
      *
-     * @return string 
+     * @return string
      */
     public function getPreOrderId()
     {
@@ -232,9 +237,10 @@ class CouponOrder extends AbstractEntity
     }
 
     /**
-     * Set order_date
+     * Set order_date.
      *
      * @param \DateTime $orderDate
+     *
      * @return CouponOrder
      */
     public function setOrderDate($orderDate)
@@ -245,9 +251,9 @@ class CouponOrder extends AbstractEntity
     }
 
     /**
-     * Get order_date
+     * Get order_date.
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getOrderDate()
     {
@@ -255,9 +261,10 @@ class CouponOrder extends AbstractEntity
     }
 
     /**
-     * Set discount
+     * Set discount.
      *
      * @param string $discount
+     *
      * @return CouponOrder
      */
     public function setDiscount($discount)
@@ -268,9 +275,9 @@ class CouponOrder extends AbstractEntity
     }
 
     /**
-     * Get discount
+     * Get discount.
      *
-     * @return string 
+     * @return string
      */
     public function getDiscount()
     {
@@ -278,9 +285,10 @@ class CouponOrder extends AbstractEntity
     }
 
     /**
-     * Set del_flg
+     * Set del_flg.
      *
-     * @param integer $delFlg
+     * @param int $delFlg
+     *
      * @return CouponOrder
      */
     public function setDelFlg($delFlg)
@@ -291,9 +299,9 @@ class CouponOrder extends AbstractEntity
     }
 
     /**
-     * Get del_flg
+     * Get del_flg.
      *
-     * @return integer 
+     * @return int
      */
     public function getDelFlg()
     {
@@ -317,9 +325,10 @@ class CouponOrder extends AbstractEntity
     }
 
     /**
-     * Set create_date
+     * Set create_date.
      *
      * @param \DateTime $createDate
+     *
      * @return CouponOrder
      */
     public function setCreateDate($createDate)
@@ -330,9 +339,9 @@ class CouponOrder extends AbstractEntity
     }
 
     /**
-     * Get create_date
+     * Get create_date.
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getCreateDate()
     {
@@ -340,9 +349,10 @@ class CouponOrder extends AbstractEntity
     }
 
     /**
-     * Set update_date
+     * Set update_date.
      *
      * @param \DateTime $updateDate
+     *
      * @return CouponOrder
      */
     public function setUpdateDate($updateDate)
@@ -353,9 +363,9 @@ class CouponOrder extends AbstractEntity
     }
 
     /**
-     * Get update_date
+     * Get update_date.
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getUpdateDate()
     {

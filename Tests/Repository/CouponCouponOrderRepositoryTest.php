@@ -19,18 +19,14 @@ use Plugin\Coupon\Entity\CouponCouponDetail;
 use Plugin\Coupon\Entity\CouponCouponOrder;
 
 /**
- * Class CouponCouponOrderRepositoryTest
- *
- * @package Plugin\Coupon\Tests\Repository
+ * Class CouponCouponOrderRepositoryTest.
  */
 class CouponCouponOrderRepositoryTest extends EccubeTestCase
 {
-
     private $Customer;
 
     public function testSave()
     {
-
         $Coupon = $this->getCoupon();
 
         $discount = 200;
@@ -47,14 +43,10 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
         $this->expected = $discount;
 
         $this->verify();
-
-
     }
-
 
     public function testFindUseCouponByOrderId()
     {
-
         $Coupon = $this->getCoupon();
 
         $discount = 200;
@@ -75,14 +67,10 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
         $this->expected = $discount;
 
         $this->verify();
-
-
     }
-
 
     public function testFindUseCouponNonMember()
     {
-
         $Coupon = $this->getCoupon();
 
         $discount = 200;
@@ -102,14 +90,10 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
         $this->expected = $discount;
 
         $this->verify();
-
-
     }
-
 
     public function testCountCouponByCd()
     {
-
         $Coupon = $this->getCoupon();
 
         $discount = 200;
@@ -128,13 +112,10 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
         $this->expected = 1;
 
         $this->verify();
-
     }
-
 
     private function getCouponOrder(CouponCoupon $Coupon, $discount, $preOrderId)
     {
-
         $this->Customer = $this->createCustomer('aaa@example.com');
 
         $Order = $this->createOrder($this->Customer);
@@ -150,7 +131,6 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
 
         $ProductClasses = $Product->getProductClasses();
         $ProductClass = $ProductClasses[0];
-
 
         $orderDetails = $Order->getOrderDetails();
         foreach ($orderDetails as $OrderDetail) {
@@ -180,13 +160,8 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
         $CouponOrder->setPreOrderId($Order->getPreOrderId());
         $CouponOrder->setCouponCd($Coupon->getCouponCd());
 
-
         return $CouponOrder;
-
     }
-
-
-
 
     private function getCoupon($couponType = 1)
     {
@@ -220,10 +195,8 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
         return $Coupon;
     }
 
-
     private function getTestData($couponType = 1)
     {
-
         $Coupon = new CouponCoupon();
 
         $date1 = new \DateTime();
@@ -243,8 +216,5 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
         $Coupon->setAvailableToDate($d2);
 
         return $Coupon;
-
     }
-
-
 }

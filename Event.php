@@ -13,21 +13,20 @@ namespace Plugin\Coupon;
 use Eccube\Application;
 use Eccube\Event\EventArgs;
 use Eccube\Event\TemplateEvent;
-use Symfony\Component\Form as Error;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Plugin\Coupon\Util\Version;
 
 /**
- * Class Event
+ * Class Event.
  */
 class Event
 {
-
     /** @var \Eccube\Application */
     private $app;
 
     /**
      * Event constructor.
+     *
      * @param Application $app
      */
     public function __construct($app)
@@ -36,7 +35,7 @@ class Event
     }
 
     /**
-     * クーポン関連項目を追加する
+     * クーポン関連項目を追加する.
      *
      * @param TemplateEvent $event
      */
@@ -46,8 +45,7 @@ class Event
     }
 
     /**
-     * クーポンが利用されていないかチェック
-     *
+     * クーポンが利用されていないかチェック.
      */
     public function onShoppingConfirmInit()
     {
@@ -56,7 +54,6 @@ class Event
 
     /**
      * 注文クーポン情報に受注日付を登録する.
-     *
      */
     public function onRenderShoppingComplete()
     {
@@ -65,7 +62,7 @@ class Event
 
     /**
      * [order/{id}/edit]表示の時のEvent Fock.
-     * クーポン関連項目を追加する
+     * クーポン関連項目を追加する.
      *
      * @param TemplateEvent $event
      */
@@ -76,7 +73,7 @@ class Event
 
     /**
      * 配送先や支払い方法変更時の合計金額と値引きの差額チェック
-     * v3.0.9以降で使用
+     * v3.0.9以降で使用.
      *
      * @param EventArgs $event
      */
@@ -86,7 +83,7 @@ class Event
     }
 
     /**
-     * Hook point add coupon information to mypage history
+     * Hook point add coupon information to mypage history.
      *
      * @param TemplateEvent $event
      */
@@ -96,7 +93,7 @@ class Event
     }
 
     /**
-     * クーポン関連項目を追加する
+     * クーポン関連項目を追加する.
      *
      * @param FilterResponseEvent $event
      */
@@ -110,7 +107,7 @@ class Event
     }
 
     /**
-     * Hook point add coupon information to mypage history
+     * Hook point add coupon information to mypage history.
      *
      * @param FilterResponseEvent $event
      */
@@ -124,8 +121,7 @@ class Event
     }
 
     /**
-     * クーポンが利用されていないかチェック
-     *
+     * クーポンが利用されていないかチェック.
      */
     public function onControllerShoppingConfirmBefore($event = null)
     {
@@ -138,7 +134,6 @@ class Event
 
     /**
      * 注文クーポン情報に受注日付を登録する.
-     *
      */
     public function onControllerShoppingCompleteBefore()
     {
@@ -151,7 +146,7 @@ class Event
 
     /**
      * [order/{id}/edit]表示の時のEvent Fock.
-     * クーポン関連項目を追加する
+     * クーポン関連項目を追加する.
      *
      * @param FilterResponseEvent $event
      */
@@ -166,8 +161,7 @@ class Event
 
     /**
      * 配送先や支払い方法変更時の合計金額と値引きの差額チェック
-     * v3.0.8までで使用
-     *
+     * v3.0.8までで使用.
      */
     public function onControllerRestoreDiscountAfter()
     {

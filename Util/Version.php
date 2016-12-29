@@ -14,12 +14,12 @@ use Eccube\Common\Constant;
 
 /**
  * Class Version.
- * Util to check version
+ * Util to check version.
  */
 class Version
 {
     /**
-     * Check version to support get instance function. (monolog, new style, ...)
+     * Check version to support get instance function. (monolog, new style, ...).
      *
      * @return bool|int|mixed|void
      */
@@ -39,7 +39,7 @@ class Version
     }
 
     /**
-     * Check support in version Ec cube
+     * Check support in version Ec cube.
      *
      * @param string $version
      * @param string $operation
@@ -52,7 +52,7 @@ class Version
     }
 
     /**
-     * Check support in version Ec cube
+     * Check support in version Ec cube.
      *
      * @param string $version
      * @param string $operation

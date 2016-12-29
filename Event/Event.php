@@ -14,13 +14,11 @@ use Eccube\Application;
 use Eccube\Entity\Order;
 use Eccube\Event\EventArgs;
 use Plugin\Coupon\Entity\Coupon;
-use Symfony\Component\Form as Error;
-use Symfony\Component\Validator\Constraints as Assert;
 use Plugin\Coupon\Util\Version;
 use Eccube\Event\TemplateEvent;
 
 /**
- * Class Event
+ * Class Event.
  */
 class Event
 {
@@ -43,6 +41,7 @@ class Event
 
     /**
      * Event constructor.
+     *
      * @param Application $app
      */
     public function __construct($app)
@@ -51,7 +50,7 @@ class Event
     }
 
     /**
-     * クーポン関連項目を追加する
+     * クーポン関連項目を追加する.
      *
      * @param TemplateEvent $event
      */
@@ -109,7 +108,7 @@ class Event
     }
 
     /**
-     * クーポンが利用されていないかチェック
+     * クーポンが利用されていないかチェック.
      */
     public function onShoppingConfirmInit()
     {
@@ -141,7 +140,7 @@ class Event
         if ($couponUsedOrNot) {
             $this->app->addError($this->app->trans('front.plugin.coupon.shopping.sameuser'), 'front.request');
             // 既に存在している
-            header("Location: ".$this->app->url('shopping'));
+            header('Location: '.$this->app->url('shopping'));
             exit;
         }
         log_info('Coupon trigger onShoppingConfirmInit end');
@@ -160,7 +159,7 @@ class Event
         $repository = $this->app['eccube.plugin.coupon.repository.coupon_order'];
         // クーポン受注情報を取得する
         $CouponOrder = $repository->findOneBy(array(
-            'order_id' => $orderId
+            'order_id' => $orderId,
         ));
         if (is_null($CouponOrder)) {
             return;
@@ -179,7 +178,7 @@ class Event
 
     /**
      * [order/{id}/edit]表示の時のEvent Fock.
-     * クーポン関連項目を追加する
+     * クーポン関連項目を追加する.
      *
      * @param TemplateEvent $event
      */
@@ -224,7 +223,7 @@ class Event
 
     /**
      * 配送先や支払い方法変更時の合計金額と値引きの差額チェック
-     * v3.0.9以降で使用
+     * v3.0.9以降で使用.
      *
      * @param EventArgs $event
      */
@@ -242,7 +241,7 @@ class Event
     }
 
     /**
-     * Hook point add coupon information to mypage history
+     * Hook point add coupon information to mypage history.
      *
      * @param TemplateEvent $event
      */
@@ -286,7 +285,7 @@ class Event
     }
 
     /**
-     * 合計金額がマイナスになっていた場合、値引き処理を元に戻す
+     * 合計金額がマイナスになっていた場合、値引き処理を元に戻す.
      *
      * @param Order $Order
      */

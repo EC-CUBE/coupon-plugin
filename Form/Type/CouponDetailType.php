@@ -14,20 +14,20 @@ use Eccube\Form\DataTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Class CouponDetailType
+ * Class CouponDetailType.
  */
 class CouponDetailType extends AbstractType
 {
     /**
-     * @var \Eccube\Application $app
+     * @var \Eccube\Application
      */
     protected $app;
 
     /**
      * CouponDetailType constructor.
+     *
      * @param \Eccube\Application $app
      */
     public function __construct($app)
@@ -36,7 +36,7 @@ class CouponDetailType extends AbstractType
     }
 
     /**
-     * buildForm
+     * buildForm.
      *
      * @param FormBuilderInterface $builder
      * @param array                $options
@@ -62,7 +62,8 @@ class CouponDetailType extends AbstractType
     }
 
     /**
-     * configureOptions
+     * configureOptions.
+     *
      * @param OptionsResolver $resolver
      */
     public function configureOptions(OptionsResolver $resolver)
@@ -73,7 +74,8 @@ class CouponDetailType extends AbstractType
     }
 
     /**
-     * getName
+     * getName.
+     *
      *  @return string
      */
     public function getName()
@@ -81,4 +83,3 @@ class CouponDetailType extends AbstractType
         return 'admin_plugin_coupon_detail';
     }
 }
-

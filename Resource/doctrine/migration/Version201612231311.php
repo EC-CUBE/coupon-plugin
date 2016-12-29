@@ -15,28 +15,29 @@ use Doctrine\DBAL\Schema\Schema;
 use Plugin\Coupon\Util\Version;
 
 /**
- * Version201612231311
+ * Version201612231311.
  */
 class Version201612231311 extends AbstractMigration
 {
     /**
-     * up
+     * up.
+     *
      * @param Schema $schema
      */
     public function up(Schema $schema)
     {
         if (!Version::isSupportGetInstanceFunction()) {
-            $this->addSql("alter table plg_coupon add coupon_member SMALLINT DEFAULT 0");
-            $this->addSql("alter table plg_coupon add coupon_lower_limit");
+            $this->addSql('alter table plg_coupon add coupon_member SMALLINT DEFAULT 0');
+            $this->addSql('alter table plg_coupon add coupon_lower_limit');
         }
     }
 
     /**
-     * down
+     * down.
+     *
      * @param Schema $schema
      */
     public function down(Schema $schema)
     {
     }
 }
-

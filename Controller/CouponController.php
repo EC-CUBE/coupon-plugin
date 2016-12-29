@@ -19,11 +19,9 @@ use Plugin\Coupon\Service\CouponService;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception as HttpException;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Class CouponController
+ * Class CouponController.
  */
 class CouponController
 {
@@ -37,6 +35,7 @@ class CouponController
      *
      * @param Application $app
      * @param Request     $request
+     *
      * @return Response
      */
     public function index(Application $app, Request $request)
@@ -56,11 +55,12 @@ class CouponController
     }
 
     /**
-     * クーポンの新規作成/編集確定
+     * クーポンの新規作成/編集確定.
      *
      * @param Application $app
      * @param Request     $request
      * @param int         $id
+     *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      */
     public function edit(Application $app, Request $request, $id = null)
@@ -127,11 +127,12 @@ class CouponController
     }
 
     /**
-     * クーポンの有効/無効化
+     * クーポンの有効/無効化.
      *
      * @param Application $app
-     * @param Request $request
+     * @param Request     $request
      * @param $id
+     *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function enable(Application $app, Request $request, $id)
@@ -156,11 +157,12 @@ class CouponController
     }
 
     /**
-     * クーポンの削除
+     * クーポンの削除.
      *
      * @param Application $app
      * @param Request     $request
      * @param int         $id
+     *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function delete(Application $app, Request $request, $id)
@@ -190,10 +192,11 @@ class CouponController
     }
 
     /**
-     * 編集画面用のrender
+     * 編集画面用のrender.
      *
      * @param Application $app
-     * @param array $parameters
+     * @param array       $parameters
+     *
      * @return Response
      */
     protected function renderRegistView(Application $app, $parameters = array())
@@ -212,10 +215,11 @@ class CouponController
     }
 
     /**
-     * クーポン入力、登録画面
+     * クーポン入力、登録画面.
      *
      * @param Application $app
      * @param Request     $request
+     *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      */
     public function shoppingCoupon(Application $app, Request $request)
@@ -228,6 +232,7 @@ class CouponController
         $Order = $app['eccube.service.shopping']->getOrder($app['config']['order_processing']);
         if (!$Order) {
             $app->addError('front.shopping.order.error');
+
             return $app->redirect($app->url('shopping_error'));
         }
         $form = $app['form.factory']->createBuilder('front_plugin_coupon_shopping')->getForm();
@@ -272,7 +277,7 @@ class CouponController
                     $Customer = $app['eccube.service.shopping']->getNonMember($this->sessionKey);
                     if ($Coupon) {
                         if ($Coupon->getCouponMember()) {
-                            $form->get("coupon_cd")->addError(new FormError('front.plugin.coupon.shopping.member'));
+                            $form->get('coupon_cd')->addError(new FormError('front.plugin.coupon.shopping.member'));
                             $error = true;
                         }
                     }
@@ -294,12 +299,12 @@ class CouponController
                     }
 
                     if (!$existCoupon) {
-                        $form->get("coupon_cd")->addError(new FormError('front.plugin.coupon.shopping.notexists'));
+                        $form->get('coupon_cd')->addError(new FormError('front.plugin.coupon.shopping.notexists'));
                         $error = true;
                     }
 
                     if (!$checkLowerLimit) {
-                        $form->get("coupon_cd")->addError(new FormError('front.plugin.coupon.shopping.lowerlimit'));
+                        $form->get('coupon_cd')->addError(new FormError('front.plugin.coupon.shopping.lowerlimit'));
                         $error = true;
                     }
 
@@ -307,24 +312,24 @@ class CouponController
                     $couponUsedOrNot = $service->checkCouponUsedOrNot($formCouponCd, $Customer);
                     if ($couponUsedOrNot && $existCoupon) {
                         // 既に存在している
-                        $form->get("coupon_cd")->addError(new FormError('front.plugin.coupon.shopping.sameuser'));
+                        $form->get('coupon_cd')->addError(new FormError('front.plugin.coupon.shopping.sameuser'));
                         $error = true;
                     }
 
                     // クーポンの発行枚数チェック
                     $checkCouponUseTime = $this->checkCouponUseTime($formCouponCd, $app);
                     if (!$checkCouponUseTime && $existCoupon) {
-                        $form->get("coupon_cd")->addError(new FormError('front.plugin.coupon.shopping.couponusetime'));
+                        $form->get('coupon_cd')->addError(new FormError('front.plugin.coupon.shopping.couponusetime'));
                         $error = true;
                     }
 
                     // 合計金額より値引き額の方が高いかチェック
                     if ($Order->getTotal() < $discount && $existCoupon) {
-                        $form->get("coupon_cd")->addError(new FormError('front.plugin.coupon.shopping.minus'));
+                        $form->get('coupon_cd')->addError(new FormError('front.plugin.coupon.shopping.minus'));
                         $error = true;
                     }
                 } elseif (!$Coupon) {
-                    $form->get("coupon_cd")->addError(new FormError('front.plugin.coupon.shopping.notexists'));
+                    $form->get('coupon_cd')->addError(new FormError('front.plugin.coupon.shopping.notexists'));
                 }
                 // ----------------------------------
                 // 値引き項目追加 / 合計金額上書き
@@ -332,8 +337,8 @@ class CouponController
                 if (!$error && $Coupon) {
                     // クーポン情報を登録
                     $this->setCouponOrder($Order, $Coupon, $formCouponCd, $Customer, $discount, $app);
-                    return $app->redirect($app->url('shopping'));
 
+                    return $app->redirect($app->url('shopping'));
                 } else {
                     // エラーが発生した場合、前回設定されているクーポンがあればその金額を再設定する
                     if ($couponCd && $Coupon) {
@@ -357,10 +362,11 @@ class CouponController
     }
 
     /**
-     *  クーポンの発行枚数のチェック
+     *  クーポンの発行枚数のチェック.
      *
      * @param $couponCd
      * @param Application $app
+     *
      * @return bool クーポンの枚数が一枚以上の時にtrueを返す
      */
     private function checkCouponUseTime($couponCd, Application $app)
@@ -371,9 +377,9 @@ class CouponController
     }
 
     /**
-     * クーポン情報に登録
+     * クーポン情報に登録.
      *
-     * @param Order $Order
+     * @param Order  $Order
      * @param Coupon $Coupon
      * @param $couponCd
      * @param Customer $Customer
@@ -394,9 +400,9 @@ class CouponController
 
     /**
      * クーポンコードが未入力または、クーポンコードを登録後に再度別のクーポンコードが設定された場合、
-     * 既存のクーポンを情報削除
+     * 既存のクーポンを情報削除.
      *
-     * @param Order $Order
+     * @param Order       $Order
      * @param Application $app
      */
     private function removeCouponOrder(Order $Order, Application $app)

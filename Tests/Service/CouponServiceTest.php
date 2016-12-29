@@ -18,16 +18,12 @@ use Plugin\Coupon\Entity\CouponCouponDetail;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 /**
- * Class CouponServiceTest
- *
- * @package Plugin\Coupon\Tests\Service
+ * Class CouponServiceTest.
  */
 class CouponServiceTest extends EccubeTestCase
 {
-
     public function testCreateCoupon()
     {
-
         $data = $this->getTestData();
 
         $this->expected = true;
@@ -35,7 +31,6 @@ class CouponServiceTest extends EccubeTestCase
         $this->actual = $this->app['eccube.plugin.coupon.service.coupon']->createCoupon($data);
 
         $this->verify();
-
     }
 
     public function testUpdateCoupon()
@@ -78,7 +73,6 @@ class CouponServiceTest extends EccubeTestCase
         $this->verify();
     }
 
-
     public function testDeleteCoupon()
     {
         /** @var \Plugin\Coupon\Entity\CouponCoupon $Coupon */
@@ -90,7 +84,6 @@ class CouponServiceTest extends EccubeTestCase
 
         $this->verify();
     }
-
 
     public function testDeleteCouponNot()
     {
@@ -104,10 +97,8 @@ class CouponServiceTest extends EccubeTestCase
         $this->verify();
     }
 
-
     public function testGenerateCouponCd()
     {
-
         $couponCd = $this->app['eccube.plugin.coupon.service.coupon']->generateCouponCd(20);
 
         $this->actual = strlen($couponCd);
@@ -150,14 +141,12 @@ class CouponServiceTest extends EccubeTestCase
         $OrderDetail->setOrder($Order);
         $Order->addOrderDetail($OrderDetail);
 
-
         $this->actual = $this->app['eccube.plugin.coupon.service.coupon']->existsCouponProduct($Coupon, $Order);
 
         $this->expected = true;
 
         $this->verify();
     }
-
 
     public function testExistsCouponProductNot()
     {
@@ -209,14 +198,12 @@ class CouponServiceTest extends EccubeTestCase
         $OrderDetail->setOrder($Order);
         $Order->addOrderDetail($OrderDetail);
 
-
         $this->actual = $this->app['eccube.plugin.coupon.service.coupon']->existsCouponProduct($Coupon, $Order);
 
         $this->expected = true;
 
         $this->verify();
     }
-
 
     public function testSaveCouponOrder()
     {
@@ -238,17 +225,14 @@ class CouponServiceTest extends EccubeTestCase
 
         $this->app['eccube.plugin.coupon.service.coupon']->saveCouponOrder($Order, $Coupon, $Coupon->getCouponCd(), $Customer, $discount);
 
-
         /** @var \Plugin\Coupon\Entity\CouponCouponOrder $CouponOrder */
         $CouponOrder = $this->app['eccube.plugin.coupon.repository.coupon_order']->findOneBy(array('coupon_cd' => $Coupon->getCouponCd()));
-
 
         $this->actual = $discount;
         $this->expected = $CouponOrder->getDiscount();
 
         $this->verify();
     }
-
 
     public function testRecalcOrder()
     {
@@ -259,7 +243,6 @@ class CouponServiceTest extends EccubeTestCase
         $Customer = $this->createCustomer();
 
         $Order = $this->createOrder($Customer);
-
 
         $details = $Coupon->getCouponDetails();
 
@@ -294,7 +277,6 @@ class CouponServiceTest extends EccubeTestCase
         $this->verify();
     }
 
-
     public function testIsOrderInActiveCoupon()
     {
         /** @var \Plugin\Coupon\Entity\CouponCoupon $Coupon */
@@ -314,8 +296,7 @@ class CouponServiceTest extends EccubeTestCase
         $ProductClasses = $Product->getProductClasses();
         $ProductClass = $ProductClasses[0];
 
-
-        $orderDetails =$Order->getOrderDetails();
+        $orderDetails = $Order->getOrderDetails();
         foreach ($orderDetails as $OrderDetail) {
             $Order->removeOrderDetail($OrderDetail);
         }
@@ -334,14 +315,12 @@ class CouponServiceTest extends EccubeTestCase
         $OrderDetail->setOrder($Order);
         $Order->addOrderDetail($OrderDetail);
 
-
         $this->actual = $this->app['eccube.plugin.coupon.service.coupon']->isOrderInActiveCoupon($Order);
 
         $this->expected = true;
 
         $this->verify();
     }
-
 
     public function testIsOrderInActiveCouponNot()
     {
@@ -358,8 +337,6 @@ class CouponServiceTest extends EccubeTestCase
 
         $this->verify();
     }
-
-
 
     public function testGetCouponOrder()
     {
@@ -381,17 +358,13 @@ class CouponServiceTest extends EccubeTestCase
 
         $this->app['eccube.plugin.coupon.service.coupon']->saveCouponOrder($Order, $Coupon, $Coupon->getCouponCd(), $Customer, $discount);
 
-
         $CouponOrder = $this->app['eccube.plugin.coupon.service.coupon']->getCouponOrder($Order->getPreOrderId());
-
 
         $this->actual = $CouponOrder->getDiscount();
         $this->expected = 200;
 
         $this->verify();
     }
-
-
 
     private function getCoupon($couponType = 1)
     {
@@ -425,16 +398,15 @@ class CouponServiceTest extends EccubeTestCase
         return $Coupon;
     }
 
-
     private function getTestData($couponType = 1)
     {
 
         //        $CouponDetail = new CouponCouponDetail();
-        //
+
          //       $Product = $this->createProduct();
-        //
+
         //        $CouponDetail->setProduct($Product);
-        //
+
         //        $data = array(
         //            'coupon_cd' => 'aaaaaaaa',
         //            'coupon_type' => '1',
@@ -448,7 +420,7 @@ class CouponServiceTest extends EccubeTestCase
         //            'available_to_date' => new \DateTime(),
         //            'CouponDetails' => array($CouponDetail),
         //        );
-        //
+
         //        return $data;
 
         $Coupon = new CouponCoupon();
@@ -470,7 +442,5 @@ class CouponServiceTest extends EccubeTestCase
         $Coupon->setAvailableToDate($d2);
 
         return $Coupon;
-
     }
-
 }

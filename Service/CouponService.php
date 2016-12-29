@@ -20,7 +20,7 @@ use Plugin\Coupon\Entity\CouponDetail;
 use Plugin\Coupon\Entity\CouponOrder;
 
 /**
- * Class CouponService
+ * Class CouponService.
  */
 class CouponService
 {
@@ -38,9 +38,10 @@ class CouponService
     }
 
     /**
-     * クーポン情報を新規登録する
+     * クーポン情報を新規登録する.
      *
      * @param $data
+     *
      * @return bool
      */
     public function createCoupon($data)
@@ -62,9 +63,10 @@ class CouponService
     }
 
     /**
-     * クーポン情報を更新する
+     * クーポン情報を更新する.
      *
      * @param $data
+     *
      * @return bool
      */
     public function updateCoupon($data)
@@ -118,9 +120,10 @@ class CouponService
     }
 
     /**
-     * クーポン情報を有効/無効にする
+     * クーポン情報を有効/無効にする.
      *
      * @param $couponId
+     *
      * @return bool
      */
     public function enableCoupon($couponId)
@@ -141,9 +144,10 @@ class CouponService
     }
 
     /**
-     * クーポン情報を削除する
+     * クーポン情報を削除する.
      *
      * @param $couponId
+     *
      * @return bool
      */
     public function deleteCoupon($couponId)
@@ -175,6 +179,7 @@ class CouponService
      * クーポンコードを生成する.
      *
      * @param int $length
+     *
      * @return string
      */
     public function generateCouponCd($length = 12)
@@ -185,9 +190,10 @@ class CouponService
     }
 
     /**
-     * クーポン情報を生成する
+     * クーポン情報を生成する.
      *
      * @param $data
+     *
      * @return CouponCoupon
      */
     protected function newCoupon($data)
@@ -209,10 +215,11 @@ class CouponService
     }
 
     /**
-     * クーポン詳細情報を生成する
+     * クーポン詳細情報を生成する.
      *
-     * @param Coupon $coupon
+     * @param Coupon       $coupon
      * @param CouponDetail $detail
+     *
      * @return CouponDetail
      */
     protected function newCouponDetail(Coupon $coupon, CouponDetail $detail)
@@ -231,7 +238,8 @@ class CouponService
      * 注文にクーポン対象商品が含まれているか確認する.
      *
      * @param Coupon $Coupon
-     * @param Order $Order
+     * @param Order  $Order
+     *
      * @return bool
      */
     public function existsCouponProduct(Coupon $Coupon, Order $Order)
@@ -260,10 +268,11 @@ class CouponService
     }
 
     /**
-     * 商品がクーポン適用の対象か調査する
+     * 商品がクーポン適用の対象か調査する.
      *
      * @param Coupon $Coupon
-     * @param Order $Order
+     * @param Order  $Order
+     *
      * @return array
      */
     private function containsProduct(Coupon $Coupon, \Eccube\Entity\Order $Order)
@@ -289,10 +298,11 @@ class CouponService
 
     /**
      * カテゴリがクーポン適用の対象か調査する.
-     * 下位のカテゴリから上位のカテゴリに向けて検索する
+     * 下位のカテゴリから上位のカテゴリに向けて検索する.
      *
      * @param Coupon $Coupon
-     * @param Order $Order
+     * @param Order  $Order
+     *
      * @return array
      */
     private function containsCategory(Coupon $Coupon, \Eccube\Entity\Order $Order)
@@ -323,6 +333,7 @@ class CouponService
      *
      * @param $targetCategoryIds
      * @param \Eccube\Entity\Category $Category
+     *
      * @return bool
      */
     private function existsDepthCategory(&$targetCategoryIds, \Eccube\Entity\Category $Category)
@@ -352,9 +363,9 @@ class CouponService
     }
 
     /**
-     * クーポン受注情報を保存する
+     * クーポン受注情報を保存する.
      *
-     * @param Order $Order
+     * @param Order  $Order
      * @param Coupon $Coupon
      * @param $couponCd
      * @param Customer $Customer
@@ -409,12 +420,14 @@ class CouponService
     }
 
     /**
-     * 合計、値引きを再計算する
+     * 合計、値引きを再計算する.
      *
-     * @param Order $Order
+     * @param Order  $Order
      * @param Coupon $Coupon
-     * @param array $couponProducts
+     * @param array  $couponProducts
+     *
      * @return float|int|string
+     *
      * @throws \Doctrine\ORM\NoResultException
      */
     public function recalcOrder(Order $Order, Coupon $Coupon, $couponProducts)
@@ -452,9 +465,10 @@ class CouponService
     }
 
     /**
-     * カート内の商品(OrderDetail)がクーポン対象商品か確認する
+     * カート内の商品(OrderDetail)がクーポン対象商品か確認する.
      *
      * @param Order $Order
+     *
      * @return bool
      */
     public function isOrderInActiveCoupon(Order $Order)
@@ -472,9 +486,11 @@ class CouponService
     }
 
     /**
-     * check coupon lower limit
+     * check coupon lower limit.
+     *
      * @param array $productCoupon
-     * @param int $lowerLimitMoney
+     * @param int   $lowerLimitMoney
+     *
      * @return bool
      */
     public function isLowerLimitCoupon($productCoupon, $lowerLimitMoney)
@@ -492,6 +508,7 @@ class CouponService
      * クーポン受注情報を取得する.
      *
      * @param $preOrderId
+     *
      * @return null|object
      */
     public function getCouponOrder($preOrderId)
@@ -505,10 +522,11 @@ class CouponService
     }
 
     /**
-     *  ユーザはクーポン1回のみ利用できる
+     *  ユーザはクーポン1回のみ利用できる.
      *
      * @param $couponCd
      * @param Customer $Customer
+     *
      * @return bool
      */
     public function checkCouponUsedOrNot($couponCd, Customer $Customer)
@@ -529,11 +547,12 @@ class CouponService
     }
 
     /**
-     *  ユーザはクーポン1回のみ利用できる
+     *  ユーザはクーポン1回のみ利用できる.
      *
      * @param $couponCd
      * @param $orderId
      * @param Customer $Customer
+     *
      * @return bool
      */
     public function checkCouponUsedOrNotBefore($couponCd, $orderId, Customer $Customer)

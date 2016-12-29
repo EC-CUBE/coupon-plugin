@@ -14,12 +14,12 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 /**
- * Class CouponUseType
+ * Class CouponUseType.
  */
 class CouponUseType extends AbstractType
 {
     /**
-     * buildForm
+     * buildForm.
      *
      * @param FormBuilderInterface $builder
      * @param array                $options
@@ -45,7 +45,8 @@ class CouponUseType extends AbstractType
     }
 
     /**
-     * getName
+     * getName.
+     *
      * @return string
      */
     public function getName()

@@ -14,15 +14,12 @@ use Eccube\Common\Constant;
 use Eccube\Entity\Order;
 use Eccube\Event\EventArgs;
 use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\Form as Error;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\Validator\Constraints as Assert;
 
 class EventLegacy
 {
-
     /** @var \Eccube\Application */
     private $app;
 
@@ -37,7 +34,7 @@ class EventLegacy
     }
 
     /**
-     * クーポン関連項目を追加する
+     * クーポン関連項目を追加する.
      *
      * @param FilterResponseEvent $event
      */
@@ -56,7 +53,7 @@ class EventLegacy
     }
 
     /**
-     * クーポンが利用されていないかチェック
+     * クーポンが利用されていないかチェック.
      */
     public function onControllerShoppingConfirmBefore($event = null)
     {
@@ -90,15 +87,15 @@ class EventLegacy
             $this->app->addError($this->app->trans('front.plugin.coupon.shopping.sameuser'), 'front.request');
             // 既に存在している
             if (is_null($event)) {
-                header("Location: ".$this->app->url('shopping'));
+                header('Location: '.$this->app->url('shopping'));
                 exit;
             } else {
                 $response = $this->redirect($this->app->url('shopping'));
                 $event->setResponse($response);
+
                 return;
             }
         }
-
     }
 
     /**
@@ -113,7 +110,7 @@ class EventLegacy
         $repository = $this->app['eccube.plugin.coupon.repository.coupon_order'];
         // クーポン受注情報を取得する
         $CouponOrder = $repository->findOneBy(array(
-            'order_id' => $orderId
+            'order_id' => $orderId,
         ));
         if (!$CouponOrder) {
             return;
@@ -132,7 +129,7 @@ class EventLegacy
 
     /**
      * [order/{id}/edit]表示の時のEvent Fock.
-     * クーポン関連項目を追加する
+     * クーポン関連項目を追加する.
      *
      * @param FilterResponseEvent $event
      */
@@ -165,7 +162,7 @@ class EventLegacy
     }
 
     /**
-     * Hook point add coupon information to mypage history
+     * Hook point add coupon information to mypage history.
      *
      * @param FilterResponseEvent $event
      */
@@ -175,7 +172,7 @@ class EventLegacy
 
     /**
      * 配送先や支払い方法変更時の合計金額と値引きの差額チェック
-     * v3.0.8までで使用
+     * v3.0.8までで使用.
      */
     public function onControllerRestoreDiscountAfter()
     {
@@ -190,16 +187,14 @@ class EventLegacy
         $this->restoreDiscount($Order);
     }
 
-
     /**
      * 配送先や支払い方法変更時の合計金額と値引きの差額チェック
-     * v3.0.9以降で使用
+     * v3.0.9以降で使用.
      *
      * @param EventArgs $event
      */
     public function onRestoreDiscount(EventArgs $event)
     {
-
         if ($event->hasArgument('Order')) {
             $Order = $event->getArgument('Order');
         } else {
@@ -208,7 +203,6 @@ class EventLegacy
         }
 
         $this->restoreDiscount($Order);
-
     }
 
     // =========================================================
@@ -216,7 +210,7 @@ class EventLegacy
     // =========================================================
 
     /**
-     * 受注情報編集画面にクーポン情報を追加する
+     * 受注情報編集画面にクーポン情報を追加する.
      *
      * @param Request  $request
      * @param Response $response
@@ -228,10 +222,10 @@ class EventLegacy
         libxml_use_internal_errors(true);
         $dom = new \DOMDocument();
         $dom->loadHTML('<?xml encoding="UTF-8">'.$source);
-        $dom->encoding = "UTF-8";
+        $dom->encoding = 'UTF-8';
 
         /** @var DOMNodeList */
-        $Elements = $dom->getElementsByTagName("*");
+        $Elements = $dom->getElementsByTagName('*');
         $parentNode = null;
         $operationNode = null;
 
@@ -244,11 +238,11 @@ class EventLegacy
             $operationNodeValue = 'row hidden-xs hidden-sm';
         }
 
-        for ($i = 0; $i < $Elements->length; $i++) {
+        for ($i = 0; $i < $Elements->length; ++$i) {
             if (@$Elements->item($i)->attributes->getNamedItem('class')->nodeValue == $parentNodeValue) {
                 // 親ノードを保持する
                 $parentNode = $Elements->item($i);
-            } else if (@$Elements->item($i)->attributes->getNamedItem('class')->nodeValue == $operationNodeValue) {
+            } elseif (@$Elements->item($i)->attributes->getNamedItem('class')->nodeValue == $operationNodeValue) {
                 // 操作部ノードを保持する
                 $operationNode = $Elements->item($i);
             }
@@ -258,7 +252,7 @@ class EventLegacy
         if (!is_null($parentNode) && !is_null($operationNode)) {
             // 追加するクーポン情報のHTMLを取得する.
             $insert = $this->app->renderView('Coupon/View/admin/order_edit_coupon.twig', array(
-                'form' => $Coupon
+                'form' => $Coupon,
             ));
             $template = $dom->createDocumentFragment();
             $template->appendXML($insert);
@@ -276,11 +270,12 @@ class EventLegacy
      * お支払方法の下に下記の項目を追加する.(id=confirm_main )
      * ・クーポンコードボタン
      * 送料のの下に下記の項目を追加する.(class=total_box total_amountの上)
-     * ・値引き表示
+     * ・値引き表示.
      *
-     * @param Request $request
+     * @param Request  $request
      * @param Response $response
-     * @param Order $Order
+     * @param Order    $Order
+     *
      * @return mixed|string
      */
     private function getHtmlShopping(Request $request, Response $response, Order $Order)
@@ -329,17 +324,15 @@ class EventLegacy
                     }
                 }
             }
-
         } catch (\InvalidArgumentException $e) {
             // no-op
         }
 
         return $html;
-
     }
 
     /**
-     * 受注データを取得
+     * 受注データを取得.
      *
      * @return null|object
      */
@@ -350,14 +343,14 @@ class EventLegacy
         $preOrderId = $this->app['eccube.service.cart']->getPreOrderId();
         $Order = $this->app['eccube.repository.order']->findOneBy(array(
             'pre_order_id' => $preOrderId,
-            'OrderStatus' => $this->app['config']['order_processing']
+            'OrderStatus' => $this->app['config']['order_processing'],
         ));
 
         return $Order;
     }
 
     /**
-     * 合計金額がマイナスになっていた場合、値引き処理を元に戻す
+     * 合計金額がマイナスになっていた場合、値引き処理を元に戻す.
      *
      * @param Order $Order
      */
@@ -385,9 +378,10 @@ class EventLegacy
     }
 
     /**
-     * 解析用HTMLを取得
+     * 解析用HTMLを取得.
      *
      * @param Crawler $crawler
+     *
      * @return string
      */
     private function getHtml(Crawler $crawler)
@@ -402,9 +396,8 @@ class EventLegacy
         return html_entity_decode($html, ENT_NOQUOTES, 'UTF-8');
     }
 
-
     /**
-     * v3.0.9以降のフックポイントに対応しているのか
+     * v3.0.9以降のフックポイントに対応しているのか.
      *
      * @return bool
      */
@@ -412,6 +405,4 @@ class EventLegacy
     {
         return version_compare('3.0.9', Constant::VERSION, '<=');
     }
-
-
 }

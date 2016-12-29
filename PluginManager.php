@@ -14,6 +14,7 @@ use Eccube\Application;
 use Eccube\Plugin\AbstractPluginManager;
 use Eccube\Entity\Master\DeviceType;
 use Eccube\Entity\PageLayout;
+
 /**
  * Class PluginManager.
  */
@@ -75,9 +76,10 @@ class PluginManager extends AbstractPluginManager
     }
 
     /**
-     * クーポン用ページレイアウトを作成
+     * クーポン用ページレイアウトを作成.
      *
      * @param $app
+     *
      * @throws \Exception
      */
     private function createPageLayout($app)
@@ -96,9 +98,10 @@ class PluginManager extends AbstractPluginManager
         $app['orm.em']->flush($PageLayout);
     }
     /**
-     * クーポン用ページレイアウトを削除
+     * クーポン用ページレイアウトを削除.
      *
      * @param $app
+     *
      * @throws \Exception
      */
     private function removePageLayout($app)

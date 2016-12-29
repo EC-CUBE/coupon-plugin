@@ -18,7 +18,7 @@ use Doctrine\ORM\EntityManager;
 use Plugin\Coupon\Util\Version;
 
 /**
- * Version201507231300
+ * Version201507231300.
  */
 class Version201507231300 extends AbstractMigration
 {
@@ -53,7 +53,8 @@ class Version201507231300 extends AbstractMigration
     );
 
     /**
-     * Up method
+     * Up method.
+     *
      * @param Schema $schema
      */
     public function up(Schema $schema)
@@ -68,7 +69,8 @@ class Version201507231300 extends AbstractMigration
     }
 
     /**
-     * Down method
+     * Down method.
+     *
      * @param Schema $schema
      */
     public function down(Schema $schema)
@@ -114,14 +116,14 @@ class Version201507231300 extends AbstractMigration
         }
     }
 
-
     /**
-     * クーポン情報テーブル作成
+     * クーポン情報テーブル作成.
+     *
      * @param Schema $schema
      */
     protected function createCoupon(Schema $schema)
     {
-        $table = $schema->createTable("plg_coupon");
+        $table = $schema->createTable('plg_coupon');
         $table->addColumn('coupon_id', 'integer', array(
             'autoincrement' => true,
             'notnull' => true,
@@ -183,7 +185,6 @@ class Version201507231300 extends AbstractMigration
             'unsigned' => false,
         ));
 
-
         $table->addColumn('del_flg', 'smallint', array(
             'notnull' => true,
             'unsigned' => false,
@@ -204,12 +205,13 @@ class Version201507231300 extends AbstractMigration
     }
 
     /**
-     * クーポン詳細情報テーブル作成
+     * クーポン詳細情報テーブル作成.
+     *
      * @param Schema $schema
      */
     protected function createCouponDetail(Schema $schema)
     {
-        $table = $schema->createTable("plg_coupon_detail");
+        $table = $schema->createTable('plg_coupon_detail');
         $table->addColumn('coupon_detail_id', 'integer', array(
             'autoincrement' => true,
             'notnull' => true,
@@ -251,12 +253,13 @@ class Version201507231300 extends AbstractMigration
     }
 
     /**
-     * 注文クーポン情報テーブルの作成
+     * 注文クーポン情報テーブルの作成.
+     *
      * @param Schema $schema
      */
     protected function createCouponOrder(Schema $schema)
     {
-        $table = $schema->createTable("plg_coupon_order");
+        $table = $schema->createTable('plg_coupon_order');
         $table->addColumn('id', 'integer', array(
             'autoincrement' => true,
             'notnull' => true,
@@ -309,7 +312,8 @@ class Version201507231300 extends AbstractMigration
     }
 
     /**
-     * create all table of coupon
+     * create all table of coupon.
+     *
      * @param Schema $schema
      */
     protected function createCouponDb(Schema $schema)

@@ -16,13 +16,10 @@ use Plugin\Coupon\Entity\CouponCoupon;
 use Plugin\Coupon\Entity\CouponCouponDetail;
 
 /**
- * Class CouponControllerTest
- *
- * @package Plugin\Coupon\Tests\Web\Admin
+ * Class CouponControllerTest.
  */
 class CouponControllerTest extends AbstractAdminWebTestCase
 {
-
     protected $Customer;
 
     public function setUp()
@@ -38,17 +35,13 @@ class CouponControllerTest extends AbstractAdminWebTestCase
 
     public function testIndex()
     {
-
         $crawler = $this->client->request('GET', $this->app->url('admin_coupon_list'));
 
         $this->assertTrue($this->client->getResponse()->isSuccessful());
-
     }
-
 
     public function testIndexList()
     {
-
         $this->getCoupon();
 
         $crawler = $this->client->request('GET', $this->app->url('admin_coupon_list'));
@@ -58,24 +51,18 @@ class CouponControllerTest extends AbstractAdminWebTestCase
         $this->expected = '1 件';
         $this->actual = $crawler->filter('.box-title strong')->text();
 
-         $this->verify();
-
+        $this->verify();
     }
-
 
     public function testEditNew()
     {
-
         $crawler = $this->client->request('GET', $this->app->url('admin_coupon_new'));
 
         $this->assertTrue($this->client->getResponse()->isSuccessful());
-
     }
-
 
     public function testEdit()
     {
-
         $Coupon = $this->getCoupon();
 
         $crawler = $this->client->request('GET', $this->app->url('admin_coupon_edit', array('idaa' => $Coupon->getId())));
@@ -83,32 +70,7 @@ class CouponControllerTest extends AbstractAdminWebTestCase
         dump($crawler->html());
 
         $this->assertTrue($this->client->getResponse()->isSuccessful());
-
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     private function getCoupon($couponType = 1, $discountType = 1)
     {
@@ -118,7 +80,6 @@ class CouponControllerTest extends AbstractAdminWebTestCase
 
         /** @var \Plugin\Coupon\Entity\CouponCoupon $Coupon */
         $Coupon = $this->app['eccube.plugin.coupon.repository.coupon']->findOneBy(array('coupon_cd' => 'aaaaaaaa'));
-
 
         $Product = $this->app['eccube.repository.product']->find(1);
 
@@ -144,10 +105,8 @@ class CouponControllerTest extends AbstractAdminWebTestCase
         return $Coupon;
     }
 
-
     private function getTestData($couponType = 1, $discountType = 1)
     {
-
         $Coupon = new CouponCoupon();
 
         $date1 = new \DateTime();
@@ -167,7 +126,5 @@ class CouponControllerTest extends AbstractAdminWebTestCase
         $Coupon->setAvailableToDate($d2);
 
         return $Coupon;
-
     }
-
 }

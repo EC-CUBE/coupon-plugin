@@ -7,30 +7,30 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace Plugin\Coupon\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use Eccube\Entity\AbstractEntity;
 use Eccube\Entity\Product;
 use Eccube\Entity\Category;
 
 /**
- * CouponDetail
+ * CouponDetail.
  */
 class CouponDetail extends AbstractEntity
 {
     /**
-     * @var integer
+     * @var int
      */
     private $id;
 
     /**
-     * @var integer
+     * @var int
      */
     private $coupon_type;
 
     /**
-     * @var integer
+     * @var int
      */
     private $del_flg;
 
@@ -60,9 +60,9 @@ class CouponDetail extends AbstractEntity
     private $Category;
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer 
+     * @return int
      */
     public function getId()
     {
@@ -70,9 +70,10 @@ class CouponDetail extends AbstractEntity
     }
 
     /**
-     * Set id
+     * Set id.
      *
-     * @param integer $code
+     * @param int $code
+     *
      * @return CouponDetail
      */
     public function setId($id)
@@ -83,9 +84,10 @@ class CouponDetail extends AbstractEntity
     }
 
     /**
-     * Set coupon_type
+     * Set coupon_type.
      *
-     * @param integer $couponType
+     * @param int $couponType
+     *
      * @return CouponDetail
      */
     public function setCouponType($couponType)
@@ -96,9 +98,9 @@ class CouponDetail extends AbstractEntity
     }
 
     /**
-     * Get coupon_type
+     * Get coupon_type.
      *
-     * @return integer 
+     * @return int
      */
     public function getCouponType()
     {
@@ -106,9 +108,10 @@ class CouponDetail extends AbstractEntity
     }
 
     /**
-     * Set del_flg
+     * Set del_flg.
      *
-     * @param integer $delFlg
+     * @param int $delFlg
+     *
      * @return CouponDetail
      */
     public function setDelFlg($delFlg)
@@ -119,9 +122,9 @@ class CouponDetail extends AbstractEntity
     }
 
     /**
-     * Get del_flg
+     * Get del_flg.
      *
-     * @return integer 
+     * @return int
      */
     public function getDelFlg()
     {
@@ -129,9 +132,10 @@ class CouponDetail extends AbstractEntity
     }
 
     /**
-     * Set create_date
+     * Set create_date.
      *
      * @param \DateTime $createDate
+     *
      * @return CouponDetail
      */
     public function setCreateDate($createDate)
@@ -142,9 +146,9 @@ class CouponDetail extends AbstractEntity
     }
 
     /**
-     * Get create_date
+     * Get create_date.
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getCreateDate()
     {
@@ -152,9 +156,10 @@ class CouponDetail extends AbstractEntity
     }
 
     /**
-     * Set update_date
+     * Set update_date.
      *
      * @param \DateTime $updateDate
+     *
      * @return CouponDetail
      */
     public function setUpdateDate($updateDate)
@@ -165,9 +170,9 @@ class CouponDetail extends AbstractEntity
     }
 
     /**
-     * Get update_date
+     * Get update_date.
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getUpdateDate()
     {
@@ -175,9 +180,10 @@ class CouponDetail extends AbstractEntity
     }
 
     /**
-     * Set Coupon
+     * Set Coupon.
      *
      * @param Coupon $coupon
+     *
      * @return CouponDetail
      */
     public function setCoupon(Coupon $coupon)
@@ -188,7 +194,7 @@ class CouponDetail extends AbstractEntity
     }
 
     /**
-     * Get Coupon
+     * Get Coupon.
      *
      * @return Coupon
      */
@@ -198,9 +204,10 @@ class CouponDetail extends AbstractEntity
     }
 
     /**
-     * Set Product
+     * Set Product.
      *
      * @param Product $product
+     *
      * @return CouponDetail
      */
     public function setProduct(Product $product = null)
@@ -211,7 +218,7 @@ class CouponDetail extends AbstractEntity
     }
 
     /**
-     * Get Product
+     * Get Product.
      *
      * @return Product
      */
@@ -221,9 +228,10 @@ class CouponDetail extends AbstractEntity
     }
 
     /**
-     * Set Category
+     * Set Category.
      *
      * @param Category $category
+     *
      * @return CouponDetail
      */
     public function setCategory(Category $category = null)
@@ -234,7 +242,7 @@ class CouponDetail extends AbstractEntity
     }
 
     /**
-     * Get Category
+     * Get Category.
      *
      * @return Category
      */
@@ -243,29 +251,30 @@ class CouponDetail extends AbstractEntity
         return $this->Category;
     }
 
-
     /**
      * 親カテゴリ名を含むカテゴリ名を取得する.
+     *
      * @return string
      */
-    public function getCategoryFullName() {
-
-        if(is_null($this->Category)) {
-            return "";
+    public function getCategoryFullName()
+    {
+        if (is_null($this->Category)) {
+            return '';
         }
         $fulName = $this->Category->getName();
 
         // 親カテゴリがない場合はカテゴリ名を返す.
-        if(is_null($this->Category->getParent())) {
+        if (is_null($this->Category->getParent())) {
             return $fulName;
         }
 
         // 親カテゴリ名を結合する
         $ParentCategory = $this->Category->getParent();
-        while(!is_null($ParentCategory)) {
-            $fulName = $ParentCategory->getName() . "　＞　" .  $fulName;
+        while (!is_null($ParentCategory)) {
+            $fulName = $ParentCategory->getName().'　＞　'.$fulName;
             $ParentCategory = $ParentCategory->getParent();
         }
+
         return $fulName;
     }
 }

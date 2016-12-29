@@ -22,18 +22,18 @@ use Symfony\Component\Validator\ConstraintViolationList;
 use Eccube\Application;
 
 /**
- * Class CouponType
+ * Class CouponType.
  */
 class CouponType extends AbstractType
 {
-
     /**
-     * @var Application $app
+     * @var Application
      */
     private $app;
 
     /**
      * CouponType constructor.
+     *
      * @param Application $app
      */
     public function __construct(Application $app)
@@ -42,7 +42,7 @@ class CouponType extends AbstractType
     }
 
     /**
-     * buildForm
+     * buildForm.
      *
      * @param FormBuilderInterface $builder
      * @param array                $options
@@ -166,7 +166,7 @@ class CouponType extends AbstractType
             ->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($app) {
                 $form = $event->getForm();
                 $data = $form->getData();
-                if (count($data['CouponDetails']) ==  0 && $data['coupon_type'] != 3) {
+                if (count($data['CouponDetails']) == 0 && $data['coupon_type'] != 3) {
                     $form['coupon_type']->addError(new FormError('クーポン有効対象となる商品情報またはカテゴリ情報を設定してください。'));
                 }
 
@@ -239,9 +239,9 @@ class CouponType extends AbstractType
         ));
     }
 
-
     /**
-     * getName
+     * getName.
+     *
      * @return string
      */
     public function getName()
