@@ -60,7 +60,7 @@ class Version201507231300 extends AbstractMigration
     public function up(Schema $schema)
     {
         if (Version::isSupportGetInstanceFunction()) {
-            $this->createCouponDb($schema);
+            $this->createCouponDb();
         } else {
             $this->createCoupon($schema);
             $this->createCouponDetail($schema);
@@ -162,17 +162,6 @@ class Version201507231300 extends AbstractMigration
             'default' => 1,
         ));
 
-        $table->addColumn('coupon_member', 'smallint', array(
-            'notnull' => false,
-            'unsigned' => false,
-            'default' => 0,
-        ));
-
-        $table->addColumn('coupon_lower_limit', 'decimal', array(
-            'notnull' => false,
-            'unsigned' => false,
-            'default' => 0,
-        ));
         // 有効期間 開始日付
         $table->addColumn('available_from_date', 'datetime', array(
             'notnull' => false,
@@ -292,12 +281,6 @@ class Version201507231300 extends AbstractMigration
             'default' => 0,
         ));
 
-        $table->addColumn('coupon_cancel', 'smallint', array(
-            'notnull' => false,
-            'unsigned' => false,
-            'default' => 0,
-        ));
-
         $table->addColumn('create_date', 'datetime', array(
             'notnull' => true,
             'unsigned' => false,
@@ -314,9 +297,8 @@ class Version201507231300 extends AbstractMigration
     /**
      * create all table of coupon.
      *
-     * @param Schema $schema
      */
-    protected function createCouponDb(Schema $schema)
+    protected function createCouponDb()
     {
         $app = Application::getInstance();
         $em = $app['orm.em'];

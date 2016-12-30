@@ -18,6 +18,7 @@ use Eccube\Entity\OrderDetail;
 use Plugin\Coupon\Entity\Coupon;
 use Plugin\Coupon\Entity\CouponDetail;
 use Plugin\Coupon\Entity\CouponOrder;
+use Eccube\Entity\Category;
 
 /**
  * Class CouponService.
@@ -104,7 +105,7 @@ class CouponService
         foreach ($details as $detail) {
             $couponDetail = null;
             if (is_null($detail->getId())) {
-                $couponDetail = new \Plugin\Coupon\Entity\CouponCouponDetail();
+                $couponDetail = new CouponDetail();
                 $couponDetail = $detail;
                 $couponDetail->setCoupon($coupon);
                 $couponDetail->setCouponType($coupon->getCouponType());
@@ -194,7 +195,7 @@ class CouponService
      *
      * @param $data
      *
-     * @return CouponCoupon
+     * @return Coupon
      */
     protected function newCoupon($data)
     {
@@ -275,7 +276,7 @@ class CouponService
      *
      * @return array
      */
-    private function containsProduct(Coupon $Coupon, \Eccube\Entity\Order $Order)
+    private function containsProduct(Coupon $Coupon, Order $Order)
     {
         // クーポンの対象商品IDを配列にする
         $targetProductIds = array();
@@ -305,7 +306,7 @@ class CouponService
      *
      * @return array
      */
-    private function containsCategory(Coupon $Coupon, \Eccube\Entity\Order $Order)
+    private function containsCategory(Coupon $Coupon, Order $Order)
     {
         // クーポンの対象カテゴリIDを配列にする
         $targetCategoryIds = array();
@@ -332,11 +333,11 @@ class CouponService
      * クーポン対象のカテゴリが存在するか確認にする.
      *
      * @param $targetCategoryIds
-     * @param \Eccube\Entity\Category $Category
+     * @param Category $Category
      *
      * @return bool
      */
-    private function existsDepthCategory(&$targetCategoryIds, \Eccube\Entity\Category $Category)
+    private function existsDepthCategory(&$targetCategoryIds, Category $Category)
     {
         // Categoryがnullならfalse
         if (is_null($Category)) {

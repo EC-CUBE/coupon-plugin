@@ -22,6 +22,9 @@ use Plugin\Coupon\Service\CouponService;
 use Plugin\Coupon\Event\Event;
 use Plugin\Coupon\Event\EventLegacy;
 
+// include log functions (for 3.0.0 - 3.0.11)
+require_once __DIR__.'/../log.php';
+
 /**
  * Class CouponServiceProvider.
  */

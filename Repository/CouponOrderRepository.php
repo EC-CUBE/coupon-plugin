@@ -25,7 +25,7 @@ class CouponOrderRepository extends EntityRepository
     /**
      * クーポン受注情報を保存する.
      *
-     * @param CouponOrder $CouponCouponOrder
+     * @param CouponOrder $CouponOrder
      */
     public function save(CouponOrder $CouponOrder)
     {
