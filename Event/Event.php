@@ -177,7 +177,7 @@ class Event
     }
 
     /**
-     * [order/{id}/edit]表示の時のEvent Fock.
+     * [order/{id}/edit]表示の時のEvent Fork.
      * クーポン関連項目を追加する.
      *
      * @param TemplateEvent $event
@@ -282,6 +282,16 @@ class Event
         $parameters['coupon_name'] = $Coupon->getCouponName();
         $event->setParameters($parameters);
         log_info('Coupon trigger onRenderMypageHistory finish');
+    }
+
+    /**
+     * Hook point send mail.
+     *
+     * @param EventArgs $event
+     */
+    public function onSendOrderMail(EventArgs $event)
+    {
+
     }
 
     /**

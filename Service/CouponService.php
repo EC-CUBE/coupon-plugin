@@ -41,7 +41,7 @@ class CouponService
     /**
      * クーポン情報を新規登録する.
      *
-     * @param $data
+     * @param array $data
      *
      * @return bool
      */
@@ -66,7 +66,7 @@ class CouponService
     /**
      * クーポン情報を更新する.
      *
-     * @param $data
+     * @param array $data
      *
      * @return bool
      */
@@ -123,7 +123,7 @@ class CouponService
     /**
      * クーポン情報を有効/無効にする.
      *
-     * @param $couponId
+     * @param int $couponId
      *
      * @return bool
      */
@@ -147,7 +147,7 @@ class CouponService
     /**
      * クーポン情報を削除する.
      *
-     * @param $couponId
+     * @param int $couponId
      *
      * @return bool
      */
@@ -366,11 +366,11 @@ class CouponService
     /**
      * クーポン受注情報を保存する.
      *
-     * @param Order  $Order
-     * @param Coupon $Coupon
-     * @param $couponCd
+     * @param Order    $Order
+     * @param Coupon   $Coupon
+     * @param int      $couponCd
      * @param Customer $Customer
-     * @param $discount
+     * @param int      $discount
      */
     public function saveCouponOrder(Order $Order, Coupon $Coupon, $couponCd, Customer $Customer, $discount)
     {

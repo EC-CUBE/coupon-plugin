@@ -46,6 +46,9 @@ front.shopping.complete.initialize:
 front.shopping.confirm.initialize:
     - [onShoppingConfirmInit, NORMAL]
 
+mail.order:
+    - [onSendOrderMail, NORMAL]
+
 Admin/Order/edit.twig:
     - [onRenderAdminOrderEdit, NORMAL]
 

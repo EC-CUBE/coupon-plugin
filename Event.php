@@ -93,6 +93,16 @@ class Event
     }
 
     /**
+     * Hook point send mail.
+     *
+     * @param EventArgs $event
+     */
+    public function onSendOrderMail(EventArgs $event)
+    {
+        $this->app['eccube.plugin.coupon.event']->onSendOrderMail($event);
+    }
+
+    /**
      * クーポン関連項目を追加する.
      *
      * @param FilterResponseEvent $event

@@ -131,7 +131,7 @@ class CouponController
      *
      * @param Application $app
      * @param Request     $request
-     * @param $id
+     * @param int         $id
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
@@ -364,7 +364,7 @@ class CouponController
     /**
      *  クーポンの発行枚数のチェック.
      *
-     * @param $couponCd
+     * @param int         $couponCd
      * @param Application $app
      *
      * @return bool クーポンの枚数が一枚以上の時にtrueを返す

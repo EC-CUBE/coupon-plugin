@@ -17,7 +17,6 @@ use Plugin\Coupon\Util\Version;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Plugin\Coupon\Entity\Coupon;
 
 /**
  * Class EventLegacy
@@ -135,7 +134,7 @@ class EventLegacy
     }
 
     /**
-     * [order/{id}/edit]表示の時のEvent Fock.
+     * [order/{id}/edit]表示の時のEvent Fork.
      * クーポン関連項目を追加する.
      *
      * @param FilterResponseEvent $event
