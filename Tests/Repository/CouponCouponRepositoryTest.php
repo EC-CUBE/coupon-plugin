@@ -12,14 +12,17 @@ namespace Plugin\Coupon\Tests\Repository;
 
 use Eccube\Common\Constant;
 use Eccube\Tests\EccubeTestCase;
-use Plugin\Coupon\Entity\CouponCoupon;
-use Plugin\Coupon\Entity\CouponCouponDetail;
+use Plugin\Coupon\Entity\Coupon;
+use Plugin\Coupon\Entity\CouponDetail;
 
 /**
  * Class CouponCouponRepositoryTest.
  */
 class CouponCouponRepositoryTest extends EccubeTestCase
 {
+    /**
+     * testFindActiveCoupon
+     */
     public function testFindActiveCoupon()
     {
         $Coupon = $this->getCoupon();
@@ -35,6 +38,9 @@ class CouponCouponRepositoryTest extends EccubeTestCase
         $this->verify();
     }
 
+    /**
+     * testFindActiveCouponAll
+     */
     public function testFindActiveCouponAll()
     {
         $this->getCoupon();
@@ -46,17 +52,21 @@ class CouponCouponRepositoryTest extends EccubeTestCase
         $this->assertGreaterThan(0, $this->actual);
     }
 
+    /**
+     * @param int $couponType
+     * @return Coupon
+     */
     private function getCoupon($couponType = 1)
     {
         $data = $this->getTestData($couponType);
 
         $this->app['eccube.plugin.coupon.service.coupon']->createCoupon($data);
 
-        /** @var \Plugin\Coupon\Entity\CouponCoupon $Coupon */
+        /** @var Coupon $Coupon */
         $Coupon = $this->app['eccube.plugin.coupon.repository.coupon']->findOneBy(array('coupon_cd' => 'aaaaaaaa'));
 
         $Product = $this->createProduct();
-        $CouponDetail = new CouponCouponDetail();
+        $CouponDetail = new CouponDetail();
 
         $CouponDetail->setCoupon($Coupon);
         $CouponDetail->setCouponType($Coupon->getCouponType());
@@ -78,9 +88,14 @@ class CouponCouponRepositoryTest extends EccubeTestCase
         return $Coupon;
     }
 
+    /**
+     * getTestData
+     * @param int $couponType
+     * @return Coupon
+     */
     private function getTestData($couponType = 1)
     {
-        $Coupon = new CouponCoupon();
+        $Coupon = new Coupon();
 
         $date1 = new \DateTime();
         $date2 = new \DateTime();

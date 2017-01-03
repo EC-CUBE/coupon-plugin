@@ -10,29 +10,42 @@
 
 namespace Plugin\Coupon\Tests\Web\Admin;
 
+use DoctrineProxy\__CG__\Eccube\Entity\Customer;
 use Eccube\Common\Constant;
 use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;
-use Plugin\Coupon\Entity\CouponCoupon;
-use Plugin\Coupon\Entity\CouponCouponDetail;
+use Plugin\Coupon\Entity\Coupon;
+use Plugin\Coupon\Entity\CouponDetail;
 
 /**
  * Class CouponControllerTest.
  */
 class CouponControllerTest extends AbstractAdminWebTestCase
 {
+    /**
+     * @var Customer
+     */
     protected $Customer;
 
+    /**
+     * setUp
+     */
     public function setUp()
     {
         parent::setUp();
         $this->Customer = $this->createCustomer();
     }
 
+    /**
+     * tearDown
+     */
     public function tearDown()
     {
         parent::tearDown();
     }
 
+    /**
+     * testIndex
+     */
     public function testIndex()
     {
         $crawler = $this->client->request('GET', $this->app->url('admin_coupon_list'));
@@ -40,6 +53,9 @@ class CouponControllerTest extends AbstractAdminWebTestCase
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
 
+    /**
+     * testIndexList
+     */
     public function testIndexList()
     {
         $this->getCoupon();
@@ -54,6 +70,9 @@ class CouponControllerTest extends AbstractAdminWebTestCase
         $this->verify();
     }
 
+    /**
+     * testEditNew
+     */
     public function testEditNew()
     {
         $crawler = $this->client->request('GET', $this->app->url('admin_coupon_new'));
@@ -61,6 +80,9 @@ class CouponControllerTest extends AbstractAdminWebTestCase
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
 
+    /**
+     * testEdit
+     */
     public function testEdit()
     {
         $Coupon = $this->getCoupon();
@@ -72,6 +94,12 @@ class CouponControllerTest extends AbstractAdminWebTestCase
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
 
+    /**
+     * getCoupon
+     * @param int $couponType
+     * @param int $discountType
+     * @return Coupon
+     */
     private function getCoupon($couponType = 1, $discountType = 1)
     {
         $data = $this->getTestData($couponType, $discountType);
@@ -83,7 +111,7 @@ class CouponControllerTest extends AbstractAdminWebTestCase
 
         $Product = $this->app['eccube.repository.product']->find(1);
 
-        $CouponDetail = new CouponCouponDetail();
+        $CouponDetail = new CouponDetail();
 
         $CouponDetail->setCoupon($Coupon);
         $CouponDetail->setCouponType($Coupon->getCouponType());
@@ -105,9 +133,15 @@ class CouponControllerTest extends AbstractAdminWebTestCase
         return $Coupon;
     }
 
+    /**
+     * getTestData
+     * @param int $couponType
+     * @param int $discountType
+     * @return Coupon
+     */
     private function getTestData($couponType = 1, $discountType = 1)
     {
-        $Coupon = new CouponCoupon();
+        $Coupon = new Coupon();
 
         $date1 = new \DateTime();
         $date2 = new \DateTime();

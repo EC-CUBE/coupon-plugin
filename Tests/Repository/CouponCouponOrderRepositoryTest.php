@@ -14,17 +14,23 @@ use Eccube\Common\Constant;
 use Eccube\Entity\OrderDetail;
 use Eccube\Tests\EccubeTestCase;
 use Eccube\Util\Str;
-use Plugin\Coupon\Entity\CouponCoupon;
-use Plugin\Coupon\Entity\CouponCouponDetail;
-use Plugin\Coupon\Entity\CouponCouponOrder;
+use Plugin\Coupon\Entity\Coupon;
+use Plugin\Coupon\Entity\CouponDetail;
+use Plugin\Coupon\Entity\CouponOrder;
 
 /**
  * Class CouponCouponOrderRepositoryTest.
  */
 class CouponCouponOrderRepositoryTest extends EccubeTestCase
 {
+    /**
+     * @var
+     */
     private $Customer;
 
+    /**
+     * testSave
+     */
     public function testSave()
     {
         $Coupon = $this->getCoupon();
@@ -45,6 +51,9 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
         $this->verify();
     }
 
+    /**
+     * testFindUseCouponByOrderId
+     */
     public function testFindUseCouponByOrderId()
     {
         $Coupon = $this->getCoupon();
@@ -69,6 +78,9 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
         $this->verify();
     }
 
+    /**
+     * testFindUseCouponNonMember
+     */
     public function testFindUseCouponNonMember()
     {
         $Coupon = $this->getCoupon();
@@ -92,6 +104,9 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
         $this->verify();
     }
 
+    /**
+     * testCountCouponByCd
+     */
     public function testCountCouponByCd()
     {
         $Coupon = $this->getCoupon();
@@ -114,7 +129,14 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
         $this->verify();
     }
 
-    private function getCouponOrder(CouponCoupon $Coupon, $discount, $preOrderId)
+    /**
+     * getCouponOrder
+     * @param Coupon $Coupon
+     * @param $discount
+     * @param $preOrderId
+     * @return CouponOrder
+     */
+    private function getCouponOrder(Coupon $Coupon, $discount, $preOrderId)
     {
         $this->Customer = $this->createCustomer('aaa@example.com');
 
@@ -124,7 +146,7 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
 
         $details = $Coupon->getCouponDetails();
 
-        /** @var \Plugin\Coupon\Entity\CouponCouponDetail $CouponDetail */
+        /** @var CouponDetail $CouponDetail */
         $CouponDetail = $details[0];
 
         $Product = $CouponDetail->getProduct();
@@ -138,7 +160,7 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
         }
 
         $OrderDetail = new OrderDetail();
-        $TaxRule = $this->app['eccube.repository.tax_rule']->getByRule(); // デフォルト課税規則
+        $TaxRule = $this->app['eccube.repository.tax_rule']->getByRule();
         $OrderDetail->setProduct($Product)
             ->setProductClass($ProductClass)
             ->setProductName($Product->getName())
@@ -151,7 +173,7 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
         $OrderDetail->setOrder($Order);
         $Order->addOrderDetail($OrderDetail);
 
-        $CouponOrder = new CouponCouponOrder();
+        $CouponOrder = new CouponOrder();
         $CouponOrder->setDelFlg(Constant::DISABLED);
         $CouponOrder->setDiscount($discount);
         $CouponOrder->setUserId($this->Customer->getId());
@@ -163,17 +185,22 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
         return $CouponOrder;
     }
 
+    /**
+     * getCoupon
+     * @param int $couponType
+     * @return Coupon
+     */
     private function getCoupon($couponType = 1)
     {
         $data = $this->getTestData($couponType);
 
         $this->app['eccube.plugin.coupon.service.coupon']->createCoupon($data);
 
-        /** @var \Plugin\Coupon\Entity\CouponCoupon $Coupon */
+        /** @var Coupon $Coupon */
         $Coupon = $this->app['eccube.plugin.coupon.repository.coupon']->findOneBy(array('coupon_cd' => 'aaaaaaaa'));
 
         $Product = $this->createProduct();
-        $CouponDetail = new CouponCouponDetail();
+        $CouponDetail = new CouponDetail();
 
         $CouponDetail->setCoupon($Coupon);
         $CouponDetail->setCouponType($Coupon->getCouponType());
@@ -195,9 +222,14 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
         return $Coupon;
     }
 
+    /**
+     * getTestData
+     * @param int $couponType
+     * @return Coupon
+     */
     private function getTestData($couponType = 1)
     {
-        $Coupon = new CouponCoupon();
+        $Coupon = new Coupon();
 
         $date1 = new \DateTime();
         $date2 = new \DateTime();

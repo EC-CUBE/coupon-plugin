@@ -13,8 +13,8 @@ namespace Plugin\Coupon\Tests\Service;
 use Eccube\Common\Constant;
 use Eccube\Entity\OrderDetail;
 use Eccube\Tests\EccubeTestCase;
-use Plugin\Coupon\Entity\CouponCoupon;
-use Plugin\Coupon\Entity\CouponCouponDetail;
+use Plugin\Coupon\Entity\Coupon;
+use Plugin\Coupon\Entity\CouponDetail;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 /**
@@ -22,6 +22,9 @@ use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
  */
 class CouponServiceTest extends EccubeTestCase
 {
+    /**
+     * testCreateCoupon
+     */
     public function testCreateCoupon()
     {
         $data = $this->getTestData();
@@ -33,9 +36,12 @@ class CouponServiceTest extends EccubeTestCase
         $this->verify();
     }
 
+    /**
+     * testUpdateCoupon
+     */
     public function testUpdateCoupon()
     {
-        /** @var \Plugin\Coupon\Entity\CouponCoupon $Coupon */
+        /** @var Coupon $Coupon */
         $Coupon = $this->getCoupon();
 
         $Coupon->setCouponName('クーポン2');
@@ -47,10 +53,13 @@ class CouponServiceTest extends EccubeTestCase
         $this->verify();
     }
 
+    /**
+     * testEnableCoupon
+     */
     public function testEnableCoupon()
     {
 
-        /** @var \Plugin\Coupon\Entity\CouponCoupon $Coupon */
+        /** @var Coupon $Coupon */
         $Coupon = $this->getCoupon();
 
         $this->actual = $this->app['eccube.plugin.coupon.service.coupon']->enableCoupon($Coupon->getId());
@@ -60,10 +69,13 @@ class CouponServiceTest extends EccubeTestCase
         $this->verify();
     }
 
+    /**
+     * testEnableCouponNot
+     */
     public function testEnableCouponNot()
     {
 
-        /** @var \Plugin\Coupon\Entity\CouponCoupon $Coupon */
+        /** @var Coupon $Coupon */
         $Coupon = $this->getCoupon();
 
         $this->actual = $this->app['eccube.plugin.coupon.service.coupon']->enableCoupon(1000);
@@ -73,9 +85,12 @@ class CouponServiceTest extends EccubeTestCase
         $this->verify();
     }
 
+    /**
+     * testDeleteCoupon
+     */
     public function testDeleteCoupon()
     {
-        /** @var \Plugin\Coupon\Entity\CouponCoupon $Coupon */
+        /** @var Coupon $Coupon */
         $Coupon = $this->getCoupon();
 
         $this->actual = $this->app['eccube.plugin.coupon.service.coupon']->deleteCoupon($Coupon->getId());
@@ -85,9 +100,12 @@ class CouponServiceTest extends EccubeTestCase
         $this->verify();
     }
 
+    /**
+     * testDeleteCouponNot
+     */
     public function testDeleteCouponNot()
     {
-        /** @var \Plugin\Coupon\Entity\CouponCoupon $Coupon */
+        /** @var Coupon $Coupon */
         $Coupon = $this->getCoupon();
 
         $this->actual = $this->app['eccube.plugin.coupon.service.coupon']->deleteCoupon(1111111111);
@@ -97,6 +115,9 @@ class CouponServiceTest extends EccubeTestCase
         $this->verify();
     }
 
+    /**
+     * testGenerateCouponCd
+     */
     public function testGenerateCouponCd()
     {
         $couponCd = $this->app['eccube.plugin.coupon.service.coupon']->generateCouponCd(20);
@@ -107,10 +128,13 @@ class CouponServiceTest extends EccubeTestCase
         $this->verify();
     }
 
+    /**
+     * testExistsCouponProduct
+     */
     public function testExistsCouponProduct()
     {
 
-        /** @var \Plugin\Coupon\Entity\CouponCoupon $Coupon */
+        /** @var Coupon $Coupon */
         $Coupon = $this->getCoupon();
 
         $Customer = $this->createCustomer();
@@ -119,7 +143,7 @@ class CouponServiceTest extends EccubeTestCase
 
         $details = $Coupon->getCouponDetails();
 
-        /** @var \Plugin\Coupon\Entity\CouponCouponDetail $CouponDetail */
+        /** @var CouponDetail $CouponDetail */
         $CouponDetail = $details[0];
 
         $Product = $CouponDetail->getProduct();
@@ -148,9 +172,12 @@ class CouponServiceTest extends EccubeTestCase
         $this->verify();
     }
 
+    /**
+     * testExistsCouponProductNot
+     */
     public function testExistsCouponProductNot()
     {
-        /** @var \Plugin\Coupon\Entity\CouponCoupon $Coupon */
+        /** @var Coupon $Coupon */
         $Coupon = $this->getCoupon();
 
         $Customer = $this->createCustomer();
@@ -164,10 +191,13 @@ class CouponServiceTest extends EccubeTestCase
         $this->verify();
     }
 
+    /**
+     * testExistsCouponProduct2
+     */
     public function testExistsCouponProduct2()
     {
 
-        /** @var \Plugin\Coupon\Entity\CouponCoupon $Coupon */
+        /** @var Coupon $Coupon */
         $Coupon = $this->getCoupon(2);
 
         $Customer = $this->createCustomer();
@@ -176,7 +206,7 @@ class CouponServiceTest extends EccubeTestCase
 
         $details = $Coupon->getCouponDetails();
 
-        /** @var \Plugin\Coupon\Entity\CouponCouponDetail $CouponDetail */
+        /** @var CouponDetail $CouponDetail */
         $CouponDetail = $details[0];
 
         $Product = $CouponDetail->getProduct();
@@ -205,10 +235,13 @@ class CouponServiceTest extends EccubeTestCase
         $this->verify();
     }
 
+    /**
+     * testSaveCouponOrder
+     */
     public function testSaveCouponOrder()
     {
 
-        /** @var \Plugin\Coupon\Entity\CouponCoupon $Coupon */
+        /** @var Coupon $Coupon */
         $Coupon = $this->getCoupon();
 
         $Customer = $this->createCustomer();
@@ -234,10 +267,13 @@ class CouponServiceTest extends EccubeTestCase
         $this->verify();
     }
 
+    /**
+     * testRecalcOrder
+     */
     public function testRecalcOrder()
     {
 
-        /** @var \Plugin\Coupon\Entity\CouponCoupon $Coupon */
+        /** @var Coupon $Coupon */
         $Coupon = $this->getCoupon();
 
         $Customer = $this->createCustomer();
@@ -246,7 +282,7 @@ class CouponServiceTest extends EccubeTestCase
 
         $details = $Coupon->getCouponDetails();
 
-        /** @var \Plugin\Coupon\Entity\CouponCouponDetail $CouponDetail */
+        /** @var CouponDetail $CouponDetail */
         $CouponDetail = $details[0];
 
         $Product = $CouponDetail->getProduct();
@@ -277,9 +313,12 @@ class CouponServiceTest extends EccubeTestCase
         $this->verify();
     }
 
+    /**
+     * testIsOrderInActiveCoupon
+     */
     public function testIsOrderInActiveCoupon()
     {
-        /** @var \Plugin\Coupon\Entity\CouponCoupon $Coupon */
+        /** @var Coupon $Coupon */
         $Coupon = $this->getCoupon();
 
         $Customer = $this->createCustomer();
@@ -288,7 +327,7 @@ class CouponServiceTest extends EccubeTestCase
 
         $details = $Coupon->getCouponDetails();
 
-        /** @var \Plugin\Coupon\Entity\CouponCouponDetail $CouponDetail */
+        /** @var CouponDetail $CouponDetail */
         $CouponDetail = $details[0];
 
         $Product = $CouponDetail->getProduct();
@@ -322,9 +361,12 @@ class CouponServiceTest extends EccubeTestCase
         $this->verify();
     }
 
+    /**
+     * testIsOrderInActiveCouponNot
+     */
     public function testIsOrderInActiveCouponNot()
     {
-        /** @var \Plugin\Coupon\Entity\CouponCoupon $Coupon */
+        /** @var Coupon $Coupon */
         $Coupon = $this->getCoupon();
 
         $Customer = $this->createCustomer();
@@ -338,10 +380,13 @@ class CouponServiceTest extends EccubeTestCase
         $this->verify();
     }
 
+    /**
+     * testGetCouponOrder
+     */
     public function testGetCouponOrder()
     {
 
-        /** @var \Plugin\Coupon\Entity\CouponCoupon $Coupon */
+        /** @var Coupon $Coupon */
         $Coupon = $this->getCoupon();
 
         $Customer = $this->createCustomer();
@@ -366,17 +411,22 @@ class CouponServiceTest extends EccubeTestCase
         $this->verify();
     }
 
+    /**
+     * getCoupon
+     * @param int $couponType
+     * @return Coupon
+     */
     private function getCoupon($couponType = 1)
     {
         $data = $this->getTestData($couponType);
 
         $this->app['eccube.plugin.coupon.service.coupon']->createCoupon($data);
 
-        /** @var \Plugin\Coupon\Entity\CouponCoupon $Coupon */
+        /** @var Coupon $Coupon */
         $Coupon = $this->app['eccube.plugin.coupon.repository.coupon']->findOneBy(array('coupon_cd' => 'aaaaaaaa'));
 
         $Product = $this->createProduct();
-        $CouponDetail = new CouponCouponDetail();
+        $CouponDetail = new CouponDetail();
 
         $CouponDetail->setCoupon($Coupon);
         $CouponDetail->setCouponType($Coupon->getCouponType());
@@ -398,32 +448,14 @@ class CouponServiceTest extends EccubeTestCase
         return $Coupon;
     }
 
+    /**
+     * getTestData
+     * @param int $couponType
+     * @return Coupon
+     */
     private function getTestData($couponType = 1)
     {
-
-        //        $CouponDetail = new CouponCouponDetail();
-
-         //       $Product = $this->createProduct();
-
-        //        $CouponDetail->setProduct($Product);
-
-        //        $data = array(
-        //            'coupon_cd' => 'aaaaaaaa',
-        //            'coupon_type' => '1',
-        //            'coupon_name' => 'クーポン',
-        //            'discount_type' => '1',
-        //            'coupon_use_time' => '1',
-        //            'discount_price' => '1',
-        //            'discount_rate' => '1',
-        //            'enalbe_flag' => '1',
-        //            'available_from_date' => new \DateTime(),
-        //            'available_to_date' => new \DateTime(),
-        //            'CouponDetails' => array($CouponDetail),
-        //        );
-
-        //        return $data;
-
-        $Coupon = new CouponCoupon();
+        $Coupon = new Coupon();
 
         $date1 = new \DateTime();
         $date2 = new \DateTime();
