@@ -214,6 +214,45 @@ class EventLegacy
     }
 
     /**
+     * Hook point order edit completed.
+     *
+     */
+    public function onControllerAdminOrderCompleteBefore()
+    {
+        $Order = null;
+        $app = $this->app;
+        $delFlg = false;
+        $orderId = $this->app['session']->get('eccube.front.shopping.order.id');
+        if (is_null($orderId)) {
+            return;
+        }
+        $Order =  $this->app['eccube.plugin.order']->find($orderId);
+        $repository = $this->app['eccube.plugin.coupon.repository.coupon_order'];
+        // クーポン受注情報を取得する
+        $CouponOrder = $repository->findOneBy(array(
+            'order_id' => $Order->getId(),
+        ));
+        if (is_null($CouponOrder)) {
+            return;
+        }
+        $status = $Order->getOrderStatus()->getId();
+        $orderDate = $CouponOrder->getOrderDate();
+        if ($status == $app['config']['order_cancel'] || $status == $app['config']['order_processing'] || $delFlg) {
+            if ($orderDate) {
+                // 更新対象データ
+                $now = new \DateTime();
+                $CouponOrder->setUpdateDate($now);
+                $CouponOrder->setOrderDate(null);
+                $repository->save($CouponOrder);
+                $Coupon = $this->app['eccube.plugin.coupon.repository.coupon']->findActiveCoupon($CouponOrder->getCouponCd());
+                // クーポンの発行枚数を上がる
+                $Coupon->setCouponUseTime($Coupon->getCouponUseTime() + 1);
+                $this->app['orm.em']->flush($Coupon);
+            }
+        }
+    }
+
+    /**
      * 配送先や支払い方法変更時の合計金額と値引きの差額チェック
      * v3.0.8までで使用.
      */

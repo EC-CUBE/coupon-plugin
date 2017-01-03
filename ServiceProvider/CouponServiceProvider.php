@@ -55,6 +55,8 @@ class CouponServiceProvider implements ServiceProviderInterface
         $admin->match('/plugin/coupon/{id}/enable', 'Plugin\Coupon\Controller\CouponController::enable')->value('id', null)->assert('id', '\d+|')->bind('plugin_coupon_enable');
         // クーポンの削除
         $admin->match('/plugin/coupon/{id}/delete', 'Plugin\Coupon\Controller\CouponController::delete')->value('id', null)->assert('id', '\d+|')->bind('plugin_coupon_delete');
+        //ajax link
+        $admin->post('/plugin/coupon/save/delivery', 'Plugin\Coupon\Controller\CouponController::saveDelivery')->bind('plugin_coupon_save_delivery');
         // 商品検索画面表示
         $admin->post('/plugin/coupon/search/product', 'Plugin\Coupon\Controller\CouponSearchModelController::searchProduct')->bind('plugin_coupon_search_product');
         // カテゴリ検索画面表示

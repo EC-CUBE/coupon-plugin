@@ -10,10 +10,12 @@
 
 namespace Plugin\Coupon\Controller;
 
+use Eccube\Entity\DeliveryTime;
 use Eccube\Application;
 use Eccube\Common\Constant;
 use Eccube\Entity\Customer;
 use Eccube\Entity\Order;
+use Eccube\Entity\Shipping;
 use Plugin\Coupon\Entity\Coupon;
 use Plugin\Coupon\Service\CouponService;
 use Symfony\Component\Form\FormError;
@@ -29,6 +31,11 @@ class CouponController
      * @var string 非会員用セッションキー
      */
     private $sessionKey = 'eccube.front.shopping.nonmember';
+
+    /**
+     * @var string
+     */
+    private $deliveryKey = 'plugin.coupon.delivery';
 
     /**
      * クーポン設定画面表示.
@@ -359,6 +366,41 @@ class CouponController
             'form' => $form->createView(),
             'Order' => $Order,
         ));
+    }
+
+    /**
+     *  save delivery.
+     *
+     * @param Application $app
+     * @param Request     $request
+     *
+     * @return Response
+     */
+    public function saveDelivery(Application $app, Request $request)
+    {
+        if ($request->isXmlHttpRequest()) {
+            $date = explode(',', $request->get('coupon_delivery_date'));
+            $time = explode(',', $request->get('coupon_delivery_time'));
+            /* @var Order $Order */
+            $Order = $app['eccube.service.shopping']->getOrder($app['config']['order_processing']);
+            /* @var Shipping $Shipping */
+            $Shippings = $Order->getShippings();
+            $index = 0;
+            foreach ($Shippings as $Shipping) {
+                if ($time[$index]) {
+                    $DeliveryTime = $app['eccube.repository.delivery_time']->find($time[$index]);
+                    $Shipping->setDeliveryTime($DeliveryTime);
+                }
+                if ($date[$index]) {
+                    $Shipping->setShippingDeliveryDate(new \DateTime($date[$index]));
+                }
+                $index++;
+                $app['orm.em']->persist($Shipping);
+                $app['orm.em']->flush($Shipping);
+            }
+        }
+
+        return new Response();
     }
 
     /**
