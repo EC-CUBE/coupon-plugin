@@ -39,7 +39,7 @@ Plugin\Coupon\Entity\CouponDetail:
             joinColumn:
                 name: product_id
                 referencedColumnName: product_id
-                nullable: false
+                nullable: true
         Category:
             targetEntity: \Eccube\Entity\Category
             joinColumn:

@@ -59,7 +59,6 @@ class Event
         log_info('Coupon trigger onRenderShoppingIndex start');
         $app = $this->app;
         $parameters = $event->getParameters();
-        // ProductIDがない場合、レンダリングしない
         if (is_null($parameters['Order'])) {
             return;
         }
@@ -186,7 +185,6 @@ class Event
         log_info('Coupon trigger onRenderAdminOrderEdit start');
         $app = $this->app;
         $parameters = $event->getParameters();
-        // ProductIDがない場合、レンダリングしない
         if (is_null($parameters['Order'])) {
             return;
         }
@@ -249,7 +247,6 @@ class Event
         log_info('Coupon trigger onRenderMypageHistory start');
         $app = $this->app;
         $parameters = $event->getParameters();
-        // ProductIDがない場合、レンダリングしない
         if (is_null($parameters['Order'])) {
             return;
         }
@@ -290,6 +287,107 @@ class Event
      */
     public function onSendOrderMail(EventArgs $event)
     {
+        log_info('Coupon trigger onSendOrderMail start');
+        $repository = $this->app['eccube.plugin.coupon.repository.coupon_order'];
+        $CouponOrder = null;
+        $Coupon = null;
+        $message = null;
+        $MailTemplate = null;
+        if ($event->hasArgument('Order')) {
+            $Order = $event->getArgument('Order');
+            // クーポン受注情報を取得する
+            $CouponOrder = $repository->findOneBy(array(
+                'order_id' => $Order->getId(),
+            ));
+            if (is_null($CouponOrder)) {
+                return;
+            }
+            // クーポン受注情報からクーポン情報を取得する
+            $repCoupon = $this->app['eccube.plugin.coupon.repository.coupon'];
+            /* @var $Coupon Coupon */
+            $Coupon = $repCoupon->find($CouponOrder->getCouponId());
+            if (is_null($Coupon)) {
+                return;
+            }
+        }
+
+        if ($event->hasArgument('message')) {
+            $message = $event->getArgument('message');
+        }
+
+        if (!is_null($CouponOrder)) {
+            // メールボディ取得
+            $body = $message->getBody();
+            // 情報置換用のキーを取得
+            $search = array();
+            preg_match_all('/合　計.*\\n/u', $body, $search);
+            // メール本文置換
+            $snippet = PHP_EOL;
+            $snippet .= PHP_EOL;
+            $snippet .= '***********************************************'.PHP_EOL;
+            $snippet .= '　クーポン情報                                 '.PHP_EOL;
+            $snippet .= '***********************************************'.PHP_EOL;
+            $snippet .= PHP_EOL;
+            $snippet .= 'クーポンコード: ' . $Coupon->getCouponCd() . ' '. $Coupon->getCouponName();
+            $snippet .= PHP_EOL;
+            $replace = $search[0][0].$snippet;
+            $body = preg_replace('/'.$search[0][0].'/u', $replace, $body);
+            // メッセージにメールボディをセット
+            $message->setBody($body);
+        }
+        log_info('Coupon trigger onSendOrderMail finish');
+    }
+
+    /**
+     * Hook point order edit completed.
+     *
+     * @param EventArgs $event
+     */
+    public function onOrderEditComplete(EventArgs $event)
+    {
+        $Order = null;
+        $app = $this->app;
+        $delFlg = false;
+        //for edit event
+        if ($event->hasArgument('TargetOrder')) {
+            /* @var Order $Order */
+            $Order = $event->getArgument('TargetOrder');
+            if (is_null($Order)) {
+                return;
+            }
+        }
+        //for delete event
+        if ($event->hasArgument('Order')) {
+            /* @var Order $Order */
+            $Order = $event->getArgument('Order');
+            if (is_null($Order)) {
+                return;
+            }
+            $delFlg = true;
+        }
+        $repository = $this->app['eccube.plugin.coupon.repository.coupon_order'];
+        // クーポン受注情報を取得する
+        $CouponOrder = $repository->findOneBy(array(
+            'order_id' => $Order->getId(),
+        ));
+        if (is_null($CouponOrder)) {
+            return;
+        }
+        $status = $Order->getOrderStatus()->getId();
+        $orderDate = $CouponOrder->getOrderDate();
+        if ($status == $app['config']['order_cancel'] || $status == $app['config']['order_processing'] || $delFlg) {
+            if ($orderDate) {
+                // 更新対象データ
+                $now = new \DateTime();
+                $CouponOrder->setUpdateDate($now);
+                $CouponOrder->setOrderDate(null);
+                $repository->save($CouponOrder);
+                $Coupon = $this->app['eccube.plugin.coupon.repository.coupon']->findActiveCoupon($CouponOrder->getCouponCd());
+                // クーポンの発行枚数を上がる
+                $Coupon->setCouponUseTime($Coupon->getCouponUseTime() + 1);
+                $this->app['orm.em']->flush($Coupon);
+            }
+        }
     }
 
     /**

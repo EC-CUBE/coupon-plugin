@@ -43,10 +43,20 @@ Mypage/history.twig:
 front.shopping.complete.initialize:
     - [onRenderShoppingComplete, NORMAL]
 
-front.shopping.confirm.initialize:
+admin.order.edit.index.complete:
     - [onShoppingConfirmInit, NORMAL]
 
+admin.order.edit.index.progress:
+    - [onOrderEditComplete, NORMAL]
+
+admin.order.delete.complete:
+    - [onOrderEditComplete, NORMAL]
+
 mail.order:
+    - [onSendOrderMail, NORMAL]
+
+##  メール通知
+mail.admin.order:
     - [onSendOrderMail, NORMAL]
 
 Admin/Order/edit.twig:

@@ -103,6 +103,16 @@ class Event
     }
 
     /**
+     * Hook point order edit completed.
+     *
+     * @param EventArgs $event
+     */
+    public function onOrderEditComplete(EventArgs $event)
+    {
+        $this->app['eccube.plugin.coupon.event']->onOrderEditComplete($event);
+    }
+
+    /**
      * クーポン関連項目を追加する.
      *
      * @param FilterResponseEvent $event
