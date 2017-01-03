@@ -77,7 +77,6 @@ class Event
             $search = self::COUPON_TAG;
             $replace = $snipet.$search;
         } else {
-            //regular expression for get free area div
             $search = '<h2 class="heading02">お問い合わせ欄</h2>';
             $replace = $snipet.$search;
         }
@@ -93,7 +92,7 @@ class Event
                 $this->app['orm.em']->flush($Order);
                 // このタグを前後に分割し、間に項目を入れ込む
                 // 元の合計金額は書き込み済みのため再度書き込みを行う
-                $snipet = $app['twig']->getLoader()->getSource('Coupon/Resource/template/default/coupon_shopping_item.twig');
+                $snipet = $app['twig']->getLoader()->getSource('Coupon/Resource/template/default/discount_shopping_item.twig');
                 $search = '<div id="summary_box__result" class="total_amount">';
                 $replace = $search.$snipet;
                 $source = str_replace($search, $replace, $source);
@@ -291,7 +290,6 @@ class Event
      */
     public function onSendOrderMail(EventArgs $event)
     {
-
     }
 
     /**
