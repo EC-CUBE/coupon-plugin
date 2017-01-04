@@ -135,6 +135,13 @@ class Event
 
         // クーポンが既に利用されているかチェック
         $couponUsedOrNot = $this->app['eccube.plugin.coupon.service.coupon']->checkCouponUsedOrNotBefore($CouponOrder->getCouponCd(), $CouponOrder->getOrderId(), $Customer);
+        $Coupon = $this->app['eccube.plugin.coupon.repository.coupon']->findActiveCoupon($CouponOrder->getCouponCd());
+        if (is_null($Coupon)) {
+            $this->app->addError($this->app->trans('front.plugin.coupon.shopping.notfound'), 'front.request');
+            // 既に存在している
+            header('Location: '.$this->app->url('shopping'));
+            exit;
+        }
         if ($couponUsedOrNot) {
             $this->app->addError($this->app->trans('front.plugin.coupon.shopping.sameuser'), 'front.request');
             // 既に存在している
@@ -168,9 +175,21 @@ class Event
         $CouponOrder->setUpdateDate($now);
         $repository->save($CouponOrder);
         $Coupon = $this->app['eccube.plugin.coupon.repository.coupon']->findActiveCoupon($CouponOrder->getCouponCd());
+        if (is_null($Coupon)) {
+            return;
+        }
         // クーポンの発行枚数を減らす(マイナスになっても無視する)
-        $Coupon->setCouponUseTime($Coupon->getCouponUseTime() - 1);
-        $this->app['orm.em']->flush($Coupon);
+        $couponUseTime = $Coupon->getCouponUseTime() - 1;
+        if ($couponUseTime > 0) {
+            $Coupon->setCouponUseTime($couponUseTime);
+            $this->app['orm.em']->flush($Coupon);
+        } else {
+            $this->app->addError($this->app->trans('front.plugin.coupon.shopping.notfound'), 'front.request');
+            // 既に存在している
+            header('Location: '.$this->app->url('shopping'));
+            exit;
+        }
+
         log_info('Coupon trigger onRenderShoppingComplete start');
     }
 
@@ -345,6 +364,7 @@ class Event
      */
     public function onOrderEditComplete(EventArgs $event)
     {
+        log_info('Coupon trigger onOrderEditComplete start');
         $Order = null;
         $app = $this->app;
         $delFlg = false;
@@ -388,6 +408,7 @@ class Event
                 $this->app['orm.em']->flush($Coupon);
             }
         }
+        log_info('Coupon trigger onOrderEditComplete end');
     }
 
     /**

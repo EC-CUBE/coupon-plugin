@@ -105,12 +105,22 @@ class CouponType extends AbstractType
                 'required' => false,
                 'currency' => 'JPY',
                 'precision' => 0,
+                'constraints' => array(
+                    new Assert\Range(array(
+                        'min' => 0,
+                    )),
+                ),
             ))
             ->add('discount_price', 'money', array(
                 'label' => '値引き額',
                 'required' => false,
                 'currency' => 'JPY',
                 'precision' => 0,
+                'constraints' => array(
+                    new Assert\Range(array(
+                        'min' => 0,
+                    )),
+                ),
             ))
             ->add('discount_rate', 'integer', array(
                 'label' => '値引率',
@@ -167,7 +177,7 @@ class CouponType extends AbstractType
                 $form = $event->getForm();
                 $data = $form->getData();
                 if (count($data['CouponDetails']) == 0 && $data['coupon_type'] != 3) {
-                    $form['coupon_type']->addError(new FormError('クーポン有効対象となる商品情報またはカテゴリ情報を設定してください。'));
+                    $form['coupon_type']->addError(new FormError($app->trans('admin.plugin.coupon.coupontype')));
                 }
 
                 if ($data['discount_type'] == 1) {
@@ -202,7 +212,7 @@ class CouponType extends AbstractType
                     $fromDate = Carbon::instance($data['available_from_date']);
                     $toDate = Carbon::instance($data['available_to_date']);
                     if ($fromDate->gt($toDate)) {
-                        $form['available_from_date']->addError(new FormError('有効期間に誤りがあります。'));
+                        $form['available_from_date']->addError(new FormError($app->trans('admin.plugin.coupon.avaiabledate')));
                     }
                 }
 
@@ -222,7 +232,7 @@ class CouponType extends AbstractType
                         $count = $qb->getQuery()->getSingleScalarResult();
                     }
                     if ($count > 0) {
-                        $form['coupon_cd']->addError(new FormError('既に利用されているクーポンコードです。'));
+                        $form['coupon_cd']->addError(new FormError($app->trans('admin.plugin.coupon.duplicate')));
                     }
                 }
             });

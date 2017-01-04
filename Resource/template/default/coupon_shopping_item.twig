@@ -7,7 +7,6 @@
  For the full copyright and license information, please view the LICENSE
  file that was distributed with this source code.
 #}
-{% set couponSession = app.session.get('plugin.coupon.delivery') %}
 <script type="text/javascript">
     $(function () {
         $('#coupon_button').click(function () {
@@ -19,31 +18,28 @@
             $("select[id^=shopping_shippings_][id$=_deliveryTime]").each(function () {
                 time += $(this).val() + ',';
             });
-
-            $.ajax({
-                type: 'POST',
-                data: {
-                    'coupon_delivery_date' : date,
-                    'coupon_delivery_time' : time
-                },
-                url: '{{ url('plugin_coupon_save_delivery') }}',
-                success: function(data) {
-                    console.log('success');
-                    window.location.href = "{{ url('plugin_coupon_shopping') }}";
-                },
-                error: function() {
-                    window.location.href = "{{ url('plugin_coupon_shopping') }}";
-                    alert('save delivery failed.');
-                }
-            });
-            return false;
+            {#$.ajax({#}
+                {#type: 'POST',#}
+                {#data: {#}
+                    {#'coupon_delivery_date' : date,#}
+                    {#'coupon_delivery_time' : time#}
+                {#},#}
+                {#url: '{{ url('plugin_coupon_save_delivery') }}',#}
+                {#success: function(data) {#}
+                    {#//window.location.href = "{{ url('plugin_coupon_shopping') }}";#}
+                {#},#}
+                {#error: function() {#}
+                    {#//window.location.href = "{{ url('plugin_coupon_shopping') }}";#}
+                    {#alert('save delivery failed.');#}
+                {#}#}
+            {#});#}
         });
     })
 </script>
 <h2 class="heading02">クーポンコード</h2>
 <div id="customer_detail_box" class="column is-edit">
     クーポンをお持ちの方はクーポンコードを入力してください。
-    <p><button class="btn btn-default btn-sm" id="coupon_button">クーポンを利用する</button>
+    <p><a class="btn btn-default btn-sm" id="coupon_button" href="{{ url('plugin_coupon_shopping') }}">クーポンを利用する</a>
         {% if CouponOrder %}
             <strong class="text-danger">クーポンを利用しています。</strong>
         {% endif %}
