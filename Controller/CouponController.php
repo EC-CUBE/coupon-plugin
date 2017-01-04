@@ -98,6 +98,7 @@ class CouponController
         foreach ($CouponDetails as $CouponDetail) {
             $details[] = clone $CouponDetail;
         }
+
         $form->get('CouponDetails')->setData($details);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
