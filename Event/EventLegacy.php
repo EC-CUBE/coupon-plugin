@@ -162,7 +162,7 @@ class EventLegacy
             return;
         }
         // 編集画面にクーポン表示を追加する
-        $this->getHtmlOrderEdit($response, $Coupon);
+        $this->getHtmlOrderEdit($response, $CouponOrder);
     }
 
     /**
@@ -193,8 +193,8 @@ class EventLegacy
             $Coupon = $repCoupon->find($CouponOrder->getCouponId());
 
             $twig = $this->app->renderView('Coupon/Resource/template/default/mypage_history_coupon.twig', array(
-                'coupon_cd' => $Coupon->getCouponCd(),
-                'coupon_name' => $Coupon->getCouponName(),
+                'coupon_cd' => $CouponOrder->getCouponCd(),
+                'coupon_name' => $CouponOrder->getCouponName(),
             ));
             $crawler = new Crawler($response->getContent());
             $html = $this->getHtml($crawler);
@@ -209,7 +209,7 @@ class EventLegacy
             $response->setContent($html);
             $event->setResponse($response);
         } catch (\InvalidArgumentException $e) {
-            // no-op
+            log_info($e->getMessage());
         }
     }
 

@@ -348,7 +348,7 @@ class Event
             $snippet .= '　クーポン情報                                 '.PHP_EOL;
             $snippet .= '***********************************************'.PHP_EOL;
             $snippet .= PHP_EOL;
-            $snippet .= 'クーポンコード: ' . $Coupon->getCouponCd() . ' '. $Coupon->getCouponName();
+            $snippet .= 'クーポンコード: ' . $CouponOrder->getCouponCd() . ' '. $CouponOrder->getCouponName();
             $snippet .= PHP_EOL;
             $replace = $search[0][0].$snippet;
             $body = preg_replace('/'.$search[0][0].'/u', $replace, $body);

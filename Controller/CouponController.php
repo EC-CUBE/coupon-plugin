@@ -10,7 +10,6 @@
 
 namespace Plugin\Coupon\Controller;
 
-use Eccube\Entity\DeliveryTime;
 use Eccube\Application;
 use Eccube\Common\Constant;
 use Eccube\Entity\Customer;
@@ -31,11 +30,6 @@ class CouponController
      * @var string 非会員用セッションキー
      */
     private $sessionKey = 'eccube.front.shopping.nonmember';
-
-    /**
-     * @var string
-     */
-    private $deliveryKey = 'plugin.coupon.delivery';
 
     /**
      * クーポン設定画面表示.
