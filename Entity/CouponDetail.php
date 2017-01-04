@@ -280,4 +280,23 @@ class CouponDetail extends AbstractEntity
             return null;
         }
     }
+
+    /**
+     * get product name.
+     *
+     * @return string
+     */
+    public function getProductName()
+    {
+        try {
+            if (is_null($this->Product)) {
+                return null;
+            }
+            $fulName = $this->Product->getName();
+
+            return $fulName;
+        } catch (EntityNotFoundException $e) {
+            return null;
+        }
+    }
 }
