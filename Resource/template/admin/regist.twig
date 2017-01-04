@@ -393,24 +393,26 @@ $(function() {
                                 ">
                             {% set i = 0 %}
                             {% for couponDetailForm in form.CouponDetails %}
-                                {% if couponDetailForm.vars.value.Product.name is not null %}
-                                    <div class="item_box">
-                                        {{ form_widget(couponDetailForm.id) }}
-                                        {{ form_widget(couponDetailForm.Product) }}
-                                        <div class="item_detail">
-                                            <div class="item_name_area">
-                                                <strong class="item_name">
-                                                    <div id="admin_plugin_coupon_CouponDetails_{{ i }}_product_name">
-                                                        {{ couponDetailForm.vars.value.Product.name }}
-                                                    </div>
-                                                </strong><br>
+                                {% if couponDetailForm.vars.value.Product is not null %}
+                                    {% if couponDetailForm.vars.value.Product.name is not null %}
+                                        <div class="item_box">
+                                            {{ form_widget(couponDetailForm.id) }}
+                                            {{ form_widget(couponDetailForm.Product) }}
+                                            <div class="item_detail">
+                                                <div class="item_name_area">
+                                                    <strong class="item_name">
+                                                        <div id="admin_plugin_coupon_CouponDetails_{{ i }}_product_name">
+                                                            {{ couponDetailForm.vars.value.Product.name }}
+                                                        </div>
+                                                    </strong><br>
+                                                </div>
                                             </div>
-                                        </div>
 
-                                        <div class="icon_edit">
-                                            <button class="btn btn-default btn-sm delete-item">削除</button>
-                                        </div>
-                                    </div><!-- /.item_box -->
+                                            <div class="icon_edit">
+                                                <button class="btn btn-default btn-sm delete-item">削除</button>
+                                            </div>
+                                        </div><!-- /.item_box -->
+                                    {% endif %}
                                 {% endif %}
                                 {% set i = i + 1 %}
                             {% endfor %}
@@ -462,24 +464,26 @@ $(function() {
 
                             {% set i = 0 %}
                             {% for couponDetailForm in form.CouponDetails %}
-                                {% if couponDetailForm.vars.value.Category.name is not null %}
-                                    <div class="item_box">
-                                        {{ form_widget(couponDetailForm.id) }}
-                                        {{ form_widget(couponDetailForm.Category) }}
-                                        <div class="item_detail">
-                                            <div class="item_name_area">
-                                                <strong class="item_name">
-                                                    <div id="admin_plugin_coupon_CouponDetails_{{ i }}_category_name">
-                                                        {{ couponDetailForm.vars.value.category_full_name }}
-                                                    </div>
-                                                </strong><br>
+                                {% if couponDetailForm.vars.value.Category is not null %}
+                                    {% if couponDetailForm.vars.value.category_full_name is not null %}
+                                        <div class="item_box">
+                                            {{ form_widget(couponDetailForm.id) }}
+                                            {{ form_widget(couponDetailForm.Category) }}
+                                            <div class="item_detail">
+                                                <div class="item_name_area">
+                                                    <strong class="item_name">
+                                                        <div id="admin_plugin_coupon_CouponDetails_{{ i }}_category_name">
+                                                            {{ couponDetailForm.vars.value.category_full_name }}
+                                                        </div>
+                                                    </strong><br>
+                                                </div>
                                             </div>
-                                        </div>
 
-                                        <div class="icon_edit">
-                                            <button class="btn btn-default btn-sm delete-item">削除</button>
-                                        </div>
-                                    </div><!-- /.item_box -->
+                                            <div class="icon_edit">
+                                                <button class="btn btn-default btn-sm delete-item">削除</button>
+                                            </div>
+                                        </div><!-- /.item_box -->
+                                    {% endif %}
                                 {% endif %}
                                 {% set i = i + 1 %}
                             {% endfor %}

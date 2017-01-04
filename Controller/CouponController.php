@@ -97,8 +97,8 @@ class CouponController
         $CouponDetails = $Coupon->getCouponDetails();
         foreach ($CouponDetails as $CouponDetail) {
             $details[] = clone $CouponDetail;
+            $CouponDetail->getCategoryFullName();
         }
-
         $form->get('CouponDetails')->setData($details);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {

@@ -93,7 +93,6 @@ class CouponSearchModelController
     public function searchCategory(Application $app, Request $request)
     {
         if ($request->isXmlHttpRequest()) {
-            $app['monolog']->addDebug('search category start.');
             $categoryId = $request->get('category_id');
             $existCategoryId = $request->get('exist_category_id');
 
@@ -110,7 +109,7 @@ class CouponSearchModelController
             $Categories = $app['eccube.repository.category']->getList($Category);
 
             if (empty($Categories)) {
-                $app['monolog']->addDebug('search category not found.');
+                log_info('search category not found.');
             }
 
             // カテゴリーの一覧を作成する

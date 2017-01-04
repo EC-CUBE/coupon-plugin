@@ -13,6 +13,7 @@ namespace Plugin\Coupon\Entity;
 use Eccube\Entity\AbstractEntity;
 use Eccube\Entity\Product;
 use Eccube\Entity\Category;
+use Doctrine\ORM\EntityNotFoundException;
 
 /**
  * CouponDetail.
@@ -258,23 +259,22 @@ class CouponDetail extends AbstractEntity
      */
     public function getCategoryFullName()
     {
-        if (is_null($this->Category)) {
-            return '';
-        }
-        $fulName = $this->Category->getName();
+        try {
+            $fulName = $this->Category->getName();
+            // 親カテゴリがない場合はカテゴリ名を返す.
+            if (is_null($this->Category->getParent())) {
+                return $fulName;
+            }
+            // 親カテゴリ名を結合する
+            $ParentCategory = $this->Category->getParent();
+            while (!is_null($ParentCategory)) {
+                $fulName = $ParentCategory->getName() . '　＞　' . $fulName;
+                $ParentCategory = $ParentCategory->getParent();
+            }
 
-        // 親カテゴリがない場合はカテゴリ名を返す.
-        if (is_null($this->Category->getParent())) {
             return $fulName;
+        } catch (EntityNotFoundException $e) {
+            return null;
         }
-
-        // 親カテゴリ名を結合する
-        $ParentCategory = $this->Category->getParent();
-        while (!is_null($ParentCategory)) {
-            $fulName = $ParentCategory->getName().'　＞　'.$fulName;
-            $ParentCategory = $ParentCategory->getParent();
-        }
-
-        return $fulName;
     }
 }
