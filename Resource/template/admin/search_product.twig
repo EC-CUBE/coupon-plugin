@@ -79,7 +79,7 @@
                         </span>
                     </td>
                     <td class="text-right">
-                        <button onclick="fnAddProductDetail($(this).parent().parent(), {{ Product.id }},  '{{ Product.name }}')" type="button" class="btn btn-default btn-sm">
+                        <button onclick="fnAddProductDetail($(this).parent().parent(), {{ Product.id }},  '{{ Product.name|escape('js') }}')" type="button" class="btn btn-default btn-sm">
                             決定
                         </button>
                     </td>

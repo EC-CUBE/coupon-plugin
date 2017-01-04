@@ -260,6 +260,9 @@ class CouponDetail extends AbstractEntity
     public function getCategoryFullName()
     {
         try {
+            if (is_null($this->Category)) {
+                return null;
+            }
             $fulName = $this->Category->getName();
             // 親カテゴリがない場合はカテゴリ名を返す.
             if (is_null($this->Category->getParent())) {

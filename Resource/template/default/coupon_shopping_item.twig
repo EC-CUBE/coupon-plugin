@@ -18,21 +18,22 @@
             $("select[id^=shopping_shippings_][id$=_deliveryTime]").each(function () {
                 time += $(this).val() + ',';
             });
-            {#$.ajax({#}
-                {#type: 'POST',#}
-                {#data: {#}
-                    {#'coupon_delivery_date' : date,#}
-                    {#'coupon_delivery_time' : time#}
-                {#},#}
-                {#url: '{{ url('plugin_coupon_save_delivery') }}',#}
-                {#success: function(data) {#}
-                    {#//window.location.href = "{{ url('plugin_coupon_shopping') }}";#}
-                {#},#}
-                {#error: function() {#}
-                    {#//window.location.href = "{{ url('plugin_coupon_shopping') }}";#}
-                    {#alert('save delivery failed.');#}
-                {#}#}
-            {#});#}
+            $.ajax({
+                type: 'POST',
+                data: {
+                    'coupon_delivery_date' : date,
+                    'coupon_delivery_time' : time
+                },
+                url: '{{ url('plugin_coupon_save_delivery') }}',
+                success: function(data) {
+                    window.location.href = '{{ url('plugin_coupon_shopping') }}';
+                },
+                error: function() {
+                    window.location.href = '{{ url('plugin_coupon_shopping') }}';
+                    alert('save delivery failed.');
+                }
+            });
+            return false;
         });
     })
 </script>

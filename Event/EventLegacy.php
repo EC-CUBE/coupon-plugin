@@ -377,7 +377,7 @@ class EventLegacy
                     $this->app['orm.em']->flush($Order);
                     // このタグを前後に分割し、間に項目を入れ込む
                     // 元の合計金額は書き込み済みのため再度書き込みを行う
-                    $parts = $this->app->renderView('Coupon/Resource/template/default/discount_shopping_item_for_oldversion.twig', array(
+                    $parts = $this->app->renderView('Coupon/Resource/template/default/discount_shopping_item.twig', array(
                         'Order' => $Order,
                     ));
                     $form = $crawler->filter('#confirm_side .total_box')->last()->html();

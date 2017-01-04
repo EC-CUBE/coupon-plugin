@@ -50,7 +50,7 @@
                     <td>
                     </td>
                     <td class="text-right">
-                        <button onclick="fnAddCategoryDetail($(this).parent().parent(), {{ id }},  '{{ name }}')" type="button" class="btn btn-default btn-sm">
+                        <button onclick="fnAddCategoryDetail($(this).parent().parent(), {{ id }},  '{{ name|escape('js') }}')" type="button" class="btn btn-default btn-sm">
                             決定
                         </button>
                     </td>
