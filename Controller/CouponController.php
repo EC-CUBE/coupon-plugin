@@ -98,6 +98,7 @@ class CouponController
         foreach ($CouponDetails as $CouponDetail) {
             $details[] = clone $CouponDetail;
         }
+
         $form->get('CouponDetails')->setData($details);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -298,8 +299,7 @@ class CouponController
                     $checkLowerLimit = $service->isLowerLimitCoupon($couponProducts, $lowerLimit);
                     // 値引き額を取得
                     $discount = $service->recalcOrder($Order, $Coupon, $couponProducts);
-
-                    if (is_null($couponProducts)) {
+                    if (sizeof($couponProducts) == 0) {
                         $existCoupon = false;
                     } else {
                         $existCoupon = true;

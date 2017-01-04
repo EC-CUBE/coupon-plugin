@@ -393,7 +393,7 @@ $(function() {
                                 ">
                             {% set i = 0 %}
                             {% for couponDetailForm in form.CouponDetails %}
-                                {% if couponDetailForm.vars.value.Product is not null %}
+                                {% if couponDetailForm.vars.value.Product.name is not null %}
                                     <div class="item_box">
                                         {{ form_widget(couponDetailForm.id) }}
                                         {{ form_widget(couponDetailForm.Product) }}
@@ -462,7 +462,7 @@ $(function() {
 
                             {% set i = 0 %}
                             {% for couponDetailForm in form.CouponDetails %}
-                                {% if couponDetailForm.vars.value.Category is not null %}
+                                {% if couponDetailForm.vars.value.Category.name is not null %}
                                     <div class="item_box">
                                         {{ form_widget(couponDetailForm.id) }}
                                         {{ form_widget(couponDetailForm.Category) }}
