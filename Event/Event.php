@@ -169,15 +169,16 @@ class Event
         if (is_null($CouponOrder)) {
             return;
         }
-        // 更新対象データ
-        $now = new \DateTime();
-        $CouponOrder->setOrderDate($now);
-        $CouponOrder->setUpdateDate($now);
-        $repository->save($CouponOrder);
         $Coupon = $this->app['eccube.plugin.coupon.repository.coupon']->findActiveCoupon($CouponOrder->getCouponCd());
         if (is_null($Coupon)) {
             return;
         }
+        // 更新対象データ
+        $now = new \DateTime();
+        $CouponOrder->setOrderDate($now);
+        $CouponOrder->setUpdateDate($now);
+        $CouponOrder->setCouponName($Coupon->getCouponName());
+        $repository->save($CouponOrder);
         // クーポンの発行枚数を減らす(マイナスになっても無視する)
         $couponUseTime = $Coupon->getCouponUseTime() - 1;
         if ($couponUseTime > 0) {
@@ -231,8 +232,8 @@ class Event
         $source = str_replace($search, $replace, $source);
         $event->setSource($source);
         //set parameter for twig files
-        $parameters['coupon_cd'] = $Coupon->getCouponCd();
-        $parameters['coupon_name'] = $Coupon->getCouponName();
+        $parameters['coupon_cd'] = $CouponOrder->getCouponCd();
+        $parameters['coupon_name'] = $CouponOrder->getCouponName();
         $event->setParameters($parameters);
         log_info('Coupon trigger onRenderAdminOrderEdit finish');
     }
@@ -293,8 +294,8 @@ class Event
         $source = str_replace($search, $replace, $source);
         $event->setSource($source);
         //set parameter for twig files
-        $parameters['coupon_cd'] = $Coupon->getCouponCd();
-        $parameters['coupon_name'] = $Coupon->getCouponName();
+        $parameters['coupon_cd'] = $CouponOrder->getCouponCd();
+        $parameters['coupon_name'] = $CouponOrder->getCouponName();
         $event->setParameters($parameters);
         log_info('Coupon trigger onRenderMypageHistory finish');
     }

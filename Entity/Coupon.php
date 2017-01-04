@@ -88,6 +88,11 @@ class Coupon extends AbstractEntity
     private $coupon_lower_limit;
 
     /**
+     * @var int
+     */
+    private $coupon_release;
+
+    /**
      * @var \DateTime
      */
     private $create_date;
@@ -496,5 +501,21 @@ class Coupon extends AbstractEntity
     public function setCouponLowerLimit($couponLowerLimit)
     {
         $this->coupon_lower_limit = $couponLowerLimit;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCouponRelease()
+    {
+        return $this->coupon_release;
+    }
+
+    /**
+     * @param int $coupon_release
+     */
+    public function setCouponRelease($coupon_release)
+    {
+        $this->coupon_release = $coupon_release;
     }
 }

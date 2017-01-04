@@ -156,7 +156,7 @@ class CouponType extends AbstractType
                     new Assert\NotBlank(),
                 ),
             ))
-            ->add('coupon_use_time', 'integer', array(
+            ->add('coupon_release', 'integer', array(
                 'label' => '発行枚数',
                 'required' => true,
                 'constraints' => array(

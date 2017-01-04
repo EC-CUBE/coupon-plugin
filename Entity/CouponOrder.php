@@ -33,6 +33,11 @@ class CouponOrder extends AbstractEntity
     private $coupon_cd;
 
     /**
+     * @var string
+     */
+    private $coupon_name;
+
+    /**
      * @var int
      */
     private $user_id;
@@ -370,5 +375,21 @@ class CouponOrder extends AbstractEntity
     public function getUpdateDate()
     {
         return $this->update_date;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCouponName()
+    {
+        return $this->coupon_name;
+    }
+
+    /**
+     * @param string $coupon_name
+     */
+    public function setCouponName($coupon_name)
+    {
+        $this->coupon_name = $coupon_name;
     }
 }

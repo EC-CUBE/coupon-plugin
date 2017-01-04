@@ -86,7 +86,7 @@ function fnDelete(action) {
                                         <td class="coupon_discount"></td>
                                     {% endif %}
 
-                                    <td>{{ Coupon.coupon_use_time|number_format }}</td>
+                                    <td>{{ Coupon.coupon_use_time|number_format }} / {{ Coupon.coupon_release|number_format }}</td>
                                     <td>{{ Coupon.coupon_lower_limit|price }}</td>
                                     <td>{{ Coupon.available_from_date|date_format }} ～ {{ Coupon.available_to_date|date_format }}</td>
 
