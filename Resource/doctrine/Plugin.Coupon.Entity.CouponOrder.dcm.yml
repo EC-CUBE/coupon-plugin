@@ -17,6 +17,9 @@ Plugin\Coupon\Entity\CouponOrder:
         coupon_cd:
             type: text
             nullable: false
+        coupon_name:
+            type: text
+            nullable: true
         user_id:
             type: integer
             nullable: true
