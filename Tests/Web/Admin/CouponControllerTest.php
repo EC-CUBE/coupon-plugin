@@ -40,7 +40,8 @@ class CouponControllerTest extends AbstractAdminWebTestCase
 
     public function testIndexList()
     {
-
+        // delete record before test
+        $this->deleteAllRows(array('plg_coupon'));
         $this->getCoupon();
 
         $crawler = $this->client->request('GET', $this->app->url('admin_coupon_list'));
