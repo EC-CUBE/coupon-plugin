@@ -296,7 +296,6 @@ class Version201507231300 extends AbstractMigration
 
     /**
      * create all table of coupon.
-     *
      */
     protected function createCouponDb()
     {

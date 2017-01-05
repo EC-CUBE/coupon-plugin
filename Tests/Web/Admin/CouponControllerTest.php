@@ -27,7 +27,7 @@ class CouponControllerTest extends AbstractAdminWebTestCase
     protected $Customer;
 
     /**
-     * setUp
+     * setUp.
      */
     public function setUp()
     {
@@ -36,7 +36,7 @@ class CouponControllerTest extends AbstractAdminWebTestCase
     }
 
     /**
-     * tearDown
+     * tearDown.
      */
     public function tearDown()
     {
@@ -44,7 +44,7 @@ class CouponControllerTest extends AbstractAdminWebTestCase
     }
 
     /**
-     * testIndex
+     * testIndex.
      */
     public function testIndex()
     {
@@ -54,7 +54,7 @@ class CouponControllerTest extends AbstractAdminWebTestCase
     }
 
     /**
-     * testIndexList
+     * testIndexList.
      */
     public function testIndexList()
     {
@@ -71,7 +71,7 @@ class CouponControllerTest extends AbstractAdminWebTestCase
     }
 
     /**
-     * testEditNew
+     * testEditNew.
      */
     public function testEditNew()
     {
@@ -81,7 +81,7 @@ class CouponControllerTest extends AbstractAdminWebTestCase
     }
 
     /**
-     * testEdit
+     * testEdit.
      */
     public function testEdit()
     {
@@ -95,9 +95,11 @@ class CouponControllerTest extends AbstractAdminWebTestCase
     }
 
     /**
-     * getCoupon
+     * getCoupon.
+     *
      * @param int $couponType
      * @param int $discountType
+     *
      * @return Coupon
      */
     private function getCoupon($couponType = 1, $discountType = 1)
@@ -134,9 +136,11 @@ class CouponControllerTest extends AbstractAdminWebTestCase
     }
 
     /**
-     * getTestData
+     * getTestData.
+     *
      * @param int $couponType
      * @param int $discountType
+     *
      * @return Coupon
      */
     private function getTestData($couponType = 1, $discountType = 1)

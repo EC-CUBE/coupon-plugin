@@ -23,7 +23,7 @@ use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 class CouponServiceTest extends EccubeTestCase
 {
     /**
-     * testCreateCoupon
+     * testCreateCoupon.
      */
     public function testCreateCoupon()
     {
@@ -37,7 +37,7 @@ class CouponServiceTest extends EccubeTestCase
     }
 
     /**
-     * testUpdateCoupon
+     * testUpdateCoupon.
      */
     public function testUpdateCoupon()
     {
@@ -54,7 +54,7 @@ class CouponServiceTest extends EccubeTestCase
     }
 
     /**
-     * testEnableCoupon
+     * testEnableCoupon.
      */
     public function testEnableCoupon()
     {
@@ -70,7 +70,7 @@ class CouponServiceTest extends EccubeTestCase
     }
 
     /**
-     * testEnableCouponNot
+     * testEnableCouponNot.
      */
     public function testEnableCouponNot()
     {
@@ -86,7 +86,7 @@ class CouponServiceTest extends EccubeTestCase
     }
 
     /**
-     * testDeleteCoupon
+     * testDeleteCoupon.
      */
     public function testDeleteCoupon()
     {
@@ -101,7 +101,7 @@ class CouponServiceTest extends EccubeTestCase
     }
 
     /**
-     * testDeleteCouponNot
+     * testDeleteCouponNot.
      */
     public function testDeleteCouponNot()
     {
@@ -116,7 +116,7 @@ class CouponServiceTest extends EccubeTestCase
     }
 
     /**
-     * testGenerateCouponCd
+     * testGenerateCouponCd.
      */
     public function testGenerateCouponCd()
     {
@@ -129,7 +129,7 @@ class CouponServiceTest extends EccubeTestCase
     }
 
     /**
-     * testExistsCouponProduct
+     * testExistsCouponProduct.
      */
     public function testExistsCouponProduct()
     {
@@ -173,7 +173,7 @@ class CouponServiceTest extends EccubeTestCase
     }
 
     /**
-     * testExistsCouponProductNot
+     * testExistsCouponProductNot.
      */
     public function testExistsCouponProductNot()
     {
@@ -192,7 +192,7 @@ class CouponServiceTest extends EccubeTestCase
     }
 
     /**
-     * testExistsCouponProduct2
+     * testExistsCouponProduct2.
      */
     public function testExistsCouponProduct2()
     {
@@ -236,7 +236,7 @@ class CouponServiceTest extends EccubeTestCase
     }
 
     /**
-     * testSaveCouponOrder
+     * testSaveCouponOrder.
      */
     public function testSaveCouponOrder()
     {
@@ -268,7 +268,7 @@ class CouponServiceTest extends EccubeTestCase
     }
 
     /**
-     * testRecalcOrder
+     * testRecalcOrder.
      */
     public function testRecalcOrder()
     {
@@ -314,7 +314,7 @@ class CouponServiceTest extends EccubeTestCase
     }
 
     /**
-     * testIsOrderInActiveCoupon
+     * testIsOrderInActiveCoupon.
      */
     public function testIsOrderInActiveCoupon()
     {
@@ -362,7 +362,7 @@ class CouponServiceTest extends EccubeTestCase
     }
 
     /**
-     * testIsOrderInActiveCouponNot
+     * testIsOrderInActiveCouponNot.
      */
     public function testIsOrderInActiveCouponNot()
     {
@@ -381,7 +381,7 @@ class CouponServiceTest extends EccubeTestCase
     }
 
     /**
-     * testGetCouponOrder
+     * testGetCouponOrder.
      */
     public function testGetCouponOrder()
     {
@@ -412,8 +412,10 @@ class CouponServiceTest extends EccubeTestCase
     }
 
     /**
-     * getCoupon
+     * getCoupon.
+     *
      * @param int $couponType
+     *
      * @return Coupon
      */
     private function getCoupon($couponType = 1)
@@ -449,8 +451,10 @@ class CouponServiceTest extends EccubeTestCase
     }
 
     /**
-     * getTestData
+     * getTestData.
+     *
      * @param int $couponType
+     *
      * @return Coupon
      */
     private function getTestData($couponType = 1)

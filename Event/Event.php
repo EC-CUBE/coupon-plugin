@@ -16,7 +16,6 @@ use Eccube\Event\EventArgs;
 use Plugin\Coupon\Entity\Coupon;
 use Plugin\Coupon\Util\Version;
 use Eccube\Event\TemplateEvent;
-use Symfony\Component\Form\FormError;
 
 /**
  * Class Event.
@@ -168,7 +167,7 @@ class Event
         $repository = $this->app['eccube.plugin.coupon.repository.coupon_order'];
         // クーポン受注情報を取得する
         $CouponOrder = $repository->findOneBy(array(
-            'order_id' => $orderId
+            'order_id' => $orderId,
         ));
         if (is_null($CouponOrder)) {
             return;
@@ -334,7 +333,7 @@ class Event
             $snippet .= '　クーポン情報                                 '.PHP_EOL;
             $snippet .= '***********************************************'.PHP_EOL;
             $snippet .= PHP_EOL;
-            $snippet .= 'クーポンコード: ' . $CouponOrder->getCouponCd() . ' '. $CouponOrder->getCouponName();
+            $snippet .= 'クーポンコード: '.$CouponOrder->getCouponCd().' '.$CouponOrder->getCouponName();
             $snippet .= PHP_EOL;
             $replace = $search[0][0].$snippet;
             $body = preg_replace('/'.$search[0][0].'/u', $replace, $body);

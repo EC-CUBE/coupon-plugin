@@ -19,7 +19,6 @@ use Plugin\Coupon\Entity\Coupon;
 use Plugin\Coupon\Entity\CouponDetail;
 use Plugin\Coupon\Entity\CouponOrder;
 use Eccube\Entity\Category;
-use Symfony\Component\Form\FormError;
 
 /**
  * Class CouponService.
@@ -585,11 +584,12 @@ class CouponService
     /**
      *  Coupon Validation.
      *
-     * @param string $formCouponCd
-     * @param Coupon $Coupon
-     * @param Order  $Order
-     * @param Customer  $Customer
-     * @return String|null
+     * @param string   $formCouponCd
+     * @param Coupon   $Coupon
+     * @param Order    $Order
+     * @param Customer $Customer
+     *
+     * @return string|null
      */
     public function couponValidation($formCouponCd, Coupon $Coupon, Order $Order, Customer $Customer)
     {
@@ -654,5 +654,4 @@ class CouponService
         // クーポンの発行枚数は購入完了時に減算される、一枚以上残っていれば利用できる
         return $Coupon->getCouponUseTime() >= 1;
     }
-
 }

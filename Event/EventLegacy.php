@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 
 /**
- * Class EventLegacy
+ * Class EventLegacy.
  */
 class EventLegacy
 {
@@ -40,6 +40,7 @@ class EventLegacy
 
     /**
      * EventLegacy constructor.
+     *
      * @param Application $app
      */
     public function __construct($app)
@@ -234,7 +235,6 @@ class EventLegacy
 
     /**
      * Hook point order edit completed.
-     *
      */
     public function onControllerAdminOrderCompleteBefore()
     {
@@ -246,7 +246,7 @@ class EventLegacy
         if (is_null($orderId)) {
             return;
         }
-        $Order =  $this->app['eccube.plugin.order']->find($orderId);
+        $Order = $this->app['eccube.plugin.order']->find($orderId);
         $repository = $this->app['eccube.plugin.coupon.repository.coupon_order'];
         // クーポン受注情報を取得する
         $CouponOrder = $repository->findOneBy(array(
@@ -295,7 +295,8 @@ class EventLegacy
 
     /**
      * 受注情報編集画面にクーポン情報を追加する.
-     *t
+     *t.
+     *
      * @param Response $response
      * @param $Coupon
      */
@@ -483,5 +484,4 @@ class EventLegacy
 
         return html_entity_decode($html, ENT_NOQUOTES, 'UTF-8');
     }
-
 }

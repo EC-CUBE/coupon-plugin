@@ -29,7 +29,7 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
     private $Customer;
 
     /**
-     * testSave
+     * testSave.
      */
     public function testSave()
     {
@@ -52,7 +52,7 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
     }
 
     /**
-     * testFindUseCouponByOrderId
+     * testFindUseCouponByOrderId.
      */
     public function testFindUseCouponByOrderId()
     {
@@ -79,7 +79,7 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
     }
 
     /**
-     * testFindUseCouponNonMember
+     * testFindUseCouponNonMember.
      */
     public function testFindUseCouponNonMember()
     {
@@ -105,7 +105,7 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
     }
 
     /**
-     * testCountCouponByCd
+     * testCountCouponByCd.
      */
     public function testCountCouponByCd()
     {
@@ -130,10 +130,12 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
     }
 
     /**
-     * getCouponOrder
+     * getCouponOrder.
+     *
      * @param Coupon $Coupon
      * @param $discount
      * @param $preOrderId
+     *
      * @return CouponOrder
      */
     private function getCouponOrder(Coupon $Coupon, $discount, $preOrderId)
@@ -186,8 +188,10 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
     }
 
     /**
-     * getCoupon
+     * getCoupon.
+     *
      * @param int $couponType
+     *
      * @return Coupon
      */
     private function getCoupon($couponType = 1)
@@ -223,8 +227,10 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
     }
 
     /**
-     * getTestData
+     * getTestData.
+     *
      * @param int $couponType
+     *
      * @return Coupon
      */
     private function getTestData($couponType = 1)

@@ -28,7 +28,7 @@ class CouponControllerTest extends AbstractWebTestCase
     protected $Customer;
 
     /**
-     * setUp
+     * setUp.
      */
     public function setUp()
     {
@@ -37,7 +37,7 @@ class CouponControllerTest extends AbstractWebTestCase
     }
 
     /**
-     * tearDown
+     * tearDown.
      */
     public function tearDown()
     {
@@ -45,7 +45,7 @@ class CouponControllerTest extends AbstractWebTestCase
     }
 
     /**
-     * test routing shopping coupon
+     * test routing shopping coupon.
      */
     public function testRoutingShoppingCoupon()
     {
@@ -62,7 +62,7 @@ class CouponControllerTest extends AbstractWebTestCase
     }
 
     /**
-     * testRoutingShoppingCouponNot
+     * testRoutingShoppingCouponNot.
      */
     public function testRoutingShoppingCouponNot()
     {
@@ -72,7 +72,7 @@ class CouponControllerTest extends AbstractWebTestCase
     }
 
     /**
-     * testShoppingCouponPost
+     * testShoppingCouponPost.
      */
     public function testShoppingCouponPost()
     {
@@ -89,7 +89,7 @@ class CouponControllerTest extends AbstractWebTestCase
     }
 
     /**
-     * testShoppingCouponPostError
+     * testShoppingCouponPostError.
      */
     public function testShoppingCouponPostError()
     {
@@ -107,7 +107,7 @@ class CouponControllerTest extends AbstractWebTestCase
     }
 
     /**
-     * testShoppingCoupon
+     * testShoppingCoupon.
      */
     public function testShoppingCoupon()
     {
@@ -133,7 +133,7 @@ class CouponControllerTest extends AbstractWebTestCase
     }
 
     /**
-     * testShoppingCouponDiscountType1
+     * testShoppingCouponDiscountType1.
      */
     public function testShoppingCouponDiscountType1()
     {
@@ -166,7 +166,7 @@ class CouponControllerTest extends AbstractWebTestCase
     }
 
     /**
-     * testShoppingCouponDiscountType2
+     * testShoppingCouponDiscountType2.
      */
     public function testShoppingCouponDiscountType2()
     {
@@ -201,7 +201,7 @@ class CouponControllerTest extends AbstractWebTestCase
     }
 
     /**
-     * routingShopping
+     * routingShopping.
      */
     private function routingShopping()
     {
@@ -216,8 +216,10 @@ class CouponControllerTest extends AbstractWebTestCase
 
     /**
      * get coupon form.
+     *
      * @param Crawler $crawler
-     * @param string $couponCd
+     * @param string  $couponCd
+     *
      * @return \Symfony\Component\DomCrawler\Form
      */
     private function getForm(Crawler $crawler, $couponCd = '')
@@ -233,6 +235,7 @@ class CouponControllerTest extends AbstractWebTestCase
     /**
      * @param int $couponType
      * @param int $discountType
+     *
      * @return Coupon
      */
     private function getCoupon($couponType = 1, $discountType = 1)
@@ -269,9 +272,11 @@ class CouponControllerTest extends AbstractWebTestCase
     }
 
     /**
-     * getTestData
+     * getTestData.
+     *
      * @param int $couponType
      * @param int $discountType
+     *
      * @return Coupon
      */
     private function getTestData($couponType = 1, $discountType = 1)

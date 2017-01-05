@@ -391,7 +391,6 @@ class CouponController
             $Shippings = $Order->getShippings();
             $index = 0;
             foreach ($Shippings as $Shipping) {
-
                 if ($time[$index]) {
                     $DeliveryTime = $app['eccube.repository.delivery_time']->find($time[$index]);
                     $Shipping->setDeliveryTime($DeliveryTime);
@@ -405,7 +404,7 @@ class CouponController
                     $Shipping->setShippingDeliveryDate(null);
                 }
 
-                $index++;
+                ++$index;
                 $app['orm.em']->persist($Shipping);
                 $app['orm.em']->flush($Shipping);
             }

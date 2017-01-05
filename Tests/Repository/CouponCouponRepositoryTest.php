@@ -21,7 +21,7 @@ use Plugin\Coupon\Entity\CouponDetail;
 class CouponCouponRepositoryTest extends EccubeTestCase
 {
     /**
-     * testFindActiveCoupon
+     * testFindActiveCoupon.
      */
     public function testFindActiveCoupon()
     {
@@ -39,7 +39,7 @@ class CouponCouponRepositoryTest extends EccubeTestCase
     }
 
     /**
-     * testFindActiveCouponAll
+     * testFindActiveCouponAll.
      */
     public function testFindActiveCouponAll()
     {
@@ -54,6 +54,7 @@ class CouponCouponRepositoryTest extends EccubeTestCase
 
     /**
      * @param int $couponType
+     *
      * @return Coupon
      */
     private function getCoupon($couponType = 1)
@@ -89,8 +90,10 @@ class CouponCouponRepositoryTest extends EccubeTestCase
     }
 
     /**
-     * getTestData
+     * getTestData.
+     *
      * @param int $couponType
+     *
      * @return Coupon
      */
     private function getTestData($couponType = 1)

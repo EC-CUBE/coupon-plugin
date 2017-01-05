@@ -271,7 +271,7 @@ class CouponDetail extends AbstractEntity
             // 親カテゴリ名を結合する
             $ParentCategory = $this->Category->getParent();
             while (!is_null($ParentCategory)) {
-                $fulName = $ParentCategory->getName() . '　＞　' . $fulName;
+                $fulName = $ParentCategory->getName().'　＞　'.$fulName;
                 $ParentCategory = $ParentCategory->getParent();
             }
 
