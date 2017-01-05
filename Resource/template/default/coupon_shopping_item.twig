@@ -18,6 +18,7 @@
             $("select[id^=shopping_shippings_][id$=_deliveryTime]").each(function () {
                 time += $(this).val() + ',';
             });
+            $(this).attr('disabled', 'disabled');
             $.ajax({
                 type: 'POST',
                 data: {
@@ -41,7 +42,7 @@
     クーポンをお持ちの方はクーポンコードを入力してください。
     <p><a class="btn btn-default btn-sm" id="coupon_button" href="{{ url('plugin_coupon_shopping') }}">クーポンを利用する</a>
         {% if CouponOrder %}
-            <strong class="text-danger">クーポンを利用しています。</strong>
+            <strong class="text-danger">クーポン {{ CouponOrder.coupon_cd }} を利用しています。</strong>
         {% endif %}
     </p>
 </div>

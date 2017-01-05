@@ -43,7 +43,7 @@ Mypage/history.twig:
 front.shopping.complete.initialize:
     - [onRenderShoppingComplete, NORMAL]
 
-admin.order.edit.index.complete:
+front.shopping.confirm.initialize:
     - [onShoppingConfirmInit, NORMAL]
 
 admin.order.edit.index.progress:

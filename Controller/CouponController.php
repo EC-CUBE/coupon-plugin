@@ -98,7 +98,14 @@ class CouponController
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var \Plugin\Coupon\Entity\Coupon $Coupon */
             $Coupon = $form->getData();
-            $Coupon->setCouponUseTime($Coupon->getCouponRelease());
+            if (!$Coupon->getCouponUseTime()) {
+                $Coupon->setCouponUseTime($Coupon->getCouponRelease());
+            } else {
+                if ($Coupon->getCouponUseTime() > $Coupon->getCouponRelease()) {
+                    $Coupon->setCouponUseTime($Coupon->getCouponRelease());
+                }
+            }
+
             $CouponDetails = $app['eccube.plugin.coupon.repository.coupon_detail']->findBy(array(
                 'Coupon' => $Coupon,
             ));

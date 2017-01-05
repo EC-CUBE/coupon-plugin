@@ -19,6 +19,7 @@ use Plugin\Coupon\Entity\Coupon;
 use Plugin\Coupon\Entity\CouponDetail;
 use Plugin\Coupon\Entity\CouponOrder;
 use Eccube\Entity\Category;
+use Symfony\Component\Form\FormError;
 
 /**
  * Class CouponService.
@@ -580,4 +581,99 @@ class CouponService
 
         return false;
     }
+
+    /**
+     *  Coupon Validation.
+     *
+     * @param string $formCouponCd
+     * @param Coupon $Coupon
+     * @param Order  $Order
+     * @param Customer  $Customer
+     * @return String|null
+     */
+    public function couponValidation($formCouponCd, Coupon $Coupon, Order $Order, Customer $Customer)
+    {
+        $error = false;
+        $app = $this->app;
+        if ($Coupon && !$error) {
+            $lowerLimit = $Coupon->getCouponLowerLimit();
+            // 対象クーポンが存在しているかチェック
+            $couponProducts = $this->existsCouponProduct($Coupon, $Order);
+            $checkLowerLimit = $this->isLowerLimitCoupon($couponProducts, $lowerLimit);
+            // 値引き額を取得
+            $discount = $this->recalcOrder($Order, $Coupon, $couponProducts);
+            if (sizeof($couponProducts) == 0) {
+                $existCoupon = false;
+            } else {
+                $existCoupon = true;
+            }
+
+            if (!$existCoupon) {
+                return $app->trans('front.plugin.coupon.shopping.notexists');
+            }
+
+            if (!$checkLowerLimit) {
+                return $app->trans('front.plugin.coupon.shopping.lowerlimit');
+            }
+
+            // クーポンが既に利用されているかチェック
+            $couponUsedOrNot = $this->checkCouponUsedOrNot($formCouponCd, $Customer);
+            if ($couponUsedOrNot && $existCoupon) {
+                // 既に存在している
+                return $app->trans('front.plugin.coupon.shopping.sameuser');
+            }
+
+            // クーポンの発行枚数チェック
+            $checkCouponUseTime = $this->checkCouponUseTime($formCouponCd, $app);
+            if (!$checkCouponUseTime && $existCoupon) {
+                return $app->trans('front.plugin.coupon.shopping.couponusetime');
+            }
+
+            // 合計金額より値引き額の方が高いかチェック
+            if ($Order->getTotal() < $discount && $existCoupon) {
+                return $app->trans('front.plugin.coupon.shopping.minus');
+            }
+        } elseif (!$Coupon) {
+            return  $app->trans('front.plugin.coupon.shopping.notexists');
+        }
+
+        return null;
+    }
+
+    /**
+     *  クーポンの発行枚数のチェック.
+     *
+     * @param int         $couponCd
+     * @param Application $app
+     *
+     * @return bool クーポンの枚数が一枚以上の時にtrueを返す
+     */
+    private function checkCouponUseTime($couponCd, Application $app)
+    {
+        $Coupon = $app['eccube.plugin.coupon.repository.coupon']->findOneBy(array('coupon_cd' => $couponCd));
+        // クーポンの発行枚数は購入完了時に減算される、一枚以上残っていれば利用できる
+        return $Coupon->getCouponUseTime() >= 1;
+    }
+
+    /**
+     * クーポンコードが未入力または、クーポンコードを登録後に再度別のクーポンコードが設定された場合、
+     * 既存のクーポンを情報削除.
+     *
+     * @param Order       $Order
+     * @param Application $app
+     */
+    private function removeCouponOrder(Order $Order, Application $app)
+    {
+        // クーポンが未入力でクーポン情報が存在すればクーポン情報を削除
+        $CouponOrder = $app['eccube.plugin.coupon.service.coupon']->getCouponOrder($Order->getPreOrderId());
+        if ($CouponOrder) {
+            $app['orm.em']->remove($CouponOrder);
+            $app['orm.em']->flush($CouponOrder);
+            $Order->setDiscount($Order->getDiscount() - $CouponOrder->getDiscount());
+            $Order->setTotal($Order->getTotal() + $CouponOrder->getDiscount());
+            $Order->setPaymentTotal($Order->getPaymentTotal() + $CouponOrder->getDiscount());
+            $app['orm.em']->flush($Order);
+        }
+    }
+
 }

@@ -16,6 +16,7 @@ use Eccube\Event\EventArgs;
 use Plugin\Coupon\Entity\Coupon;
 use Plugin\Coupon\Util\Version;
 use Eccube\Event\TemplateEvent;
+use Symfony\Component\Form\FormError;
 
 /**
  * Class Event.
@@ -132,22 +133,25 @@ class Event
         } else {
             $Customer = $this->app['eccube.service.shopping']->getNonMember($this->sessionKey);
         }
-
-        // クーポンが既に利用されているかチェック
-        $couponUsedOrNot = $this->app['eccube.plugin.coupon.service.coupon']->checkCouponUsedOrNotBefore($CouponOrder->getCouponCd(), $CouponOrder->getOrderId(), $Customer);
+        //check if coupon valid or not
         $Coupon = $this->app['eccube.plugin.coupon.repository.coupon']->findActiveCoupon($CouponOrder->getCouponCd());
         if (is_null($Coupon)) {
-            $this->app->addError($this->app->trans('front.plugin.coupon.shopping.notfound'), 'front.request');
+            $this->app->addError($this->app->trans('front.plugin.coupon.shopping.notexists'), 'front.request');
             // 既に存在している
             header('Location: '.$this->app->url('shopping'));
             exit;
         }
-        if ($couponUsedOrNot) {
-            $this->app->addError($this->app->trans('front.plugin.coupon.shopping.sameuser'), 'front.request');
+        $Order = $this->app['eccube.repository.order']->find($CouponOrder->getOrderId());
+        // Validation coupon again
+        $validationMsg = $this->app['eccube.plugin.coupon.service.coupon']->couponValidation($Coupon->getCouponCd(), $Coupon, $Order, $Customer);
+        if (!is_null($validationMsg)) {
+            $this->app->addError($validationMsg, 'front.request');
             // 既に存在している
             header('Location: '.$this->app->url('shopping'));
             exit;
         }
+        $CouponOrder->setCouponName($Coupon->getCouponName());
+        $repository->save($CouponOrder);
         log_info('Coupon trigger onShoppingConfirmInit end');
     }
 
@@ -164,32 +168,21 @@ class Event
         $repository = $this->app['eccube.plugin.coupon.repository.coupon_order'];
         // クーポン受注情報を取得する
         $CouponOrder = $repository->findOneBy(array(
-            'order_id' => $orderId,
+            'order_id' => $orderId
         ));
         if (is_null($CouponOrder)) {
             return;
         }
         $Coupon = $this->app['eccube.plugin.coupon.repository.coupon']->findActiveCoupon($CouponOrder->getCouponCd());
-        if (is_null($Coupon)) {
-            return;
-        }
         // 更新対象データ
         $now = new \DateTime();
         $CouponOrder->setOrderDate($now);
         $CouponOrder->setUpdateDate($now);
-        $CouponOrder->setCouponName($Coupon->getCouponName());
         $repository->save($CouponOrder);
+
         // クーポンの発行枚数を減らす(マイナスになっても無視する)
-        $couponUseTime = $Coupon->getCouponUseTime() - 1;
-        if ($couponUseTime > 0) {
-            $Coupon->setCouponUseTime($couponUseTime);
-            $this->app['orm.em']->flush($Coupon);
-        } else {
-            $this->app->addError($this->app->trans('front.plugin.coupon.shopping.notfound'), 'front.request');
-            // 既に存在している
-            header('Location: '.$this->app->url('shopping'));
-            exit;
-        }
+        $Coupon->setCouponUseTime($Coupon->getCouponUseTime() - 1);
+        $this->app['orm.em']->flush($Coupon);
 
         log_info('Coupon trigger onRenderShoppingComplete start');
     }
@@ -276,13 +269,6 @@ class Event
         // クーポン受注情報を取得する
         $CouponOrder = $repCouponOrder->findUseCouponByOrderId($Order->getId());
         if (is_null($CouponOrder)) {
-            return;
-        }
-        // クーポン受注情報からクーポン情報を取得する
-        $repCoupon = $this->app['eccube.plugin.coupon.repository.coupon'];
-        /* @var $Coupon Coupon */
-        $Coupon = $repCoupon->find($CouponOrder->getCouponId());
-        if (is_null($Coupon)) {
             return;
         }
         // twigコードを挿入
@@ -438,5 +424,23 @@ class Event
                 $this->app->addError($this->app->trans('front.plugin.coupon.shopping.use.minus'), 'front.request');
             }
         }
+    }
+
+    /**
+     * 受注データを取得.
+     *
+     * @return null|object
+     */
+    private function getOrder()
+    {
+        // 受注データを取得
+        $preOrderId = $this->app['eccube.service.cart']->getPreOrderId();
+        $Order = $this->app['eccube.repository.order']->findOneBy(
+            array(
+                'pre_order_id' => $preOrderId,
+                'OrderStatus' => $this->app['config']['order_processing'],
+            ));
+
+        return $Order;
     }
 }
