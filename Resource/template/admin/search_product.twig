@@ -43,16 +43,25 @@
 
     // 商品検索
     $('div.box-footer a').on('click', function(event) {
+        var existProductId = "";
+        $(":input[id^=admin_plugin_coupon_CouponDetails_][id$=_Product]").each(
+                function(index, elem) {
+                    if(existProductId == "") {
+                        existProductId = elem.value;
+                    } else {
+                        existProductId = existProductId + "," + elem.value;
+                    }
+                }
+        );
         var list = $('#searchProductModalList');
-        var couponType = $('input[name~="admin_plugin_coupon[coupon_type]"]:checked').val();
-        if (couponType == 2) {
-            list = $('#searchCategoryModalList');
-        }
+        var href = $(this).attr('href');
+        href = href.split('?')[0];
+        href += '?exist_product_id=' + existProductId;
         list.find('tbody').children().remove();
         $.ajax({
             type: 'GET',
             dataType: 'html',
-            url: $(this).attr('href'),
+            url: href,
             success: function(data) {
                 list.html(data);
             },

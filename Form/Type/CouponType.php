@@ -167,6 +167,7 @@ class CouponType extends AbstractType
                     )),
                 ),
             ))
+            ->add('coupon_use_time', 'hidden', array())
             ->add('CouponDetails', 'collection', array(
                 'type' => 'admin_plugin_coupon_detail',
                 'allow_add' => true,

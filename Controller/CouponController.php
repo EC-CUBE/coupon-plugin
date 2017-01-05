@@ -98,10 +98,11 @@ class CouponController
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var \Plugin\Coupon\Entity\Coupon $Coupon */
             $Coupon = $form->getData();
-            if (!$Coupon->getCouponUseTime()) {
+            $oldReleaseNumber = $request->get('coupon_release_old');
+            if (!$oldReleaseNumber) {
                 $Coupon->setCouponUseTime($Coupon->getCouponRelease());
             } else {
-                if ($Coupon->getCouponUseTime() > $Coupon->getCouponRelease()) {
+                if ($Coupon->getCouponRelease() != $oldReleaseNumber) {
                     $Coupon->setCouponUseTime($Coupon->getCouponRelease());
                 }
             }

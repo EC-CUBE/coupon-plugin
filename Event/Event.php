@@ -425,22 +425,4 @@ class Event
             }
         }
     }
-
-    /**
-     * 受注データを取得.
-     *
-     * @return null|object
-     */
-    private function getOrder()
-    {
-        // 受注データを取得
-        $preOrderId = $this->app['eccube.service.cart']->getPreOrderId();
-        $Order = $this->app['eccube.repository.order']->findOneBy(
-            array(
-                'pre_order_id' => $preOrderId,
-                'OrderStatus' => $this->app['config']['order_processing'],
-            ));
-
-        return $Order;
-    }
 }

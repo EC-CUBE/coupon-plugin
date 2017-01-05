@@ -328,6 +328,8 @@ $(function() {
                                 {{ form_widget(form.coupon_release) }}
                                 {{ form_errors(form.coupon_release) }}
                             </div>
+                            {{ form_widget(form.coupon_use_time) }}
+                            <input type="hidden" name="coupon_release_old" value="{{ form.vars.value.coupon_release }}">
                         </div>
                         {# 下限金額 #}
                         <div class="form-group">
