@@ -54,6 +54,7 @@ class EventLegacy
      */
     public function onRenderShoppingBefore(FilterResponseEvent $event)
     {
+        log_info('Coupon trigger onRenderShoppingBefore start');
         $response = $event->getResponse();
         // 受注データを取得
         $Order = $this->getOrder();
@@ -63,6 +64,7 @@ class EventLegacy
         // クーポン関連項目を追加する
         $response->setContent($this->getHtmlShopping($response, $Order));
         $event->setResponse($response);
+        log_info('Coupon trigger onRenderShoppingBefore end');
     }
 
     /**
@@ -70,6 +72,7 @@ class EventLegacy
      */
     public function onControllerShoppingConfirmBefore()
     {
+        log_info('Coupon trigger onControllerShoppingConfirmBefore start');
         $cartService = $this->app['eccube.service.cart'];
         $preOrderId = $cartService->getPreOrderId();
         if (is_null($preOrderId)) {
@@ -92,16 +95,26 @@ class EventLegacy
             $Customer = $this->app['eccube.service.shopping']->getNonMember($this->sessionKey);
         }
 
-        // クーポンが既に利用されているかチェック
-        $couponUsedOrNot = $this->app['eccube.plugin.coupon.service.coupon']
-            ->checkCouponUsedOrNotBefore($CouponOrder->getCouponCd(), $CouponOrder->getOrderId(), $Customer);
-
-        if ($couponUsedOrNot) {
-            $this->app->addError($this->app->trans('front.plugin.coupon.shopping.sameuser'), 'front.request');
+        //check if coupon valid or not
+        $Coupon = $this->app['eccube.plugin.coupon.repository.coupon']->findActiveCoupon($CouponOrder->getCouponCd());
+        if (is_null($Coupon)) {
+            $this->app->addError($this->app->trans('front.plugin.coupon.shopping.notexists'), 'front.request');
             // 既に存在している
             header('Location: '.$this->app->url('shopping'));
             exit;
         }
+        $Order = $this->app['eccube.repository.order']->find($CouponOrder->getOrderId());
+        // Validation coupon again
+        $validationMsg = $this->app['eccube.plugin.coupon.service.coupon']->couponValidation($Coupon->getCouponCd(), $Coupon, $Order, $Customer);
+        if (!is_null($validationMsg)) {
+            $this->app->addError($validationMsg, 'front.request');
+            // 既に存在している
+            header('Location: '.$this->app->url('shopping'));
+            exit;
+        }
+        $CouponOrder->setCouponName($Coupon->getCouponName());
+        $repository->save($CouponOrder);
+        log_info('Coupon trigger onControllerShoppingConfirmBefore end');
     }
 
     /**
@@ -109,6 +122,7 @@ class EventLegacy
      */
     public function onControllerShoppingCompleteBefore()
     {
+        log_info('Coupon trigger onControllerShoppingCompleteBefore start');
         $orderId = $this->app['session']->get('eccube.front.shopping.order.id');
         if (is_null($orderId)) {
             return;
@@ -131,6 +145,7 @@ class EventLegacy
         // クーポンの発行枚数を減らす(マイナスになっても無視する)
         $Coupon->setCouponUseTime($Coupon->getCouponUseTime() - 1);
         $this->app['orm.em']->flush($Coupon);
+        log_info('Coupon trigger onControllerShoppingCompleteBefore end');
     }
 
     /**
@@ -141,6 +156,7 @@ class EventLegacy
      */
     public function onRenderAdminOrderEditAfter(FilterResponseEvent $event)
     {
+        log_info('Coupon trigger onRenderAdminOrderEditAfter start');
         $request = $event->getRequest();
         $response = $event->getResponse();
         // 受注IDを取得する
@@ -163,6 +179,7 @@ class EventLegacy
         }
         // 編集画面にクーポン表示を追加する
         $this->getHtmlOrderEdit($response, $CouponOrder);
+        log_info('Coupon trigger onRenderAdminOrderEditAfter end');
     }
 
     /**
@@ -172,6 +189,7 @@ class EventLegacy
      */
     public function onRenderMypageHistoryBefore(FilterResponseEvent $event)
     {
+        log_info('Coupon trigger onRenderMypageHistoryBefore start');
         try {
             // 受注データを取得
             $request = $event->getRequest();
@@ -211,6 +229,7 @@ class EventLegacy
         } catch (\InvalidArgumentException $e) {
             log_info($e->getMessage());
         }
+        log_info('Coupon trigger onRenderMypageHistoryBefore end');
     }
 
     /**
@@ -219,6 +238,7 @@ class EventLegacy
      */
     public function onControllerAdminOrderCompleteBefore()
     {
+        log_info('Coupon trigger onControllerAdminOrderCompleteBefore start');
         $Order = null;
         $app = $this->app;
         $delFlg = false;
@@ -250,6 +270,7 @@ class EventLegacy
                 $this->app['orm.em']->flush($Coupon);
             }
         }
+        log_info('Coupon trigger onControllerAdminOrderCompleteBefore end');
     }
 
     /**
@@ -258,12 +279,14 @@ class EventLegacy
      */
     public function onControllerRestoreDiscountAfter()
     {
+        log_info('Coupon trigger onControllerRestoreDiscountAfter start');
         // 受注データを取得
         $Order = $this->getOrder();
         if (!$Order) {
             return;
         }
         $this->restoreDiscount($Order);
+        log_info('Coupon trigger onControllerRestoreDiscountAfter end');
     }
 
     // =========================================================

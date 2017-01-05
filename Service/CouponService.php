@@ -498,7 +498,7 @@ class CouponService
     public function isLowerLimitCoupon($productCoupon, $lowerLimitMoney)
     {
         foreach ($productCoupon as $key => $value) {
-            if ($value['price'] < $lowerLimitMoney) {
+            if ($value['price'] * $value['quantity'] < $lowerLimitMoney) {
                 return false;
             }
         }
@@ -653,27 +653,6 @@ class CouponService
         $Coupon = $app['eccube.plugin.coupon.repository.coupon']->findOneBy(array('coupon_cd' => $couponCd));
         // クーポンの発行枚数は購入完了時に減算される、一枚以上残っていれば利用できる
         return $Coupon->getCouponUseTime() >= 1;
-    }
-
-    /**
-     * クーポンコードが未入力または、クーポンコードを登録後に再度別のクーポンコードが設定された場合、
-     * 既存のクーポンを情報削除.
-     *
-     * @param Order       $Order
-     * @param Application $app
-     */
-    private function removeCouponOrder(Order $Order, Application $app)
-    {
-        // クーポンが未入力でクーポン情報が存在すればクーポン情報を削除
-        $CouponOrder = $app['eccube.plugin.coupon.service.coupon']->getCouponOrder($Order->getPreOrderId());
-        if ($CouponOrder) {
-            $app['orm.em']->remove($CouponOrder);
-            $app['orm.em']->flush($CouponOrder);
-            $Order->setDiscount($Order->getDiscount() - $CouponOrder->getDiscount());
-            $Order->setTotal($Order->getTotal() + $CouponOrder->getDiscount());
-            $Order->setPaymentTotal($Order->getPaymentTotal() + $CouponOrder->getDiscount());
-            $app['orm.em']->flush($Order);
-        }
     }
 
 }

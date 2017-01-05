@@ -355,8 +355,9 @@ class CouponController
                         // クーポン情報を取得
                         $Coupon = $app['eccube.plugin.coupon.repository.coupon']->findActiveCoupon($couponCd);
                         if ($Coupon) {
+                            $couponProducts = $service->existsCouponProduct($Coupon, $Order);
                             // 値引き額を取得
-                            $discount = $service->recalcOrder($Order, $Coupon);
+                            $discount = $service->recalcOrder($Order, $Coupon, $couponProducts);
                             // クーポン情報を登録
                             $this->setCouponOrder($Order, $Coupon, $couponCd, $Customer, $discount, $app);
                         }
