@@ -35,20 +35,20 @@ class Version201612231311 extends AbstractMigration
     public function up(Schema $schema)
     {
         $table = $schema->getTable(self::COUPON);
-        if ($table->hasColumn('coupon_member')) {
+        if (!$table->hasColumn('coupon_member')) {
             $this->addSql('alter table plg_coupon add coupon_member SMALLINT DEFAULT 0');
         }
 
-        if ($table->hasColumn('coupon_lower_limit')) {
+        if (!$table->hasColumn('coupon_lower_limit')) {
             $this->addSql('alter table plg_coupon add coupon_lower_limit SMALLINT DEFAULT 0');
         }
 
-        if ($table->hasColumn('coupon_release')) {
+        if (!$table->hasColumn('coupon_release')) {
             $this->addSql('alter table plg_coupon add coupon_release SMALLINT DEFAULT 0');
         }
 
         $table = $schema->getTable(self::COUPON_ORDER);
-        if ($table->hasColumn('coupon_name')) {
+        if (!$table->hasColumn('coupon_name')) {
             $this->addSql('alter table plg_coupon_order add coupon_name text');
         }
     }
