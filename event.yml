@@ -15,8 +15,13 @@ eccube.event.controller.shopping_complete.before:
     - [onControllerShoppingCompleteBefore, NORMAL]
 
 eccube.event.render.admin_order_edit.before:
-    - [onRenderAdminOrderEditAfter, NORMAL]
+    - [onRenderAdminOrderEditBefore, NORMAL]
 
+eccube.event.controller.admin_order_edit.after:
+    - [onControllerOrderEditAfter, NORMAL]
+
+eccube.event.controller.admin_order_delete.after:
+    - [onControllerOrderDeleteAfter, NORMAL]
 
 # v3.0.8まで
 eccube.event.controller.shopping_delivery.after:

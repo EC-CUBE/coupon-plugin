@@ -327,7 +327,7 @@ class CouponController
                     }
 
                     // クーポンの発行枚数チェック
-                    $checkCouponUseTime = $this->checkCouponUseTime($formCouponCd, $app);
+                    $checkCouponUseTime = $service->checkCouponUseTime($formCouponCd, $app);
                     if (!$checkCouponUseTime && $existCoupon) {
                         $form->get('coupon_cd')->addError(new FormError('front.plugin.coupon.shopping.couponusetime'));
                         $error = true;
@@ -411,21 +411,6 @@ class CouponController
         }
 
         return new Response();
-    }
-
-    /**
-     *  クーポンの発行枚数のチェック.
-     *
-     * @param int         $couponCd
-     * @param Application $app
-     *
-     * @return bool クーポンの枚数が一枚以上の時にtrueを返す
-     */
-    private function checkCouponUseTime($couponCd, Application $app)
-    {
-        $Coupon = $app['eccube.plugin.coupon.repository.coupon']->findOneBy(array('coupon_cd' => $couponCd));
-        // クーポンの発行枚数は購入完了時に減算される、一枚以上残っていれば利用できる
-        return $Coupon->getCouponUseTime() >= 1;
     }
 
     /**

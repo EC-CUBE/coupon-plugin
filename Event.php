@@ -170,13 +170,13 @@ class Event
      *
      * @param FilterResponseEvent $event
      */
-    public function onRenderAdminOrderEditAfter(FilterResponseEvent $event)
+    public function onRenderAdminOrderEditBefore(FilterResponseEvent $event)
     {
         //current version >= 3.0.9
         if (Version::isSupportNewHookPoint()) {
             return;
         }
-        $this->app['eccube.plugin.coupon.event.legacy']->onRenderAdminOrderEditAfter($event);
+        $this->app['eccube.plugin.coupon.event.legacy']->onRenderAdminOrderEditBefore($event);
     }
 
     /**
@@ -190,5 +190,29 @@ class Event
             return;
         }
         $this->app['eccube.plugin.coupon.event.legacy']->onControllerRestoreDiscountAfter();
+    }
+
+    /**
+     * for order change status
+     */
+    public function onControllerOrderEditAfter()
+    {
+        //current version >= 3.0.9
+        if (Version::isSupportNewHookPoint()) {
+            return;
+        }
+        $this->app['eccube.plugin.coupon.event.legacy']->onControllerOrderEditAfter();
+    }
+
+    /**
+     * for order delete
+     */
+    public function onControllerOrderDeleteAfter()
+    {
+        //current version >= 3.0.9
+        if (Version::isSupportNewHookPoint()) {
+            return;
+        }
+        $this->app['eccube.plugin.coupon.event.legacy']->onControllerOrderDeleteAfter();
     }
 }

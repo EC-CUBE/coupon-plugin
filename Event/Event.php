@@ -175,6 +175,7 @@ class Event
         $Coupon = $this->app['eccube.plugin.coupon.repository.coupon']->findActiveCoupon($CouponOrder->getCouponCd());
         // 更新対象データ
         $now = new \DateTime();
+        $CouponOrder->setCouponName($Coupon->getCouponName());
         $CouponOrder->setOrderDate($now);
         $CouponOrder->setUpdateDate($now);
         $repository->save($CouponOrder);
