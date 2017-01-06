@@ -45,6 +45,7 @@ class Version201612231311 extends AbstractMigration
 
         if (!$table->hasColumn('coupon_release')) {
             $this->addSql('alter table plg_coupon add coupon_release SMALLINT DEFAULT 0');
+            $this->addSql('update plg_coupon set coupon_release = coupon_use_time');
         }
 
         $table = $schema->getTable(self::COUPON_ORDER);
