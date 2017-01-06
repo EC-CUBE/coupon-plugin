@@ -308,7 +308,7 @@ class CouponController
                         $error = true;
                     }
 
-                    if (!$checkLowerLimit) {
+                    if (!$checkLowerLimit && $existCoupon) {
                         $form->get('coupon_cd')->addError(new FormError('front.plugin.coupon.shopping.lowerlimit'));
                         $error = true;
                     }

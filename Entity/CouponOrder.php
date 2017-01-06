@@ -71,6 +71,10 @@ class CouponOrder extends AbstractEntity
      * @var int
      */
     private $del_flg;
+    /**
+     * @var int
+     */
+    private $order_change_status;
 
     /**
      * @var int
@@ -391,5 +395,21 @@ class CouponOrder extends AbstractEntity
     public function setCouponName($coupon_name)
     {
         $this->coupon_name = $coupon_name;
+    }
+
+    /**
+     * @return int
+     */
+    public function getOrderChangeStatus()
+    {
+        return $this->order_change_status;
+    }
+
+    /**
+     * @param int $order_change_status
+     */
+    public function setOrderChangeStatus($order_change_status)
+    {
+        $this->order_change_status = $order_change_status;
     }
 }

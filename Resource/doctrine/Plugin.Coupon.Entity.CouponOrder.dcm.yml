@@ -47,6 +47,11 @@ Plugin\Coupon\Entity\CouponOrder:
             options:
                 unsigned: true
                 default: 0
+        order_change_status:
+            type: smallint
+            options:
+                unsigned: true
+                default: 0
         create_date:
             type: datetime
             nullable: false

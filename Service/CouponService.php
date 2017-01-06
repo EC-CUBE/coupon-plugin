@@ -357,12 +357,14 @@ class CouponService
      */
     public function isLowerLimitCoupon($productCoupon, $lowerLimitMoney)
     {
+        $subTotal = 0;
         foreach ($productCoupon as $key => $value) {
-            if ($value['price'] * $value['quantity'] < $lowerLimitMoney) {
-                return false;
-            }
+            $subTotal += $value['price'] * $value['quantity'];
         }
 
+        if ($subTotal < $lowerLimitMoney && $subTotal != 0) {
+            return false;
+        }
         return true;
     }
 
