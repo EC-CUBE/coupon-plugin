@@ -178,7 +178,9 @@ class EventLegacy
         // クーポン受注情報を取得する
         $repCouponOrder = $this->app['eccube.plugin.coupon.repository.coupon_order'];
         // クーポン受注情報を取得する
-        $CouponOrder = $repCouponOrder->findUseCouponByOrderId($orderId);
+        $CouponOrder = $repCouponOrder->findOneBy(array(
+            'order_id' => $orderId,
+        ));
         if (is_null($CouponOrder)) {
             return;
         }
