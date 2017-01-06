@@ -12,7 +12,6 @@ namespace DoctrineMigrations;
 
 use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
-use Plugin\Coupon\Util\Version;
 
 /**
  * Version201612231311.
@@ -20,16 +19,36 @@ use Plugin\Coupon\Util\Version;
 class Version201612231311 extends AbstractMigration
 {
     /**
+     * @var string coupon table name
+     */
+    const COUPON = 'plg_coupon';
+
+    /**
+     * @var string coupon order table
+     */
+    const COUPON_ORDER = 'plg_coupon_order';
+    /**
      * up.
      *
      * @param Schema $schema
      */
     public function up(Schema $schema)
     {
-        if (!Version::isSupportGetInstanceFunction()) {
+        $table = $schema->getTable(self::COUPON);
+        if ($table->hasColumn('coupon_member')) {
             $this->addSql('alter table plg_coupon add coupon_member SMALLINT DEFAULT 0');
-            $this->addSql('alter table plg_coupon add coupon_lower_limit integer');
-            $this->addSql('alter table plg_coupon add coupon_release integer');
+        }
+
+        if ($table->hasColumn('coupon_lower_limit')) {
+            $this->addSql('alter table plg_coupon add coupon_lower_limit SMALLINT DEFAULT 0');
+        }
+
+        if ($table->hasColumn('coupon_release')) {
+            $this->addSql('alter table plg_coupon add coupon_release SMALLINT DEFAULT 0');
+        }
+
+        $table = $schema->getTable(self::COUPON_ORDER);
+        if ($table->hasColumn('coupon_name')) {
             $this->addSql('alter table plg_coupon_order add coupon_name text');
         }
     }
