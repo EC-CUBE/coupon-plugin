@@ -99,7 +99,7 @@ class CouponController
             /** @var \Plugin\Coupon\Entity\Coupon $Coupon */
             $Coupon = $form->getData();
             $oldReleaseNumber = $request->get('coupon_release_old');
-            if (!$oldReleaseNumber) {
+            if (is_null($Coupon->getCouponUseTime())) {
                 $Coupon->setCouponUseTime($Coupon->getCouponRelease());
             } else {
                 if ($Coupon->getCouponRelease() != $oldReleaseNumber) {
@@ -265,11 +265,6 @@ class CouponController
             // ---------------------------------
             // クーポンコード入力項目追加
             // ----------------------------------
-            if ($formCouponCd == $couponCd) {
-                // 画面上のクーポンコードと既に登録済みのクーポンコードが同一の場合、何もしない
-                return $app->redirect($app->url('shopping'));
-            }
-
             if ($formCouponCancel == 0 && $couponCd) {
                 // 画面上のクーポンコードが入力されておらず、既にクーポンコードが登録されていればクーポンを無効にする
                 $this->removeCouponOrder($Order, $app);

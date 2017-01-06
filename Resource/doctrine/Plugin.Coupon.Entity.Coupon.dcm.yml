@@ -26,7 +26,7 @@ Plugin\Coupon\Entity\Coupon:
             nullable: true
         coupon_use_time:
             type: integer
-            nullable: false
+            nullable: true
         coupon_release:
             type: integer
             nullable: false
