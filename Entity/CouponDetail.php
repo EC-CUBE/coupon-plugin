@@ -73,7 +73,7 @@ class CouponDetail extends AbstractEntity
     /**
      * Set id.
      *
-     * @param int $code
+     * @param int $id
      *
      * @return CouponDetail
      */

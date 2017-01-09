@@ -13,6 +13,7 @@ namespace Plugin\Coupon\Controller;
 use Eccube\Application;
 use Eccube\Entity\Category;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class CouponSearchModelController.
@@ -125,7 +126,7 @@ class CouponSearchModelController
             ));
         }
 
-        return null;
+        return new Response();
     }
 
     /**
@@ -136,7 +137,7 @@ class CouponSearchModelController
      *
      * @return array
      */
-    protected function getCategoryList($Categories, &$existCategoryIds)
+    protected function getCategoryList($Categories, $existCategoryIds)
     {
         $result = array();
         foreach ($Categories as $Category) {

@@ -29,7 +29,7 @@ class CouponCouponRepositoryTest extends EccubeTestCase
 
         $couponCd = 'aaaaaaaa';
 
-        $Coupon1 = $this->app['eccube.plugin.coupon.repository.coupon']->findActiveCoupon($couponCd);
+        $Coupon1 = $this->app['coupon.repository.coupon']->findActiveCoupon($couponCd);
 
         $this->actual = $Coupon1->getCouponCd();
 
@@ -45,7 +45,7 @@ class CouponCouponRepositoryTest extends EccubeTestCase
     {
         $this->getCoupon();
 
-        $coupons = $this->app['eccube.plugin.coupon.repository.coupon']->findActiveCouponAll();
+        $coupons = $this->app['coupon.repository.coupon']->findActiveCouponAll();
 
         $this->actual = count($coupons);
 
@@ -64,7 +64,7 @@ class CouponCouponRepositoryTest extends EccubeTestCase
         $this->app['eccube.plugin.coupon.service.coupon']->createCoupon($data);
 
         /** @var Coupon $Coupon */
-        $Coupon = $this->app['eccube.plugin.coupon.repository.coupon']->findOneBy(array('coupon_cd' => 'aaaaaaaa'));
+        $Coupon = $this->app['coupon.repository.coupon']->findOneBy(array('coupon_cd' => 'aaaaaaaa'));
 
         $Product = $this->createProduct();
         $CouponDetail = new CouponDetail();

@@ -143,13 +143,13 @@ class Event
     /**
      * クーポンが利用されていないかチェック.
      */
-    public function onControllerShoppingConfirmBefore($event = null)
+    public function onControllerShoppingConfirmBefore()
     {
         //current version >= 3.0.9
         if (Version::isSupportNewHookPoint()) {
             return;
         }
-        $this->app['eccube.plugin.coupon.event.legacy']->onControllerShoppingConfirmBefore($event);
+        $this->app['eccube.plugin.coupon.event.legacy']->onControllerShoppingConfirmBefore();
     }
 
     /**
@@ -193,7 +193,7 @@ class Event
     }
 
     /**
-     * for order change status
+     * for order change status.
      */
     public function onControllerOrderEditAfter()
     {
@@ -205,7 +205,7 @@ class Event
     }
 
     /**
-     * for order delete
+     * for order delete.
      */
     public function onControllerOrderDeleteAfter()
     {

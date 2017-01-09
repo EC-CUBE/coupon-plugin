@@ -1,4 +1,4 @@
-# maker-plugin
+# coupon-plugin
 
 [![Build Status](https://travis-ci.org/eccubevn/maker-plugin.svg?branch=maker-renew)](https://travis-ci.org/eccubevn/maker-plugin)
 [![Build status](https://ci.appveyor.com/api/projects/status/jaaigevfbae0led5/branch/maker-renew?svg=true)](https://ci.appveyor.com/project/lqdung-lockon/maker-plugin/branch/maker-renew)

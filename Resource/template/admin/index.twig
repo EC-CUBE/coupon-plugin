@@ -15,17 +15,6 @@
 {% block title %}クーポン管理{% endblock %}
 {% block sub_title %}クーポン内容設定{% endblock %}
 
-{% block javascript %}
-<script>
-function fnDelete(action) {
-    if (confirm('このクーポンを削除しても宜しいですか？')) {
-        document.search_form.action = action;
-        document.search_form.submit();
-    }
-}
-</script>
-{% endblock javascript %}
-
 {% block main %}
 <form name="search_form" id="search_form" method="post" action="">
     {{ form_widget(searchForm._token) }}
@@ -100,8 +89,9 @@ function fnDelete(action) {
                                         {% endif %}
                                         </a>
                                     </td>
-                                    <td><a href="javascript:;" onclick="fnDelete('{{ url('plugin_coupon_delete', { id: Coupon.id}) }}'); return false;">削除</a></td>
-
+                                    <td>
+                                        <a href="{{ url('plugin_coupon_delete', { id : Coupon.id }) }}" {{ csrf_token_for_anchor() }} data-method="delete" data-message="このクーポンを削除しても宜しいですか？">削除</a>
+                                    </td>
                                 </tr>
                                 {% endfor %}
                                 </tbody>

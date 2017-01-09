@@ -54,7 +54,7 @@ class CouponServiceProvider implements ServiceProviderInterface
         // クーポンの有効/無効化
         $admin->match('/plugin/coupon/{id}/enable', 'Plugin\Coupon\Controller\CouponController::enable')->value('id', null)->assert('id', '\d+|')->bind('plugin_coupon_enable');
         // クーポンの削除
-        $admin->match('/plugin/coupon/{id}/delete', 'Plugin\Coupon\Controller\CouponController::delete')->value('id', null)->assert('id', '\d+|')->bind('plugin_coupon_delete');
+        $admin->delete('/plugin/coupon/{id}/delete', 'Plugin\Coupon\Controller\CouponController::delete')->value('id', null)->assert('id', '\d+|')->bind('plugin_coupon_delete');
         //ajax link
         $admin->post('/plugin/coupon/save/delivery', 'Plugin\Coupon\Controller\CouponController::saveDelivery')->bind('plugin_coupon_save_delivery');
         // 商品検索画面表示
@@ -90,15 +90,15 @@ class CouponServiceProvider implements ServiceProviderInterface
         }));
 
         // クーポン情報テーブルリポジトリ
-        $app['eccube.plugin.coupon.repository.coupon'] = $app->share(function () use ($app) {
+        $app['coupon.repository.coupon'] = $app->share(function () use ($app) {
             return $app['orm.em']->getRepository('Plugin\Coupon\Entity\Coupon');
         });
         // クーポン詳細情報テーブルリポジトリ
-        $app['eccube.plugin.coupon.repository.coupon_detail'] = $app->share(function () use ($app) {
+        $app['coupon.repository.coupon_detail'] = $app->share(function () use ($app) {
             return $app['orm.em']->getRepository('Plugin\Coupon\Entity\CouponDetail');
         });
         // 受注クーポン情報テーブルリポジトリ
-        $app['eccube.plugin.coupon.repository.coupon_order'] = $app->share(function () use ($app) {
+        $app['coupon.repository.coupon_order'] = $app->share(function () use ($app) {
             return $app['orm.em']->getRepository('Plugin\Coupon\Entity\CouponOrder');
         });
 

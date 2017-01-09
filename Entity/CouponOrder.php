@@ -326,11 +326,11 @@ class CouponOrder extends AbstractEntity
     }
 
     /**
-     * @param int $coupon_cancel
+     * @param int $couponCancel
      */
-    public function setCouponCancel($coupon_cancel)
+    public function setCouponCancel($couponCancel)
     {
-        $this->coupon_cancel = $coupon_cancel;
+        $this->coupon_cancel = $couponCancel;
     }
 
     /**
@@ -406,10 +406,10 @@ class CouponOrder extends AbstractEntity
     }
 
     /**
-     * @param int $order_change_status
+     * @param int $orderChangeStatus
      */
-    public function setOrderChangeStatus($order_change_status)
+    public function setOrderChangeStatus($orderChangeStatus)
     {
-        $this->order_change_status = $order_change_status;
+        $this->order_change_status = $orderChangeStatus;
     }
 }

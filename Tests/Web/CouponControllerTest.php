@@ -191,7 +191,7 @@ class CouponControllerTest extends AbstractWebTestCase
             )
         );
 
-        $CouponOrder = $this->app['eccube.plugin.coupon.repository.coupon_order']->findOneBy(array('pre_order_id' => $Order->getPreOrderId()));
+        $CouponOrder = $this->app['coupon.repository.coupon_order']->findOneBy(array('pre_order_id' => $Order->getPreOrderId()));
 
         $this->actual = $CouponOrder->getDiscount();
 
@@ -245,7 +245,7 @@ class CouponControllerTest extends AbstractWebTestCase
         $this->app['eccube.plugin.coupon.service.coupon']->createCoupon($data);
 
         /** @var Coupon $Coupon */
-        $Coupon = $this->app['eccube.plugin.coupon.repository.coupon']->findOneBy(array('coupon_cd' => 'aaaaaaaa'));
+        $Coupon = $this->app['coupon.repository.coupon']->findOneBy(array('coupon_cd' => 'aaaaaaaa'));
 
         $Product = $this->app['eccube.repository.product']->find(1);
 

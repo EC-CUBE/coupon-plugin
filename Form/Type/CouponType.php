@@ -219,7 +219,7 @@ class CouponType extends AbstractType
 
                 // 既に登録されているクーポンコードは利用できない
                 if (null !== $data->getCouponCd()) {
-                    $qb = $app['eccube.plugin.coupon.repository.coupon']
+                    $qb = $app['coupon.repository.coupon']
                         ->createQueryBuilder('c')
                         ->select('COUNT(c)')
                         ->where('c.coupon_cd = :coupon_cd')

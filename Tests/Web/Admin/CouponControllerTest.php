@@ -10,7 +10,7 @@
 
 namespace Plugin\Coupon\Tests\Web\Admin;
 
-use DoctrineProxy\__CG__\Eccube\Entity\Customer;
+use Eccube\Entity\Customer;
 use Eccube\Common\Constant;
 use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;
 use Plugin\Coupon\Entity\Coupon;
@@ -109,7 +109,7 @@ class CouponControllerTest extends AbstractAdminWebTestCase
         $this->app['eccube.plugin.coupon.service.coupon']->createCoupon($data);
 
         /** @var \Plugin\Coupon\Entity\CouponCoupon $Coupon */
-        $Coupon = $this->app['eccube.plugin.coupon.repository.coupon']->findOneBy(array('coupon_cd' => 'aaaaaaaa'));
+        $Coupon = $this->app['coupon.repository.coupon']->findOneBy(array('coupon_cd' => 'aaaaaaaa'));
 
         $Product = $this->app['eccube.repository.product']->find(1);
 

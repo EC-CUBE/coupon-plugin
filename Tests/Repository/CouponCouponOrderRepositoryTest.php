@@ -40,9 +40,9 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
 
         $CouponOrder = $this->getCouponOrder($Coupon, $discount, $preOrderId);
 
-        $this->app['eccube.plugin.coupon.repository.coupon_order']->save($CouponOrder);
+        $this->app['coupon.repository.coupon_order']->save($CouponOrder);
 
-        $CouponOrder1 = $this->app['eccube.plugin.coupon.repository.coupon_order']->findOneBy(array('pre_order_id' => $preOrderId));
+        $CouponOrder1 = $this->app['coupon.repository.coupon_order']->findOneBy(array('pre_order_id' => $preOrderId));
 
         $this->actual = $CouponOrder1->getDiscount();
 
@@ -65,11 +65,11 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
 
         $CouponOrder->setOrderDate(new \DateTime());
 
-        $this->app['eccube.plugin.coupon.repository.coupon_order']->save($CouponOrder);
+        $this->app['coupon.repository.coupon_order']->save($CouponOrder);
 
         $Order = $this->app['eccube.repository.order']->find($CouponOrder->getOrderId());
 
-        $CouponOrder1 = $this->app['eccube.plugin.coupon.repository.coupon_order']->findUseCouponByOrderId($Order->getId());
+        $CouponOrder1 = $this->app['coupon.repository.coupon_order']->findUseCouponByOrderId($Order->getId());
 
         $this->actual = $CouponOrder1->getDiscount();
 
@@ -93,9 +93,9 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
         $CouponOrder->setEmail($this->Customer->getEmail());
         $CouponOrder->setOrderDate(new \DateTime());
 
-        $this->app['eccube.plugin.coupon.repository.coupon_order']->save($CouponOrder);
+        $this->app['coupon.repository.coupon_order']->save($CouponOrder);
 
-        $CouponOrder1 = $this->app['eccube.plugin.coupon.repository.coupon_order']->findUseCoupon($Coupon->getCouponCd(), $this->Customer->getEmail());
+        $CouponOrder1 = $this->app['coupon.repository.coupon_order']->findUseCoupon($Coupon->getCouponCd(), $this->Customer->getEmail());
 
         $this->actual = $CouponOrder1[0]->getDiscount();
 
@@ -118,9 +118,9 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
 
         $CouponOrder->setOrderDate(new \DateTime());
 
-        $this->app['eccube.plugin.coupon.repository.coupon_order']->save($CouponOrder);
+        $this->app['coupon.repository.coupon_order']->save($CouponOrder);
 
-        $count = $this->app['eccube.plugin.coupon.repository.coupon_order']->countCouponByCd($Coupon->getCouponCd());
+        $count = $this->app['coupon.repository.coupon_order']->countCouponByCd($Coupon->getCouponCd());
 
         $this->actual = $count['1'];
 
@@ -201,7 +201,7 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
         $this->app['eccube.plugin.coupon.service.coupon']->createCoupon($data);
 
         /** @var Coupon $Coupon */
-        $Coupon = $this->app['eccube.plugin.coupon.repository.coupon']->findOneBy(array('coupon_cd' => 'aaaaaaaa'));
+        $Coupon = $this->app['coupon.repository.coupon']->findOneBy(array('coupon_cd' => 'aaaaaaaa'));
 
         $Product = $this->createProduct();
         $CouponDetail = new CouponDetail();

@@ -11,6 +11,7 @@
 namespace Plugin\Coupon\Entity;
 
 use Eccube\Entity\AbstractEntity;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Coupon.
@@ -112,7 +113,7 @@ class Coupon extends AbstractEntity
      */
     public function __construct()
     {
-        $this->CouponDetails = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->CouponDetails = new ArrayCollection();
     }
 
     /**

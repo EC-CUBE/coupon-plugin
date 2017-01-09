@@ -18,7 +18,6 @@ use Doctrine\DBAL\Schema\Schema;
  */
 class Version201706011311 extends AbstractMigration
 {
-
     /**
      * @var string coupon order table
      */
