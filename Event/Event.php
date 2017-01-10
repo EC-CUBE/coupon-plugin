@@ -17,6 +17,7 @@ use Plugin\Coupon\Entity\Coupon;
 use Plugin\Coupon\Entity\CouponOrder;
 use Plugin\Coupon\Util\Version;
 use Eccube\Event\TemplateEvent;
+use Eccube\Common\Constant;
 
 /**
  * Class Event.
@@ -39,16 +40,6 @@ class Event
      * @var string 非会員用セッションキー
      */
     private $sessionKey = 'eccube.front.shopping.nonmember';
-
-    /**
-     * @var int
-     */
-    private $ORDER_STATUS_CHANGE = 1;
-
-    /**
-     * @var int
-     */
-    private $NOT_CHANGE_ORDER_STATUS = 0;
 
     /**
      * Event constructor.
@@ -401,13 +392,13 @@ class Event
         $status = $Order->getOrderStatus()->getId();
         $orderStatusFlg = $CouponOrder->getOrderChangeStatus();
         if ($status == $app['config']['order_cancel'] || $status == $app['config']['order_processing'] || $delFlg) {
-            if ($orderStatusFlg != $this->ORDER_STATUS_CHANGE) {
+            if ($orderStatusFlg != Constant::ENABLED) {
                 $Coupon = $this->app['coupon.repository.coupon']->findActiveCoupon($CouponOrder->getCouponCd());
                 // クーポンの発行枚数を上がる
                 if (!is_null($Coupon)) {
                     // 更新対象データ
                     $CouponOrder->setOrderDate(null);
-                    $CouponOrder->setOrderChangeStatus($this->ORDER_STATUS_CHANGE);
+                    $CouponOrder->setOrderChangeStatus(Constant::ENABLED);
                     $repository->save($CouponOrder);
                     $Coupon->setCouponUseTime($Coupon->getCouponUseTime() + 1);
                     $this->app['orm.em']->persist($Coupon);
@@ -417,14 +408,14 @@ class Event
         }
 
         if ($status != $app['config']['order_cancel'] && $status != $app['config']['order_processing']) {
-            if ($orderStatusFlg == $this->ORDER_STATUS_CHANGE) {
+            if ($orderStatusFlg == Constant::ENABLED) {
                 $Coupon = $this->app['coupon.repository.coupon']->findActiveCoupon($CouponOrder->getCouponCd());
                 // クーポンの発行枚数を上がる
                 if (!is_null($Coupon)) {
                     // 更新対象データ
                     $now = new \DateTime();
                     $CouponOrder->setOrderDate($now);
-                    $CouponOrder->setOrderChangeStatus($this->NOT_CHANGE_ORDER_STATUS);
+                    $CouponOrder->setOrderChangeStatus(Constant::DISABLED);
                     $repository->save($CouponOrder);
                     $Coupon->setCouponUseTime($Coupon->getCouponUseTime() - 1);
                     $this->app['orm.em']->persist($Coupon);
