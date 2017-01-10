@@ -41,7 +41,7 @@ install:
   # Set MySQL.
   - cp tests/my.cnf c:\
   - SET PATH=C:\Program Files\MySql\MySQL Server 5.7\bin\;%PATH%
-  - cinst php --version 7.0.9
+  - cinst php --version 7.0.9  --allow-empty-checksums
   - SET PATH=C:\tools\php\;%PATH%
   - copy C:\tools\php\php.ini-production C:\tools\php\php.ini
   - echo date.timezone="Asia/Tokyo" >> C:\tools\php\php.ini
