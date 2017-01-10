@@ -263,12 +263,15 @@ class CouponController extends AbstractController
             // ---------------------------------
             // クーポンコード入力項目追加
             // ----------------------------------
-            if ($formCouponCancel == 0 && $couponCd) {
-                // 画面上のクーポンコードが入力されておらず、既にクーポンコードが登録されていればクーポンを無効にする
-                $this->removeCouponOrder($Order, $app);
+            if ($formCouponCancel == 0) {
+                if (!is_null($formCouponCd)) {
+                    // 画面上のクーポンコードが入力されておらず、既にクーポンコードが登録されていればクーポンを無効にする
+                    $this->removeCouponOrder($Order, $app);
+                }
 
                 return $app->redirect($app->url('shopping'));
-            } else {
+            }
+            else {
                 // クーポンコードが入力されている
                 $discount = 0;
                 $error = false;

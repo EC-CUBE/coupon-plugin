@@ -10,15 +10,16 @@
 {% extends 'default_frame.twig' %}
 
 {% set body_class = 'cart_page' %}
-
 {% block javascript %}
 <script>
     $(function() {
         $('input[name~="front_plugin_coupon_shopping[coupon_use]"]').change(function () {
             if($(this).val() == 0) {
-                $('#front_plugin_coupon_shopping_coupon_cd').attr('disabled', '');
+                $('#front_plugin_coupon_shopping_coupon_cd').attr('readonly', '');
+                $('#front_plugin_coupon_shopping_coupon_cd').css('background-color', '#eee');
             } else {
-                $('#front_plugin_coupon_shopping_coupon_cd').removeAttr('disabled');
+                $('#front_plugin_coupon_shopping_coupon_cd').removeAttr('readonly');
+                $('#front_plugin_coupon_shopping_coupon_cd').css('background-color', 'white');
             }
         });
     });
