@@ -279,7 +279,7 @@ class EventLegacy
             // 更新対象データ
             $CouponOrder->setOrderDate(null);
             $repository->save($CouponOrder);
-            $Coupon = $this->app['coupon.repository.coupon']->findActiveCoupon($CouponOrder->getCouponCd());
+            $Coupon = $this->app['coupon.repository.coupon']->find($CouponOrder->getCouponId());
             if (!is_null($Coupon)) {
                 // クーポンの発行枚数を上がる
                 $Coupon->setCouponUseTime($Coupon->getCouponUseTime() + 1);
@@ -315,7 +315,7 @@ class EventLegacy
         $orderStatusFlg = $CouponOrder->getOrderChangeStatus();
         if ($status == $app['config']['order_cancel'] || $status == $app['config']['order_processing']) {
             if ($orderStatusFlg != Constant::ENABLED) {
-                $Coupon = $this->app['coupon.repository.coupon']->findActiveCoupon($CouponOrder->getCouponCd());
+                $Coupon = $this->app['coupon.repository.coupon']->find($CouponOrder->getCouponId());
                 // クーポンの発行枚数を上がる
                 if (!is_null($Coupon)) {
                     // 更新対象データ
@@ -331,7 +331,7 @@ class EventLegacy
 
         if ($status != $app['config']['order_cancel'] && $status != $app['config']['order_processing']) {
             if ($orderStatusFlg == Constant::ENABLED) {
-                $Coupon = $this->app['coupon.repository.coupon']->findActiveCoupon($CouponOrder->getCouponCd());
+                $Coupon = $this->app['coupon.repository.coupon']->find($CouponOrder->getCouponId());
                 // クーポンの発行枚数を上がる
                 if (!is_null($Coupon)) {
                     // 更新対象データ

@@ -28,7 +28,7 @@ class CouponCouponRepositoryTest extends EccubeTestCase
         $Coupon = $this->getCoupon();
         $couponCd = 'aaaaaaaa';
         $Coupon1 = $this->app['coupon.repository.coupon']->findActiveCoupon($couponCd);
-        $this->actual = $Coupon1->getCouponCd();
+        $this->actual = $Coupon->getCouponCd();
         $this->expected = $couponCd;
         $this->verify();
     }
