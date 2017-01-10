@@ -95,16 +95,18 @@ class CouponControllerTest extends AbstractWebTestCase
     public function testShoppingCoupon()
     {
         $this->routingShopping();
-        $Coupon = $this->getCoupon();
-        /** @var \Symfony\Component\DomCrawler\Crawler $crawler */
         $crawler = $this->client->request('GET', $this->app->url('plugin_coupon_shopping'));
+        $Coupon = $this->getCoupon();
         $form = $this->getForm($crawler, $Coupon->getCouponCd());
-        $this->client->submit($form);
+
+        /** @var \Symfony\Component\DomCrawler\Crawler $crawler */
+        $crawler = $this->client->submit($form);
         $this->assertTrue($this->client->getResponse()->isRedirection());
+
         $crawler = $this->client->request('GET', $this->app->url('shopping'));
         $this->expected = '利用しています。';
         $this->actual = $crawler->filter('strong.text-danger')->text();
-        $this->verify();
+        $this->assertContains($this->expected, $this->actual);
     }
 
     /**
@@ -200,10 +202,9 @@ class CouponControllerTest extends AbstractWebTestCase
     private function getForm(Crawler $crawler, $couponCd = '')
     {
         $form = $crawler->selectButton('登録する')->form();
-
+        $form['front_plugin_coupon_shopping[_token]'] = 'dummy';
         $form['front_plugin_coupon_shopping[coupon_cd]'] = $couponCd;
         $form['front_plugin_coupon_shopping[coupon_use]'] = 1;
-        $form['front_plugin_coupon_shopping[_token]'] = 'dummy';
 
         return $form;
     }
@@ -255,7 +256,7 @@ class CouponControllerTest extends AbstractWebTestCase
      *
      * @return Coupon
      */
-    private function getTestData($couponType = 1, $discountType = 1)
+    private function getTestData($couponType = 3, $discountType = 1)
     {
         $Coupon = new Coupon();
 
@@ -267,12 +268,15 @@ class CouponControllerTest extends AbstractWebTestCase
         $Coupon->setCouponName('クーポン');
         $Coupon->setDiscountType($discountType);
         $Coupon->setCouponUseTime(1);
+        $Coupon->setCouponRelease(1);
+        $Coupon->setCouponLowerLimit(100);
+        $Coupon->setCouponMember(0);
         $Coupon->setDiscountPrice(100);
         $Coupon->setDiscountRate(10);
         $Coupon->setEnableFlag(1);
         $d1 = $date1->setDate(2016, 1, 1);
         $Coupon->setAvailableFromDate($d1);
-        $d2 = $date2->setDate(2016, 12, 31);
+        $d2 = $date2->setDate(2040, 12, 31);
         $Coupon->setAvailableToDate($d2);
 
         return $Coupon;
