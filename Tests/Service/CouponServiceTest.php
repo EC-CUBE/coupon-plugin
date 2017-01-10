@@ -249,6 +249,9 @@ class CouponServiceTest extends EccubeTestCase
         $Customer = $this->createCustomer();
 
         $Order = $this->createOrder($Customer);
+        if (!$Order->getPreOrderId()) {
+            $Order->setPreOrderId('dummy');
+        }
 
         $discount = 200;
 
@@ -321,16 +324,14 @@ class CouponServiceTest extends EccubeTestCase
      */
     public function testGetCouponOrder()
     {
-
         /** @var Coupon $Coupon */
         $Coupon = $this->getCoupon();
-
         $Customer = $this->createCustomer();
-
         $Order = $this->createOrder($Customer);
-
+        if (!$Order->getPreOrderId()) {
+            $Order->setPreOrderId('dummy');
+        }
         $discount = 200;
-
         $this->app['security.token_storage']->setToken(
             new UsernamePasswordToken(
                 $Customer, null, 'customer', $Customer->getRoles()
