@@ -29,6 +29,11 @@ class CouponService
     public $app;
 
     /**
+     * @var int
+     */
+    private $NOT_CHANGE_ORDER_STATUS = 0;
+
+    /**
      * コンストラクタ
      *
      * @param Application $app
@@ -268,6 +273,7 @@ class CouponService
         }
 
         $CouponOrder->setCouponName($Coupon->getCouponName());
+        $CouponOrder->setOrderChangeStatus($this->NOT_CHANGE_ORDER_STATUS);
         // ログイン済みの場合は, user_id取得
         if ($this->app->isGranted('ROLE_USER')) {
             $CouponOrder->setUserId($Customer->getId());
