@@ -180,6 +180,7 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
         $CouponOrder->setDiscount($discount);
         $CouponOrder->setUserId($this->Customer->getId());
         $CouponOrder->setCouponId($Coupon->getId());
+        $CouponOrder->setOrderChangeStatus(Constant::DISABLED);
         $CouponOrder->setOrderId($Order->getId());
         $CouponOrder->setPreOrderId($Order->getPreOrderId());
         $CouponOrder->setCouponCd($Coupon->getCouponCd());

@@ -13,10 +13,10 @@ Plugin\Coupon\Entity\CouponOrder:
     fields:
         coupon_id:
             type: integer
-            nullable: false
+            nullable: true
         coupon_cd:
             type: text
-            nullable: false
+            nullable: true
         coupon_name:
             type: text
             nullable: true

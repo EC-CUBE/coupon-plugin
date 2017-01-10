@@ -221,13 +221,21 @@ class EventLegacy
             ));
             $crawler = new Crawler($response->getContent());
             $html = $this->getHtml($crawler);
-            $beforeHtml = $crawler->filter('#confirm_main')->last()->html();
-            $pos = strrpos($beforeHtml, '<h2 class="heading02">');
-            if ($pos !== false) {
-                $oldHtml = substr($beforeHtml, 0, $pos);
-                $afterHtml = substr($beforeHtml, $pos);
-                $newHtml = $oldHtml.$twig.$afterHtml;
-                $html = str_replace($beforeHtml, $newHtml, $html);
+            if (strpos($html, self::COUPON_TAG)) {
+                log_info('Render coupont with ', array('COUPON_TAG' => self::COUPON_TAG));
+                $search = self::COUPON_TAG;
+                $replace = $search.$twig;
+                $html = str_replace($search, $replace, $html);
+            } else {
+                // このタグを前後に分割し、間に項目を入れ込む
+                $beforeHtml = $crawler->filter('#confirm_main')->last()->html();
+                $pos = strrpos($beforeHtml, '<h2 class="heading02">');
+                if ($pos !== false) {
+                    $oldHtml = substr($beforeHtml, 0, $pos);
+                    $afterHtml = substr($beforeHtml, $pos);
+                    $newHtml = $oldHtml.$twig.$afterHtml;
+                    $html = str_replace($beforeHtml, $newHtml, $html);
+                }
             }
             $response->setContent($html);
             $event->setResponse($response);

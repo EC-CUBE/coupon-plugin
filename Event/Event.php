@@ -282,9 +282,15 @@ class Event
         // twigコードを挿入
         $snipet = $app['twig']->getLoader()->getSource('Coupon/Resource/template/default/mypage_history_coupon.twig');
         $source = $event->getSource();
+        if (strpos($source, self::COUPON_TAG)) {
+            log_info('Render coupon with ', array('COUPON_TAG' => self::COUPON_TAG));
+            $search = self::COUPON_TAG;
+            $replace = $snipet.$search;
+        } else {
+            $search = '<h2 class="heading02">お問い合わせ欄</h2>';
+            $replace = $snipet.$search;
+        }
         //find coupon mark
-        $search = '<h2 class="heading02">お問い合わせ</h2>';
-        $replace = $snipet.$search;
         $source = str_replace($search, $replace, $source);
         $event->setSource($source);
         //set parameter for twig files

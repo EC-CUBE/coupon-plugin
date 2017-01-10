@@ -28,11 +28,9 @@ class CouponServiceTest extends EccubeTestCase
     public function testCreateCoupon()
     {
         $data = $this->getTestData();
-
-        $this->expected = true;
-
-        $this->actual = $this->app['eccube.plugin.coupon.service.coupon']->createCoupon($data);
-
+        $Coupon = $this->app['coupon.repository.coupon']->findOneBy(array('coupon_cd' => 'aaaaaaaa'));
+        $this->actual = $data->getCouponCd();
+        $this->expected = $Coupon->getCouponCd();
         $this->verify();
     }
 
@@ -262,7 +260,7 @@ class CouponServiceTest extends EccubeTestCase
 
         $this->app['eccube.plugin.coupon.service.coupon']->saveCouponOrder($Order, $Coupon, $Coupon->getCouponCd(), $Customer, $discount);
 
-        /** @var \Plugin\Coupon\Entity\CouponCouponOrder $CouponOrder */
+        /** @var \Plugin\Coupon\Entity\CouponOrder $CouponOrder */
         $CouponOrder = $this->app['coupon.repository.coupon_order']->findOneBy(array('coupon_cd' => $Coupon->getCouponCd()));
 
         $this->actual = $discount;
