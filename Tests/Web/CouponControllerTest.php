@@ -72,23 +72,6 @@ class CouponControllerTest extends AbstractWebTestCase
     }
 
     /**
-     * testShoppingCouponPost.
-     */
-    public function testShoppingCouponPost()
-    {
-        $this->routingShopping();
-
-        $crawler = $this->client->request('GET', $this->app->url('plugin_coupon_shopping'));
-
-        $form = $this->getForm($crawler);
-
-        /** @var \Symfony\Component\DomCrawler\Crawler $crawler */
-        $crawler = $this->client->submit($form);
-
-        $this->assertTrue($this->client->getResponse()->isRedirection());
-    }
-
-    /**
      * testShoppingCouponPostError.
      */
     public function testShoppingCouponPostError()
@@ -112,24 +95,18 @@ class CouponControllerTest extends AbstractWebTestCase
     public function testShoppingCoupon()
     {
         $this->routingShopping();
-
         $crawler = $this->client->request('GET', $this->app->url('plugin_coupon_shopping'));
-
         $Coupon = $this->getCoupon();
-
         $form = $this->getForm($crawler, $Coupon->getCouponCd());
 
         /** @var \Symfony\Component\DomCrawler\Crawler $crawler */
         $crawler = $this->client->submit($form);
-
         $this->assertTrue($this->client->getResponse()->isRedirection());
 
         $crawler = $this->client->request('GET', $this->app->url('shopping'));
-
-        $this->expected = 'クーポンを利用しています。';
+        $this->expected = '利用しています。';
         $this->actual = $crawler->filter('strong.text-danger')->text();
-
-        $this->verify();
+        $this->assertContains($this->expected, $this->actual);
     }
 
     /**
@@ -225,9 +202,9 @@ class CouponControllerTest extends AbstractWebTestCase
     private function getForm(Crawler $crawler, $couponCd = '')
     {
         $form = $crawler->selectButton('登録する')->form();
-
-        $form['front_plugin_coupon_shopping[coupon_cd]'] = $couponCd;
         $form['front_plugin_coupon_shopping[_token]'] = 'dummy';
+        $form['front_plugin_coupon_shopping[coupon_cd]'] = $couponCd;
+        $form['front_plugin_coupon_shopping[coupon_use]'] = 1;
 
         return $form;
     }
@@ -240,10 +217,7 @@ class CouponControllerTest extends AbstractWebTestCase
      */
     private function getCoupon($couponType = 1, $discountType = 1)
     {
-        $data = $this->getTestData($couponType, $discountType);
-
-        $this->app['eccube.plugin.coupon.service.coupon']->createCoupon($data);
-
+        $this->getTestData($couponType, $discountType);
         /** @var Coupon $Coupon */
         $Coupon = $this->app['coupon.repository.coupon']->findOneBy(array('coupon_cd' => 'aaaaaaaa'));
 
@@ -279,7 +253,7 @@ class CouponControllerTest extends AbstractWebTestCase
      *
      * @return Coupon
      */
-    private function getTestData($couponType = 1, $discountType = 1)
+    private function getTestData($couponType = 3, $discountType = 1)
     {
         $Coupon = new Coupon();
 
@@ -289,15 +263,24 @@ class CouponControllerTest extends AbstractWebTestCase
         $Coupon->setCouponCd('aaaaaaaa');
         $Coupon->setCouponType($couponType);
         $Coupon->setCouponName('クーポン');
-        $Coupon->setDiscountType($discountType);
-        $Coupon->setCouponUseTime(1);
+        $Coupon->setDiscountType(1);
+        $Coupon->setCouponRelease(100);
+        $Coupon->setCouponUseTime(100);
         $Coupon->setDiscountPrice(100);
         $Coupon->setDiscountRate(10);
+        $Coupon->setCouponLowerLimit(100);
+        $Coupon->setCouponMember(0);
         $Coupon->setEnableFlag(1);
+        $Coupon->setDelFlg(0);
         $d1 = $date1->setDate(2016, 1, 1);
         $Coupon->setAvailableFromDate($d1);
-        $d2 = $date2->setDate(2016, 12, 31);
+        $d2 = $date2->setDate(2040, 12, 31);
         $Coupon->setAvailableToDate($d2);
+
+        $em = $this->app['orm.em'];
+        // クーポン情報を登録する
+        $em->persist($Coupon);
+        $em->flush($Coupon);
 
         return $Coupon;
     }

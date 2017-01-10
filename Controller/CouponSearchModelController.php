@@ -163,7 +163,7 @@ class CouponSearchModelController
      *
      * @return string
      */
-    protected function getCategoryFullName($Category)
+    protected function getCategoryFullName(Category $Category)
     {
         if (is_null($Category)) {
             return '';

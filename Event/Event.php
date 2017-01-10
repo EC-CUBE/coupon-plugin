@@ -34,7 +34,7 @@ class Event
      *
      * @var string
      */
-    const COUPON_TAG = '<!--# counpon-plugin-tag #-->';
+    const COUPON_TAG = '<!--# coupon-plugin-tag #-->';
 
     /**
      * @var string 非会員用セッションキー
@@ -306,7 +306,6 @@ class Event
         $CouponOrder = null;
         $Coupon = null;
         $message = null;
-        $MailTemplate = null;
         if ($event->hasArgument('Order')) {
             $Order = $event->getArgument('Order');
             // クーポン受注情報を取得する
@@ -393,6 +392,7 @@ class Event
         $orderStatusFlg = $CouponOrder->getOrderChangeStatus();
         if ($status == $app['config']['order_cancel'] || $status == $app['config']['order_processing'] || $delFlg) {
             if ($orderStatusFlg != Constant::ENABLED) {
+                /* @var Coupon $Coupon */
                 $Coupon = $this->app['coupon.repository.coupon']->find($CouponOrder->getCouponId());
                 // クーポンの発行枚数を上がる
                 if (!is_null($Coupon)) {
@@ -400,7 +400,13 @@ class Event
                     $CouponOrder->setOrderDate(null);
                     $CouponOrder->setOrderChangeStatus(Constant::ENABLED);
                     $repository->save($CouponOrder);
-                    $Coupon->setCouponUseTime($Coupon->getCouponUseTime() + 1);
+                    $couponUseTime = $Coupon->getCouponUseTime() + 1;
+                    $couponRelease = $Coupon->getCouponRelease();
+                    if ($couponUseTime <= $couponRelease) {
+                        $Coupon->setCouponUseTime($couponUseTime);
+                    } else {
+                        $Coupon->setCouponUseTime($couponRelease);
+                    }
                     $this->app['orm.em']->persist($Coupon);
                     $this->app['orm.em']->flush($Coupon);
                 }

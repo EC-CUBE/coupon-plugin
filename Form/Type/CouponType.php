@@ -209,7 +209,6 @@ class CouponType extends AbstractType
                     }
                 }
                 if (!empty($data['available_from_date']) && !empty($data['available_to_date'])) {
-                    $now = Carbon::today();
                     $fromDate = Carbon::instance($data['available_from_date']);
                     $toDate = Carbon::instance($data['available_to_date']);
                     if ($fromDate->gt($toDate)) {

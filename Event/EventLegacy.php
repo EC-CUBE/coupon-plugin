@@ -13,6 +13,7 @@ namespace Plugin\Coupon\Event;
 use Eccube\Application;
 use Eccube\Common\Constant;
 use Eccube\Entity\Order;
+use Plugin\Coupon\Entity\Coupon;
 use Plugin\Coupon\Util\Version;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,7 +37,7 @@ class EventLegacy
      *
      * @var string
      */
-    const COUPON_TAG = '<!--# counpon-plugin-tag #-->';
+    const COUPON_TAG = '<!--# coupon-plugin-tag #-->';
 
     /**
      * EventLegacy constructor.
@@ -282,7 +283,13 @@ class EventLegacy
             $Coupon = $this->app['coupon.repository.coupon']->find($CouponOrder->getCouponId());
             if (!is_null($Coupon)) {
                 // クーポンの発行枚数を上がる
-                $Coupon->setCouponUseTime($Coupon->getCouponUseTime() + 1);
+                $couponUseTime = $Coupon->getCouponUseTime() + 1;
+                $couponRelease = $Coupon->getCouponRelease();
+                if ($couponUseTime <= $couponRelease) {
+                    $Coupon->setCouponUseTime($couponUseTime);
+                } else {
+                    $Coupon->setCouponUseTime($couponRelease);
+                }
                 $this->app['orm.em']->persist($Coupon);
                 $this->app['orm.em']->flush($Coupon);
             }
@@ -322,7 +329,13 @@ class EventLegacy
                     $CouponOrder->setOrderDate(null);
                     $CouponOrder->setOrderChangeStatus(Constant::ENABLED);
                     $repository->save($CouponOrder);
-                    $Coupon->setCouponUseTime($Coupon->getCouponUseTime() + 1);
+                    $couponUseTime = $Coupon->getCouponUseTime() + 1;
+                    $couponRelease = $Coupon->getCouponRelease();
+                    if ($couponUseTime <= $couponRelease) {
+                        $Coupon->setCouponUseTime($couponUseTime);
+                    } else {
+                        $Coupon->setCouponUseTime($couponRelease);
+                    }
                     $this->app['orm.em']->persist($Coupon);
                     $this->app['orm.em']->flush($Coupon);
                 }
@@ -357,9 +370,9 @@ class EventLegacy
      *t.
      *
      * @param Response $response
-     * @param $Coupon
+     * @param Coupon $Coupon
      */
-    private function getHtmlOrderEdit(Response $response, $Coupon)
+    private function getHtmlOrderEdit(Response $response, Coupon $Coupon)
     {
         $source = $response->getContent();
         libxml_use_internal_errors(true);

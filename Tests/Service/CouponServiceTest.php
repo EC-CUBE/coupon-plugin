@@ -308,59 +308,12 @@ class CouponServiceTest extends EccubeTestCase
         $OrderDetail->setOrder($Order);
         $Order->addOrderDetail($OrderDetail);
 
-        $discount = $this->app['eccube.plugin.coupon.service.coupon']->recalcOrder($Order, $Coupon);
+        $products = $this->app['eccube.plugin.coupon.service.coupon']->existsCouponProduct($Coupon, $Order);
+        $discount = $this->app['eccube.plugin.coupon.service.coupon']->recalcOrder($Order, $Coupon, $products);
 
         $this->actual = $discount;
 
         $this->expected = 100;
-
-        $this->verify();
-    }
-
-    /**
-     * testIsOrderInActiveCoupon.
-     */
-    public function testIsOrderInActiveCoupon()
-    {
-        /** @var Coupon $Coupon */
-        $Coupon = $this->getCoupon();
-
-        $Customer = $this->createCustomer();
-
-        $Order = $this->createOrder($Customer);
-
-        $details = $Coupon->getCouponDetails();
-
-        /** @var CouponDetail $CouponDetail */
-        $CouponDetail = $details[0];
-
-        $Product = $CouponDetail->getProduct();
-
-        $ProductClasses = $Product->getProductClasses();
-        $ProductClass = $ProductClasses[0];
-
-        $orderDetails = $Order->getOrderDetails();
-        foreach ($orderDetails as $OrderDetail) {
-            $Order->removeOrderDetail($OrderDetail);
-        }
-
-        $OrderDetail = new OrderDetail();
-        $TaxRule = $this->app['eccube.repository.tax_rule']->getByRule(); // デフォルト課税規則
-        $OrderDetail->setProduct($Product)
-            ->setProductClass($ProductClass)
-            ->setProductName($Product->getName())
-            ->setProductCode($ProductClass->getCode())
-            ->setPrice($ProductClass->getPrice02())
-            ->setQuantity(1)
-            ->setTaxRule($TaxRule->getCalcRule()->getId())
-            ->setTaxRate($TaxRule->getTaxRate());
-        $this->app['orm.em']->persist($OrderDetail);
-        $OrderDetail->setOrder($Order);
-        $Order->addOrderDetail($OrderDetail);
-
-        $this->actual = $this->app['eccube.plugin.coupon.service.coupon']->isOrderInActiveCoupon($Order);
-
-        $this->expected = true;
 
         $this->verify();
     }
@@ -405,9 +358,7 @@ class CouponServiceTest extends EccubeTestCase
      */
     private function getCoupon($couponType = 1)
     {
-        $data = $this->getTestData($couponType);
-
-        $this->app['eccube.plugin.coupon.service.coupon']->createCoupon($data);
+        $this->getTestData($couponType);
 
         /** @var Coupon $Coupon */
         $Coupon = $this->app['coupon.repository.coupon']->findOneBy(array('coupon_cd' => 'aaaaaaaa'));
@@ -453,14 +404,23 @@ class CouponServiceTest extends EccubeTestCase
         $Coupon->setCouponType($couponType);
         $Coupon->setCouponName('クーポン');
         $Coupon->setDiscountType(1);
-        $Coupon->setCouponUseTime(1);
+        $Coupon->setCouponRelease(100);
+        $Coupon->setCouponUseTime(100);
         $Coupon->setDiscountPrice(100);
         $Coupon->setDiscountRate(10);
+        $Coupon->setCouponLowerLimit(100);
+        $Coupon->setCouponMember(0);
         $Coupon->setEnableFlag(1);
+        $Coupon->setDelFlg(0);
         $d1 = $date1->setDate(2016, 1, 1);
         $Coupon->setAvailableFromDate($d1);
-        $d2 = $date2->setDate(2016, 12, 31);
+        $d2 = $date2->setDate(2040, 12, 31);
         $Coupon->setAvailableToDate($d2);
+
+        $em = $this->app['orm.em'];
+        // クーポン情報を登録する
+        $em->persist($Coupon);
+        $em->flush($Coupon);
 
         return $Coupon;
     }
