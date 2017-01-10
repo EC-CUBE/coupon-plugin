@@ -29,7 +29,7 @@ class CouponSearchCategoryType extends AbstractType
         $builder
             ->add('category_id', 'category', array(
                 'label' => 'カテゴリ',
-                'empty_value' => '---------',
+                'empty_value' => 'すべて',
                 'required' => false,
             ))
             ->add('status', 'disp', array(

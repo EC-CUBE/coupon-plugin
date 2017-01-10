@@ -73,18 +73,18 @@ class CouponType extends AbstractType
                 'required' => true,
                 'expanded' => true,
                 'multiple' => false,
-                'label' => 'クーポン有効対象',
+                'label' => '対象商品',
                 'empty_value' => false,
                 'constraints' => array(
                     new Assert\NotBlank(),
                 ),
             ))
             ->add('coupon_member', 'choice', array(
-                'choices' => array(1 => 'YES', 0 => 'NO'),
+                'choices' => array(1 => '会員のみ', 0 => 'なし'),
                 'required' => true,
                 'expanded' => true,
                 'multiple' => false,
-                'label' => '会員のみクーポン',
+                'label' => '利用制限',
                 'empty_value' => false,
                 'constraints' => array(
                     new Assert\NotBlank(),
@@ -101,7 +101,7 @@ class CouponType extends AbstractType
                 ),
             ))
             ->add('coupon_lower_limit', 'money', array(
-                'label' => '下限金額',
+                'label' => '下限金額(円)',
                 'required' => false,
                 'currency' => 'JPY',
                 'precision' => 0,
@@ -112,7 +112,7 @@ class CouponType extends AbstractType
                 ),
             ))
             ->add('discount_price', 'money', array(
-                'label' => '値引き額',
+                'label' => '値引き額(円)',
                 'required' => false,
                 'currency' => 'JPY',
                 'precision' => 0,
@@ -123,7 +123,7 @@ class CouponType extends AbstractType
                 ),
             ))
             ->add('discount_rate', 'integer', array(
-                'label' => '値引率',
+                'label' => '値引率(％)',
                 'required' => false,
                 'constraints' => array(
                     new Assert\Range(array(

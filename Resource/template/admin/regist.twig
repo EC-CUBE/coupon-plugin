@@ -256,12 +256,12 @@ $(function() {
     <form role="form" name="form1" id="form1" method="post" action="">
     <input type="hidden" name="mode" value="">
     {{ form_widget(form._token) }}
-        <div class="col-md-9">
-            <div class="box accordion">
-                <div class="box-header toggle active">
-                    <h3 class="box-title">クーポン情報<svg class="cb cb-angle-down icon_down"> <use xlink:href="#cb-angle-down" /></svg></h3>
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">クーポン情報</h3>
                 </div><!-- /.box-header -->
-                <div class="box-body accpanel" style="display: block;">
+                <div class="box-body" style="display: block;">
                     <div class="order_list form-horizontal">
                         {# クーポンコード #}
                         <div class="form-group">
@@ -284,7 +284,6 @@ $(function() {
                             {{ form_label(form.coupon_type) }}
                             <div class="col-sm-9 col-lg-10">
                                 {{ form_widget(form.coupon_type) }}
-                                <span class="small text-danger">対象商品が含まれている場合、クーポン利用可能になります。</span>
                                 {{ form_errors(form.coupon_type) }}
                             </div>
                         </div>
@@ -301,7 +300,6 @@ $(function() {
                             {{ form_label(form.discount_type) }}
                             <div class="col-sm-9 col-lg-10">
                                 {{ form_widget(form.discount_type) }}
-                                <span class="small text-danger">合計金額から値引きされます。</span>
                                 {{ form_errors(form.discount_type) }}
                             </div>
                         </div>
@@ -311,6 +309,7 @@ $(function() {
                             <div class="col-sm-9 col-lg-10">
                                 {{ form_widget(form.discount_price) }}
                                 {{ form_errors(form.discount_price) }}
+                                <span id="discount_type_price_description" class="small">合計金額から設定金額を値引きします。</span>
                             </div>
                         </div>
                         {# 値引き率 #}
@@ -319,6 +318,7 @@ $(function() {
                             <div class="col-sm-9 col-lg-10">
                                 {{ form_widget(form.discount_rate) }}
                                 {{ form_errors(form.discount_rate) }}
+                                <span id="discount_type_rate_description" class="small">対象商品の合計金額から設定した率を値引きします。</span>
                             </div>
                         </div>
                         {# 使用回数 #}
@@ -337,17 +337,16 @@ $(function() {
                             <div class="col-sm-9 col-lg-10">
                                 {{ form_widget(form.coupon_lower_limit) }}
                                 {{ form_errors(form.coupon_lower_limit) }}
+                                <span id="discount_type_rate_description" class="small">対象商品の合計金額が、下限金額以上の場合にクーポンを利用できます。</span>
                             </div>
                         </div>
                         {# 有効期間 #}
                         <div class="form-group">
                             {{ form_label(form.available_from_date) }}
-                            <div class="col-sm-9 col-lg-10">
-                                <div class="form-group range">
-                                    {{ form_widget(form.available_from_date) }}～{{ form_widget(form.available_to_date) }}
-                                    {{ form_errors(form.available_from_date) }}
-                                    {{ form_errors(form.available_to_date) }}
-                                </div>
+                            <div class="col-sm-9 col-lg-10  form-inline">
+                                {{ form_widget(form.available_from_date) }} ～ {{ form_widget(form.available_to_date) }}
+                                {{ form_errors(form.available_from_date) }}
+                                {{ form_errors(form.available_to_date) }}
                             </div>
                         </div>
                     </div>
@@ -359,10 +358,10 @@ $(function() {
             // ===================================
 #}
             <div class="box accordion" id="product_area">
-                <div class="box-header toggle">
+                <div class="box-header toggle active">
                     <h3 class="box-title">商品情報<svg class="cb cb-angle-down icon_down"> <use xlink:href="#cb-angle-down" /></svg></h3>
                 </div><!-- /.box-header -->
-                <div class="box-body accpanel">
+                <div class="box-body accpanel" style="display: block;">
                     <div class="order_list">
                         <div class="btn_area">
                             <ul>
@@ -374,7 +373,7 @@ $(function() {
                              data-prototype="
                                 {% filter escape %}
                                     <div class="item_box">
-                                        <div id="admin_plugin_coupon_CouponDetails___name__">
+                                        <div id="admin_plugin_coupon_CouponDetails___name__" style="display: none">
                                             <input type="hidden" id="admin_plugin_coupon_CouponDetails___name___Product" name="admin_plugin_coupon[CouponDetails][__name__][Product]" class="form-control" />
                                         </div>
                                         <input type="hidden" id="admin_plugin_coupon_CouponDetails___name___id" name="admin_plugin_coupon[CouponDetails][__name__][id]" class="form-control" value="" />
@@ -430,10 +429,10 @@ $(function() {
             // ===================================
 #}
             <div class="box accordion" id="category_area">
-                <div class="box-header toggle">
+                <div class="box-header toggle active">
                     <h3 class="box-title">カテゴリ情報<svg class="cb cb-angle-down icon_down"> <use xlink:href="#cb-angle-down" /></svg></h3>
                 </div><!-- /.box-header -->
-                <div class="box-body accpanel">
+                <div class="box-body accpanel" style="display: block;">
                     <div class="order_list">
                         <div class="btn_area">
                             <ul>
@@ -500,10 +499,10 @@ $(function() {
             // 操作部
             // ===================================
 #}
-            <div class="row hidden-xs hidden-sm">
-                <div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3 text-center btn_area">
+            <div class="row btn_area">
+                <div class="col-xs-8 col-xs-offset-2 col-sm-4 col-sm-offset-4 text-center">
                     <button type="submit" class="btn btn-primary btn-block btn-lg">登録</button>
-                     <p><a href="{{ url('plugin_coupon_list') }}">戻る</a></p>
+                    <p><a href="{{ url('plugin_coupon_list') }}">戻る</a></p>
                 </div>
             </div>
 
@@ -556,7 +555,7 @@ $(function() {
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    {{ form_widget(searchCategoryModalForm.category_id) }}
+                    {{ form_widget(searchCategoryModalForm.category_id, {'attr': {'class': 'form-control'}}) }}
                 </div>
                 <div class="form-group">
                     <button type="button" id="searchCategoryModalButton" class="btn btn-primary" >検索</button>
