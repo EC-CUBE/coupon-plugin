@@ -308,59 +308,12 @@ class CouponServiceTest extends EccubeTestCase
         $OrderDetail->setOrder($Order);
         $Order->addOrderDetail($OrderDetail);
 
-        $discount = $this->app['eccube.plugin.coupon.service.coupon']->recalcOrder($Order, $Coupon);
+        $products = $this->app['eccube.plugin.coupon.service.coupon']->existsCouponProduct($Coupon, $Order);
+        $discount = $this->app['eccube.plugin.coupon.service.coupon']->recalcOrder($Order, $Coupon, $products);
 
         $this->actual = $discount;
 
         $this->expected = 100;
-
-        $this->verify();
-    }
-
-    /**
-     * testIsOrderInActiveCoupon.
-     */
-    public function testIsOrderInActiveCoupon()
-    {
-        /** @var Coupon $Coupon */
-        $Coupon = $this->getCoupon();
-
-        $Customer = $this->createCustomer();
-
-        $Order = $this->createOrder($Customer);
-
-        $details = $Coupon->getCouponDetails();
-
-        /** @var CouponDetail $CouponDetail */
-        $CouponDetail = $details[0];
-
-        $Product = $CouponDetail->getProduct();
-
-        $ProductClasses = $Product->getProductClasses();
-        $ProductClass = $ProductClasses[0];
-
-        $orderDetails = $Order->getOrderDetails();
-        foreach ($orderDetails as $OrderDetail) {
-            $Order->removeOrderDetail($OrderDetail);
-        }
-
-        $OrderDetail = new OrderDetail();
-        $TaxRule = $this->app['eccube.repository.tax_rule']->getByRule(); // デフォルト課税規則
-        $OrderDetail->setProduct($Product)
-            ->setProductClass($ProductClass)
-            ->setProductName($Product->getName())
-            ->setProductCode($ProductClass->getCode())
-            ->setPrice($ProductClass->getPrice02())
-            ->setQuantity(1)
-            ->setTaxRule($TaxRule->getCalcRule()->getId())
-            ->setTaxRate($TaxRule->getTaxRate());
-        $this->app['orm.em']->persist($OrderDetail);
-        $OrderDetail->setOrder($Order);
-        $Order->addOrderDetail($OrderDetail);
-
-        $this->actual = $this->app['eccube.plugin.coupon.service.coupon']->isOrderInActiveCoupon($Order);
-
-        $this->expected = true;
 
         $this->verify();
     }

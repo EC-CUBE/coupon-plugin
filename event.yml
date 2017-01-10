@@ -51,7 +51,7 @@ front.shopping.complete.initialize:
 front.shopping.confirm.initialize:
     - [onShoppingConfirmInit, NORMAL]
 
-admin.order.edit.index.progress:
+admin.order.edit.index.complete:
     - [onOrderEditComplete, NORMAL]
 
 admin.order.delete.complete:

@@ -72,23 +72,6 @@ class CouponControllerTest extends AbstractWebTestCase
     }
 
     /**
-     * testShoppingCouponPost.
-     */
-    public function testShoppingCouponPost()
-    {
-        $this->routingShopping();
-
-        $crawler = $this->client->request('GET', $this->app->url('plugin_coupon_shopping'));
-
-        $form = $this->getForm($crawler);
-
-        /** @var \Symfony\Component\DomCrawler\Crawler $crawler */
-        $crawler = $this->client->submit($form);
-
-        $this->assertTrue($this->client->getResponse()->isRedirection());
-    }
-
-    /**
      * testShoppingCouponPostError.
      */
     public function testShoppingCouponPostError()
@@ -112,23 +95,15 @@ class CouponControllerTest extends AbstractWebTestCase
     public function testShoppingCoupon()
     {
         $this->routingShopping();
-
-        $crawler = $this->client->request('GET', $this->app->url('plugin_coupon_shopping'));
-
         $Coupon = $this->getCoupon();
-
-        $form = $this->getForm($crawler, $Coupon->getCouponCd());
-
         /** @var \Symfony\Component\DomCrawler\Crawler $crawler */
-        $crawler = $this->client->submit($form);
-
+        $crawler = $this->client->request('GET', $this->app->url('plugin_coupon_shopping'));
+        $form = $this->getForm($crawler, $Coupon->getCouponCd());
+        $this->client->submit($form);
         $this->assertTrue($this->client->getResponse()->isRedirection());
-
         $crawler = $this->client->request('GET', $this->app->url('shopping'));
-
-        $this->expected = 'クーポンを利用しています。';
+        $this->expected = '利用しています。';
         $this->actual = $crawler->filter('strong.text-danger')->text();
-
         $this->verify();
     }
 
@@ -227,6 +202,7 @@ class CouponControllerTest extends AbstractWebTestCase
         $form = $crawler->selectButton('登録する')->form();
 
         $form['front_plugin_coupon_shopping[coupon_cd]'] = $couponCd;
+        $form['front_plugin_coupon_shopping[coupon_use]'] = 1;
         $form['front_plugin_coupon_shopping[_token]'] = 'dummy';
 
         return $form;

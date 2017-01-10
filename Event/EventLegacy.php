@@ -282,7 +282,13 @@ class EventLegacy
             $Coupon = $this->app['coupon.repository.coupon']->find($CouponOrder->getCouponId());
             if (!is_null($Coupon)) {
                 // クーポンの発行枚数を上がる
-                $Coupon->setCouponUseTime($Coupon->getCouponUseTime() + 1);
+                $couponUseTime = $Coupon->getCouponUseTime() + 1;
+                $couponRelease = $Coupon->getCouponRelease();
+                if ($couponUseTime <= $couponRelease) {
+                    $Coupon->setCouponUseTime($couponUseTime);
+                } else {
+                    $Coupon->setCouponUseTime($couponRelease);
+                }
                 $this->app['orm.em']->persist($Coupon);
                 $this->app['orm.em']->flush($Coupon);
             }
@@ -322,7 +328,13 @@ class EventLegacy
                     $CouponOrder->setOrderDate(null);
                     $CouponOrder->setOrderChangeStatus(Constant::ENABLED);
                     $repository->save($CouponOrder);
-                    $Coupon->setCouponUseTime($Coupon->getCouponUseTime() + 1);
+                    $couponUseTime = $Coupon->getCouponUseTime() + 1;
+                    $couponRelease = $Coupon->getCouponRelease();
+                    if ($couponUseTime <= $couponRelease) {
+                        $Coupon->setCouponUseTime($couponUseTime);
+                    } else {
+                        $Coupon->setCouponUseTime($couponRelease);
+                    }
                     $this->app['orm.em']->persist($Coupon);
                     $this->app['orm.em']->flush($Coupon);
                 }

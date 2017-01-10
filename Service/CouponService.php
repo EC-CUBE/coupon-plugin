@@ -391,40 +391,6 @@ class CouponService
     }
 
     /**
-     *  ユーザはクーポン1回のみ利用できる.
-     *
-     * @param string   $couponCd
-     * @param string   $orderId
-     * @param Customer $Customer
-     *
-     * @return bool
-     */
-    public function checkCouponUsedOrNotBefore($couponCd, $orderId, Customer $Customer)
-    {
-        $repository = $this->app['coupon.repository.coupon_order'];
-        if ($this->app->isGranted('ROLE_USER')) {
-            $CouponOrders = $repository->findUseCouponBefore($couponCd, $orderId, $Customer->getId());
-        } else {
-            $CouponOrders = $repository->findUseCouponBefore($couponCd, $orderId, $Customer->getEmail());
-        }
-
-        if ($CouponOrders) {
-            // 存在すれば既に受注として利用されていないかチェック
-            foreach ($CouponOrders as $CouponOrder) {
-                $Order = $this->app['eccube.repository.order']->find($CouponOrder->getOrderId());
-                if ($Order) {
-                    if ($Order->getOrderStatus()->getId() != $this->app['config']['order_processing']) {
-                        // 同一のクーポンコードで既に受注データが存在している
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return false;
-    }
-
-    /**
      *  Coupon Validation.
      *
      * @param string   $formCouponCd
