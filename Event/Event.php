@@ -287,7 +287,7 @@ class Event
             $search = self::COUPON_TAG;
             $replace = $snipet.$search;
         } else {
-            $search = '<h2 class="heading02">お問い合わせ欄</h2>';
+            $search = '<h2 class="heading02">お問い合わせ</h2>';
             $replace = $snipet.$search;
         }
         //find coupon mark
