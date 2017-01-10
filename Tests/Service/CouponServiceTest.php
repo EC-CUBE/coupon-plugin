@@ -152,7 +152,8 @@ class CouponServiceTest extends EccubeTestCase
         $ProductClass = $ProductClasses[0];
 
         $OrderDetail = new OrderDetail();
-        $TaxRule = $this->app['eccube.repository.tax_rule']->getByRule(); // デフォルト課税規則
+        // デフォルト課税規則
+        $TaxRule = $this->app['eccube.repository.tax_rule']->getByRule();
         $OrderDetail->setProduct($Product)
             ->setProductClass($ProductClass)
             ->setProductName($Product->getName())
@@ -165,9 +166,10 @@ class CouponServiceTest extends EccubeTestCase
         $OrderDetail->setOrder($Order);
         $Order->addOrderDetail($OrderDetail);
 
-        $this->actual = $this->app['eccube.plugin.coupon.service.coupon']->existsCouponProduct($Coupon, $Order);
+        $products = $this->app['eccube.plugin.coupon.service.coupon']->existsCouponProduct($Coupon, $Order);
+        $this->actual = sizeof($products);
 
-        $this->expected = true;
+        $this->expected = 1;
 
         $this->verify();
     }
@@ -184,9 +186,10 @@ class CouponServiceTest extends EccubeTestCase
 
         $Order = $this->createOrder($Customer);
 
-        $this->actual = $this->app['eccube.plugin.coupon.service.coupon']->existsCouponProduct($Coupon, $Order);
+        $products = $this->app['eccube.plugin.coupon.service.coupon']->existsCouponProduct($Coupon, $Order);
+        $this->actual = sizeof($products);
 
-        $this->expected = false;
+        $this->expected = 0;
 
         $this->verify();
     }
@@ -228,9 +231,10 @@ class CouponServiceTest extends EccubeTestCase
         $OrderDetail->setOrder($Order);
         $Order->addOrderDetail($OrderDetail);
 
-        $this->actual = $this->app['eccube.plugin.coupon.service.coupon']->existsCouponProduct($Coupon, $Order);
+        $products = $this->app['eccube.plugin.coupon.service.coupon']->existsCouponProduct($Coupon, $Order);
+        $this->actual = sizeof($products);
 
-        $this->expected = true;
+        $this->expected = 2;
 
         $this->verify();
     }
@@ -357,25 +361,6 @@ class CouponServiceTest extends EccubeTestCase
         $this->actual = $this->app['eccube.plugin.coupon.service.coupon']->isOrderInActiveCoupon($Order);
 
         $this->expected = true;
-
-        $this->verify();
-    }
-
-    /**
-     * testIsOrderInActiveCouponNot.
-     */
-    public function testIsOrderInActiveCouponNot()
-    {
-        /** @var Coupon $Coupon */
-        $Coupon = $this->getCoupon();
-
-        $Customer = $this->createCustomer();
-
-        $Order = $this->createOrder($Customer);
-
-        $this->actual = $this->app['eccube.plugin.coupon.service.coupon']->isOrderInActiveCoupon($Order);
-
-        $this->expected = false;
 
         $this->verify();
     }

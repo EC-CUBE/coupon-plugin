@@ -327,27 +327,6 @@ class CouponService
     }
 
     /**
-     * カート内の商品(OrderDetail)がクーポン対象商品か確認する.
-     *
-     * @param Order $Order
-     *
-     * @return bool
-     */
-    public function isOrderInActiveCoupon(Order $Order)
-    {
-        // 有効なクーポン一覧を取得する
-        $Coupons = $this->app['coupon.repository.coupon']->findActiveCouponAll();
-        // 有効なクーポンを持つ商品の存在を確認する
-        foreach ($Coupons as $Coupon) {
-            if ($this->existsCouponProduct($Coupon, $Order)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
      * check coupon lower limit.
      *
      * @param array $productCoupon
