@@ -37,12 +37,14 @@
         });
     })
 </script>
-<h2 class="heading02">クーポンコード</h2>
+<h2 class="heading02">クーポン</h2>
 <div id="customer_detail_box" class="column is-edit">
-    クーポンをお持ちの方はクーポンコードを入力してください。
-    <p><a class="btn btn-default btn-sm" id="coupon_button" href="{{ url('plugin_coupon_shopping') }}">クーポンを利用する</a>
-        {% if CouponOrder %}
-            <strong class="text-danger">クーポン {{ CouponOrder.coupon_cd }} を利用しています。</strong>
-        {% endif %}
+    {% if CouponOrder %}
+        <strong class="text-danger">クーポンコード {{ CouponOrder.coupon_cd }} を利用しています。</strong>
+        <p><a class="btn btn-default btn-sm" id="coupon_button" href="{{ url('plugin_coupon_shopping') }}">クーポンを変更する</a>
+    {% else %}
+        クーポンをお持ちの方はクーポンコードを入力してください。
+        <p><a class="btn btn-default btn-sm" id="coupon_button" href="{{ url('plugin_coupon_shopping') }}">クーポンを利用する</a>
+    {% endif %}
     </p>
 </div>
