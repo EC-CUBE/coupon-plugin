@@ -48,8 +48,7 @@ class CouponControllerTest extends AbstractAdminWebTestCase
      */
     public function testIndex()
     {
-        $crawler = $this->client->request('GET', $this->app->url('admin_coupon_list'));
-
+        $this->client->request('GET', $this->app->url('plugin_coupon_list'));
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
 
@@ -59,14 +58,10 @@ class CouponControllerTest extends AbstractAdminWebTestCase
     public function testIndexList()
     {
         $this->getCoupon();
-
-        $crawler = $this->client->request('GET', $this->app->url('admin_coupon_list'));
-
+        $crawler = $this->client->request('GET', $this->app->url('plugin_coupon_list'));
         $this->assertTrue($this->client->getResponse()->isSuccessful());
-
         $this->expected = '1 件';
         $this->actual = $crawler->filter('.box-title strong')->text();
-
         $this->verify();
     }
 
@@ -75,8 +70,7 @@ class CouponControllerTest extends AbstractAdminWebTestCase
      */
     public function testEditNew()
     {
-        $crawler = $this->client->request('GET', $this->app->url('admin_coupon_new'));
-
+        $this->client->request('GET', $this->app->url('plugin_coupon_new'));
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
 
@@ -86,11 +80,7 @@ class CouponControllerTest extends AbstractAdminWebTestCase
     public function testEdit()
     {
         $Coupon = $this->getCoupon();
-
-        $crawler = $this->client->request('GET', $this->app->url('admin_coupon_edit', array('idaa' => $Coupon->getId())));
-
-        dump($crawler->html());
-
+        $this->client->request('GET', $this->app->url('plugin_coupon_edit', array('idaa' => $Coupon->getId())));
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
 
@@ -110,26 +100,19 @@ class CouponControllerTest extends AbstractAdminWebTestCase
 
         /** @var \Plugin\Coupon\Entity\CouponCoupon $Coupon */
         $Coupon = $this->app['coupon.repository.coupon']->findOneBy(array('coupon_cd' => 'aaaaaaaa'));
-
         $Product = $this->app['eccube.repository.product']->find(1);
-
         $CouponDetail = new CouponDetail();
-
         $CouponDetail->setCoupon($Coupon);
         $CouponDetail->setCouponType($Coupon->getCouponType());
         $CouponDetail->setUpdateDate($Coupon->getUpdateDate());
         $CouponDetail->setCreateDate($Coupon->getCreateDate());
         $CouponDetail->setDelFlg(Constant::ENABLED);
-
         $Categories = $Product->getProductCategories();
 
         /** @var \Eccube\Entity\ProductCategory $Category */
         $ProductCategory = $Categories[0];
-
         $CouponDetail->setCategory($ProductCategory->getCategory());
-
         $CouponDetail->setProduct($Product);
-
         $Coupon->addCouponDetail($CouponDetail);
 
         return $Coupon;

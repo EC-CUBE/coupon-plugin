@@ -40,11 +40,11 @@ class Version201612231311 extends AbstractMigration
         }
 
         if (!$table->hasColumn('coupon_lower_limit')) {
-            $this->addSql('alter table plg_coupon add coupon_lower_limit SMALLINT DEFAULT 0');
+            $this->addSql('alter table plg_coupon add coupon_lower_limit integer DEFAULT 0');
         }
 
         if (!$table->hasColumn('coupon_release')) {
-            $this->addSql('alter table plg_coupon add coupon_release SMALLINT DEFAULT 0');
+            $this->addSql('alter table plg_coupon add coupon_release integer DEFAULT 0');
             $this->addSql('update plg_coupon set coupon_release = coupon_use_time');
         }
 

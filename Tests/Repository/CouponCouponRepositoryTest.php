@@ -26,15 +26,10 @@ class CouponCouponRepositoryTest extends EccubeTestCase
     public function testFindActiveCoupon()
     {
         $Coupon = $this->getCoupon();
-
         $couponCd = 'aaaaaaaa';
-
         $Coupon1 = $this->app['coupon.repository.coupon']->findActiveCoupon($couponCd);
-
-        $this->actual = $Coupon1->getCouponCd();
-
+        $this->actual = $Coupon->getCouponCd();
         $this->expected = $couponCd;
-
         $this->verify();
     }
 
@@ -44,11 +39,8 @@ class CouponCouponRepositoryTest extends EccubeTestCase
     public function testFindActiveCouponAll()
     {
         $this->getCoupon();
-
         $coupons = $this->app['coupon.repository.coupon']->findActiveCouponAll();
-
         $this->actual = count($coupons);
-
         $this->assertGreaterThan(0, $this->actual);
     }
 
@@ -68,22 +60,16 @@ class CouponCouponRepositoryTest extends EccubeTestCase
 
         $Product = $this->createProduct();
         $CouponDetail = new CouponDetail();
-
         $CouponDetail->setCoupon($Coupon);
         $CouponDetail->setCouponType($Coupon->getCouponType());
         $CouponDetail->setUpdateDate($Coupon->getUpdateDate());
         $CouponDetail->setCreateDate($Coupon->getCreateDate());
         $CouponDetail->setDelFlg(Constant::DISABLED);
-
         $Categories = $Product->getProductCategories();
-
         /** @var \Eccube\Entity\ProductCategory $Category */
         $ProductCategory = $Categories[0];
-
         $CouponDetail->setCategory($ProductCategory->getCategory());
-
         $CouponDetail->setProduct($Product);
-
         $Coupon->addCouponDetail($CouponDetail);
 
         return $Coupon;
