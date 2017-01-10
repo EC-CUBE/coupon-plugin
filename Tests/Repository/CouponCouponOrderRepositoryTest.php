@@ -247,10 +247,13 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
         $Coupon->setCouponUseTime(1);
         $Coupon->setDiscountPrice(100);
         $Coupon->setDiscountRate(10);
+        $Coupon->setCouponRelease(1);
+        $Coupon->setCouponLowerLimit(100);
+        $Coupon->setCouponMember(0);
         $Coupon->setEnableFlag(1);
         $d1 = $date1->setDate(2016, 1, 1);
         $Coupon->setAvailableFromDate($d1);
-        $d2 = $date2->setDate(2016, 12, 31);
+        $d2 = $date2->setDate(2040, 12, 31);
         $Coupon->setAvailableToDate($d2);
 
         return $Coupon;
