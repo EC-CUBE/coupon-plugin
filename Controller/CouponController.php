@@ -310,7 +310,8 @@ class CouponController extends AbstractController
                     }
 
                     if (!$checkLowerLimit && $existCoupon) {
-                        $form->get('coupon_cd')->addError(new FormError('front.plugin.coupon.shopping.lowerlimit'));
+                        $message = $app->trans('front.plugin.coupon.shopping.lowerlimit', array('lowerLimit' => number_format($lowerLimit)));
+                        $form->get('coupon_cd')->addError(new FormError($message));
                         $error = true;
                     }
 
