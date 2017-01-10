@@ -51,9 +51,7 @@ class CouponCouponRepositoryTest extends EccubeTestCase
      */
     private function getCoupon($couponType = 1)
     {
-        $data = $this->getTestData($couponType);
-
-        $this->app['eccube.plugin.coupon.service.coupon']->createCoupon($data);
+        $this->getTestData($couponType);
 
         /** @var Coupon $Coupon */
         $Coupon = $this->app['coupon.repository.coupon']->findOneBy(array('coupon_cd' => 'aaaaaaaa'));
@@ -93,17 +91,23 @@ class CouponCouponRepositoryTest extends EccubeTestCase
         $Coupon->setCouponType($couponType);
         $Coupon->setCouponName('クーポン');
         $Coupon->setDiscountType(1);
-        $Coupon->setCouponUseTime(1);
+        $Coupon->setCouponRelease(100);
+        $Coupon->setCouponUseTime(100);
         $Coupon->setDiscountPrice(100);
         $Coupon->setDiscountRate(10);
-        $Coupon->setEnableFlag(1);
-        $Coupon->setCouponRelease(1);
         $Coupon->setCouponLowerLimit(100);
         $Coupon->setCouponMember(0);
+        $Coupon->setEnableFlag(1);
+        $Coupon->setDelFlg(0);
         $d1 = $date1->setDate(2016, 1, 1);
         $Coupon->setAvailableFromDate($d1);
         $d2 = $date2->setDate(2040, 12, 31);
         $Coupon->setAvailableToDate($d2);
+
+        $em = $this->app['orm.em'];
+        // クーポン情報を登録する
+        $em->persist($Coupon);
+        $em->flush($Coupon);
 
         return $Coupon;
     }

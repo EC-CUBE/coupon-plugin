@@ -13,6 +13,7 @@ namespace Plugin\Coupon\Event;
 use Eccube\Application;
 use Eccube\Common\Constant;
 use Eccube\Entity\Order;
+use Plugin\Coupon\Entity\Coupon;
 use Plugin\Coupon\Util\Version;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,7 +37,7 @@ class EventLegacy
      *
      * @var string
      */
-    const COUPON_TAG = '<!--# counpon-plugin-tag #-->';
+    const COUPON_TAG = '<!--# coupon-plugin-tag #-->';
 
     /**
      * EventLegacy constructor.
@@ -369,9 +370,9 @@ class EventLegacy
      *t.
      *
      * @param Response $response
-     * @param $Coupon
+     * @param Coupon $Coupon
      */
-    private function getHtmlOrderEdit(Response $response, $Coupon)
+    private function getHtmlOrderEdit(Response $response, Coupon $Coupon)
     {
         $source = $response->getContent();
         libxml_use_internal_errors(true);

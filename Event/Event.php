@@ -34,7 +34,7 @@ class Event
      *
      * @var string
      */
-    const COUPON_TAG = '<!--# counpon-plugin-tag #-->';
+    const COUPON_TAG = '<!--# coupon-plugin-tag #-->';
 
     /**
      * @var string 非会員用セッションキー
@@ -306,7 +306,6 @@ class Event
         $CouponOrder = null;
         $Coupon = null;
         $message = null;
-        $MailTemplate = null;
         if ($event->hasArgument('Order')) {
             $Order = $event->getArgument('Order');
             // クーポン受注情報を取得する
