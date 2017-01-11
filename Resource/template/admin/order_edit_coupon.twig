@@ -1,0 +1,22 @@
+{#
+ This file is part of the Coupon plugin
+
+ Copyright(c) 2000-2016 LOCKON CO.,LTD. All Rights Reserved.
+ http://www.lockon.co.jp/
+
+ For the full copyright and license information, please view the LICENSE
+ file that was distributed with this source code.
+#}
+{# クーポン情報 #}
+<div class="box accordion">
+    <div class="box-header toggle">
+        <h3 class="box-title">ご利用クーポンコード<svg class="cb cb-angle-down icon_down"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#cb-angle-down"></use></svg></h3>
+    </div><!-- /.box-header -->
+    <div class="box-body accpanel" style="display: none;">
+        <dl class="dl-horizontal"><dt><label class="control-label">クーポンコード</label></dt>
+            <dd>
+            {{ coupon_cd }}　{{ coupon_name}}
+            </dd>
+        </dl>
+    </div>
+</div>

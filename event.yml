@@ -5,6 +5,9 @@
 eccube.event.render.shopping.before:
     - [onRenderShoppingBefore, NORMAL]
 
+eccube.event.render.mypage_history.before:
+    - [onRenderMypageHistoryBefore, NORMAL]
+
 eccube.event.controller.shopping_confirm.before:
     - [onControllerShoppingConfirmBefore, NORMAL]
 
@@ -12,8 +15,13 @@ eccube.event.controller.shopping_complete.before:
     - [onControllerShoppingCompleteBefore, NORMAL]
 
 eccube.event.render.admin_order_edit.before:
-    - [onRenderAdminOrderEditAfter, NORMAL]
+    - [onRenderAdminOrderEditBefore, NORMAL]
 
+eccube.event.controller.admin_order_edit.after:
+    - [onControllerOrderEditAfter, NORMAL]
+
+eccube.event.controller.admin_order_delete.after:
+    - [onControllerOrderDeleteAfter, NORMAL]
 
 # v3.0.8まで
 eccube.event.controller.shopping_delivery.after:
@@ -30,6 +38,35 @@ eccube.event.controller.shopping_shipping_edit.after:
 
 
 # v3.0.9以降
+# new hook point
+Shopping/index.twig:
+   - [onRenderShoppingIndex, NORMAL]
+
+Mypage/history.twig:
+    - [onRenderMypageHistory, NORMAL]
+
+front.shopping.complete.initialize:
+    - [onRenderShoppingComplete, NORMAL]
+
+front.shopping.confirm.initialize:
+    - [onShoppingConfirmInit, NORMAL]
+
+admin.order.edit.index.complete:
+    - [onOrderEditComplete, NORMAL]
+
+admin.order.delete.complete:
+    - [onOrderEditComplete, NORMAL]
+
+mail.order:
+    - [onSendOrderMail, NORMAL]
+
+##  メール通知
+mail.admin.order:
+    - [onSendOrderMail, NORMAL]
+
+Admin/Order/edit.twig:
+    - [onRenderAdminOrderEdit, NORMAL]
+
 # 配送先関連
 front.shopping.delivery.complete:
     - [onRestoreDiscount, NORMAL]
@@ -41,6 +78,6 @@ front.shopping.payment.complete:
 ## 配送方法設定
 front.shopping.shipping.complete:
     - [onRestoreDiscount, NORMAL]
+
 front.shopping.shipping.edit.complete:
     - [onRestoreDiscount, NORMAL]
-

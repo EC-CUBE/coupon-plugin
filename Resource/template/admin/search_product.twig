@@ -1,0 +1,104 @@
+{#
+ This file is part of the Coupon plugin
+
+ Copyright(c) 2000-2016 LOCKON CO.,LTD. All Rights Reserved.
+ http://www.lockon.co.jp/
+
+ For the full copyright and license information, please view the LICENSE
+ file that was distributed with this source code.
+#}
+<script>
+    function fnAddProductDetail($row, product_id, product_name) {
+
+        // ================================================================
+        // 商品情報を取得.
+        // ================================================================
+        // 明細行を取得.
+        var list = $('#coupon_detail_list');
+
+        // prototype templateを取得.
+        var newWidget = list.attr('data-prototype');
+        // レコード数カウンタで置換.
+        var cnt = coupon_details_count + 1;
+        newWidget = newWidget.replace(/__name__/g, cnt);
+
+        // フォーム入力値をセットm
+        $newWidget = $(newWidget);
+
+        $newWidget.find('#admin_plugin_coupon_CouponDetails_' + cnt + '_Product').val(product_id);
+        $newWidget.find('#admin_plugin_coupon_CouponDetails_' + cnt + '_product_name').text(product_name);
+        $newWidget.find('#admin_plugin_coupon_CouponDetails_' + cnt + '_coupon_type').val(1);
+
+        // 明細行に追加.
+        list.append($newWidget);
+
+        // カウンタを更新.
+        coupon_details_count++;
+
+        // モーダル閉じる.
+        $('#searchProductModal').modal('hide');
+
+        return false;
+    }
+
+    // 商品検索
+    $('div.box-footer a').on('click', function(event) {
+        var existProductId = "";
+        $(":input[id^=admin_plugin_coupon_CouponDetails_][id$=_Product]").each(
+                function(index, elem) {
+                    if(existProductId == "") {
+                        existProductId = elem.value;
+                    } else {
+                        existProductId = existProductId + "," + elem.value;
+                    }
+                }
+        );
+        var list = $('#searchProductModalList');
+        var href = $(this).attr('href');
+        href = href.split('?')[0];
+        href += '?exist_product_id=' + existProductId;
+        list.find('tbody').children().remove();
+        $.ajax({
+            type: 'GET',
+            dataType: 'html',
+            url: href,
+            success: function(data) {
+                list.html(data);
+            },
+            error: function() {
+                alert('paginator failed.');
+            }
+        });
+        event.preventDefault();
+    });
+
+</script>
+<div class="table-responsive">
+    <table class="table">
+        <tbody>
+        {% for Product in pagination %}
+            <form name="product_form{{ Product.id }}">
+                <tr>
+                    <td>
+                        {{ Product.name }}
+                        <br>
+                        <span>{{ Product.code_min }}
+                            {% if Product.code_min != Product.code_max %} ～ {{ Product.code_max }}
+                            {% endif %}
+                        </span>
+                    </td>
+                    <td class="text-right">
+                        <button onclick="fnAddProductDetail($(this).parent().parent(), {{ Product.id }},  '{{ Product.name|escape('js') }}')" type="button" class="btn btn-default btn-sm">
+                            決定
+                        </button>
+                    </td>
+                </tr>
+            </form>
+        {% endfor %}
+
+        </tbody>
+    </table>
+    {% if pagination.totalItemCount > 0 %}
+        {% include "pager.twig" with {'pages': pagination.paginationData, 'routes': 'plugin_coupon_search_product_page'} %}
+    {% endif %}
+</div>

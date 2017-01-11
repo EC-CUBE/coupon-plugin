@@ -1,42 +1,19 @@
 {#
-This file is part of EC-CUBE
+ This file is part of the Coupon plugin
 
-Copyright(c) 2000-2015 LOCKON CO.,LTD. All Rights Reserved.
+ Copyright(c) 2000-2016 LOCKON CO.,LTD. All Rights Reserved.
+ http://www.lockon.co.jp/
 
-http://www.lockon.co.jp/
-
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ For the full copyright and license information, please view the LICENSE
+ file that was distributed with this source code.
 #}
 
 {% extends 'default_frame.twig' %}
 
-{% set menus = ['order', 'admin_coupon'] %}
+{% set menus = ['order', 'plugin_coupon'] %}
 
 {% block title %}クーポン管理{% endblock %}
 {% block sub_title %}クーポン内容設定{% endblock %}
-
-{% block javascript %}
-<script>
-function fnDelete(action) {
-    if (confirm('このクーポンを削除しても宜しいですか？')) {
-        document.search_form.action = action;
-        document.search_form.submit();
-    }
-}
-</script>
-{% endblock javascript %}
 
 {% block main %}
 <form name="search_form" id="search_form" method="post" action="">
@@ -57,8 +34,10 @@ function fnDelete(action) {
                                     <th>クーポンコード</th>
                                     <th>クーポン名</th>
                                     <th>種別</th>
+                                    <th>会員のみ</th>
                                     <th>値引き</th>
                                     <th>残発行枚数</th>
+                                    <th>下限金額</th>
                                     <th>有効期間</th>
                                     <th>編集</th>
                                     <th>状態</th>
@@ -71,13 +50,23 @@ function fnDelete(action) {
                                     <td class="coupon_id">{{ Coupon.id }}</td>
                                     <td class="coupon_cd">{{ Coupon.coupon_cd }}</td>
                                     <td class="coupon_name">{{ Coupon.coupon_name }}</td>
+
                                     {% if Coupon.coupon_type == 1 %}
                                         <td class="coupon_type">商品</td>
                                     {% elseif Coupon.coupon_type == 2 %}
                                         <td class="coupon_type">カテゴリ</td>
+                                    {% elseif Coupon.coupon_type == 3 %}
+                                        <td class="coupon_type">全商品</td>
                                     {% else %}
                                         <td class="coupon_type"></td>
                                     {% endif %}
+
+                                    {% if Coupon.coupon_member == 1 %}
+                                        <td class="coupon_member">YES</td>
+                                    {% else %}
+                                        <td class="coupon_member">NO</td>
+                                    {% endif %}
+
                                     {% if Coupon.discount_type == 1 %}
                                         <td class="coupon_discount">{{ Coupon.discount_price|price }}</td>
                                     {% elseif Coupon.discount_type == 2 %}
@@ -85,12 +74,14 @@ function fnDelete(action) {
                                     {% else %}
                                         <td class="coupon_discount"></td>
                                     {% endif %}
-                                    <td>{{ Coupon.coupon_use_time|number_format }}</td>
+
+                                    <td>{{ Coupon.coupon_use_time|number_format }} / {{ Coupon.coupon_release|number_format }}</td>
+                                    <td>{{ Coupon.coupon_lower_limit|price }}</td>
                                     <td>{{ Coupon.available_from_date|date_format }} ～ {{ Coupon.available_to_date|date_format }}</td>
 
-                                    <td><a href="{{ url('admin_coupon_edit', { id: Coupon.id }) }}">編集</a></td>
+                                    <td><a href="{{ url('plugin_coupon_edit', { id: Coupon.id }) }}">編集</a></td>
                                     <td>
-                                        <a href="{{ url('admin_coupon_enable', { id: Coupon.id }) }}">
+                                        <a href="{{ url('plugin_coupon_enable', { id: Coupon.id }) }}">
                                         {% if Coupon.enable_flag == 1 %}
                                             有効
                                         {% else %}
@@ -98,8 +89,9 @@ function fnDelete(action) {
                                         {% endif %}
                                         </a>
                                     </td>
-                                    <td><a href="javascript:;" onclick="fnDelete('{{ url('admin_coupon_delete', { id: Coupon.id}) }}'); return false;">削除</a></td>
-
+                                    <td>
+                                        <a href="{{ url('plugin_coupon_delete', { id : Coupon.id }) }}" {{ csrf_token_for_anchor() }} data-method="delete" data-message="このクーポンを削除しても宜しいですか？">削除</a>
+                                    </td>
                                 </tr>
                                 {% endfor %}
                                 </tbody>
@@ -112,7 +104,7 @@ function fnDelete(action) {
     </div>
 <div class="row">
     <div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3 text-center btn_area">
-        <a href="{{ url('admin_coupon_new') }}" class="btn btn-primary btn-block btn-lg">クーポンを新規登録</a>
+        <a href="{{ url('plugin_coupon_new') }}" class="btn btn-primary btn-block btn-lg">クーポンを新規登録</a>
     </div>
 </div>
 </form>

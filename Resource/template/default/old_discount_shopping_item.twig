@@ -1,0 +1,23 @@
+{#
+ This file is part of the Coupon plugin
+
+ Copyright(c) 2000-2016 LOCKON CO.,LTD. All Rights Reserved.
+ http://www.lockon.co.jp/
+
+ For the full copyright and license information, please view the LICENSE
+ file that was distributed with this source code.
+#}
+<dl>
+    <dt>値引き</dt>
+    <dd>{{ (0 - Order.discount)|price }}</dd>
+    {# 元の合計金額は書き込み済みのため再度書き込みを行う #}
+    <div class="total_amount">
+        <p class="total_price">合計 <strong class="text-primary">{{ Order.total|price }}
+                <span class="small">税込</span></strong></p>
+        <p>
+            <button id="order-button" type="submit" class="btn btn-primary btn-block prevention-btn prevention-mask">
+                注文する
+            </button>
+        </p>
+    </div>
+</dl>

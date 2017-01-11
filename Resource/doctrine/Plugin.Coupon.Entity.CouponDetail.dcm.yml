@@ -1,7 +1,7 @@
-Plugin\Coupon\Entity\CouponCouponDetail:
+Plugin\Coupon\Entity\CouponDetail:
     type: entity
     table: plg_coupon_detail
-    repositoryClass: Plugin\Coupon\Repository\CouponCouponDetailRepository
+    repositoryClass: Plugin\Coupon\Repository\CouponDetailRepository
     id:
         id:
             type: integer
@@ -28,7 +28,7 @@ Plugin\Coupon\Entity\CouponCouponDetail:
             nullable: false
     manyToOne:
         Coupon:
-            targetEntity: Plugin\Coupon\Entity\CouponCoupon
+            targetEntity: Plugin\Coupon\Entity\Coupon
             inversedBy: CouponDetail
             joinColumn:
                 name: coupon_id
@@ -39,7 +39,7 @@ Plugin\Coupon\Entity\CouponCouponDetail:
             joinColumn:
                 name: product_id
                 referencedColumnName: product_id
-                nullable: false
+                nullable: true
         Category:
             targetEntity: \Eccube\Entity\Category
             joinColumn:

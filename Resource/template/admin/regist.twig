@@ -1,27 +1,15 @@
 {#
-This file is part of EC-CUBE
+ This file is part of the Coupon plugin
 
-Copyright(c) 2000-2015 LOCKON CO.,LTD. All Rights Reserved.
+ Copyright(c) 2000-2016 LOCKON CO.,LTD. All Rights Reserved.
+ http://www.lockon.co.jp/
 
-http://www.lockon.co.jp/
-
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ For the full copyright and license information, please view the LICENSE
+ file that was distributed with this source code.
 #}
 {% extends 'default_frame.twig' %}
 
-{% set menus = ['order', 'admin_coupon'] %}
+{% set menus = ['order', 'plugin_coupon'] %}
 
 {% block title %}クーポン管理{% endblock %}
 {% block sub_title %}クーポン内容設定{% endblock %}
@@ -45,6 +33,7 @@ $(function() {
     $('#showSearchProductModal').on('click', function() {
             var tbody = $('#searchProductModalList tbody');
             tbody.children().remove();
+            $('div.box-footer').remove();
         }
     );
 
@@ -54,6 +43,7 @@ $(function() {
     $('#showSearchCategoryModal').on('click', function() {
             var tbody = $('#searchCategoryModalList tbody');
             tbody.children().remove();
+            $('div.box-footer').remove();
         }
     );
     // ==================================
@@ -61,7 +51,7 @@ $(function() {
     // ==================================
     $('#searchProductModalButton').on('click', function() {
         var existProductId = "";
-        $(":input[id^=admin_coupon_CouponDetails_][id$=_Product]").each(
+        $(":input[id^=admin_plugin_coupon_CouponDetails_][id$=_Product]").each(
             function(index, elem) {
                 if(existProductId == "") {
                     existProductId = elem.value;
@@ -80,7 +70,7 @@ $(function() {
                 'category_id' : $('#admin_search_product_category_id').val(),
                 'exist_product_id' : existProductId
             },
-            url: '{{ url('admin_coupon_search_product') }}',
+            url: '{{ url('plugin_coupon_search_product') }}',
             success: function(data) {
                 // モーダルに結果を書き出し.
                 $('#searchProductModalList').html(data);
@@ -97,7 +87,7 @@ $(function() {
     // ==================================
     $('#searchCategoryModalButton').on('click', function() {
         var existCategoryId = "";
-        $(":input[id^=admin_coupon_CouponDetails_][id$=_Category]").each(
+        $(":input[id^=admin_plugin_coupon_CouponDetails_][id$=_Category]").each(
             function(index, elem) {
                 if(existCategoryId == "") {
                     existCategoryId = elem.value;
@@ -113,10 +103,10 @@ $(function() {
             type: 'POST',
             dataType: 'html',
             data: {
-                'category_id' : $('#admin_coupon_search_category_category_id').val(),
+                'category_id' : $('#admin_plugin_coupon_search_category_category_id').val(),
                 'exist_category_id' : existCategoryId
             },
-            url: '{{ url('admin_coupon_search_category') }}',
+            url: '{{ url('plugin_coupon_search_category') }}',
             success: function(data) {
                 // モーダルに結果を書き出し.
                 $('#searchCategoryModalList').html(data);
@@ -153,21 +143,36 @@ $(function() {
         $(this).parents(".item_box").remove();
         coupon_details_count--;
     });
+
+    //set radio button default.
+    if ($('input[name~="admin_plugin_coupon[coupon_type]"]:checked').length == 0) {
+        $('#admin_plugin_coupon_coupon_type_0').attr('checked', 'checked');
+    }
+
+    if ($('input[name~="admin_plugin_coupon[coupon_member]"]:checked').length == 0) {
+        $('#admin_plugin_coupon_coupon_member_1').attr('checked', 'checked');
+    }
+
+    if ($('input[name~="admin_plugin_coupon[discount_type]"]:checked').length == 0) {
+        $('#admin_plugin_coupon_discount_type_0').attr('checked', 'checked');
+    }
+
+
     // ==================================
     // クリック時の処理
     // ==================================
     // 値引き額
-    $("#admin_coupon_discount_type_0").on("click", function(){
-        $("#admin_coupon_discount_price").removeAttr('disabled');
-        $("#admin_coupon_discount_rate").attr('disabled', 'disabled');
+    $("#admin_plugin_coupon_discount_type_0").on("click", function(){
+        $("#admin_plugin_coupon_discount_price").removeAttr('disabled');
+        $("#admin_plugin_coupon_discount_rate").attr('disabled', 'disabled');
     });
     // 値引率
-    $("#admin_coupon_discount_type_1").on("click", function(){
-        $("#admin_coupon_discount_price").attr('disabled', 'disabled');
-        $("#admin_coupon_discount_rate").removeAttr('disabled');
+    $("#admin_plugin_coupon_discount_type_1").on("click", function(){
+        $("#admin_plugin_coupon_discount_price").attr('disabled', 'disabled');
+        $("#admin_plugin_coupon_discount_rate").removeAttr('disabled');
     });
     // クーポン種別 - 商品
-    $("#admin_coupon_coupon_type_0").on("click", function(){
+    $("#admin_plugin_coupon_coupon_type_0").on("click", function(){
         if($("#category_area").find(".item_box").length > 0) {
             if(confirm("登録済みのカテゴリがあります。削除してよろしいですか。")) {
                 $("#category_area").find(".item_box").remove();
@@ -179,7 +184,7 @@ $(function() {
         $("#category_area").hide();
     });
     // クーポン種別 - カテゴリ
-    $("#admin_coupon_coupon_type_1").on("click", function(){
+    $("#admin_plugin_coupon_coupon_type_1").on("click", function(){
         if($("#product_area").find(".item_box").length > 0) {
             if(confirm("登録済みの商品があります。削除してよろしいですか。")) {
                 $("#product_area").find(".item_box").remove();
@@ -191,29 +196,42 @@ $(function() {
         $("#category_area").show();
     });
 
+    $("#admin_plugin_coupon_coupon_type_2").on("click", function(){
+        if($("#product_area").find(".item_box").length > 0 || $("#category_area").find(".item_box").length) {
+            if(confirm("登録済みの商品・カテゴリがあります。削除してよろしいですか。")) {
+                $("#product_area").find(".item_box").remove();
+                $("#category_area").find(".item_box").remove();
+            } else {
+                return false;
+            }
+        }
+        $("#product_area").hide();
+        $("#category_area").hide();
+    });
+
     // ==========================
     // 初期処理
     // ==========================
     // 値引き額
-    if($("#admin_coupon_discount_type_0").prop('checked')) {
-        $("#admin_coupon_discount_price").removeAttr('disabled');
+    if($("#admin_plugin_coupon_discount_type_0").prop('checked')) {
+        $("#admin_plugin_coupon_discount_price").removeAttr('disabled');
     } else {
-        $("#admin_coupon_discount_price").attr('disabled', 'disabled');
+        $("#admin_plugin_coupon_discount_price").attr('disabled', 'disabled');
     }
     // 値引率
-    if($("#admin_coupon_discount_type_1").prop('checked')) {
-        $("#admin_coupon_discount_rate").removeAttr('disabled');
+    if($("#admin_plugin_coupon_discount_type_1").prop('checked')) {
+        $("#admin_plugin_coupon_discount_rate").removeAttr('disabled');
     } else {
-        $("#admin_coupon_discount_rate").attr('disabled', 'disabled');
+        $("#admin_plugin_coupon_discount_rate").attr('disabled', 'disabled');
     }
     // クーポン種別 - 商品
-    if($("#admin_coupon_coupon_type_0").prop('checked')) {
+    if($("#admin_plugin_coupon_coupon_type_0").prop('checked')) {
         $("#product_area").show();
     } else {
         $("#product_area").hide();
     }
     // クーポン種別 - カテゴリ
-    if($("#admin_coupon_coupon_type_1").prop('checked')) {
+    if($("#admin_plugin_coupon_coupon_type_1").prop('checked')) {
         $("#category_area").show();
     } else {
         $("#category_area").hide();
@@ -229,8 +247,6 @@ $(function() {
             showTodayButton: true
         });
     }
-
-
 });
 </script>
 {% endblock javascript %}
@@ -240,12 +256,12 @@ $(function() {
     <form role="form" name="form1" id="form1" method="post" action="">
     <input type="hidden" name="mode" value="">
     {{ form_widget(form._token) }}
-        <div class="col-md-9">
-            <div class="box accordion">
-                <div class="box-header toggle active">
-                    <h3 class="box-title">クーポン情報<svg class="cb cb-angle-down icon_down"> <use xlink:href="#cb-angle-down" /></svg></h3>
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">クーポン情報</h3>
                 </div><!-- /.box-header -->
-                <div class="box-body accpanel" style="display: block;">
+                <div class="box-body" style="display: block;">
                     <div class="order_list form-horizontal">
                         {# クーポンコード #}
                         <div class="form-group">
@@ -268,8 +284,15 @@ $(function() {
                             {{ form_label(form.coupon_type) }}
                             <div class="col-sm-9 col-lg-10">
                                 {{ form_widget(form.coupon_type) }}
-                                <span class="small text-danger">対象商品が含まれている場合、クーポン利用可能になります。</span>
                                 {{ form_errors(form.coupon_type) }}
+                            </div>
+                        </div>
+                        {# 会員のみクーポン #}
+                        <div class="form-group">
+                            {{ form_label(form.coupon_member) }}
+                            <div class="col-sm-9 col-lg-10">
+                                {{ form_widget(form.coupon_member) }}
+                                {{ form_errors(form.coupon_member) }}
                             </div>
                         </div>
                         {# 値引き種別 #}
@@ -277,7 +300,6 @@ $(function() {
                             {{ form_label(form.discount_type) }}
                             <div class="col-sm-9 col-lg-10">
                                 {{ form_widget(form.discount_type) }}
-                                <span class="small text-danger">合計金額から値引きされます。</span>
                                 {{ form_errors(form.discount_type) }}
                             </div>
                         </div>
@@ -287,6 +309,7 @@ $(function() {
                             <div class="col-sm-9 col-lg-10">
                                 {{ form_widget(form.discount_price) }}
                                 {{ form_errors(form.discount_price) }}
+                                <span id="discount_type_price_description" class="small">合計金額から設定金額を値引きします。</span>
                             </div>
                         </div>
                         {# 値引き率 #}
@@ -295,25 +318,35 @@ $(function() {
                             <div class="col-sm-9 col-lg-10">
                                 {{ form_widget(form.discount_rate) }}
                                 {{ form_errors(form.discount_rate) }}
+                                <span id="discount_type_rate_description" class="small">対象商品の合計金額から設定した率を値引きします。</span>
                             </div>
                         </div>
                         {# 使用回数 #}
                         <div class="form-group">
-                            {{ form_label(form.coupon_use_time) }}
+                            {{ form_label(form.coupon_release) }}
                             <div class="col-sm-9 col-lg-10">
-                                {{ form_widget(form.coupon_use_time) }}
-                                {{ form_errors(form.coupon_use_time) }}
+                                {{ form_widget(form.coupon_release) }}
+                                {{ form_errors(form.coupon_release) }}
+                            </div>
+                            {{ form_widget(form.coupon_use_time) }}
+                            <input type="hidden" name="coupon_release_old" value="{{ form.vars.value.coupon_release }}">
+                        </div>
+                        {# 下限金額 #}
+                        <div class="form-group">
+                            {{ form_label(form.coupon_lower_limit) }}
+                            <div class="col-sm-9 col-lg-10">
+                                {{ form_widget(form.coupon_lower_limit) }}
+                                {{ form_errors(form.coupon_lower_limit) }}
+                                <span id="discount_type_rate_description" class="small">対象商品の合計金額が、下限金額以上の場合にクーポンを利用できます。</span>
                             </div>
                         </div>
                         {# 有効期間 #}
                         <div class="form-group">
                             {{ form_label(form.available_from_date) }}
-                            <div class="col-sm-9 col-lg-10">
-                                <div class="form-group range">
-                                    {{ form_widget(form.available_from_date) }}～{{ form_widget(form.available_to_date) }}
-                                    {{ form_errors(form.available_from_date) }}
-                                    {{ form_errors(form.available_to_date) }}
-                                </div>
+                            <div class="col-sm-9 col-lg-10  form-inline">
+                                {{ form_widget(form.available_from_date) }} ～ {{ form_widget(form.available_to_date) }}
+                                {{ form_errors(form.available_from_date) }}
+                                {{ form_errors(form.available_to_date) }}
                             </div>
                         </div>
                     </div>
@@ -325,10 +358,10 @@ $(function() {
             // ===================================
 #}
             <div class="box accordion" id="product_area">
-                <div class="box-header toggle">
+                <div class="box-header toggle active">
                     <h3 class="box-title">商品情報<svg class="cb cb-angle-down icon_down"> <use xlink:href="#cb-angle-down" /></svg></h3>
                 </div><!-- /.box-header -->
-                <div class="box-body accpanel">
+                <div class="box-body accpanel" style="display: block;">
                     <div class="order_list">
                         <div class="btn_area">
                             <ul>
@@ -340,14 +373,16 @@ $(function() {
                              data-prototype="
                                 {% filter escape %}
                                     <div class="item_box">
-                                        <div id="admin_coupon_CouponDetails___name__"><input type="hidden" id="admin_coupon_CouponDetails___name___Product" name="admin_coupon[CouponDetails][__name__][Product]" class="form-control" /></div>
-                                        <input type="hidden" id="admin_coupon_CouponDetails___name___id" name="admin_coupon[CouponDetails][__name__][id]" class="form-control" value="" />
-                                        <input type="hidden" id="admin_coupon_CouponDetails___name___coupon_type" name="admin_coupon[CouponDetails][__name__][coupon_type]">
+                                        <div id="admin_plugin_coupon_CouponDetails___name__" style="display: none">
+                                            <input type="hidden" id="admin_plugin_coupon_CouponDetails___name___Product" name="admin_plugin_coupon[CouponDetails][__name__][Product]" class="form-control" />
+                                        </div>
+                                        <input type="hidden" id="admin_plugin_coupon_CouponDetails___name___id" name="admin_plugin_coupon[CouponDetails][__name__][id]" class="form-control" value="" />
+                                        <input type="hidden" id="admin_plugin_coupon_CouponDetails___name___coupon_type" name="admin_plugin_coupon[CouponDetails][__name__][coupon_type]">
 
                                         <div class="item_detail">
                                             <div class="item_name_area">
                                                 <strong class="item_name">
-                                                    <div id="admin_coupon_CouponDetails___name___product_name"></div>
+                                                    <div id="admin_plugin_coupon_CouponDetails___name___product_name"></div>
                                                 </strong><br>
                                             </div>
                                         </div>
@@ -360,23 +395,25 @@ $(function() {
                             {% set i = 0 %}
                             {% for couponDetailForm in form.CouponDetails %}
                                 {% if couponDetailForm.vars.value.Product is not null %}
-                                    <div class="item_box">
-                                        {{ form_widget(couponDetailForm.id) }}
-                                        {{ form_widget(couponDetailForm.Product) }}
-                                        <div class="item_detail">
-                                            <div class="item_name_area">
-                                                <strong class="item_name">
-                                                    <div id="admin_coupon_CouponDetails_{{ i }}_product_name">
-                                                        {{ couponDetailForm.vars.value.Product.name }}
-                                                    </div>
-                                                </strong><br>
+                                    {% if couponDetailForm.vars.value.product_name is not null %}
+                                        <div class="item_box">
+                                            {{ form_widget(couponDetailForm.id) }}
+                                            {{ form_widget(couponDetailForm.Product) }}
+                                            <div class="item_detail">
+                                                <div class="item_name_area">
+                                                    <strong class="item_name">
+                                                        <div id="admin_plugin_coupon_CouponDetails_{{ i }}_product_name">
+                                                            {{ couponDetailForm.vars.value.product_name }}
+                                                        </div>
+                                                    </strong><br>
+                                                </div>
                                             </div>
-                                        </div>
 
-                                        <div class="icon_edit">
-                                            <button class="btn btn-default btn-sm delete-item">削除</button>
-                                        </div>
-                                    </div><!-- /.item_box -->
+                                            <div class="icon_edit">
+                                                <button class="btn btn-default btn-sm delete-item">削除</button>
+                                            </div>
+                                        </div><!-- /.item_box -->
+                                    {% endif %}
                                 {% endif %}
                                 {% set i = i + 1 %}
                             {% endfor %}
@@ -392,10 +429,10 @@ $(function() {
             // ===================================
 #}
             <div class="box accordion" id="category_area">
-                <div class="box-header toggle">
+                <div class="box-header toggle active">
                     <h3 class="box-title">カテゴリ情報<svg class="cb cb-angle-down icon_down"> <use xlink:href="#cb-angle-down" /></svg></h3>
                 </div><!-- /.box-header -->
-                <div class="box-body accpanel">
+                <div class="box-body accpanel" style="display: block;">
                     <div class="order_list">
                         <div class="btn_area">
                             <ul>
@@ -407,13 +444,13 @@ $(function() {
                              data-prototype="
                                 {% filter escape %}
                                 <div class="item_box">
-                                    <input type="hidden" id="admin_coupon_CouponDetails___name___id" name="admin_coupon[CouponDetails][__name__][id]">
-                                    <input type="hidden" id="admin_coupon_CouponDetails___name___Category" name="admin_coupon[CouponDetails][__name__][Category]">
-                                    <input type="hidden" id="admin_coupon_CouponDetails___name___coupon_type" name="admin_coupon[CouponDetails][__name__][coupon_type]">
+                                    <input type="hidden" id="admin_plugin_coupon_CouponDetails___name___id" name="admin_plugin_coupon[CouponDetails][__name__][id]">
+                                    <input type="hidden" id="admin_plugin_coupon_CouponDetails___name___Category" name="admin_plugin_coupon[CouponDetails][__name__][Category]">
+                                    <input type="hidden" id="admin_plugin_coupon_CouponDetails___name___coupon_type" name="admin_plugin_coupon[CouponDetails][__name__][coupon_type]">
                                     <div class="item_detail">
                                         <div class="item_name_area">
                                             <strong class="item_name">
-                                                <div id="admin_coupon_CouponDetails___name___category_name">
+                                                <div id="admin_plugin_coupon_CouponDetails___name___category_name">
                                                 </div>
                                             </strong><br>
                                         </div>
@@ -429,23 +466,25 @@ $(function() {
                             {% set i = 0 %}
                             {% for couponDetailForm in form.CouponDetails %}
                                 {% if couponDetailForm.vars.value.Category is not null %}
-                                    <div class="item_box">
-                                        {{ form_widget(couponDetailForm.id) }}
-                                        {{ form_widget(couponDetailForm.Category) }}
-                                        <div class="item_detail">
-                                            <div class="item_name_area">
-                                                <strong class="item_name">
-                                                    <div id="admin_coupon_CouponDetails_{{ i }}_category_name">
-                                                        {{ couponDetailForm.vars.value.category_full_name }}
-                                                    </div>
-                                                </strong><br>
+                                    {% if couponDetailForm.vars.value.category_full_name is not null %}
+                                        <div class="item_box">
+                                            {{ form_widget(couponDetailForm.id) }}
+                                            {{ form_widget(couponDetailForm.Category) }}
+                                            <div class="item_detail">
+                                                <div class="item_name_area">
+                                                    <strong class="item_name">
+                                                        <div id="admin_plugin_coupon_CouponDetails_{{ i }}_category_name">
+                                                            {{ couponDetailForm.vars.value.category_full_name }}
+                                                        </div>
+                                                    </strong><br>
+                                                </div>
                                             </div>
-                                        </div>
 
-                                        <div class="icon_edit">
-                                            <button class="btn btn-default btn-sm delete-item">削除</button>
-                                        </div>
-                                    </div><!-- /.item_box -->
+                                            <div class="icon_edit">
+                                                <button class="btn btn-default btn-sm delete-item">削除</button>
+                                            </div>
+                                        </div><!-- /.item_box -->
+                                    {% endif %}
                                 {% endif %}
                                 {% set i = i + 1 %}
                             {% endfor %}
@@ -460,10 +499,10 @@ $(function() {
             // 操作部
             // ===================================
 #}
-            <div class="row hidden-xs hidden-sm">
-                <div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3 text-center btn_area">
+            <div class="row btn_area">
+                <div class="col-xs-8 col-xs-offset-2 col-sm-4 col-sm-offset-4 text-center">
                     <button type="submit" class="btn btn-primary btn-block btn-lg">登録</button>
-                     <p><a href="{{ url('admin_coupon_list') }}">戻る</a></p>
+                    <p><a href="{{ url('plugin_coupon_list') }}">戻る</a></p>
                 </div>
             </div>
 
@@ -483,7 +522,7 @@ $(function() {
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><svg class="cb cb-close" aria-hidden="true"><use xlink:href="#cb-close"></svg></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><svg class="cb cb-close" aria-hidden="true"><use xlink:href="#cb-close"></use></svg></button>
                 <h4 class="modal-title" id="myModalLabel">商品検索</h4>
             </div>
             <div class="modal-body">
@@ -511,12 +550,12 @@ $(function() {
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><svg class="cb cb-close" aria-hidden="true"><use xlink:href="#cb-close"></svg></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><svg class="cb cb-close" aria-hidden="true"><use xlink:href="#cb-close"></use></svg></button>
                 <h4 class="modal-title" id="myModalLabel">カテゴリ検索</h4>
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    {{ form_widget(searchCategoryModalForm.category_id) }}
+                    {{ form_widget(searchCategoryModalForm.category_id, {'attr': {'class': 'form-control'}}) }}
                 </div>
                 <div class="form-group">
                     <button type="button" id="searchCategoryModalButton" class="btn btn-primary" >検索</button>

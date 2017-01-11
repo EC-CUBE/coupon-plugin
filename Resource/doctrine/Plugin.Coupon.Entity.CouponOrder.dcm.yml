@@ -1,7 +1,7 @@
-Plugin\Coupon\Entity\CouponCouponOrder:
+Plugin\Coupon\Entity\CouponOrder:
     type: entity
     table: plg_coupon_order
-    repositoryClass: Plugin\Coupon\Repository\CouponCouponOrderRepository
+    repositoryClass: Plugin\Coupon\Repository\CouponOrderRepository
     id:
         id:
             type: integer
@@ -13,16 +13,19 @@ Plugin\Coupon\Entity\CouponCouponOrder:
     fields:
         coupon_id:
             type: integer
-            nullable: false
+            nullable: true
         coupon_cd:
             type: text
-            nullable: false
+            nullable: true
+        coupon_name:
+            type: text
+            nullable: true
         user_id:
             type: integer
             nullable: true
         email:
             type: text
-            nullable: false
+            nullable: true
         order_id:
             type: integer
             nullable: false
@@ -31,7 +34,7 @@ Plugin\Coupon\Entity\CouponCouponOrder:
             nullable: false
         order_date:
             type: datetime
-            nullable: false
+            nullable: true
         discount:
             type: decimal
             nullable: false
@@ -40,6 +43,11 @@ Plugin\Coupon\Entity\CouponCouponOrder:
             options:
                 default: 0
         del_flg:
+            type: smallint
+            options:
+                unsigned: true
+                default: 0
+        order_change_status:
             type: smallint
             options:
                 unsigned: true

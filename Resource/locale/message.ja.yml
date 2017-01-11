@@ -1,5 +1,8 @@
-admin.coupon.notfound: クーポンが存在しません。
-admin.coupon.coupon_id.notexists: クーポンIDがありません。
+admin.plugin.coupon.notfound: クーポンが存在しません。
+admin.plugin.coupon.coupon_id.notexists: クーポンIDがありません。
+admin.plugin.coupon.duplicate: 既に利用されているクーポンコードです。
+admin.plugin.coupon.avaiabledate: 有効期間に誤りがあります。
+admin.plugin.coupon.coupontype: クーポン有効対象となる商品情報またはカテゴリ情報を設定してください。
 
 admin.plugin.coupon.regist.success: クーポンを登録しました。
 admin.plugin.coupon.delete.success: クーポンを削除しました。
@@ -10,4 +13,7 @@ front.plugin.coupon.shopping.notexists: クーポン対象商品はございま�
 front.plugin.coupon.shopping.sameuser: このクーポンは既にご利用いただいています。
 front.plugin.coupon.shopping.couponusetime: このクーポンはご利用いただくことができません。
 front.plugin.coupon.shopping.minus: 合計金額を超えるため、このクーポンをご利用いただくことはできません。
-front.plugin.coupon.shopping.use.minus: クーポン利用時の合計金額がマイナスになったため、クーポンの利用をキャンセルしました。
+front.plugin.coupon.shopping.use.minus: クーポン適用後の合計金額がマイナスになったため、クーポンの利用をキャンセルしました。
+front.plugin.coupon.shopping.member: このクーポンは会員のみ利用できるクーポンです。
+front.plugin.coupon.shopping.lowerlimit: このクーポンを利用するためには、対象商品をlowerLimit円以上購入してください。
+front.plugin.coupon.shopping.notfound: このクーポンコードは利用できません。
