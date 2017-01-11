@@ -47,9 +47,9 @@ class Event
     /**
      * クーポンが利用されていないかチェック.
      */
-    public function onShoppingConfirmInit()
+    public function onShoppingConfirmInit(EventArgs $event)
     {
-        $this->app['eccube.plugin.coupon.event']->onShoppingConfirmInit();
+        $this->app['eccube.plugin.coupon.event']->onShoppingConfirmInit($event);
     }
 
     /**
