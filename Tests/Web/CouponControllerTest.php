@@ -10,7 +10,7 @@
 
 namespace Plugin\Coupon\Tests\Web;
 
-use DoctrineProxy\__CG__\Eccube\Entity\Customer;
+use Eccube\Entity\Customer;
 use Eccube\Common\Constant;
 use Eccube\Tests\Web\AbstractWebTestCase;
 use Plugin\Coupon\Entity\Coupon;
@@ -33,6 +33,7 @@ class CouponControllerTest extends AbstractWebTestCase
     public function setUp()
     {
         parent::setUp();
+        $this->initializeMailCatcher();
         $this->Customer = $this->createCustomer();
     }
 
@@ -41,6 +42,7 @@ class CouponControllerTest extends AbstractWebTestCase
      */
     public function tearDown()
     {
+        $this->cleanUpMailCatcherMessages();
         parent::tearDown();
     }
 
@@ -77,14 +79,10 @@ class CouponControllerTest extends AbstractWebTestCase
     public function testShoppingCouponPostError()
     {
         $this->routingShopping();
-
         $crawler = $this->client->request('GET', $this->app->url('plugin_coupon_shopping'));
-
         $form = $this->getForm($crawler, 'aaaa');
-
         /** @var \Symfony\Component\DomCrawler\Crawler $crawler */
         $crawler = $this->client->submit($form);
-
         // 存在しないクーポンコードで検索したためエラーになるためリダイレクトはされない
         $this->assertFalse($this->client->getResponse()->isRedirection());
     }
@@ -100,13 +98,71 @@ class CouponControllerTest extends AbstractWebTestCase
         $form = $this->getForm($crawler, $Coupon->getCouponCd());
 
         /** @var \Symfony\Component\DomCrawler\Crawler $crawler */
-        $crawler = $this->client->submit($form);
+        $this->client->submit($form);
         $this->assertTrue($this->client->getResponse()->isRedirection());
 
         $crawler = $this->client->request('GET', $this->app->url('shopping'));
         $this->expected = '利用しています。';
         $this->actual = $crawler->filter('strong.text-danger')->text();
         $this->assertContains($this->expected, $this->actual);
+
+        $this->client->request('GET', $this->app->url('shopping'));
+        $this->scenarioComplete($this->client, $this->app->path('shopping_confirm'));
+        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('shopping_complete')));
+    }
+
+    /**
+     * testRenderMypage.
+     */
+    public function testRenderMypage()
+    {
+        $this->routingShopping();
+        $crawler = $this->client->request('GET', $this->app->url('plugin_coupon_shopping'));
+        $Coupon = $this->getCoupon();
+        $form = $this->getForm($crawler, $Coupon->getCouponCd());
+
+        /** @var \Symfony\Component\DomCrawler\Crawler $crawler */
+        $this->client->submit($form);
+        $this->assertTrue($this->client->getResponse()->isRedirection());
+
+        $crawler = $this->client->request('GET', $this->app->url('shopping'));
+        $this->expected = '利用しています。';
+        $this->actual = $crawler->filter('strong.text-danger')->text();
+        $this->assertContains($this->expected, $this->actual);
+
+        $this->client->request('GET', $this->app->url('shopping'));
+        $this->scenarioComplete($this->client, $this->app->path('shopping_confirm'));
+        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('shopping_complete')));
+
+        $repository = $this->app['coupon.repository.coupon_order'];
+        // クーポン受注情報を取得する
+        $CouponOrder = $repository->findOneBy(array(
+            'coupon_id' => $Coupon->getId(),
+        ));
+
+        $Order =  $this->app['eccube.repository.order']->find($CouponOrder->getOrderId());
+        $crawler = $this->client->request('GET', $this->app->url('mypage_history', array('id' => $Order->getId())));
+        $this->assertContains('ご利用クーポンコード', $crawler->html());
+    }
+
+    /**
+     * testCouponLowerLimit.
+     */
+    public function testCouponLowerLimit()
+    {
+        $em = $this->app['orm.em'];
+        $this->routingShopping();
+        $crawler = $this->client->request('GET', $this->app->url('plugin_coupon_shopping'));
+        $Coupon = $this->getCoupon();
+        $Coupon->setCouponLowerLimit(600000);
+        // クーポン情報を登録する
+        $em->persist($Coupon);
+        $em->flush($Coupon);
+        $form = $this->getForm($crawler, $Coupon->getCouponCd());
+
+        /** @var \Symfony\Component\DomCrawler\Crawler $crawler */
+        $this->client->submit($form);
+        $this->assertFalse($this->client->getResponse()->isRedirection());
     }
 
     /**
@@ -220,29 +276,67 @@ class CouponControllerTest extends AbstractWebTestCase
         $this->getTestData($couponType, $discountType);
         /** @var Coupon $Coupon */
         $Coupon = $this->app['coupon.repository.coupon']->findOneBy(array('coupon_cd' => 'aaaaaaaa'));
-
         $Product = $this->app['eccube.repository.product']->find(1);
-
         $CouponDetail = new CouponDetail();
-
         $CouponDetail->setCoupon($Coupon);
         $CouponDetail->setCouponType($Coupon->getCouponType());
         $CouponDetail->setUpdateDate($Coupon->getUpdateDate());
         $CouponDetail->setCreateDate($Coupon->getCreateDate());
         $CouponDetail->setDelFlg(Constant::ENABLED);
-
         $Categories = $Product->getProductCategories();
-
         /** @var \Eccube\Entity\ProductCategory $Category */
         $ProductCategory = $Categories[0];
-
         $CouponDetail->setCategory($ProductCategory->getCategory());
-
         $CouponDetail->setProduct($Product);
-
         $Coupon->addCouponDetail($CouponDetail);
 
         return $Coupon;
+    }
+
+    /**
+     * scenarioConfirm
+     * @param  object $client
+     * @return Crawler mixed
+     */
+    private function scenarioConfirm($client)
+    {
+        $crawler = $client->request('GET', $this->app->path('shopping'));
+
+        return $crawler;
+    }
+
+    /**
+     * scenarioComplete
+     * @param object $client
+     * @param string $confirmUrl
+     * @param array $shippings
+     * @return Crawler $crawler
+     */
+    private function scenarioComplete($client, $confirmUrl, array $shippings = array())
+    {
+        $faker = $this->getFaker();
+        if (count($shippings) < 1) {
+            $shippings = array(
+                array(
+                    'delivery' => 1,
+                    'deliveryTime' => 1,
+                ),
+            );
+        }
+
+        $crawler = $client->request(
+            'POST',
+            $confirmUrl,
+            array('shopping' => array(
+                    'shippings' => $shippings,
+                    'payment' => 1,
+                    'message' => $faker->text(),
+                    '_token' => 'dummy',
+                ),
+            )
+        );
+
+        return $crawler;
     }
 
     /**
@@ -263,7 +357,7 @@ class CouponControllerTest extends AbstractWebTestCase
         $Coupon->setCouponCd('aaaaaaaa');
         $Coupon->setCouponType($couponType);
         $Coupon->setCouponName('クーポン');
-        $Coupon->setDiscountType(1);
+        $Coupon->setDiscountType($discountType);
         $Coupon->setCouponRelease(100);
         $Coupon->setCouponUseTime(100);
         $Coupon->setDiscountPrice(100);

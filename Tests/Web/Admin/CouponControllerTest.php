@@ -15,6 +15,7 @@ use Eccube\Common\Constant;
 use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;
 use Plugin\Coupon\Entity\Coupon;
 use Plugin\Coupon\Entity\CouponDetail;
+use Symfony\Component\DomCrawler\Crawler;
 
 /**
  * Class CouponControllerTest.
@@ -70,8 +71,13 @@ class CouponControllerTest extends AbstractAdminWebTestCase
      */
     public function testEditNew()
     {
-        $this->client->request('GET', $this->app->url('plugin_coupon_new'));
+        $crawler = $this->client->request('GET', $this->app->url('plugin_coupon_new'));
         $this->assertTrue($this->client->getResponse()->isSuccessful());
+        $form = $this->getForm($crawler);
+
+        /** @var \Symfony\Component\DomCrawler\Crawler $crawler */
+        $this->client->submit($form);
+        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('plugin_coupon_list')));
     }
 
     /**
@@ -80,8 +86,64 @@ class CouponControllerTest extends AbstractAdminWebTestCase
     public function testEdit()
     {
         $Coupon = $this->getCoupon();
-        $this->client->request('GET', $this->app->url('plugin_coupon_edit', array('idaa' => $Coupon->getId())));
+        $crawler = $this->client->request('GET', $this->app->url('plugin_coupon_edit', array('idaa' => $Coupon->getId())));
         $this->assertTrue($this->client->getResponse()->isSuccessful());
+        $form = $this->getForm($crawler);
+        $this->client->submit($form);
+        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('plugin_coupon_list')));
+    }
+
+    /**
+     * testEnable.
+     */
+    public function testEnable()
+    {
+        $Coupon = $this->getTestData();
+        $this->client->request('GET', $this->app->url('plugin_coupon_enable', array('id' => $Coupon->getId())));
+        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('plugin_coupon_list')));
+    }
+
+    /**
+     * testEnable.
+     */
+    public function testDelete()
+    {
+        $Coupon = $this->getTestData();
+        $this->client->request('DELETE', $this->app->url('plugin_coupon_delete', array('id' => $Coupon->getId())));
+        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('plugin_coupon_list')));
+    }
+
+    /**
+     * search with none condition.
+     */
+    public function testAjaxSearchProductEmpty()
+    {
+        $crawler = $this->client->request(
+            'POST',
+            $this->app->url('plugin_coupon_search_product', array('id' => '', 'category_id' => '', '_token' => 'dummy')),
+            array(),
+            array(),
+            array('HTTP_X-Requested-With' => 'XMLHttpRequest')
+        );
+        $productList = $crawler->html();
+        $this->assertContains('ディナーフォーク', $productList);
+        $this->assertContains('パーコレーター', $productList);
+    }
+
+    /**
+     * search with none condition.
+     */
+    public function testAjaxSearchCategoryEmpty()
+    {
+        $crawler = $this->client->request(
+            'POST',
+            $this->app->url('plugin_coupon_search_category', array('category_id' => '', '_token' => 'dummy')),
+            array(),
+            array(),
+            array('HTTP_X-Requested-With' => 'XMLHttpRequest')
+        );
+        $categoryList = $crawler->html();
+        $this->assertContains('新入荷', $categoryList);
     }
 
     /**
@@ -113,6 +175,51 @@ class CouponControllerTest extends AbstractAdminWebTestCase
         $Coupon->addCouponDetail($CouponDetail);
 
         return $Coupon;
+    }
+
+    /**
+     * get coupon form.
+     *
+     * @param Crawler $crawler
+     * @param string  $couponCd
+     *
+     * @return \Symfony\Component\DomCrawler\Form
+     */
+    private function getFormCoupon(Crawler $crawler, $couponCd = '')
+    {
+        $form = $crawler->selectButton('登録する')->form();
+        $form['front_plugin_coupon_shopping[_token]'] = 'dummy';
+        $form['front_plugin_coupon_shopping[coupon_cd]'] = $couponCd;
+        $form['front_plugin_coupon_shopping[coupon_use]'] = 1;
+
+        return $form;
+    }
+
+    /**
+     * get coupon form.
+     *
+     * @param Crawler $crawler
+     * @param string  $couponCd
+     *
+     * @return \Symfony\Component\DomCrawler\Form
+     */
+    private function getForm(Crawler $crawler)
+    {
+        $current = new \DateTime();
+        $form = $crawler->selectButton('登録')->form();
+        $form['admin_plugin_coupon[_token]'] = 'dummy';
+        $form['admin_plugin_coupon[coupon_cd]'] = 'aaaaaaa';
+        $form['admin_plugin_coupon[coupon_name]'] = 'aaaaaa';
+        $form['admin_plugin_coupon[coupon_type]'] = 3;
+        $form['admin_plugin_coupon[coupon_member]'] = 1;
+        $form['admin_plugin_coupon[discount_type]'] = 1;
+        $form['admin_plugin_coupon[discount_price]'] = 100;
+        $form['admin_plugin_coupon[coupon_lower_limit]'] = 100;
+        $form['admin_plugin_coupon[available_from_date]'] = $current->modify('-15 days')->format('Y-m-d');
+        $form['admin_plugin_coupon[available_to_date]'] = $current->modify('+15 days')->format('Y-m-d');
+        $form['admin_plugin_coupon[coupon_release]'] = 100;
+
+        return $form;
     }
 
     /**
