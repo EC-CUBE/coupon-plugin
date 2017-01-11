@@ -220,26 +220,18 @@ class CouponControllerTest extends AbstractWebTestCase
         $this->getTestData($couponType, $discountType);
         /** @var Coupon $Coupon */
         $Coupon = $this->app['coupon.repository.coupon']->findOneBy(array('coupon_cd' => 'aaaaaaaa'));
-
         $Product = $this->app['eccube.repository.product']->find(1);
-
         $CouponDetail = new CouponDetail();
-
         $CouponDetail->setCoupon($Coupon);
         $CouponDetail->setCouponType($Coupon->getCouponType());
         $CouponDetail->setUpdateDate($Coupon->getUpdateDate());
         $CouponDetail->setCreateDate($Coupon->getCreateDate());
         $CouponDetail->setDelFlg(Constant::ENABLED);
-
         $Categories = $Product->getProductCategories();
-
         /** @var \Eccube\Entity\ProductCategory $Category */
         $ProductCategory = $Categories[0];
-
         $CouponDetail->setCategory($ProductCategory->getCategory());
-
         $CouponDetail->setProduct($Product);
-
         $Coupon->addCouponDetail($CouponDetail);
 
         return $Coupon;
@@ -247,7 +239,7 @@ class CouponControllerTest extends AbstractWebTestCase
 
     /**
      * scenarioConfirm
-     * @param  Symfony\Component\Http\Client $client
+     * @param  $client
      * @return Crawler mixed
      */
     private function scenarioConfirm($client)
@@ -259,7 +251,7 @@ class CouponControllerTest extends AbstractWebTestCase
 
     /**
      * scenarioComplete
-     * @param Symfony\Component\Http\Client $client
+     * @param $client
      * @param string $confirmUrl
      * @param array $shippings
      * @return Crawler $crawler
@@ -271,7 +263,7 @@ class CouponControllerTest extends AbstractWebTestCase
             $shippings = array(
                 array(
                     'delivery' => 1,
-                    'deliveryTime' => 1
+                    'deliveryTime' => 1,
                 ),
             );
         }
@@ -279,13 +271,12 @@ class CouponControllerTest extends AbstractWebTestCase
         $crawler = $client->request(
             'POST',
             $confirmUrl,
-            array('shopping' =>
-                array(
+            array('shopping' => array(
                     'shippings' => $shippings,
                     'payment' => 1,
                     'message' => $faker->text(),
-                    '_token' => 'dummy'
-                )
+                    '_token' => 'dummy',
+                ),
             )
         );
 
