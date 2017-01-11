@@ -10,7 +10,7 @@
 
 namespace Plugin\Coupon\Tests\Web;
 
-use DoctrineProxy\__CG__\Eccube\Entity\Customer;
+use Eccube\Entity\Customer;
 use Eccube\Common\Constant;
 use Eccube\Tests\Web\AbstractWebTestCase;
 use Plugin\Coupon\Entity\Coupon;
@@ -100,13 +100,37 @@ class CouponControllerTest extends AbstractWebTestCase
         $form = $this->getForm($crawler, $Coupon->getCouponCd());
 
         /** @var \Symfony\Component\DomCrawler\Crawler $crawler */
-        $crawler = $this->client->submit($form);
+        $this->client->submit($form);
         $this->assertTrue($this->client->getResponse()->isRedirection());
 
         $crawler = $this->client->request('GET', $this->app->url('shopping'));
         $this->expected = '利用しています。';
         $this->actual = $crawler->filter('strong.text-danger')->text();
         $this->assertContains($this->expected, $this->actual);
+
+        $this->client->request('GET', $this->app->url('shopping'));
+        $this->scenarioComplete($this->client, $this->app->path('shopping_confirm'));
+        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('shopping_complete')));
+    }
+
+    /**
+     * testCouponLowerLimit.
+     */
+    public function testCouponLowerLimit()
+    {
+        $em = $this->app['orm.em'];
+        $this->routingShopping();
+        $crawler = $this->client->request('GET', $this->app->url('plugin_coupon_shopping'));
+        $Coupon = $this->getCoupon();
+        $Coupon->setCouponLowerLimit(600000);
+        // クーポン情報を登録する
+        $em->persist($Coupon);
+        $em->flush($Coupon);
+        $form = $this->getForm($crawler, $Coupon->getCouponCd());
+
+        /** @var \Symfony\Component\DomCrawler\Crawler $crawler */
+        $this->client->submit($form);
+        $this->assertFalse($this->client->getResponse()->isRedirection());
     }
 
     /**
@@ -239,7 +263,7 @@ class CouponControllerTest extends AbstractWebTestCase
 
     /**
      * scenarioConfirm
-     * @param  $client
+     * @param  object $client
      * @return Crawler mixed
      */
     private function scenarioConfirm($client)
@@ -251,7 +275,7 @@ class CouponControllerTest extends AbstractWebTestCase
 
     /**
      * scenarioComplete
-     * @param $client
+     * @param object $client
      * @param string $confirmUrl
      * @param array $shippings
      * @return Crawler $crawler

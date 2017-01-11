@@ -25,8 +25,10 @@
         <exclude>
             <directory suffix=".php">./vendor</directory>
             <directory suffix=".php">./Tests</directory>
+            <directory suffix=".php">./ServiceProvider</directory>
             <directory suffix=".php">./Resource</directory>
             <file>./PluginManager.php</file>
+            <file>./Event/EventLegacy.php</file>
         </exclude>
     </whitelist>
 </filter>
