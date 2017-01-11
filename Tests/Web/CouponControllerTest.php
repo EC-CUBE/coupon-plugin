@@ -33,6 +33,7 @@ class CouponControllerTest extends AbstractWebTestCase
     public function setUp()
     {
         parent::setUp();
+        $this->initializeMailCatcher();
         $this->Customer = $this->createCustomer();
     }
 
@@ -41,6 +42,7 @@ class CouponControllerTest extends AbstractWebTestCase
      */
     public function tearDown()
     {
+        $this->cleanUpMailCatcherMessages();
         parent::tearDown();
     }
 
@@ -111,6 +113,40 @@ class CouponControllerTest extends AbstractWebTestCase
         $this->client->request('GET', $this->app->url('shopping'));
         $this->scenarioComplete($this->client, $this->app->path('shopping_confirm'));
         $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('shopping_complete')));
+    }
+
+    /**
+     * testRenderMypage.
+     */
+    public function testRenderMypage()
+    {
+        $this->routingShopping();
+        $crawler = $this->client->request('GET', $this->app->url('plugin_coupon_shopping'));
+        $Coupon = $this->getCoupon();
+        $form = $this->getForm($crawler, $Coupon->getCouponCd());
+
+        /** @var \Symfony\Component\DomCrawler\Crawler $crawler */
+        $this->client->submit($form);
+        $this->assertTrue($this->client->getResponse()->isRedirection());
+
+        $crawler = $this->client->request('GET', $this->app->url('shopping'));
+        $this->expected = '利用しています。';
+        $this->actual = $crawler->filter('strong.text-danger')->text();
+        $this->assertContains($this->expected, $this->actual);
+
+        $this->client->request('GET', $this->app->url('shopping'));
+        $this->scenarioComplete($this->client, $this->app->path('shopping_confirm'));
+        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('shopping_complete')));
+
+        $repository = $this->app['coupon.repository.coupon_order'];
+        // クーポン受注情報を取得する
+        $CouponOrder = $repository->findOneBy(array(
+            'coupon_id' => $Coupon->getId(),
+        ));
+
+        $Order =  $this->app['eccube.repository.order']->find($CouponOrder->getOrderId());
+        $crawler = $this->client->request('GET', $this->app->url('mypage_history', array('id' => $Order->getId())));
+        $this->assertContains('ご利用クーポンコード', $crawler->html());
     }
 
     /**

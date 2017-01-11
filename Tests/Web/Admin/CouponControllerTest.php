@@ -185,6 +185,24 @@ class CouponControllerTest extends AbstractAdminWebTestCase
      *
      * @return \Symfony\Component\DomCrawler\Form
      */
+    private function getFormCoupon(Crawler $crawler, $couponCd = '')
+    {
+        $form = $crawler->selectButton('登録する')->form();
+        $form['front_plugin_coupon_shopping[_token]'] = 'dummy';
+        $form['front_plugin_coupon_shopping[coupon_cd]'] = $couponCd;
+        $form['front_plugin_coupon_shopping[coupon_use]'] = 1;
+
+        return $form;
+    }
+
+    /**
+     * get coupon form.
+     *
+     * @param Crawler $crawler
+     * @param string  $couponCd
+     *
+     * @return \Symfony\Component\DomCrawler\Form
+     */
     private function getForm(Crawler $crawler)
     {
         $current = new \DateTime();
