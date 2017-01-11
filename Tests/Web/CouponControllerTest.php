@@ -79,14 +79,10 @@ class CouponControllerTest extends AbstractWebTestCase
     public function testShoppingCouponPostError()
     {
         $this->routingShopping();
-
         $crawler = $this->client->request('GET', $this->app->url('plugin_coupon_shopping'));
-
         $form = $this->getForm($crawler, 'aaaa');
-
         /** @var \Symfony\Component\DomCrawler\Crawler $crawler */
         $crawler = $this->client->submit($form);
-
         // 存在しないクーポンコードで検索したためエラーになるためリダイレクトはされない
         $this->assertFalse($this->client->getResponse()->isRedirection());
     }
