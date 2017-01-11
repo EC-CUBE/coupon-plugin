@@ -235,6 +235,7 @@ class EventLegacy
                     $oldHtml = substr($beforeHtml, 0, $pos);
                     $afterHtml = substr($beforeHtml, $pos);
                     $newHtml = $oldHtml.$twig.$afterHtml;
+                    $beforeHtml = html_entity_decode($beforeHtml, ENT_NOQUOTES, 'UTF-8');
                     $html = str_replace($beforeHtml, $newHtml, $html);
                 }
             }
@@ -467,6 +468,7 @@ class EventLegacy
                     $oldHtml = substr($beforeHtml, 0, $pos);
                     $afterHtml = substr($beforeHtml, $pos);
                     $newHtml = $oldHtml.$parts.$afterHtml;
+                    $beforeHtml = html_entity_decode($beforeHtml, ENT_NOQUOTES, 'UTF-8');
                     $html = str_replace($beforeHtml, $newHtml, $html);
                 }
             }
