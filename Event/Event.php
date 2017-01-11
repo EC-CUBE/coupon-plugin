@@ -18,6 +18,9 @@ use Plugin\Coupon\Entity\CouponOrder;
 use Plugin\Coupon\Util\Version;
 use Eccube\Event\TemplateEvent;
 use Eccube\Common\Constant;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormError;
 
 /**
  * Class Event.
@@ -111,50 +114,58 @@ class Event
     /**
      * クーポンが利用されていないかチェック.
      */
-    public function onShoppingConfirmInit()
+    public function onShoppingConfirmInit(EventArgs $event)
     {
-        log_info('Coupon trigger onShoppingConfirmInit start');
-        $cartService = $this->app['eccube.service.cart'];
-        $preOrderId = $cartService->getPreOrderId();
-        if (is_null($preOrderId)) {
-            return;
-        }
+        $app = $this->app;
+        $builder = $event->getArgument('builder');
 
-        $repository = $this->app['coupon.repository.coupon_order'];
-        // クーポン受注情報を取得する
-        $CouponOrder = $repository->findOneBy(array(
-            'pre_order_id' => $preOrderId,
-        ));
+        // フォームイベントでバリデーションを実行する
+        // 問題がある場合にはエラーを追加することで、バリデーションが失敗するようにして、購入確定処理に進まないようにする
+        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) use ($app) {
+            log_info('Coupon trigger onShoppingConfirmInit start');
+            $cartService = $app['eccube.service.cart'];
+            $preOrderId = $cartService->getPreOrderId();
+            if (is_null($preOrderId)) {
+                return;
+            }
 
-        if (!$CouponOrder) {
-            return;
-        }
+            $repository = $app['coupon.repository.coupon_order'];
+            // クーポン受注情報を取得する
+            $CouponOrder = $repository->findOneBy(array(
+                'pre_order_id' => $preOrderId,
+            ));
 
-        if ($this->app->isGranted('ROLE_USER')) {
-            $Customer = $this->app->user();
-        } else {
-            $Customer = $this->app['eccube.service.shopping']->getNonMember($this->sessionKey);
-        }
-        //check if coupon valid or not
-        $Coupon = $this->app['coupon.repository.coupon']->findActiveCoupon($CouponOrder->getCouponCd());
-        if (is_null($Coupon)) {
-            $this->app->addError($this->app->trans('front.plugin.coupon.shopping.notexists'), 'front.request');
-            // 既に存在している
-            header('Location: '.$this->app->url('shopping'));
-            exit;
-        }
-        $Order = $this->app['eccube.repository.order']->find($CouponOrder->getOrderId());
-        // Validation coupon again
-        $validationMsg = $this->app['eccube.plugin.coupon.service.coupon']->couponValidation($Coupon->getCouponCd(), $Coupon, $Order, $Customer);
-        if (!is_null($validationMsg)) {
-            $this->app->addError($validationMsg, 'front.request');
-            // 既に存在している
-            header('Location: '.$this->app->url('shopping'));
-            exit;
-        }
-        $CouponOrder->setCouponName($Coupon->getCouponName());
-        $repository->save($CouponOrder);
-        log_info('Coupon trigger onShoppingConfirmInit end');
+            if (!$CouponOrder) {
+                return;
+            }
+
+            if ($app->isGranted('ROLE_USER')) {
+                $Customer = $app->user();
+            } else {
+                $Customer = $app['eccube.service.shopping']->getNonMember($this->sessionKey);
+            }
+            //check if coupon valid or not
+            $Coupon = $app['coupon.repository.coupon']->findActiveCoupon($CouponOrder->getCouponCd());
+            if (is_null($Coupon)) {
+                $errorMessage = $app->trans('front.plugin.coupon.shopping.notexists');
+                $app->addError($errorMessage, 'front.request');
+                $event->getForm()->addError(new FormError($errorMessage));
+
+                return;
+            }
+            $Order = $app['eccube.repository.order']->find($CouponOrder->getOrderId());
+            // Validation coupon again
+            $validationMsg = $app['eccube.plugin.coupon.service.coupon']->couponValidation($Coupon->getCouponCd(), $Coupon, $Order, $Customer);
+            if (!is_null($validationMsg)) {
+                $app->addError($validationMsg, 'front.request');
+                $event->getForm()->addError(new FormError($validationMsg));
+
+                return;
+            }
+            $CouponOrder->setCouponName($Coupon->getCouponName());
+            $repository->save($CouponOrder);
+            log_info('Coupon trigger onShoppingConfirmInit end');
+        });
     }
 
     /**
