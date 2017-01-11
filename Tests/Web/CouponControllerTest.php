@@ -246,6 +246,53 @@ class CouponControllerTest extends AbstractWebTestCase
     }
 
     /**
+     * scenarioConfirm
+     * @param  Symfony\Component\Http\Client $client
+     * @return Crawler mixed
+     */
+    private function scenarioConfirm($client)
+    {
+        $crawler = $client->request('GET', $this->app->path('shopping'));
+
+        return $crawler;
+    }
+
+    /**
+     * scenarioComplete
+     * @param Symfony\Component\Http\Client $client
+     * @param string $confirmUrl
+     * @param array $shippings
+     * @return Crawler $crawler
+     */
+    private function scenarioComplete($client, $confirmUrl, array $shippings = array())
+    {
+        $faker = $this->getFaker();
+        if (count($shippings) < 1) {
+            $shippings = array(
+                array(
+                    'delivery' => 1,
+                    'deliveryTime' => 1
+                ),
+            );
+        }
+
+        $crawler = $client->request(
+            'POST',
+            $confirmUrl,
+            array('shopping' =>
+                array(
+                    'shippings' => $shippings,
+                    'payment' => 1,
+                    'message' => $faker->text(),
+                    '_token' => 'dummy'
+                )
+            )
+        );
+
+        return $crawler;
+    }
+
+    /**
      * getTestData.
      *
      * @param int $couponType
@@ -263,7 +310,7 @@ class CouponControllerTest extends AbstractWebTestCase
         $Coupon->setCouponCd('aaaaaaaa');
         $Coupon->setCouponType($couponType);
         $Coupon->setCouponName('クーポン');
-        $Coupon->setDiscountType(1);
+        $Coupon->setDiscountType($discountType);
         $Coupon->setCouponRelease(100);
         $Coupon->setCouponUseTime(100);
         $Coupon->setDiscountPrice(100);
