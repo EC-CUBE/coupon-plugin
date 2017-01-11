@@ -178,12 +178,6 @@ class EventLegacy
         if (is_null($CouponOrder)) {
             return;
         }
-        // クーポン受注情報からクーポン情報を取得する
-        $repCoupon = $this->app['coupon.repository.coupon'];
-        $Coupon = $repCoupon->find($CouponOrder->getCouponId());
-        if (is_null($Coupon)) {
-            return;
-        }
         // 編集画面にクーポン表示を追加する
         $this->getHtmlOrderEdit($response, $CouponOrder);
         log_info('Coupon trigger onRenderAdminOrderEditAfter end');

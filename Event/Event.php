@@ -215,13 +215,6 @@ class Event
         if (is_null($CouponOrder)) {
             return;
         }
-        // クーポン受注情報からクーポン情報を取得する
-        $repCoupon = $this->app['coupon.repository.coupon'];
-        /* @var $Coupon Coupon */
-        $Coupon = $repCoupon->find($CouponOrder->getCouponId());
-        if (is_null($Coupon)) {
-            return;
-        }
         // twigコードを挿入
         $snipet = $app['twig']->getLoader()->getSource('Coupon/Resource/template/admin/order_edit_coupon.twig');
         $source = $event->getSource();
