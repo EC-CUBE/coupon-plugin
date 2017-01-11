@@ -382,6 +382,7 @@ class CouponController extends AbstractController
         if ($request->isXmlHttpRequest()) {
             $date = explode(',', $request->get('coupon_delivery_date'));
             $time = explode(',', $request->get('coupon_delivery_time'));
+            $message = $request->get('message');
             /* @var Order $Order */
             $Order = $app['eccube.service.shopping']->getOrder($app['config']['order_processing']);
             /* @var Shipping $Shipping */
@@ -405,6 +406,9 @@ class CouponController extends AbstractController
                 $app['orm.em']->persist($Shipping);
                 $app['orm.em']->flush($Shipping);
             }
+            $Order->setMessage($message);
+            $app['orm.em']->persist($Order);
+            $app['orm.em']->flush($Order);
         }
 
         return new Response();

@@ -14,6 +14,7 @@ use Eccube\Application;
 use Eccube\Common\Constant;
 use Eccube\Entity\Order;
 use Plugin\Coupon\Entity\Coupon;
+use Plugin\Coupon\Entity\CouponOrder;
 use Plugin\Coupon\Util\Version;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Response;
@@ -375,12 +376,11 @@ class EventLegacy
 
     /**
      * 受注情報編集画面にクーポン情報を追加する.
-     *t.
      *
      * @param Response $response
-     * @param Coupon $Coupon
+     * @param CouponOrder $CouponOrder
      */
-    private function getHtmlOrderEdit(Response $response, Coupon $Coupon)
+    private function getHtmlOrderEdit(Response $response, CouponOrder $CouponOrder)
     {
         $source = $response->getContent();
         libxml_use_internal_errors(true);
@@ -415,8 +415,8 @@ class EventLegacy
         if (!is_null($parentNode) && !is_null($operationNode)) {
             // 追加するクーポン情報のHTMLを取得する.
             $insert = $this->app->renderView('Coupon/Resource/template/admin/order_edit_coupon.twig', array(
-                'coupon_cd' => $Coupon->getCouponCd(),
-                'coupon_name' => $Coupon->getCouponName(),
+                'coupon_cd' => $CouponOrder->getCouponCd(),
+                'coupon_name' => $CouponOrder->getCouponName(),
             ));
             $template = $dom->createDocumentFragment();
             $template->appendXML($insert);
