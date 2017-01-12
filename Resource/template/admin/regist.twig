@@ -118,7 +118,7 @@ $(function() {
         });
     });
 
-    coupon_details_count = '{{ form.CouponDetails|length }}';
+    coupon_details_count = {{ form.CouponDetails|length }};
 
     // 項目数が多く、入力している項目によってEnter押下時に期待する動作が変わるので、いったん禁止
     $("input").on("keydown", function(e) {
