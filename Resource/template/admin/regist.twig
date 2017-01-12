@@ -118,7 +118,7 @@ $(function() {
         });
     });
 
-    coupon_details_count = '{{ form.CouponDetails|length }}';
+    coupon_details_count = {{ form.CouponDetails|length }};
 
     // 項目数が多く、入力している項目によってEnter押下時に期待する動作が変わるので、いったん禁止
     $("input").on("keydown", function(e) {
@@ -134,14 +134,12 @@ $(function() {
     // ==================================
     $("#coupon_detail_list").on("click", ".delete-item", function(){
         $(this).parents(".item_box").remove();
-        coupon_details_count--;
     });
     // ==================================
     // カテゴリ一覧の削除ボタンクリック時の処理
     // ==================================
     $("#coupon_detail_list2").on("click", ".delete-item", function(){
         $(this).parents(".item_box").remove();
-        coupon_details_count--;
     });
 
     //set radio button default.
