@@ -1,0 +1,51 @@
+{#
+ This file is part of the Coupon plugin
+
+ Copyright(c) 2000-2016 LOCKON CO.,LTD. All Rights Reserved.
+ http://www.lockon.co.jp/
+
+ For the full copyright and license information, please view the LICENSE
+ file that was distributed with this source code.
+#}
+<script type="text/javascript">
+    $(function () {
+        $('#coupon_button').click(function () {
+            var date = '';
+            var time = '';
+            $("select[id^=shopping_shippings_][id$=_shippingDeliveryDate]").each(function () {
+                date += $(this).val() + ',';
+            });
+            $("select[id^=shopping_shippings_][id$=_deliveryTime]").each(function () {
+                time += $(this).val() + ',';
+            });
+            $(this).attr('disabled', 'disabled');
+            $.ajax({
+                type: 'POST',
+                data: {
+                    'coupon_delivery_date' : date,
+                    'coupon_delivery_time' : time,
+                    'message' : $('#shopping_message').val()
+                },
+                url: '{{ url('plugin_coupon_save_delivery') }}',
+                success: function(data) {
+                    window.location.href = '{{ url('plugin_coupon_shopping') }}';
+                },
+                error: function() {
+                    window.location.href = '{{ url('plugin_coupon_shopping') }}';
+                }
+            });
+            return false;
+        });
+    })
+</script>
+<h2 class="heading02">クーポン</h2>
+<div id="customer_detail_box" class="column is-edit">
+    {% if CouponOrder %}
+        <strong class="text-danger">クーポンコード {{ CouponOrder.coupon_cd }} を利用しています。</strong>
+        <p><a class="btn btn-default btn-sm" id="coupon_button" href="{{ url('plugin_coupon_shopping') }}">クーポンを変更する</a>
+    {% else %}
+        クーポンをお持ちの方はクーポンコードを入力してください。
+        <p><a class="btn btn-default btn-sm" id="coupon_button" href="{{ url('plugin_coupon_shopping') }}">クーポンを利用する</a>
+    {% endif %}
+    </p>
+</div>

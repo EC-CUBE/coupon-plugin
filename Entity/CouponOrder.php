@@ -1,41 +1,29 @@
 <?php
 /*
- * This file is part of EC-CUBE
+ * This file is part of the Coupon plugin
  *
- * Copyright(c) 2000-2015 LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
  *
- * http://www.lockon.co.jp/
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
 namespace Plugin\Coupon\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
+use Eccube\Entity\AbstractEntity;
 
 /**
- * CouponCouponOrder
+ * CouponOrder.
  */
-class CouponCouponOrder extends \Eccube\Entity\AbstractEntity
+class CouponOrder extends AbstractEntity
 {
     /**
-     * @var integer
+     * @var int
      */
     private $id;
 
     /**
-     * @var integer
+     * @var int
      */
     private $coupon_id;
 
@@ -45,7 +33,12 @@ class CouponCouponOrder extends \Eccube\Entity\AbstractEntity
     private $coupon_cd;
 
     /**
-     * @var integer
+     * @var string
+     */
+    private $coupon_name;
+
+    /**
+     * @var int
      */
     private $user_id;
 
@@ -55,7 +48,7 @@ class CouponCouponOrder extends \Eccube\Entity\AbstractEntity
     private $email;
 
     /**
-     * @var integer
+     * @var int
      */
     private $order_id;
 
@@ -75,9 +68,18 @@ class CouponCouponOrder extends \Eccube\Entity\AbstractEntity
     private $discount = 0;
 
     /**
-     * @var integer
+     * @var int
      */
     private $del_flg;
+    /**
+     * @var int
+     */
+    private $order_change_status;
+
+    /**
+     * @var int
+     */
+    private $coupon_cancel;
 
     /**
      * @var \DateTime
@@ -89,11 +91,10 @@ class CouponCouponOrder extends \Eccube\Entity\AbstractEntity
      */
     private $update_date;
 
-
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer 
+     * @return int
      */
     public function getId()
     {
@@ -101,10 +102,11 @@ class CouponCouponOrder extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Set coupon_id
+     * Set coupon_id.
      *
-     * @param integer $couponId
-     * @return CouponCouponOrder
+     * @param int $couponId
+     *
+     * @return CouponOrder
      */
     public function setCouponId($couponId)
     {
@@ -114,9 +116,9 @@ class CouponCouponOrder extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Get coupon_id
+     * Get coupon_id.
      *
-     * @return integer 
+     * @return int
      */
     public function getCouponId()
     {
@@ -124,10 +126,11 @@ class CouponCouponOrder extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Set coupon_cd
+     * Set coupon_cd.
      *
      * @param string $couponCd
-     * @return CouponCouponOrder
+     *
+     * @return CouponOrder
      */
     public function setCouponCd($couponCd)
     {
@@ -137,9 +140,9 @@ class CouponCouponOrder extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Get coupon_cd
+     * Get coupon_cd.
      *
-     * @return string 
+     * @return string
      */
     public function getCouponCd()
     {
@@ -147,10 +150,11 @@ class CouponCouponOrder extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Set user_id
+     * Set user_id.
      *
-     * @param integer $userId
-     * @return CouponCouponOrder
+     * @param int $userId
+     *
+     * @return CouponOrder
      */
     public function setUserId($userId)
     {
@@ -160,9 +164,9 @@ class CouponCouponOrder extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Get user_id
+     * Get user_id.
      *
-     * @return integer 
+     * @return int
      */
     public function getUserId()
     {
@@ -170,10 +174,11 @@ class CouponCouponOrder extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Set email
+     * Set email.
      *
      * @param string $email
-     * @return CouponCouponOrder
+     *
+     * @return CouponOrder
      */
     public function setEmail($email)
     {
@@ -183,9 +188,9 @@ class CouponCouponOrder extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Get email
+     * Get email.
      *
-     * @return string 
+     * @return string
      */
     public function getEmail()
     {
@@ -193,10 +198,11 @@ class CouponCouponOrder extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Set order_id
+     * Set order_id.
      *
-     * @param integer $orderId
-     * @return CouponCouponOrder
+     * @param int $orderId
+     *
+     * @return CouponOrder
      */
     public function setOrderId($orderId)
     {
@@ -206,9 +212,9 @@ class CouponCouponOrder extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Get order_id
+     * Get order_id.
      *
-     * @return integer 
+     * @return int
      */
     public function getOrderId()
     {
@@ -216,10 +222,11 @@ class CouponCouponOrder extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Set pre_order_id
+     * Set pre_order_id.
      *
      * @param string $preOrderId
-     * @return CouponCouponOrder
+     *
+     * @return CouponOrder
      */
     public function setPreOrderId($preOrderId)
     {
@@ -229,9 +236,9 @@ class CouponCouponOrder extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Get pre_order_id
+     * Get pre_order_id.
      *
-     * @return string 
+     * @return string
      */
     public function getPreOrderId()
     {
@@ -239,10 +246,11 @@ class CouponCouponOrder extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Set order_date
+     * Set order_date.
      *
      * @param \DateTime $orderDate
-     * @return CouponCouponOrder
+     *
+     * @return CouponOrder
      */
     public function setOrderDate($orderDate)
     {
@@ -252,9 +260,9 @@ class CouponCouponOrder extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Get order_date
+     * Get order_date.
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getOrderDate()
     {
@@ -262,10 +270,11 @@ class CouponCouponOrder extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Set discount
+     * Set discount.
      *
      * @param string $discount
-     * @return CouponCouponOrder
+     *
+     * @return CouponOrder
      */
     public function setDiscount($discount)
     {
@@ -275,9 +284,9 @@ class CouponCouponOrder extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Get discount
+     * Get discount.
      *
-     * @return string 
+     * @return string
      */
     public function getDiscount()
     {
@@ -285,10 +294,11 @@ class CouponCouponOrder extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Set del_flg
+     * Set del_flg.
      *
-     * @param integer $delFlg
-     * @return CouponCouponOrder
+     * @param int $delFlg
+     *
+     * @return CouponOrder
      */
     public function setDelFlg($delFlg)
     {
@@ -298,9 +308,9 @@ class CouponCouponOrder extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Get del_flg
+     * Get del_flg.
      *
-     * @return integer 
+     * @return int
      */
     public function getDelFlg()
     {
@@ -308,10 +318,27 @@ class CouponCouponOrder extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Set create_date
+     * @return int
+     */
+    public function getCouponCancel()
+    {
+        return $this->coupon_cancel;
+    }
+
+    /**
+     * @param int $couponCancel
+     */
+    public function setCouponCancel($couponCancel)
+    {
+        $this->coupon_cancel = $couponCancel;
+    }
+
+    /**
+     * Set create_date.
      *
      * @param \DateTime $createDate
-     * @return CouponCouponOrder
+     *
+     * @return CouponOrder
      */
     public function setCreateDate($createDate)
     {
@@ -321,9 +348,9 @@ class CouponCouponOrder extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Get create_date
+     * Get create_date.
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getCreateDate()
     {
@@ -331,10 +358,11 @@ class CouponCouponOrder extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Set update_date
+     * Set update_date.
      *
      * @param \DateTime $updateDate
-     * @return CouponCouponOrder
+     *
+     * @return CouponOrder
      */
     public function setUpdateDate($updateDate)
     {
@@ -344,12 +372,44 @@ class CouponCouponOrder extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Get update_date
+     * Get update_date.
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getUpdateDate()
     {
         return $this->update_date;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCouponName()
+    {
+        return $this->coupon_name;
+    }
+
+    /**
+     * @param string $coupon_name
+     */
+    public function setCouponName($coupon_name)
+    {
+        $this->coupon_name = $coupon_name;
+    }
+
+    /**
+     * @return int
+     */
+    public function getOrderChangeStatus()
+    {
+        return $this->order_change_status;
+    }
+
+    /**
+     * @param int $orderChangeStatus
+     */
+    public function setOrderChangeStatus($orderChangeStatus)
+    {
+        $this->order_change_status = $orderChangeStatus;
     }
 }

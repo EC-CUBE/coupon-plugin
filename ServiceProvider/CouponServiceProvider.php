@@ -1,128 +1,129 @@
 <?php
 /*
- * This file is part of EC-CUBE
+ * This file is part of the Coupon plugin
  *
- * Copyright(c) 2000-2015 LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
  *
- * http://www.lockon.co.jp/
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace Plugin\Coupon\ServiceProvider;
 
 use Silex\Application as BaseApplication;
 use Silex\ServiceProviderInterface;
+use Eccube\Common\Constant;
+use Plugin\Coupon\Form\Type\CouponSearchType;
+use Plugin\Coupon\Form\Type\CouponType;
+use Plugin\Coupon\Form\Type\CouponDetailType;
+use Plugin\Coupon\Form\Type\CouponSearchCategoryType;
+use Plugin\Coupon\Form\Type\CouponUseType;
+use Plugin\Coupon\Service\CouponService;
+use Plugin\Coupon\Event\Event;
+use Plugin\Coupon\Event\EventLegacy;
 
+// include log functions (for 3.0.0 - 3.0.11)
+require_once __DIR__.'/../log.php';
+
+/**
+ * Class CouponServiceProvider.
+ */
 class CouponServiceProvider implements ServiceProviderInterface
 {
-
+    /**
+     * @param BaseApplication $app
+     */
     public function register(BaseApplication $app)
     {
-        // ============================================================
-        // コントローラの登録
-        // ============================================================
-        $adminRoute = '/'.$app["config"]["admin_route"];
+        // 管理画面定義
+        $admin = $app['controllers_factory'];
+        //Frontend
+        $front = $app['controllers_factory'];
+        // 強制SSL
+        if ($app['config']['force_ssl'] == Constant::ENABLED) {
+            $admin->requireHttps();
+            $front->requireHttps();
+        }
 
         // クーポンの一覧
-        $app->match($adminRoute.'/coupon', 'Plugin\Coupon\Controller\CouponController::index')->value('id', null)->assert('id', '\d+|')->bind('admin_coupon_list');
-
+        $admin->match('/plugin/coupon', 'Plugin\Coupon\Controller\CouponController::index')->value('id', null)->assert('id', '\d+|')->bind('plugin_coupon_list');
         // クーポンの新規登録
-        $app->match($adminRoute.'/coupon/new', 'Plugin\Coupon\Controller\CouponController::edit')->value('id', null)->bind('admin_coupon_new');
-
+        $admin->match('/plugin/coupon/new', 'Plugin\Coupon\Controller\CouponController::edit')->value('id', null)->bind('plugin_coupon_new');
         // クーポンの編集
-        $app->match($adminRoute.'/coupon/{id}/edit', 'Plugin\Coupon\Controller\CouponController::edit')->value('id', null)->assert('id', '\d+|')->bind('admin_coupon_edit');
-
+        $admin->match('/plugin/coupon/{id}/edit', 'Plugin\Coupon\Controller\CouponController::edit')->value('id', null)->assert('id', '\d+|')->bind('plugin_coupon_edit');
         // クーポンの有効/無効化
-        $app->match($adminRoute.'/coupon/{id}/enable', 'Plugin\Coupon\Controller\CouponController::enable')->value('id', null)->assert('id', '\d+|')->bind('admin_coupon_enable');
-
+        $admin->match('/plugin/coupon/{id}/enable', 'Plugin\Coupon\Controller\CouponController::enable')->value('id', null)->assert('id', '\d+|')->bind('plugin_coupon_enable');
         // クーポンの削除
-        $app->match($adminRoute.'/coupon/{id}/delete', 'Plugin\Coupon\Controller\CouponController::delete')->value('id', null)->assert('id', '\d+|')->bind('admin_coupon_delete');
-
+        $admin->delete('/plugin/coupon/{id}/delete', 'Plugin\Coupon\Controller\CouponController::delete')->value('id', null)->assert('id', '\d+|')->bind('plugin_coupon_delete');
+        //ajax link
+        $admin->post('/plugin/coupon/save/delivery', 'Plugin\Coupon\Controller\CouponController::saveDelivery')->bind('plugin_coupon_save_delivery');
         // 商品検索画面表示
-        $app->post($adminRoute.'/coupon/search/product', 'Plugin\Coupon\Controller\CouponSearchModelController::searchProduct')->bind('admin_coupon_search_product');
-
+        $admin->post('/plugin/coupon/search/product', 'Plugin\Coupon\Controller\CouponSearchModelController::searchProduct')->bind('plugin_coupon_search_product');
         // カテゴリ検索画面表示
-        $app->post($adminRoute.'/coupon/search/category', 'Plugin\Coupon\Controller\CouponSearchModelController::searchCategory')->bind('admin_coupon_search_category');
+        $admin->post('/plugin/coupon/search/category', 'Plugin\Coupon\Controller\CouponSearchModelController::searchCategory')->bind('plugin_coupon_search_category');
+        //product search dialog paginator
+        $admin->match('/plugin/coupon/search/product/page/{page_no}', 'Plugin\Coupon\Controller\CouponSearchModelController::searchProduct')
+            ->assert('page_no', '\d+')->bind('plugin_coupon_search_product_page');
 
-        $app->match('/shopping/shopping_coupon', 'Plugin\Coupon\Controller\CouponController::shoppingCoupon')->bind('plugin_shopping_coupon');
+        $app->mount('/'.trim($app['config']['admin_route'], '/').'/', $admin);
 
-        // ============================================================
+        $front->match('/plugin/coupon/shopping/shopping_coupon', 'Plugin\Coupon\Controller\CouponController::shoppingCoupon')->bind('plugin_coupon_shopping');
+        $app->mount('', $front);
+
+        // イベントの追加
+        $app['eccube.plugin.coupon.event'] = $app->share(function () use ($app) {
+            return new Event($app);
+        });
+        $app['eccube.plugin.coupon.event.legacy'] = $app->share(function () use ($app) {
+            return new EventLegacy($app);
+        });
+
         // Formの登録
-        // ============================================================
-        // 型登録
         $app['form.types'] = $app->share($app->extend('form.types', function ($types) use ($app) {
-            $types[] = new \Plugin\Coupon\Form\Type\CouponSearchType();
-            $types[] = new \Plugin\Coupon\Form\Type\CouponType($app);
-            $types[] = new \Plugin\Coupon\Form\Type\CouponDetailType($app);
-            $types[] = new \Plugin\Coupon\Form\Type\CouponSearchCategoryType();
-            $types[] = new \Plugin\Coupon\Form\Type\CouponUseType();
+            $types[] = new CouponSearchType();
+            $types[] = new CouponType($app);
+            $types[] = new CouponDetailType($app);
+            $types[] = new CouponSearchCategoryType();
+            $types[] = new CouponUseType();
 
             return $types;
         }));
 
-        // ============================================================
-        // リポジトリの登録
-        // ============================================================
         // クーポン情報テーブルリポジトリ
-        $app['eccube.plugin.coupon.repository.coupon'] = $app->share(function () use ($app) {
-            return $app['orm.em']->getRepository('Plugin\Coupon\Entity\CouponCoupon');
+        $app['coupon.repository.coupon'] = $app->share(function () use ($app) {
+            return $app['orm.em']->getRepository('Plugin\Coupon\Entity\Coupon');
         });
-
         // クーポン詳細情報テーブルリポジトリ
-        $app['eccube.plugin.coupon.repository.coupon_detail'] = $app->share(function () use ($app) {
-            return $app['orm.em']->getRepository('Plugin\Coupon\Entity\CouponCouponDetail');
+        $app['coupon.repository.coupon_detail'] = $app->share(function () use ($app) {
+            return $app['orm.em']->getRepository('Plugin\Coupon\Entity\CouponDetail');
         });
-
         // 受注クーポン情報テーブルリポジトリ
-        $app['eccube.plugin.coupon.repository.coupon_order'] = $app->share(function () use ($app) {
-            return $app['orm.em']->getRepository('Plugin\Coupon\Entity\CouponCouponOrder');
+        $app['coupon.repository.coupon_order'] = $app->share(function () use ($app) {
+            return $app['orm.em']->getRepository('Plugin\Coupon\Entity\CouponOrder');
         });
 
         // -----------------------------
         // サービスの登録
         // -----------------------------
         $app['eccube.plugin.coupon.service.coupon'] = $app->share(function () use ($app) {
-            return new \Plugin\Coupon\Service\CouponService($app);
+            return new CouponService($app);
         });
 
-        // ============================================================
         // メッセージ登録
-        // ============================================================
-        $app['translator'] = $app->share($app->extend('translator', function ($translator, \Silex\Application $app) {
-            $translator->addLoader('yaml', new \Symfony\Component\Translation\Loader\YamlFileLoader());
-
-            $file = __DIR__.'/../Resource/locale/message.'.$app['locale'].'.yml';
-            if (file_exists($file)) {
-                $translator->addResource('yaml', $file, $app['locale']);
-            }
-
-            return $translator;
-        }));
+        $file = __DIR__.'/../Resource/locale/message.'.$app['locale'].'.yml';
+        $app['translator']->addResource('yaml', $file, $app['locale']);
 
         // ============================================================
         // メニュー登録
         // ============================================================
         $app['config'] = $app->share($app->extend('config', function ($config) {
-            $addNavi['id'] = "admin_coupon";
-            $addNavi['name'] = "クーポン";
-            $addNavi['url'] = "admin_coupon_list";
+            $addNavi['id'] = 'plugin_coupon';
+            $addNavi['name'] = 'クーポン';
+            $addNavi['url'] = 'plugin_coupon_list';
 
             $nav = $config['nav'];
             foreach ($nav as $key => $val) {
-                if ("order" == $val["id"]) {
+                if ('order' == $val['id']) {
                     $nav[$key]['child'][] = $addNavi;
                 }
             }
@@ -131,10 +132,16 @@ class CouponServiceProvider implements ServiceProviderInterface
             return $config;
         }));
 
+        // initialize logger (for 3.0.0 - 3.0.8)
+        if (!method_exists('Eccube\Application', 'getInstance')) {
+            eccube_log_init($app);
+        }
     }
 
+    /**
+     * @param BaseApplication $app
+     */
     public function boot(BaseApplication $app)
     {
     }
-
 }

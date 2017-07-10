@@ -1,0 +1,69 @@
+{#
+ This file is part of the Coupon plugin
+
+ Copyright(c) 2000-2016 LOCKON CO.,LTD. All Rights Reserved.
+ http://www.lockon.co.jp/
+
+ For the full copyright and license information, please view the LICENSE
+ file that was distributed with this source code.
+#}
+{% extends 'default_frame.twig' %}
+
+{% set body_class = 'cart_page' %}
+{% block javascript %}
+<script>
+    $(function() {
+        $('input[name~="front_plugin_coupon_shopping[coupon_use]"]').change(function () {
+            if($(this).val() == 0) {
+                $('#front_plugin_coupon_shopping_coupon_cd').attr('readonly', '');
+                $('#front_plugin_coupon_shopping_coupon_cd').css('background-color', '#eee');
+            } else {
+                $('#front_plugin_coupon_shopping_coupon_cd').removeAttr('readonly');
+                $('#front_plugin_coupon_shopping_coupon_cd').css('background-color', 'white');
+            }
+        });
+    });
+</script>
+{% endblock javascript %}
+
+{% block main %}
+    <h1 class="page-heading">クーポンコードの入力</h1>
+    <div class="container-fluid">
+        <div id="coupon_box" class="row">
+            <div id="coupon_box__body" class="col-sm-10 col-sm-offset-1">
+                <p> 利用するクーポンコードを入力してください。</p>
+                <form method="post" action="{{ url('plugin_coupon_shopping') }}">
+                    {{ form_widget(form._token) }}
+                    <div class="dl_table">
+                        <dl>
+                            <dt><label>クーポン利用</label></dt>
+                            <dd>
+                                <div class="form-group form-inline">
+                                    {{ form_widget(form.coupon_use) }}
+                                    {{ form_errors(form.coupon_use) }}
+                                </div>
+                            </dd>
+                        </dl>
+                        <dl id="coupon_box__cd">
+                            <dt>{{ form_label(form.coupon_cd) }}</dt>
+                            <dd class="form-group input_name">
+                                {{ form_widget(form.coupon_cd) }}
+                                {{ form_errors(form.coupon_cd) }}
+                            </dd>
+                        </dl>
+                    </div>
+                    <div id="coupon_box_footer" class="row no-padding">
+                        <div id="coupon_box__button_menu" class="btn_group col-sm-offset-4 col-sm-4">
+                            <p id="coupon_box__insert_button">
+                                <button type="submit" class="btn btn-primary btn-block prevention-btn prevention-mask">
+                                    登録する
+                                </button>
+                            </p>
+                            <p id="coupon_box__back_button"><a href="{{ url('shopping') }}" class="btn btn-info btn-block">戻る</a></p>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

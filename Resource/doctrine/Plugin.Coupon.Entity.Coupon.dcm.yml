@@ -1,7 +1,7 @@
-Plugin\Coupon\Entity\CouponCoupon:
+Plugin\Coupon\Entity\Coupon:
     type: entity
     table: plg_coupon
-    repositoryClass: Plugin\Coupon\Repository\CouponCouponRepository
+    repositoryClass: Plugin\Coupon\Repository\CouponRepository
     id:
         id:
             type: integer
@@ -26,6 +26,9 @@ Plugin\Coupon\Entity\CouponCoupon:
             nullable: true
         coupon_use_time:
             type: integer
+            nullable: true
+        coupon_release:
+            type: integer
             nullable: false
         discount_price:
             type: decimal
@@ -42,6 +45,16 @@ Plugin\Coupon\Entity\CouponCoupon:
             nullable: false
             unsigned: false
             default: '0'
+        coupon_member:
+            type: smallint
+            nullable: true
+            unsigned: false
+            default: '0'
+        coupon_lower_limit:
+            type: decimal
+            nullable: true
+            precision: 10
+            scale: 0
         available_from_date:
             type: datetime
             nullable: false
@@ -61,7 +74,7 @@ Plugin\Coupon\Entity\CouponCoupon:
             nullable: false
     oneToMany:
         CouponDetails:
-            targetEntity: Plugin\Coupon\Entity\CouponCouponDetail
+            targetEntity: Plugin\Coupon\Entity\CouponDetail
             mappedBy: Coupon
             orderBy:
                 id: ASC

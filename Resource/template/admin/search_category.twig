@@ -1,3 +1,12 @@
+{#
+ This file is part of the Coupon plugin
+
+ Copyright(c) 2000-2016 LOCKON CO.,LTD. All Rights Reserved.
+ http://www.lockon.co.jp/
+
+ For the full copyright and license information, please view the LICENSE
+ file that was distributed with this source code.
+#}
 <script>
     function fnAddCategoryDetail($row, id, name) {
         // ================================================================
@@ -14,9 +23,9 @@
         // フォーム入力値をセットm
         $newWidget = $(newWidget);
 
-        $newWidget.find('#admin_coupon_CouponDetails_' + cnt + '_Category').val(id);
-        $newWidget.find('#admin_coupon_CouponDetails_' + cnt + '_category_name').text(name);
-        $newWidget.find('#admin_coupon_CouponDetails_' + cnt + '_coupon_type').val(2);
+        $newWidget.find('#admin_plugin_coupon_CouponDetails_' + cnt + '_Category').val(id);
+        $newWidget.find('#admin_plugin_coupon_CouponDetails_' + cnt + '_category_name').text(name);
+        $newWidget.find('#admin_plugin_coupon_CouponDetails_' + cnt + '_coupon_type').val(2);
 
         // 明細行に追加.
         list.append($newWidget);
@@ -41,14 +50,12 @@
                     <td>
                     </td>
                     <td class="text-right">
-                        <button onclick="fnAddCategoryDetail($(this).parent().parent(), {{ id }},  '{{ name }}')" type="button" class="btn btn-default btn-sm">
+                        <button onclick="fnAddCategoryDetail($(this).parent().parent(), {{ id }},  '{{ name|escape('js') }}')" type="button" class="btn btn-default btn-sm">
                             決定
                         </button>
                     </td>
                 </tr>
-            </form>
         {% endfor %}
-
         </tbody>
     </table>
 </div>
