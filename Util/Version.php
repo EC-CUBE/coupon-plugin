@@ -21,7 +21,7 @@ class Version
     /**
      * Check version to support get instance function. (monolog, new style, ...).
      *
-     * @return bool|int|mixed|void
+     * @return bool
      */
     public static function isSupportGetInstanceFunction()
     {
@@ -31,7 +31,7 @@ class Version
     /**
      * Check version to support new log function.
      *
-     * @return bool|int|mixed|void
+     * @return bool
      */
     public static function isSupportLogFunction()
     {
@@ -44,7 +44,7 @@ class Version
      * @param string $version
      * @param string $operation
      *
-     * @return bool|int|mixed|void
+     * @return bool
      */
     public static function isSupportNewHookPoint($version = '3.0.9', $operation = '>=')
     {
@@ -57,10 +57,20 @@ class Version
      * @param string $version
      * @param string $operation
      *
-     * @return bool|int|mixed|void
+     * @return bool
      */
     public static function isSupportDisplayDiscount($version = '3.0.10', $operation = '>=')
     {
         return version_compare(Constant::VERSION, $version, $operation);
+    }
+
+    /**
+     * Check version to support new session function.
+     *
+     * @return bool
+     */
+    public static function isSupportNewSession()
+    {
+        return version_compare(Constant::VERSION, '3.0.15', '>=');
     }
 }
