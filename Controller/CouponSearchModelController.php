@@ -12,7 +12,6 @@ namespace Plugin\Coupon\Controller;
 
 use Eccube\Application;
 use Eccube\Entity\Category;
-use Plugin\Coupon\Util\Version;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -45,13 +44,7 @@ class CouponSearchModelController
                 'id' => $request->get('id'),
             );
             if ($categoryId = $request->get('category_id')) {
-                $Category = $app['eccube.repository.category']->find($categoryId);
-                $searchData['category_id'] = $Category;
-
-                // New rule for session
-                if (Version::isSupportNewSession()) {
-                    $searchData['category_id'] = $categoryId;
-                }
+                $searchData['category_id'] = $categoryId;
             }
             $session->set('eccube.plugin.coupon.product.search', $searchData);
             $session->set('eccube.plugin.coupon.product.search.page_no', $page_no);
@@ -64,7 +57,7 @@ class CouponSearchModelController
             }
         }
 
-        if (!empty($searchData['category_id']) && Version::isSupportNewSession()) {
+        if (!empty($searchData['category_id'])) {
             $searchData['category_id'] = $app['eccube.repository.category']->find($searchData['category_id']);
         }
 
