@@ -1,6 +1,7 @@
 language: php
-
 sudo: required
+dist: trusty
+group: deprecated-2017Q4
 
 cache:
   directories:
@@ -11,6 +12,7 @@ php:
   - 5.5
   - 5.6
   - 7.0
+  - 7.1
 
 env:
   # plugin code
@@ -21,13 +23,12 @@ env:
     - ECCUBE_VERSION=master DB=mysql USER=root DBNAME=myapp_test DBPASS=' ' DBUSER=root
     - ECCUBE_VERSION=master DB=pgsql USER=postgres DBNAME=myapp_test DBPASS=password DBUSER=postgres
     - ECCUBE_VERSION=master DB=sqlite
-    # ec-cube 3.0.13
-    - ECCUBE_VERSION=3.0.13 DB=mysql USER=root DBNAME=myapp_test DBPASS=' ' DBUSER=root
-    - ECCUBE_VERSION=3.0.13 DB=pgsql USER=postgres DBNAME=myapp_test DBPASS=password DBUSER=postgres
-    # ec-cube 3.0.15
-    - ECCUBE_VERSION=3.0.15 DB=mysql USER=root DBNAME=myapp_test DBPASS=' ' DBUSER=root
-    - ECCUBE_VERSION=3.0.15 DB=pgsql USER=postgres DBNAME=myapp_test DBPASS=password DBUSER=postgres
-
+    # ec-cube 3.0.9
+    - ECCUBE_VERSION=3.0.9 DB=mysql USER=root DBNAME=myapp_test DBPASS=' ' DBUSER=root
+    - ECCUBE_VERSION=3.0.9 DB=pgsql USER=postgres DBNAME=myapp_test DBPASS=password DBUSER=postgres
+    # ec-cube 3.0.16
+    - ECCUBE_VERSION=3.0.16 DB=mysql USER=root DBNAME=myapp_test DBPASS=' ' DBUSER=root
+    - ECCUBE_VERSION=3.0.16 DB=pgsql USER=postgres DBNAME=myapp_test DBPASS=password DBUSER=postgres
 matrix:
   fast_finish: true
   include:
@@ -60,6 +61,7 @@ before_script:
   - sh -c "if [ ! '${ECCUBE_VERSION}' = 'master' ]; then  git checkout -b ${ECCUBE_VERSION} refs/tags/${ECCUBE_VERSION}; fi"
   # update composer
   - composer selfupdate
+  - composer global require hirak/prestissimo
   - composer install --dev --no-interaction -o
   # install ec-cube
   - sh -c "if [ '$DB' = 'mysql' ]; then sh ./eccube_install.sh mysql none; fi"
