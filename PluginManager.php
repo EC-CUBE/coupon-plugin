@@ -11,107 +11,107 @@
 namespace Plugin\Coupon;
 
 use Eccube\Application;
+use Eccube\Entity\Layout;
+use Eccube\Entity\Page;
 use Eccube\Plugin\AbstractPluginManager;
 use Eccube\Entity\Master\DeviceType;
 use Eccube\Entity\PageLayout;
+use Eccube\Repository\LayoutRepository;
+use Eccube\Repository\Master\DeviceTypeRepository;
+use Eccube\Repository\PageLayoutRepository;
+use Eccube\Repository\PageRepository;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class PluginManager.
  */
 class PluginManager extends AbstractPluginManager
 {
-    /**
-     * @param array       $config
-     * @param Application $app
-     */
-    public function install($config, $app)
+    public function enable($meta = null, Application $app = null, ContainerInterface $container)
     {
-    }
-
-    /**
-     * @param array       $config
-     * @param Application $app
-     */
-    public function uninstall($config, $app)
-    {
-        $this->migrationSchema($app, __DIR__.'/Resource/doctrine/migration', $config['code'], 0);
-    }
-
-    /**
-     * @param array       $config
-     * @param Application $app
-     */
-    public function enable($config, $app)
-    {
-        $this->migrationSchema($app, __DIR__.'/Resource/doctrine/migration', $config['code']);
-        $PageLayout = $app['eccube.repository.page_layout']->findOneBy(array('url' => 'plugin_coupon_shopping'));
+        $PageLayout = $container->get(PageRepository::class)->findOneBy(array('url' => 'plugin_coupon_shopping'));
         if (is_null($PageLayout)) {
             // pagelayoutの作成
-            $this->createPageLayout($app);
+            $this->createPageLayout($container);
         }
     }
 
     /**
-     * @param array       $config
-     * @param Application $app
+     * @param null $meta
+     * @param Application|null $app
+     * @param ContainerInterface $container
      */
-    public function disable($config, $app)
+    public function disable($meta = null, Application $app = null, ContainerInterface $container)
     {
         // pagelayoutの削除
-        $this->removePageLayout($app);
+        $this->removePageLayout($container);
     }
 
     /**
-     * @param array       $config
-     * @param Application $app
+     * @param null $meta
+     * @param Application|null $app
+     * @param ContainerInterface $container
      */
-    public function update($config, $app)
+    public function update($meta = null, Application $app = null, ContainerInterface $container)
     {
-        $this->migrationSchema($app, __DIR__.'/Resource/doctrine/migration', $config['code']);
-        $PageLayout = $app['eccube.repository.page_layout']->findOneBy(array('url' => 'plugin_coupon_shopping'));
+        $PageLayout = $container->get(PageRepository::class)->findOneBy(array('url' => 'plugin_coupon_shopping'));
         if (is_null($PageLayout)) {
             // pagelayoutの作成
-            $this->createPageLayout($app);
+            $this->createPageLayout($container);
         }
     }
 
     /**
-     * クーポン用ページレイアウトを作成.
-     *
-     * @param $app
-     *
-     * @throws \Exception
+     * @param ContainerInterface $container
      */
-    private function createPageLayout($app)
+    private function createPageLayout(ContainerInterface $container)
     {
         // ページレイアウトにプラグイン使用時の値を代入
-        $DeviceType = $app['eccube.repository.master.device_type']->find(DeviceType::DEVICE_TYPE_PC);
-        /** @var \Eccube\Entity\PageLayout $PageLayout */
-        $PageLayout = $app['eccube.repository.page_layout']->findOrCreate(null, $DeviceType);
-        $PageLayout->setEditFlg(PageLayout::EDIT_FLG_DEFAULT);
-        $PageLayout->setName('商品購入/クーポン利用');
-        $PageLayout->setUrl('plugin_coupon_shopping');
-        $PageLayout->setFileName('../../Plugin/Coupon/Resource/template/default/shopping_coupon');
-        $PageLayout->setMetaRobots('noindex');
+        $DeviceType = $container->get(DeviceTypeRepository::class)->find(DeviceType::DEVICE_TYPE_PC);
+
+        /** @var \Eccube\Entity\Page $Page */
+        $Page = $container->get(PageRepository::class)->findOrCreate(null, $DeviceType);
+        $Page->setEditType(Page::EDIT_TYPE_DEFAULT);
+        $Page->setName('商品購入/クーポン利用');
+        $Page->setUrl('plugin_coupon_shopping');
+        $Page->setFileName('../../Plugin/Coupon/Resource/template/default/shopping_coupon');
+        $Page->setMetaRobots('noindex');
+
         // DB登録
-        $app['orm.em']->persist($PageLayout);
-        $app['orm.em']->flush($PageLayout);
+        $entityManager = $container->get('doctrine.orm.entity_manager');
+        $entityManager->persist($Page);
+        $entityManager->flush($Page);
+
+        $Layout = $container->get(LayoutRepository::class)->find(Layout::DEFAULT_LAYOUT_UNDERLAYER_PAGE);
+        $PageLayout = new PageLayout();
+        $PageLayout->setPage($Page)
+            ->setPageId($Page->getId())
+            ->setLayout($Layout)
+            ->setLayoutId($Layout->getId())
+            ->setSortNo(0);
+
+        $entityManager->persist($PageLayout);
+        $entityManager->flush($PageLayout);
     }
+
     /**
      * クーポン用ページレイアウトを削除.
      *
-     * @param $app
-     *
-     * @throws \Exception
+     * @param ContainerInterface $container
      */
-    private function removePageLayout($app)
+    private function removePageLayout(ContainerInterface $container)
     {
         // ページ情報の削除
-        $PageLayout = $app['eccube.repository.page_layout']->findOneBy(array('url' => 'plugin_coupon_shopping'));
-        if ($PageLayout) {
+        $Page = $container->get(PageRepository::class)->findOneBy(array('url' => 'plugin_coupon_shopping'));
+        if ($Page) {
+            $Layout = $container->get(LayoutRepository::class)->find(Layout::DEFAULT_LAYOUT_UNDERLAYER_PAGE);
+            $PageLayout = $container->get(PageLayoutRepository::class)->findOneBy(['Page' => $Page, 'Layout' => $Layout]);
             // Blockの削除
-            $app['orm.em']->remove($PageLayout);
-            $app['orm.em']->flush($PageLayout);
+            $entityManager = $container->get('doctrine.orm.entity_manager');
+            $entityManager->remove($PageLayout);
+            $entityManager->remove($Page);
+            $entityManager->flush($PageLayout);
+            $entityManager->flush($Page);
         }
     }
 }

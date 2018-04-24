@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon\Controller;
+namespace Plugin\Coupon\Controller\Admin;
 
 use Eccube\Application;
 use Eccube\Common\Constant;
@@ -16,14 +16,18 @@ use Eccube\Entity\Customer;
 use Eccube\Entity\Order;
 use Eccube\Entity\Shipping;
 use Plugin\Coupon\Entity\Coupon;
+use Plugin\Coupon\Repository\CouponRepository;
 use Plugin\Coupon\Service\CouponService;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Eccube\Controller\AbstractController;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+
 
 /**
- * Class CouponController.
+ * Class CouponController
+ * @package Plugin\Coupon\controller\Admin
  */
 class CouponController extends AbstractController
 {
@@ -33,24 +37,30 @@ class CouponController extends AbstractController
     private $sessionKey = 'eccube.front.shopping.nonmember';
 
     /**
-     * クーポン設定画面表示.
-     *
-     * @param Application $app
-     * @param Request     $request
-     *
-     * @return Response
+     * @var CouponRepository
      */
-    public function index(Application $app, Request $request)
+    private $couponRepository;
+
+    /**
+     * CouponController constructor.
+     * @param CouponRepository $couponRepository
+     */
+    public function __construct(CouponRepository $couponRepository)
     {
-        // クーポン削除時のtokenで使用
-        $searchForm = $app['form.factory']->createBuilder('admin_plugin_coupon_search')->getForm();
-        $pagination = $app['coupon.repository.coupon']->findBy(
+        $this->couponRepository = $couponRepository;
+    }
+
+    /**
+     * @Route("/%eccube_admin_route%/plugin/coupon/", name="plugin_coupon_list")
+     */
+    public function index(Request $request)
+    {
+        $pagination = $this->couponRepository->findBy(
             array(),
             array('id' => 'DESC')
         );
 
-        return $app->render('Coupon/Resource/template/admin/index.twig', array(
-            'searchForm' => $searchForm->createView(),
+        return $this->render('Coupon/Resource/template/admin/index.twig', array(
             'pagination' => $pagination,
             'totalItemCount' => count($pagination),
         ));
@@ -72,7 +82,7 @@ class CouponController extends AbstractController
             // 新規登録
             $Coupon = new Coupon();
             $Coupon->setEnableFlag(Constant::ENABLED);
-            $Coupon->setDelFlg(Constant::DISABLED);
+            $Coupon->setVisible(Constant::DISABLED);
         } else {
             // 更新
             $Coupon = $app['coupon.repository.coupon']->find($id);

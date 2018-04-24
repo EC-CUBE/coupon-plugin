@@ -1,0 +1,2 @@
+services:
+    Plugin\Coupon\Service\CouponService:

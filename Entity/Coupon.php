@@ -10,101 +10,148 @@
 
 namespace Plugin\Coupon\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
 use Eccube\Entity\AbstractEntity;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * Coupon.
+ * Coupon
+ *
+ * @ORM\Table(name="plg_coupon")
+ * @ORM\InheritanceType("SINGLE_TABLE")
+ * @ORM\DiscriminatorColumn(name="discriminator_type", type="string", length=255)
+ * @ORM\HasLifecycleCallbacks()
+ * @ORM\Entity(repositoryClass="Plugin\Coupon\Repository\CouponRepository")
  */
 class Coupon extends AbstractEntity
 {
     /**
      * @var int
+     *
+     * @ORM\Column(name="coupon_id", type="integer", options={"unsigned":true})
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
     /**
      * @var string
+     *
+     * @ORM\Column(name="coupon_cd", type="string", nullable=true, length=20)
      */
     private $coupon_cd;
 
     /**
      * @var int
+     *
+     * @ORM\Column(name="coupon_type", type="smallint", nullable=true)
      */
     private $coupon_type;
 
     /**
      * @var string
+     *
+     * @ORM\Column(name="coupon_name", type="string", nullable=true, length=50)
      */
     private $coupon_name;
 
     /**
      * @var int
+     *
+     * @ORM\Column(name="discount_type", type="smallint", nullable=true)
      */
     private $discount_type;
 
     /**
      * @var int
+     *
+     * @ORM\Column(name="coupon_use_time", type="integer", nullable=true)
      */
     private $coupon_use_time;
 
     /**
-     * @var string
+     * @var float
+     *
+     * @ORM\Column(name="discount_price", type="decimal", nullable=true, precision=12, scale=2, options={"unsigned":true,"default":0})
      */
     private $discount_price;
 
     /**
-     * @var string
+     * @var float
+     *
+     * @ORM\Column(name="discount_rate", type="decimal", nullable=true, precision=10, scale=0, options={"unsigned":true,"default":0})
      */
     private $discount_rate;
 
     /**
-     * @var int
+     * @var bool
+     *
+     * @ORM\Column(name="enable_flag", type="boolean", nullable=false, options={"default":true})
      */
     private $enable_flag;
 
     /**
      * @var \DateTime
+     *
+     * @ORM\Column(name="available_from_date", type="datetimetz")
      */
     private $available_from_date;
 
     /**
      * @var \DateTime
+     *
+     * @ORM\Column(name="available_to_date", type="datetimetz")
      */
     private $available_to_date;
 
     /**
-     * @var int
+     * @var boolean
+     *
+     * @ORM\Column(name="visible", type="boolean", options={"default":true})
      */
-    private $del_flg;
+    private $visible;
 
     /**
-     * @var int
+     * @var boolean
+     *
+     * @ORM\Column(name="coupon_member", type="boolean", options={"default":false})
      */
     private $coupon_member;
 
     /**
-     * @var int
+     * @var float
+     *
+     * @ORM\Column(name="coupon_lower_limit", type="decimal", nullable=true, precision=12, scale=2, options={"unsigned":true,"default":0})
      */
     private $coupon_lower_limit;
 
     /**
+     * The number of coupon release
+     *
      * @var int
+     *
+     * @ORM\Column(name="coupon_release", type="integer", nullable=false)
      */
     private $coupon_release;
 
     /**
      * @var \DateTime
+     *
+     * @ORM\Column(name="create_date", type="datetimetz")
      */
     private $create_date;
 
     /**
      * @var \DateTime
+     *
+     * @ORM\Column(name="update_date", type="datetimetz")
      */
     private $update_date;
 
     /**
      * @var \Doctrine\Common\Collections\Collection
+     *
+     * @ORM\OneToMany(targetEntity="Plugin\Coupon\Entity\CouponDetail", mappedBy="Coupon", cascade={"persist","remove"})
      */
     private $CouponDetails;
 
@@ -373,9 +420,9 @@ class Coupon extends AbstractEntity
      *
      * @return Coupon
      */
-    public function setDelFlg($delFlg)
+    public function setVisible($delFlg)
     {
-        $this->del_flg = $delFlg;
+        $this->visible = $delFlg;
 
         return $this;
     }
@@ -385,9 +432,9 @@ class Coupon extends AbstractEntity
      *
      * @return int
      */
-    public function getDelFlg()
+    public function getVisible()
     {
-        return $this->del_flg;
+        return $this->visible;
     }
 
     /**

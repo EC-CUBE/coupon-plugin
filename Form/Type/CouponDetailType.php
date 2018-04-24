@@ -21,21 +21,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class CouponDetailType extends AbstractType
 {
     /**
-     * @var \Eccube\Application
-     */
-    protected $app;
-
-    /**
-     * CouponDetailType constructor.
-     *
-     * @param \Eccube\Application $app
-     */
-    public function __construct($app)
-    {
-        $this->app = $app;
-    }
-
-    /**
      * buildForm.
      *
      * @param FormBuilderInterface $builder

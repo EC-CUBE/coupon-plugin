@@ -165,7 +165,7 @@ class CouponControllerTest extends AbstractAdminWebTestCase
         $CouponDetail->setCouponType($Coupon->getCouponType());
         $CouponDetail->setUpdateDate($Coupon->getUpdateDate());
         $CouponDetail->setCreateDate($Coupon->getCreateDate());
-        $CouponDetail->setDelFlg(Constant::ENABLED);
+        $CouponDetail->setVisible(Constant::ENABLED);
         $Categories = $Product->getProductCategories();
 
         /** @var \Eccube\Entity\ProductCategory $Category */
@@ -248,7 +248,7 @@ class CouponControllerTest extends AbstractAdminWebTestCase
         $Coupon->setCouponLowerLimit(100);
         $Coupon->setCouponMember(0);
         $Coupon->setEnableFlag(1);
-        $Coupon->setDelFlg(0);
+        $Coupon->setVisible(0);
         $d1 = $date1->setDate(2016, 1, 1);
         $Coupon->setAvailableFromDate($d1);
         $d2 = $date2->setDate(2040, 12, 31);

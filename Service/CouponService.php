@@ -248,7 +248,7 @@ class CouponService
             $CouponOrder = new CouponOrder();
             $CouponOrder->setOrderId($Order->getId());
             $CouponOrder->setPreOrderId($Order->getPreOrderId());
-            $CouponOrder->setDelFlg(Constant::DISABLED);
+            $CouponOrder->setVisible(Constant::DISABLED);
         }
 
         // 更新対象データ
@@ -578,7 +578,7 @@ class CouponService
         $coupon->setDiscountRate($data['discount_rate']);
         $coupon->setCouponUseTime($data['coupon_use_time']);
         $coupon->setEnableFlag(Constant::ENABLED);
-        $coupon->setDelFlg(Constant::DISABLED);
+        $coupon->setVisible(Constant::DISABLED);
         $coupon->setAvailableFromDate($data['available_from_date']);
         $coupon->setAvailableToDate($data['available_to_date']);
 
@@ -600,7 +600,7 @@ class CouponService
         $couponDetail->setCouponType($coupon->getCouponType());
         $couponDetail->setCategory($detail->getCategory());
         $couponDetail->setProduct($detail->getProduct());
-        $couponDetail->setDelFlg(Constant::DISABLED);
+        $couponDetail->setVisible(Constant::DISABLED);
 
         return $couponDetail;
     }

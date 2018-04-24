@@ -11,83 +11,116 @@
 namespace Plugin\Coupon\Entity;
 
 use Eccube\Entity\AbstractEntity;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
- * CouponOrder.
+ * Coupon Order
+ *
+ * @ORM\Table(name="plg_coupon_order")
+ * @ORM\InheritanceType("SINGLE_TABLE")
+ * @ORM\DiscriminatorColumn(name="discriminator_type", type="string", length=255)
+ * @ORM\HasLifecycleCallbacks()
+ * @ORM\Entity(repositoryClass="Plugin\Coupon\Repository\CouponOrderRepository")
  */
 class CouponOrder extends AbstractEntity
 {
     /**
      * @var int
+     *
+     * @ORM\Column(name="coupon_order_id", type="integer", options={"unsigned":true})
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
     /**
      * @var int
+     *
+     * @ORM\Column(name="coupon_id", type="integer", options={"unsigned":true})
      */
     private $coupon_id;
 
     /**
      * @var string
+     *
+     * @ORM\Column(name="coupon_cd", type="string", nullable=true, length=20)
      */
     private $coupon_cd;
 
     /**
      * @var string
+     *
+     * @ORM\Column(name="coupon_name", type="string", nullable=true, length=50)
      */
     private $coupon_name;
 
     /**
      * @var int
+     *
+     * @ORM\Column(name="user_id", type="integer", options={"unsigned":true})
      */
     private $user_id;
 
     /**
      * @var string
+     *
+     * @ORM\Column(name="email", type="string", length=255)
      */
     private $email;
 
     /**
      * @var int
+     *
+     * @ORM\Column(name="order_id", type="integer", options={"unsigned":true})
      */
     private $order_id;
 
     /**
-     * @var string
+     * @var string|null
+     *
+     * @ORM\Column(name="pre_order_id", type="string", length=255, nullable=true)
      */
     private $pre_order_id;
 
     /**
-     * @var \DateTime
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="order_date", type="datetimetz", nullable=true)
      */
     private $order_date;
 
     /**
      * @var string
+     *
+     * @ORM\Column(name="discount", type="decimal", precision=12, scale=2, options={"unsigned":true,"default":0})
      */
     private $discount = 0;
 
     /**
-     * @var int
+     * @var boolean
+     *
+     * @ORM\Column(name="visible", type="boolean", options={"default":true})
      */
-    private $del_flg;
+    private $visible;
+
     /**
-     * @var int
+     * @var boolean
+     *
+     * @ORM\Column(name="order_change_status", type="boolean", options={"default":true})
      */
     private $order_change_status;
 
     /**
-     * @var int
-     */
-    private $coupon_cancel;
-
-    /**
      * @var \DateTime
+     *
+     * @ORM\Column(name="create_date", type="datetimetz")
      */
     private $create_date;
 
     /**
      * @var \DateTime
+     *
+     * @ORM\Column(name="update_date", type="datetimetz")
      */
     private $update_date;
 
@@ -300,9 +333,9 @@ class CouponOrder extends AbstractEntity
      *
      * @return CouponOrder
      */
-    public function setDelFlg($delFlg)
+    public function setVisible($delFlg)
     {
-        $this->del_flg = $delFlg;
+        $this->visible = $delFlg;
 
         return $this;
     }
@@ -312,25 +345,9 @@ class CouponOrder extends AbstractEntity
      *
      * @return int
      */
-    public function getDelFlg()
+    public function getVisible()
     {
-        return $this->del_flg;
-    }
-
-    /**
-     * @return int
-     */
-    public function getCouponCancel()
-    {
-        return $this->coupon_cancel;
-    }
-
-    /**
-     * @param int $couponCancel
-     */
-    public function setCouponCancel($couponCancel)
-    {
-        $this->coupon_cancel = $couponCancel;
+        return $this->visible;
     }
 
     /**
@@ -398,7 +415,7 @@ class CouponOrder extends AbstractEntity
     }
 
     /**
-     * @return int
+     * @return bool
      */
     public function getOrderChangeStatus()
     {
@@ -406,7 +423,7 @@ class CouponOrder extends AbstractEntity
     }
 
     /**
-     * @param int $orderChangeStatus
+     * @param bool $orderChangeStatus
      */
     public function setOrderChangeStatus($orderChangeStatus)
     {

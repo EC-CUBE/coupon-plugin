@@ -14,49 +14,83 @@ use Eccube\Entity\AbstractEntity;
 use Eccube\Entity\Product;
 use Eccube\Entity\Category;
 use Doctrine\ORM\EntityNotFoundException;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
- * CouponDetail.
+ * Coupon Detail
+ *
+ * @ORM\Table(name="plg_coupon_detail")
+ * @ORM\InheritanceType("SINGLE_TABLE")
+ * @ORM\DiscriminatorColumn(name="discriminator_type", type="string", length=255)
+ * @ORM\HasLifecycleCallbacks()
+ * @ORM\Entity(repositoryClass="Plugin\Coupon\Repository\CouponDetailRepository")
  */
 class CouponDetail extends AbstractEntity
 {
     /**
      * @var int
+     *
+     * @ORM\Column(name="coupon_detail_id", type="integer", options={"unsigned":true})
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
     /**
      * @var int
+     *
+     * @ORM\Column(name="coupon_type", type="smallint", nullable=true)
      */
     private $coupon_type;
 
     /**
-     * @var int
+     * @var boolean
+     *
+     * @ORM\Column(name="visible", type="boolean", options={"default":true})
      */
-    private $del_flg;
+    private $visible;
 
     /**
      * @var \DateTime
+     *
+     * @ORM\Column(name="create_date", type="datetimetz")
      */
     private $create_date;
 
     /**
      * @var \DateTime
+     *
+     * @ORM\Column(name="update_date", type="datetimetz")
      */
     private $update_date;
 
     /**
      * @var Coupon
+     *
+     * @ORM\ManyToOne(targetEntity="Plugin\Coupon\Entity\Coupon", inversedBy="CouponDetails")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="coupon_id", referencedColumnName="coupon_id")
+     * })
      */
     private $Coupon;
 
     /**
-     * @var Product
+     * @var \Eccube\Entity\Product
+     *
+     * @ORM\ManyToOne(targetEntity="Eccube\Entity\Product")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="product_id", referencedColumnName="id")
+     * })
      */
     private $Product;
 
     /**
-     * @var Category
+     * @var \Eccube\Entity\Category
+     *
+     * @ORM\ManyToOne(targetEntity="Eccube\Entity\Category")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="category_id", referencedColumnName="id")
+     * })
      */
     private $Category;
 
@@ -115,9 +149,9 @@ class CouponDetail extends AbstractEntity
      *
      * @return CouponDetail
      */
-    public function setDelFlg($delFlg)
+    public function setVisible($delFlg)
     {
-        $this->del_flg = $delFlg;
+        $this->visible = $delFlg;
 
         return $this;
     }
@@ -127,9 +161,9 @@ class CouponDetail extends AbstractEntity
      *
      * @return int
      */
-    public function getDelFlg()
+    public function getVisible()
     {
-        return $this->del_flg;
+        return $this->visible;
     }
 
     /**

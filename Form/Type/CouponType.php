@@ -27,21 +27,6 @@ use Eccube\Application;
 class CouponType extends AbstractType
 {
     /**
-     * @var Application
-     */
-    private $app;
-
-    /**
-     * CouponType constructor.
-     *
-     * @param Application $app
-     */
-    public function __construct(Application $app)
-    {
-        $this->app = $app;
-    }
-
-    /**
      * buildForm.
      *
      * @param FormBuilderInterface $builder

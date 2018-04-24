@@ -11,8 +11,8 @@
 namespace Plugin\Coupon\ServiceProvider;
 
 use Silex\Application as BaseApplication;
-use Silex\ServiceProviderInterface;
 use Eccube\Common\Constant;
+use Eccube\ServiceProvider\ServiceProviderInterface;
 use Plugin\Coupon\Form\Type\CouponSearchType;
 use Plugin\Coupon\Form\Type\CouponType;
 use Plugin\Coupon\Form\Type\CouponDetailType;
@@ -20,10 +20,7 @@ use Plugin\Coupon\Form\Type\CouponSearchCategoryType;
 use Plugin\Coupon\Form\Type\CouponUseType;
 use Plugin\Coupon\Service\CouponService;
 use Plugin\Coupon\Event\Event;
-use Plugin\Coupon\Event\EventLegacy;
 
-// include log functions (for 3.0.0 - 3.0.11)
-require_once __DIR__.'/../log.php';
 
 /**
  * Class CouponServiceProvider.
@@ -73,9 +70,6 @@ class CouponServiceProvider implements ServiceProviderInterface
         // イベントの追加
         $app['eccube.plugin.coupon.event'] = $app->share(function () use ($app) {
             return new Event($app);
-        });
-        $app['eccube.plugin.coupon.event.legacy'] = $app->share(function () use ($app) {
-            return new EventLegacy($app);
         });
 
         // Formの登録
@@ -132,10 +126,6 @@ class CouponServiceProvider implements ServiceProviderInterface
             return $config;
         }));
 
-        // initialize logger (for 3.0.0 - 3.0.8)
-        if (!method_exists('Eccube\Application', 'getInstance')) {
-            eccube_log_init($app);
-        }
     }
 
     /**
