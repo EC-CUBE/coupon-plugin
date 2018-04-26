@@ -14,7 +14,7 @@ use Eccube\Application;
 use Eccube\Common\Constant;
 use Eccube\Entity\Customer;
 use Eccube\Entity\Order;
-use Eccube\Entity\OrderDetail;
+use Eccube\Entity\OrderItem;
 use Plugin\Coupon\Entity\Coupon;
 use Plugin\Coupon\Entity\CouponDetail;
 use Plugin\Coupon\Entity\CouponOrder;
@@ -25,156 +25,6 @@ use Eccube\Entity\Category;
  */
 class CouponService
 {
-    /** @var \Eccube\Application */
-    public $app;
-
-    /**
-     * コンストラクタ
-     *
-     * @param Application $app
-     */
-    public function __construct(Application $app)
-    {
-        $this->app = $app;
-    }
-
-    /**
-     * クーポン情報を新規登録する.
-     *
-     * @param array $data
-     *
-     * @return bool
-     */
-    public function createCoupon($data)
-    {
-        // クーポン詳細情報を生成する
-        $coupon = $this->newCoupon($data);
-        $em = $this->app['orm.em'];
-        // クーポン情報を登録する
-        $em->persist($coupon);
-        $em->flush($coupon);
-        // クーポン詳細情報を登録する
-        foreach ($data['CouponDetails'] as $detail) {
-            $couponDetail = $this->newCouponDetail($coupon, $detail);
-            $em->persist($couponDetail);
-            $em->flush($couponDetail);
-        }
-
-        return true;
-    }
-
-    /**
-     * クーポン情報を更新する.
-     *
-     * @param array $data
-     *
-     * @return bool
-     */
-    public function updateCoupon($data)
-    {
-        $em = $this->app['orm.em'];
-        // クーポン情報を取得する
-        $coupon = $this->app['coupon.repository.coupon']->find($data['id']);
-        if (is_null($coupon)) {
-            false;
-        }
-
-        // クーポン情報を書き換える
-        $coupon->setCouponCd($data['coupon_cd']);
-        $coupon->setCouponName($data['coupon_name']);
-        $coupon->setCouponType($data['coupon_type']);
-        $coupon->setDiscountType($data['discount_type']);
-        $coupon->setDiscountPrice($data['discount_price']);
-        $coupon->setDiscountRate($data['discount_rate']);
-        $coupon->setAvailableFromDate($data['available_from_date']);
-        $coupon->setAvailableToDate($data['available_to_date']);
-        $coupon->setCouponUseTime($data['coupon_use_time']);
-
-        // クーポン情報を更新する
-        $em->persist($coupon);
-        // クーポン詳細情報を取得する
-        $details = $coupon->getCouponDetails();
-        // クーポン詳細情報を一旦削除する
-        foreach ($details as $detail) {
-            // クーポン詳細情報を書き換える
-            $detail->setDelFlg(Constant::ENABLED);
-            $em->persist($detail);
-        }
-        // クーポン詳細情報を登録/更新する
-        $details = $data->getCouponDetails();
-        $couponDetail = null;
-        foreach ($details as $detail) {
-            if (is_null($detail->getId())) {
-                $couponDetail = $detail;
-                $couponDetail->setCoupon($coupon);
-                $couponDetail->setCouponType($coupon->getCouponType());
-            } else {
-                $couponDetail = $this->app['coupon.repository.coupon_detail']->find($detail->getId());
-            }
-            $couponDetail->setDelFlg(Constant::DISABLED);
-            $em->persist($couponDetail);
-            $em->flush($couponDetail);
-        }
-
-        return true;
-    }
-
-    /**
-     * クーポン情報を有効/無効にする.
-     *
-     * @param int $couponId
-     *
-     * @return bool
-     */
-    public function enableCoupon($couponId)
-    {
-        $em = $this->app['orm.em'];
-        // クーポン情報を取得する
-        $coupon = $this->app['coupon.repository.coupon']->find($couponId);
-        if (is_null($coupon)) {
-            return false;
-        }
-        // クーポン情報を書き換える
-        $coupon->setEnableFlag($coupon->getEnableFlag() == 0 ? 1 : 0);
-        // クーポン情報を登録する
-        $em->persist($coupon);
-        $em->flush($coupon);
-
-        return true;
-    }
-
-    /**
-     * クーポン情報を削除する.
-     *
-     * @param int $couponId
-     *
-     * @return bool
-     */
-    public function deleteCoupon($couponId)
-    {
-        $em = $this->app['orm.em'];
-        // クーポン情報を取得する
-        $coupon = $this->app['coupon.repository.coupon']->find($couponId);
-        if (is_null($coupon)) {
-            return false;
-        }
-        // クーポン情報を書き換える
-        $coupon->setDelFlg(Constant::ENABLED);
-        // クーポン情報を登録する
-        $em->persist($coupon);
-        $em->flush($coupon);
-        // クーポン詳細情報を取得する
-        $details = $coupon->getCouponDetails();
-        foreach ($details as $detail) {
-            // クーポン詳細情報を書き換える
-            $detail->setDelFlg(Constant::ENABLED);
-            $em->persist($detail);
-            $em->flush($detail);
-        }
-
-        return true;
-    }
-
     /**
      * クーポンコードを生成する.
      *
@@ -211,8 +61,8 @@ class CouponService
             } elseif ($Coupon->getCouponType() == 3) {
                 // all product
                 // 一致する商品IDがあればtrueを返す
-                foreach ($Order->getOrderDetails() as $detail) {
-                    /* @var $detail OrderDetail */
+                foreach ($Order->getItems() as $detail) {
+                    /* @var $detail OrderItem */
                     $couponProducts[$detail->getProductClass()->getId()]['price'] = $detail->getPriceIncTax();
                     $couponProducts[$detail->getProductClass()->getId()]['quantity'] = $detail->getQuantity();
                 }

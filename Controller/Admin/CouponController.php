@@ -15,10 +15,17 @@ use Eccube\Common\Constant;
 use Eccube\Entity\Customer;
 use Eccube\Entity\Order;
 use Eccube\Entity\Shipping;
+use Eccube\Form\Type\Admin\SearchProductType;
 use Plugin\Coupon\Entity\Coupon;
+use Plugin\Coupon\Entity\CouponDetail;
+use Plugin\Coupon\Form\Type\CouponSearchCategoryType;
+use Plugin\Coupon\Form\Type\CouponType;
+use Plugin\Coupon\Repository\CouponDetailRepository;
 use Plugin\Coupon\Repository\CouponRepository;
 use Plugin\Coupon\Service\CouponService;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Eccube\Controller\AbstractController;
@@ -42,12 +49,26 @@ class CouponController extends AbstractController
     private $couponRepository;
 
     /**
+     * @var CouponService
+     */
+    private $couponService;
+
+    /**
+     * @var CouponDetailRepository
+     */
+    private $couponDetailRepository;
+
+    /**
      * CouponController constructor.
      * @param CouponRepository $couponRepository
+     * @param CouponService $couponService
+     * @param CouponDetailRepository $couponDetailRepository
      */
-    public function __construct(CouponRepository $couponRepository)
+    public function __construct(CouponRepository $couponRepository, CouponService $couponService, CouponDetailRepository $couponDetailRepository)
     {
         $this->couponRepository = $couponRepository;
+        $this->couponService = $couponService;
+        $this->couponDetailRepository = $couponDetailRepository;
     }
 
     /**
@@ -55,27 +76,26 @@ class CouponController extends AbstractController
      */
     public function index(Request $request)
     {
-        $pagination = $this->couponRepository->findBy(
+        $coupons = $this->couponRepository->findBy(
             array(),
             array('id' => 'DESC')
         );
 
         return $this->render('Coupon/Resource/template/admin/index.twig', array(
-            'pagination' => $pagination,
-            'totalItemCount' => count($pagination),
+            'Coupons' => $coupons,
         ));
     }
 
     /**
      * クーポンの新規作成/編集確定.
      *
-     * @param Application $app
-     * @param Request     $request
-     * @param int         $id
-     *
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+     * @param Request $request
+     * @param int     $id
+     * @return RedirectResponse|Response
+     * @Route("/%eccube_admin_route%/plugin/coupon/new", name="plugin_coupon_new", requirements={"id" = "\d+"})
+     * @Route("/%eccube_admin_route%/plugin/coupon/{id}/edit", name="plugin_coupon_edit", requirements={"id" = "\d+"})
      */
-    public function edit(Application $app, Request $request, $id = null)
+    public function edit(Request $request, $id = null)
     {
         $Coupon = null;
         if (!$id) {
@@ -85,18 +105,18 @@ class CouponController extends AbstractController
             $Coupon->setVisible(Constant::DISABLED);
         } else {
             // 更新
-            $Coupon = $app['coupon.repository.coupon']->find($id);
+            $Coupon = $this->couponRepository->find($id);
             if (!$Coupon) {
-                $app->addError('admin.plugin.coupon.notfound', 'admin');
+                $this->addError('admin.plugin.coupon.notfound', 'admin');
 
-                return $app->redirect($app->url('plugin_coupon_list'));
+                return $this->redirectToRoute('plugin_coupon_list');
             }
         }
 
-        $form = $app['form.factory']->createBuilder('admin_plugin_coupon', $Coupon)->getForm();
+        $form = $this->formFactory->createBuilder(CouponType::class, $Coupon)->getForm();
         // クーポンコードの発行
         if (!$id) {
-            $form->get('coupon_cd')->setData($app['eccube.plugin.coupon.service.coupon']->generateCouponCd());
+            $form->get('coupon_cd')->setData($this->couponService->generateCouponCd());
         }
         $details = array();
         $CouponDetails = $Coupon->getCouponDetails();
@@ -118,31 +138,32 @@ class CouponController extends AbstractController
                 }
             }
 
-            $CouponDetails = $app['coupon.repository.coupon_detail']->findBy(array(
+            $CouponDetails = $this->couponDetailRepository->findBy(array(
                 'Coupon' => $Coupon,
             ));
             foreach ($CouponDetails as $CouponDetail) {
                 $Coupon->removeCouponDetail($CouponDetail);
-                $app['orm.em']->remove($CouponDetail);
-                $app['orm.em']->flush($CouponDetail);
+                $this->entityManager->remove($CouponDetail);
+                $this->entityManager->flush($CouponDetail);
             }
             $CouponDetails = $form->get('CouponDetails')->getData();
+            /** @var CouponDetail $CouponDetail */
             foreach ($CouponDetails as $CouponDetail) {
                 $CouponDetail->setCoupon($Coupon);
                 $CouponDetail->setCouponType($Coupon->getCouponType());
-                $CouponDetail->setDelFlg(Constant::DISABLED);
+                $CouponDetail->setVisible(Constant::DISABLED);
                 $Coupon->addCouponDetail($CouponDetail);
-                $app['orm.em']->persist($CouponDetail);
+                $this->entityManager->persist($CouponDetail);
             }
-            $app['orm.em']->persist($Coupon);
-            $app['orm.em']->flush($Coupon);
+            $this->entityManager->persist($Coupon);
+            $this->entityManager->flush($Coupon);
             // 成功時のメッセージを登録する
-            $app->addSuccess('admin.plugin.coupon.regist.success', 'admin');
+            $this->addSuccess('admin.plugin.coupon.regist.success', 'admin');
 
-            return $app->redirect($app->url('plugin_coupon_list'));
+            return $this->redirectToRoute('plugin_coupon_list');
         }
 
-        return $this->renderRegistView($app, array(
+        return $this->renderRegistView(array(
             'form' => $form->createView(),
             'id' => $id,
         ));
@@ -151,86 +172,70 @@ class CouponController extends AbstractController
     /**
      * クーポンの有効/無効化.
      *
-     * @param Application $app
-     * @param Request     $request
-     * @param int         $id
-     *
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @param Request $request
+     * @param Coupon  $Coupon
+     * @return RedirectResponse
+     * @Route("/%eccube_admin_route%/plugin/coupon/{id}/enable", name="plugin_coupon_enable", requirements={"id" = "\d+"})
+     * @ParamConverter("Coupon")
      */
-    public function enable(Application $app, Request $request, $id)
+    public function enable(Request $request, Coupon $Coupon)
     {
-        $coupon = $app['coupon.repository.coupon']->find($id);
-        if (!$coupon) {
-            $app->addError('admin.plugin.coupon.notfound', 'admin');
-
-            return $app->redirect($app->url('plugin_coupon_list'));
-        }
         // =============
         // 更新処理
         // =============
-        $status = $app['eccube.plugin.coupon.service.coupon']->enableCoupon($id);
+        $status = $this->couponRepository->enableCoupon($Coupon);
         if ($status) {
-            $app->addSuccess('admin.plugin.coupon.enable.success', 'admin');
-            log_info('Change status a coupon with ', array('ID' => $id));
+            $this->addSuccess('admin.plugin.coupon.enable.success', 'admin');
+            log_info('Change status a coupon with ', array('ID' => $Coupon->getId()));
         } else {
-            $app->addError('admin.plugin.coupon.notfound', 'admin');
+            $this->addError('admin.plugin.coupon.notfound', 'admin');
         }
 
-        return $app->redirect($app->url('plugin_coupon_list'));
+        return $this->redirectToRoute('plugin_coupon_list');
     }
 
     /**
      * クーポンの削除.
-     *
-     * @param Application $app
-     * @param Request     $request
-     * @param int         $id
-     *
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @param Request $request
+     * @param Coupon  $Coupon
+     * @return RedirectResponse
+     * @Route("/%eccube_admin_route%/plugin/coupon/{id}/delete", name="plugin_coupon_delete", requirements={"id" = "\d+"})
+     * @ParamConverter("Coupon")
      */
-    public function delete(Application $app, Request $request, $id)
+    public function delete(Request $request, Coupon $Coupon)
     {
-        $this->isTokenValid($app);
-        $coupon = $app['coupon.repository.coupon']->find($id);
-        if (!$coupon) {
-            $app->addError('admin.plugin.coupon.notfound', 'admin');
-
-            return $app->redirect($app->url('plugin_coupon_list'));
+        $this->isTokenValid();
+        // クーポン情報を削除する
+        if ($this->couponRepository->deleteCoupon($Coupon)) {
+            $this->addSuccess('admin.plugin.coupon.delete.success', 'admin');
+            log_info('Delete a coupon with ', array('ID' => $Coupon->getId()));
         } else {
-            $service = $app['eccube.plugin.coupon.service.coupon'];
-            // クーポン情報を削除する
-            if ($service->deleteCoupon($id)) {
-                $app->addSuccess('admin.plugin.coupon.delete.success', 'admin');
-                log_info('Delete a coupon with ', array('ID' => $id));
-            } else {
-                $app->addError('admin.plugin.coupon.notfound', 'admin');
-            }
+            $this->addError('admin.plugin.coupon.notfound', 'admin');
         }
 
-        return $app->redirect($app->url('plugin_coupon_list'));
+        return $this->redirectToRoute('plugin_coupon_list');
     }
 
     /**
      * 編集画面用のrender.
      *
-     * @param Application $app
      * @param array       $parameters
      *
      * @return Response
      */
-    protected function renderRegistView(Application $app, $parameters = array())
+    protected function renderRegistView($parameters = array())
     {
         // 商品検索フォーム
-        $searchProductModalForm = $app['form.factory']->createBuilder('admin_search_product')->getForm();
+        $searchProductModalForm = $this->formFactory->createBuilder(SearchProductType::class)->getForm();
         // カテゴリ検索フォーム
-        $searchCategoryModalForm = $app['form.factory']->createBuilder('admin_plugin_coupon_search_category')->getForm();
+        $searchCategoryModalForm = $this->formFactory->createBuilder(CouponSearchCategoryType::class)->getForm();
         $viewParameters = array(
             'searchProductModalForm' => $searchProductModalForm->createView(),
             'searchCategoryModalForm' => $searchCategoryModalForm->createView(),
         );
         $viewParameters += $parameters;
 
-        return $app->render('Coupon/Resource/template/admin/regist.twig', $viewParameters);
+        return $this->render('Coupon/Resource/template/admin/regist.twig', $viewParameters);
     }
 
     /**

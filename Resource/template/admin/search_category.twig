@@ -23,9 +23,9 @@
         // フォーム入力値をセットm
         $newWidget = $(newWidget);
 
-        $newWidget.find('#admin_plugin_coupon_CouponDetails_' + cnt + '_Category').val(id);
-        $newWidget.find('#admin_plugin_coupon_CouponDetails_' + cnt + '_category_name').text(name);
-        $newWidget.find('#admin_plugin_coupon_CouponDetails_' + cnt + '_coupon_type').val(2);
+        $newWidget.find('#coupon_CouponDetails_' + cnt + '_Category').val(id);
+        $newWidget.find('#coupon_CouponDetails_' + cnt + '_category_name').text(name);
+        $newWidget.find('#coupon_CouponDetails_' + cnt + '_coupon_type').val(2);
 
         // 明細行に追加.
         list.append($newWidget);

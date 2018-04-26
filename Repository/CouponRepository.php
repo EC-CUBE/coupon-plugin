@@ -13,6 +13,7 @@ namespace Plugin\Coupon\Repository;
 use Eccube\Common\Constant;
 use Eccube\Repository\AbstractRepository;
 use Plugin\Coupon\Entity\Coupon;
+use Plugin\Coupon\Entity\CouponDetail;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
@@ -103,5 +104,53 @@ class CouponRepository extends AbstractRepository
 
         // 実行
         return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * クーポン情報を有効/無効にする.
+     *
+     * @param Coupon $Coupon
+     *
+     * @return bool
+     */
+    public function enableCoupon(Coupon $Coupon)
+    {
+        $em = $this->getEntityManager();
+        // クーポン情報を書き換える
+        $Coupon->setEnableFlag($Coupon->getEnableFlag() == 0 ? Constant::ENABLED : Constant::DISABLED);
+        // クーポン情報を登録する
+        $em->persist($Coupon);
+        $em->flush($Coupon);
+
+        return true;
+    }
+
+    /**
+     * クーポン情報を削除する.
+     *
+     * @param Coupon $Coupon
+     *
+     * @return bool
+     */
+    public function deleteCoupon(Coupon $Coupon)
+    {
+        $em = $this->getEntityManager();
+
+        // クーポン情報を書き換える
+        $Coupon->setVisible(Constant::DISABLED);
+        // クーポン情報を登録する
+        $em->persist($Coupon);
+        $em->flush($Coupon);
+        // クーポン詳細情報を取得する
+        $details = $Coupon->getCouponDetails();
+        /** @var CouponDetail $detail */
+        foreach ($details as $detail) {
+            // クーポン詳細情報を書き換える
+            $detail->setVisible(Constant::DISABLED);
+            $em->persist($detail);
+            $em->flush($detail);
+        }
+
+        return true;
     }
 }

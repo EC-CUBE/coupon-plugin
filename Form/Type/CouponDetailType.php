@@ -10,8 +10,10 @@
 
 namespace Plugin\Coupon\Form\Type;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Eccube\Form\DataTransformer;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -20,6 +22,21 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class CouponDetailType extends AbstractType
 {
+    /**
+     * @var EntityManagerInterface
+     */
+    protected $entityManager;
+
+    /**
+     * CouponDetailType constructor.
+     * @param EntityManagerInterface $entityManager
+     */
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
+
     /**
      * buildForm.
      *
@@ -30,18 +47,18 @@ class CouponDetailType extends AbstractType
     {
         $builder
             ->add(
-                $builder->create('Product', 'hidden')
-                    ->addModelTransformer(new DataTransformer\EntityToIdTransformer($this->app['orm.em'], '\Eccube\Entity\Product'))
+                $builder->create('Product', HiddenType::class)
+                    ->addModelTransformer(new DataTransformer\EntityToIdTransformer($this->entityManager, '\Eccube\Entity\Product'))
             )
             ->add(
-                $builder->create('Category', 'hidden')
-                    ->addModelTransformer(new DataTransformer\EntityToIdTransformer($this->app['orm.em'], '\Eccube\Entity\Category'))
+                $builder->create('Category', HiddenType::class)
+                    ->addModelTransformer(new DataTransformer\EntityToIdTransformer($this->entityManager, '\Eccube\Entity\Category'))
             )
-            ->add('id', 'hidden', array(
+            ->add('id', HiddenType::class, array(
                 'label' => 'クーポン詳細ID',
                 'required' => false,
             ))
-            ->add('coupon_type', 'hidden', array(
+            ->add('coupon_type', HiddenType::class, array(
                 'required' => false,
             ));
     }

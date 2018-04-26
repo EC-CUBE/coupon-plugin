@@ -13,6 +13,7 @@ namespace Plugin\Coupon\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Eccube\Entity\AbstractEntity;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Coupon
@@ -22,9 +23,18 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ORM\DiscriminatorColumn(name="discriminator_type", type="string", length=255)
  * @ORM\HasLifecycleCallbacks()
  * @ORM\Entity(repositoryClass="Plugin\Coupon\Repository\CouponRepository")
+ * @UniqueEntity("coupon_cd")
  */
 class Coupon extends AbstractEntity
 {
+    const PRODUCT = 1;
+    const CATEGORY = 2;
+    const ALL = 3;
+
+    const DISCOUNT_PRICE = 1;
+    const DISCOUNT_RATE = 2;
+
+
     /**
      * @var int
      *
@@ -37,7 +47,7 @@ class Coupon extends AbstractEntity
     /**
      * @var string
      *
-     * @ORM\Column(name="coupon_cd", type="string", nullable=true, length=20)
+     * @ORM\Column(name="coupon_cd", type="string", nullable=true, length=20, unique=true)
      */
     private $coupon_cd;
 
