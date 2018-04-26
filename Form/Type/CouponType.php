@@ -11,7 +11,17 @@
 namespace Plugin\Coupon\Form\Type;
 
 use Carbon\Carbon;
+use Plugin\Coupon\Entity\Coupon;
+use Plugin\Coupon\Repository\CouponRepository;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\MoneyType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
@@ -20,12 +30,43 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Eccube\Application;
+use Symfony\Component\Validator\Context\ExecutionContext;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * Class CouponType.
  */
 class CouponType extends AbstractType
 {
+    /**
+     * @var CouponRepository
+     */
+    private $couponRepository;
+
+    /**
+     * @var ValidatorInterface
+     */
+    private $validator;
+
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
+
+    /**
+     * CouponType constructor.
+     * @param CouponRepository $couponRepository
+     * @param ValidatorInterface $validator
+     * @param ContainerInterface $container
+     */
+    public function __construct(CouponRepository $couponRepository, ValidatorInterface $validator, ContainerInterface $container)
+    {
+        $this->couponRepository = $couponRepository;
+        $this->validator = $validator;
+        $this->container = $container;
+    }
+
+
     /**
      * buildForm.
      *
@@ -34,10 +75,10 @@ class CouponType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $app = $this->app;
+        $currency = $this->container->getParameter('currency');
         $builder
-            ->add('coupon_cd', 'text', array(
-                'label' => 'クーポンコード',
+            ->add('coupon_cd', TextType::class, array(
+                'label' => 'admin.plugin.coupon.label.coupon_cd',
                 'required' => true,
                 'trim' => true,
                 'constraints' => array(
@@ -45,70 +86,76 @@ class CouponType extends AbstractType
                     new Assert\Regex(array('pattern' => '/^[a-zA-Z0-9]+$/i')),
                 ),
             ))
-            ->add('coupon_name', 'text', array(
-                'label' => 'クーポン名',
+            ->add('coupon_name', TextType::class, array(
+                'label' => 'admin.plugin.coupon.label.coupon_name',
                 'required' => true,
                 'trim' => true,
                 'constraints' => array(
                     new Assert\NotBlank(),
                 ),
             ))
-            ->add('coupon_type', 'choice', array(
-                'choices' => array(1 => '商品', 2 => 'カテゴリ', 3 => '全商品'),
+            ->add('coupon_type', ChoiceType::class, array(
+                'choices' => array(
+                    Coupon::PRODUCT => 'admin.plugin.coupon.coupon_type.product',
+                    Coupon::CATEGORY => 'admin.plugin.coupon.coupon_type.category',
+                    Coupon::ALL => 'admin.plugin.coupon.coupon_type.all'
+                ),
                 'required' => true,
                 'expanded' => true,
                 'multiple' => false,
-                'label' => '対象商品',
-                'empty_value' => false,
+                'label' => 'admin.plugin.coupon.label.coupon_type',
                 'constraints' => array(
                     new Assert\NotBlank(),
                 ),
             ))
-            ->add('coupon_member', 'choice', array(
-                'choices' => array(1 => '会員のみ', 0 => 'なし'),
+            ->add('coupon_member', ChoiceType::class, array(
+                'choices' => array(
+                    1 => 'admin.plugin.coupon.coupon_member.yes',
+                    0 => 'admin.plugin.coupon.coupon_member.no'
+                ),
                 'required' => true,
                 'expanded' => true,
                 'multiple' => false,
-                'label' => '利用制限',
-                'empty_value' => false,
+                'label' => 'admin.plugin.coupon.label.coupon_member',
                 'constraints' => array(
                     new Assert\NotBlank(),
                 ),
             ))
-            ->add('discount_type', 'choice', array(
-                'choices' => array(1 => '値引き額', 2 => '値引率'),
+            ->add('discount_type', ChoiceType::class, array(
+                'choices' => array(
+                    Coupon::DISCOUNT_PRICE => 'admin.plugin.coupon.label.discount_type.price',
+                    Coupon::DISCOUNT_RATE => 'admin.plugin.coupon.label.discount_type.rate'
+                ),
                 'required' => true,
                 'expanded' => true,
                 'multiple' => false,
-                'label' => '値引き種別',
+                'label' => 'admin.plugin.coupon.label.discount_type',
                 'constraints' => array(
                     new Assert\NotBlank(),
                 ),
             ))
-            ->add('coupon_lower_limit', 'money', array(
-                'label' => '下限金額(円)',
+            ->add('coupon_lower_limit', MoneyType::class, array(
+                'label' => 'admin.plugin.coupon.label.coupon_lower_limit',
                 'required' => false,
-                'currency' => 'JPY',
-                'precision' => 0,
+                'currency' => $currency,
                 'constraints' => array(
                     new Assert\Range(array(
                         'min' => 0,
                     )),
                 ),
             ))
-            ->add('discount_price', 'money', array(
-                'label' => '値引き額(円)',
+            ->add('discount_price', MoneyType::class, array(
+                'label' => 'admin.plugin.coupon.label.discount_price',
                 'required' => false,
-                'currency' => 'JPY',
-                'precision' => 0,
+                'currency' => $currency,
                 'constraints' => array(
                     new Assert\Range(array(
                         'min' => 0,
                     )),
                 ),
             ))
-            ->add('discount_rate', 'integer', array(
-                'label' => '値引率(％)',
+            ->add('discount_rate', IntegerType::class, array(
+                'label' => 'admin.plugin.coupon.label.discount_rate',
                 'required' => false,
                 'constraints' => array(
                     new Assert\Range(array(
@@ -118,31 +165,31 @@ class CouponType extends AbstractType
                 ),
             ))
             // 有効期間(FROM)
-            ->add('available_from_date', 'date', array(
-                'label' => '有効期間',
+            ->add('available_from_date', DateType::class, array(
+                'label' => 'admin.plugin.coupon.label.available_from_date',
                 'required' => true,
                 'input' => 'datetime',
                 'widget' => 'single_text',
-                'format' => 'yyyy-MM-dd',
-                'empty_value' => array('year' => '----', 'month' => '--', 'day' => '--'),
+//                'format' => 'yyyy-MM-dd',
+//                'empty_value' => array('year' => '----', 'month' => '--', 'day' => '--'),
                 'constraints' => array(
                     new Assert\NotBlank(),
                 ),
             ))
             // 有効期間(TO)
-            ->add('available_to_date', 'date', array(
-                'label' => '有効期間日(TO)',
+            ->add('available_to_date', DateType::class, array(
+                'label' => 'admin.plugin.coupon.label.available_to_date',
                 'required' => true,
                 'input' => 'datetime',
                 'widget' => 'single_text',
-                'format' => 'yyyy-MM-dd',
-                'empty_value' => array('year' => '----', 'month' => '--', 'day' => '--'),
+//                'format' => 'yyyy-MM-dd',
+//                'empty_value' => array('year' => '----', 'month' => '--', 'day' => '--'),
                 'constraints' => array(
                     new Assert\NotBlank(),
                 ),
             ))
-            ->add('coupon_release', 'integer', array(
-                'label' => '発行枚数',
+            ->add('coupon_release', IntegerType::class, array(
+                'label' => 'admin.plugin.coupon.label.coupon_release',
                 'required' => true,
                 'constraints' => array(
                     new Assert\NotBlank(),
@@ -152,24 +199,24 @@ class CouponType extends AbstractType
                     )),
                 ),
             ))
-            ->add('coupon_use_time', 'hidden', array())
-            ->add('CouponDetails', 'collection', array(
-                'type' => 'admin_plugin_coupon_detail',
+            ->add('coupon_use_time', HiddenType::class, array())
+            ->add('CouponDetails', CollectionType::class, array(
+                'entry_type' => CouponDetailType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
                 'prototype' => true,
             ))
-            ->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($app) {
+            ->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
                 $form = $event->getForm();
                 $data = $form->getData();
-                if (count($data['CouponDetails']) == 0 && $data['coupon_type'] != 3) {
-                    $form['coupon_type']->addError(new FormError($app->trans('admin.plugin.coupon.coupontype')));
+                if (count($data['CouponDetails']) == 0 && $data['coupon_type'] != Coupon::ALL) {
+                    $form['coupon_type']->addError(new FormError('admin.plugin.coupon.coupontype'));
                 }
 
-                if ($data['discount_type'] == 1) {
+                if ($data['discount_type'] == Coupon::DISCOUNT_PRICE) {
                     // 値引き額
                     /** @var ConstraintViolationList $errors */
-                    $errors = $app['validator']->validateValue($data['discount_price'], array(
+                    $errors = $this->validator->validate($data['discount_price'], array(
                         new Assert\NotBlank(),
                     ));
                     if ($errors->count() > 0) {
@@ -177,10 +224,10 @@ class CouponType extends AbstractType
                             $form['discount_price']->addError(new FormError($error->getMessage()));
                         }
                     }
-                } elseif ($data['discount_type'] == 2) {
+                } elseif ($data['discount_type'] == Coupon::DISCOUNT_RATE) {
                     // 値引率
                     /** @var ConstraintViolationList $errors */
-                    $errors = $app['validator']->validateValue($data['discount_rate'], array(
+                    $errors = $this->validator->validate($data['discount_rate'], array(
                         new Assert\NotBlank(),
                         new Assert\Range(array(
                             'min' => 0,
@@ -193,31 +240,12 @@ class CouponType extends AbstractType
                         }
                     }
                 }
+
                 if (!empty($data['available_from_date']) && !empty($data['available_to_date'])) {
                     $fromDate = Carbon::instance($data['available_from_date']);
                     $toDate = Carbon::instance($data['available_to_date']);
                     if ($fromDate->gt($toDate)) {
-                        $form['available_from_date']->addError(new FormError($app->trans('admin.plugin.coupon.avaiabledate')));
-                    }
-                }
-
-                // 既に登録されているクーポンコードは利用できない
-                if (null !== $data->getCouponCd()) {
-                    $qb = $app['coupon.repository.coupon']
-                        ->createQueryBuilder('c')
-                        ->select('COUNT(c)')
-                        ->where('c.coupon_cd = :coupon_cd')
-                        ->setParameter('coupon_cd', $data->getCouponCd());
-
-                    // 新規登録時.
-                    if ($data->getId() === null) {
-                        $count = $qb->getQuery()->getSingleScalarResult();
-                    } else {
-                        $qb->andWhere('c.id <> :coupon_id')->setParameter('coupon_id', $data->getId());
-                        $count = $qb->getQuery()->getSingleScalarResult();
-                    }
-                    if ($count > 0) {
-                        $form['coupon_cd']->addError(new FormError($app->trans('admin.plugin.coupon.duplicate')));
+                        $form['available_from_date']->addError(new FormError('admin.plugin.coupon.avaiabledate'));
                     }
                 }
             });
