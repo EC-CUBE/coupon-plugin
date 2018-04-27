@@ -99,6 +99,10 @@
         </tbody>
     </table>
     {% if pagination.totalItemCount > 0 %}
-        {% include "pager.twig" with {'pages': pagination.paginationData, 'routes': 'plugin_coupon_search_product_page'} %}
+        <div class="col box-footer">
+            <div class="row justify-content-md-center mb-4">
+                {% include "@admin/styleguide_pager.twig" with {'pages': pagination.paginationData, 'routes': 'plugin_coupon_search_product_page'} %}
+            </div>
+        </div>
     {% endif %}
 </div>

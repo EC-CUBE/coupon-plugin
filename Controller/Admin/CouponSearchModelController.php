@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon\Controller;
+namespace Plugin\Coupon\Controller\Admin;
 
 use Eccube\Controller\AbstractController;
 use Eccube\Entity\Category;

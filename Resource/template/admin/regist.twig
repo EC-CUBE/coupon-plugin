@@ -290,7 +290,7 @@
                             <div class="row">
                                 <div class="col-3">{{ form_label(form.coupon_type) }}</div>
                                 <div class="col mb-2">
-                                    {{ form_widget(form.coupon_type) }}
+                                    {{ form_widget(form.coupon_type, {'label_attr': {'class': 'radio-inline'}}) }}
                                     {{ form_errors(form.coupon_type) }}
                                 </div>
                             </div>
@@ -298,15 +298,15 @@
                             <div class="row">
                                 <div class="col-3">{{ form_label(form.coupon_member) }}</div>
                                 <div class="col mb-2">
-                                    {{ form_widget(form.coupon_member) }}
+                                    {{ form_widget(form.coupon_member, {'label_attr': {'class': 'radio-inline'}}) }}
+                                    {{ form_errors(form.coupon_member) }}
                                 </div>
-                                {{ form_errors(form.coupon_member) }}
                             </div>
                             {# 値引き種別 #}
                             <div class="row">
                                 <div class="col-3">{{ form_label(form.discount_type) }}</div>
                                 <div class="col mb-2">
-                                    {{ form_widget(form.discount_type) }}
+                                    {{ form_widget(form.discount_type, {'label_attr': {'class': 'radio-inline'}}) }}
                                     {{ form_errors(form.discount_type) }}
                                 </div>
                             </div>
@@ -392,7 +392,7 @@
 
                         <div class="collapse show ec-cardCollapse" id="productArea">
                             <div class="card-body">
-                                <div class="row justify-content-between mb-2 text-center">
+                                <div class="text-center">
                                     <a id="showSearchProductModal" class="btn btn-ec-regular mr-2 add" data-toggle="modal" data-target="#searchProductModal">商品の追加</a>
                                 </div>
 
@@ -401,10 +401,10 @@
                                     {% for couponDetailForm in form.CouponDetails %}
                                         {% if couponDetailForm.vars.value.Product is not null %}
                                             {% if couponDetailForm.vars.value.product_name is not null %}
-                                                <div class="item_box">
+                                                <div class="row item_box">
                                                     {{ form_widget(couponDetailForm.id) }}
                                                     {{ form_widget(couponDetailForm.Product) }}
-                                                    <div class="item_detail">
+                                                    <div class="col-11 item_detail">
                                                         <div class="item_name_area">
                                                             <strong class="item_name">
                                                                 <div id="coupon_CouponDetails_{{ i }}_product_name">
@@ -414,7 +414,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div class="icon_edit">
+                                                    <div class="col-1 icon_edit">
                                                         <button class="btn btn-default btn-sm delete-item">削除</button>
                                                     </div>
                                                 </div><!-- /.item_box -->
@@ -451,7 +451,7 @@
 
                         <div class="collapse show ec-cardCollapse" style="display: block;">
                             <div class="card-body">
-                                <div class="row justify-content-between mb-2 text-center">
+                                <div class="text-center">
                                     <a id="showSearchCategoryModal" class="btn btn-ec-regular mr-2 add" data-toggle="modal" data-target="#searchCategoryModal">カテゴリの追加</a>
                                 </div>
                                 <div class="tableish"
@@ -462,10 +462,10 @@
                                     {% for couponDetailForm in form.CouponDetails %}
                                         {% if couponDetailForm.vars.value.Category is not null %}
                                             {% if couponDetailForm.vars.value.category_full_name is not null %}
-                                                <div class="item_box">
+                                                <div class="row item_box">
                                                     {{ form_widget(couponDetailForm.id) }}
                                                     {{ form_widget(couponDetailForm.Category) }}
-                                                    <div class="item_detail">
+                                                    <div class="col-11 item_detail">
                                                         <div class="item_name_area">
                                                             <strong class="item_name">
                                                                 <div id="coupon_CouponDetails_{{ i }}_category_name">
@@ -475,7 +475,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div class="icon_edit">
+                                                    <div class="col-1 icon_edit">
                                                         <button class="btn btn-default btn-sm delete-item">削除</button>
                                                     </div>
                                                 </div><!-- /.item_box -->
@@ -527,12 +527,14 @@
     // 商品検索モーダル ダイアログ表示
     // =======================================
     #}
-    <div class="modal" id="searchProductModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal" id="searchProductModal" tabindex="-1" role="dialog" aria-labelledby="searchProductModal" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><svg class="cb cb-close" aria-hidden="true"><use xlink:href="#cb-close"></use></svg></button>
-                    <h4 class="modal-title" id="myModalLabel">商品検索</h4>
+                    <h4 class="modal-title" id="searchProductModalLabel">商品検索</h4>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
@@ -541,7 +543,7 @@
                     <div class="form-group">
                         {{ form_widget(searchProductModalForm.category_id) }}
                     </div>
-                    <div class="form-group">
+                    <div class="form-group text-center">
                         <button type="button" id="searchProductModalButton" class="btn btn-primary" >検索</button>
                     </div>
                     <div class="form-group" id="searchProductModalList">
@@ -555,18 +557,20 @@
     // カテゴリ検索モーダル ダイアログ表示
     // =======================================
     #}
-    <div class="modal" id="searchCategoryModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal" id="searchCategoryModal" tabindex="-1" role="dialog" aria-labelledby="searchCategoryModal" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><svg class="cb cb-close" aria-hidden="true"><use xlink:href="#cb-close"></use></svg></button>
-                    <h4 class="modal-title" id="myModalLabel">カテゴリ検索</h4>
+                    <h4 class="modal-title" id="searchCategoryModalLabel">カテゴリ検索</h4>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
                         {{ form_widget(searchCategoryModalForm.category_id, {'attr': {'class': 'form-control'}}) }}
                     </div>
-                    <div class="form-group">
+                    <div class="form-group text-center">
                         <button type="button" id="searchCategoryModalButton" class="btn btn-primary" >検索</button>
                     </div>
                     <div class="form-group" id="searchCategoryModalList">

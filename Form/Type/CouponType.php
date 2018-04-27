@@ -170,8 +170,6 @@ class CouponType extends AbstractType
                 'required' => true,
                 'input' => 'datetime',
                 'widget' => 'single_text',
-//                'format' => 'yyyy-MM-dd',
-//                'empty_value' => array('year' => '----', 'month' => '--', 'day' => '--'),
                 'constraints' => array(
                     new Assert\NotBlank(),
                 ),
@@ -182,8 +180,6 @@ class CouponType extends AbstractType
                 'required' => true,
                 'input' => 'datetime',
                 'widget' => 'single_text',
-//                'format' => 'yyyy-MM-dd',
-//                'empty_value' => array('year' => '----', 'month' => '--', 'day' => '--'),
                 'constraints' => array(
                     new Assert\NotBlank(),
                 ),

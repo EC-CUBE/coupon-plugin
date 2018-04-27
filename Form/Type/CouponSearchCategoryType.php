@@ -10,11 +10,8 @@
 
 namespace Plugin\Coupon\Form\Type;
 
-use Eccube\Form\Type\Admin\CategoryType;
-use Eccube\Form\Type\Master\ProductStatusType;
+use Eccube\Form\Type\Master\CategoryType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 /**
@@ -33,48 +30,8 @@ class CouponSearchCategoryType extends AbstractType
         $builder
             ->add('category_id', CategoryType::class, array(
                 'label' => 'カテゴリ',
-//                'empty_value' => 'すべて',
                 'required' => false,
-            ))
-            ->add('status', ProductStatusType::class, array(
-                'label' => '種別',
-                'multiple' => true,
-                'required' => false,
-            ))
-            ->add('create_date_start', DateType::class, array(
-                'label' => '登録日(FROM)',
-                'required' => false,
-                'input' => 'datetime',
-                'widget' => 'single_text',
-//                'format' => 'yyyy-MM-dd',
-//                'empty_value' => array('year' => '----', 'month' => '--', 'day' => '--'),
-            ))
-            ->add('create_date_end', DateType::class, array(
-                'label' => '登録日(TO)',
-                'required' => false,
-                'input' => 'datetime',
-                'widget' => 'single_text',
-//                'format' => 'yyyy-MM-dd',
-//                'empty_value' => array('year' => '----', 'month' => '--', 'day' => '--'),
-            ))
-            ->add('update_date_start', DateType::class, array(
-                'label' => '更新日(FROM)',
-                'required' => false,
-                'input' => 'datetime',
-                'widget' => 'single_text',
-//                'format' => 'yyyy-MM-dd',
-//                'empty_value' => array('year' => '----', 'month' => '--', 'day' => '--'),
-            ))
-            ->add('update_date_end', DateType::class, array(
-                'label' => '更新日(TO)',
-                'required' => false,
-                'input' => 'datetime',
-                'widget' => 'single_text',
-//                'format' => 'yyyy-MM-dd',
-//                'empty_value' => array('year' => '----', 'month' => '--', 'day' => '--'),
-            ))
-            ->add('link_status', HiddenType::class, array(
-                'mapped' => false,
+                'placeholder' => 'searchproduct.placeholder.select',
             ));
     }
 
