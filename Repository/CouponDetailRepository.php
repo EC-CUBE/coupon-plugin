@@ -23,7 +23,7 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
 class CouponDetailRepository extends AbstractRepository
 {
     /**
-     * ProductRepository constructor.
+     * CouponDetailRepository constructor.
      *
      * @param RegistryInterface $registry
      */

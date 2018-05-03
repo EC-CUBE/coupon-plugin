@@ -25,7 +25,7 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
 class CouponRepository extends AbstractRepository
 {
     /**
-     * ProductRepository constructor.
+     * CouponRepository constructor.
      *
      * @param RegistryInterface $registry
      */
@@ -48,7 +48,7 @@ class CouponRepository extends AbstractRepository
         // 時分秒を0に設定する
         $currenDateTime->setTime(0, 0, 0);
 
-        $qb = $this->createQueryBuilder('c')->setMaxResults(1)->select('c')->Where('c.del_flg = 0');
+        $qb = $this->createQueryBuilder('c')->setMaxResults(1)->select('c')->Where('c.visible = 1');
 
         // クーポンコード
         $qb->andWhere('c.coupon_cd = :coupon_cd')
@@ -152,5 +152,19 @@ class CouponRepository extends AbstractRepository
         }
 
         return true;
+    }
+
+    /**
+     *  クーポンの発行枚数のチェック.
+     *
+     * @param int         $couponCd
+     *
+     * @return bool クーポンの枚数が一枚以上の時にtrueを返す
+     */
+    public function checkCouponUseTime($couponCd)
+    {
+        $Coupon = $this->findOneBy(array('coupon_cd' => $couponCd));
+        // クーポンの発行枚数は購入完了時に減算される、一枚以上残っていれば利用できる
+        return $Coupon->getCouponUseTime() >= 1;
     }
 }

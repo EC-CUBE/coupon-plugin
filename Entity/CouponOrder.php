@@ -57,14 +57,14 @@ class CouponOrder extends AbstractEntity
     /**
      * @var int
      *
-     * @ORM\Column(name="user_id", type="integer", options={"unsigned":true})
+     * @ORM\Column(name="user_id", type="integer", options={"unsigned":true}, nullable=true)
      */
     private $user_id;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="email", type="string", length=255)
+     * @ORM\Column(name="email", type="string", length=255, nullable=true)
      */
     private $email;
 
@@ -88,6 +88,13 @@ class CouponOrder extends AbstractEntity
      * @ORM\Column(name="order_date", type="datetimetz", nullable=true)
      */
     private $order_date;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="order_item_id", type="integer", options={"unsigned":true})
+     */
+    private $order_item_id;
 
     /**
      * @var string
@@ -408,10 +415,13 @@ class CouponOrder extends AbstractEntity
 
     /**
      * @param string $coupon_name
+     * @return $this
      */
     public function setCouponName($coupon_name)
     {
         $this->coupon_name = $coupon_name;
+
+        return $this;
     }
 
     /**
@@ -424,9 +434,31 @@ class CouponOrder extends AbstractEntity
 
     /**
      * @param bool $orderChangeStatus
+     * @return $this
      */
     public function setOrderChangeStatus($orderChangeStatus)
     {
         $this->order_change_status = $orderChangeStatus;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getOrderItemId()
+    {
+        return $this->order_item_id;
+    }
+
+    /**
+     * @param int $order_item_id
+     * @return $this
+     */
+    public function setOrderItemId(int $order_item_id)
+    {
+        $this->order_item_id = $order_item_id;
+
+        return $this;
     }
 }

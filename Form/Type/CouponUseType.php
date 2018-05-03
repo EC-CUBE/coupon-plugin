@@ -11,6 +11,8 @@
 namespace Plugin\Coupon\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 /**
@@ -27,20 +29,19 @@ class CouponUseType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('coupon_cd', 'text', array(
+            ->add('coupon_cd', TextType::class, array(
                 'label' => 'クーポンコード',
                 'required' => false,
                 'trim' => true,
                 'mapped' => false,
             ))
-            ->add('coupon_use', 'choice', array(
-                'choices' => array(0 => 'クーポンを利用しない', 1 => 'クーポンを利用する'),
+            ->add('coupon_use', ChoiceType::class, array(
+                'choices' => array_flip([0 => 'クーポンを利用しない', 1 => 'クーポンを利用する']),
                 'required' => true,
                 'expanded' => true,
                 'multiple' => false,
                 'label' => '',
-                'data' => 1,
-                'empty_value' => false,
+                'data' => 1, // default choice
             ));
     }
 
