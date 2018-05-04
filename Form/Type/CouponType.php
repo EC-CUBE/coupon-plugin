@@ -76,7 +76,7 @@ class CouponType extends AbstractType
         $currency = $this->container->getParameter('currency');
         $builder
             ->add('coupon_cd', TextType::class, array(
-                'label' => 'クーポンコード',
+                'label' => 'admin.plugin.coupon.label.coupon_cd',
                 'required' => true,
                 'trim' => true,
                 'constraints' => array(
@@ -85,7 +85,7 @@ class CouponType extends AbstractType
                 ),
             ))
             ->add('coupon_name', TextType::class, array(
-                'label' => 'クーポン名',
+                'label' => 'admin.plugin.coupon.label.coupon_name',
                 'required' => true,
                 'trim' => true,
                 'constraints' => array(
@@ -94,46 +94,46 @@ class CouponType extends AbstractType
             ))
             ->add('coupon_type', ChoiceType::class, array(
                 'choices' => array_flip([
-                    Coupon::PRODUCT => '商品',
-                    Coupon::CATEGORY => 'カテゴリ',
-                    Coupon::ALL => '全商品'
+                    Coupon::PRODUCT => 'admin.plugin.coupon.coupon_type.product',
+                    Coupon::CATEGORY => 'admin.plugin.coupon.coupon_type.category',
+                    Coupon::ALL => 'admin.plugin.coupon.coupon_type.all'
                 ]),
                 'required' => true,
                 'expanded' => true,
                 'multiple' => false,
-                'label' => '対象商品',
+                'label' => 'admin.plugin.coupon.label.coupon_type',
                 'constraints' => array(
                     new Assert\NotBlank(),
                 ),
             ))
             ->add('coupon_member', ChoiceType::class, array(
                 'choices' => array_flip([
-                    1 => '会員のみ',
-                    0 => 'なし'
+                    1 => 'admin.plugin.coupon.coupon_member.yes',
+                    0 => 'admin.plugin.coupon.coupon_member.no'
                 ]),
                 'required' => true,
                 'expanded' => true,
                 'multiple' => false,
-                'label' => '利用制限',
+                'label' => 'admin.plugin.coupon.label.coupon_member',
                 'constraints' => array(
                     new Assert\NotBlank(),
                 ),
             ))
             ->add('discount_type', ChoiceType::class, array(
                 'choices' => array_flip([
-                    Coupon::DISCOUNT_PRICE => '値引き額',
-                    Coupon::DISCOUNT_RATE => '値引率'
+                    Coupon::DISCOUNT_PRICE => 'admin.plugin.coupon.label.discount_type.price',
+                    Coupon::DISCOUNT_RATE => 'admin.plugin.coupon.label.discount_type.rate'
                 ]),
                 'required' => true,
                 'expanded' => true,
                 'multiple' => false,
-                'label' => '値引き種別',
+                'label' => 'admin.plugin.coupon.label.discount_type',
                 'constraints' => array(
                     new Assert\NotBlank(),
                 ),
             ))
             ->add('coupon_lower_limit', MoneyType::class, array(
-                'label' => '下限金額(円)',
+                'label' => 'admin.plugin.coupon.label.coupon_lower_limit',
                 'required' => false,
                 'currency' => $currency,
                 'constraints' => array(
@@ -143,7 +143,7 @@ class CouponType extends AbstractType
                 ),
             ))
             ->add('discount_price', MoneyType::class, array(
-                'label' => '値引き額(円)',
+                'label' => 'admin.plugin.coupon.label.discount_price',
                 'required' => false,
                 'currency' => $currency,
                 'constraints' => array(
@@ -153,7 +153,7 @@ class CouponType extends AbstractType
                 ),
             ))
             ->add('discount_rate', IntegerType::class, array(
-                'label' => '値引率(％)',
+                'label' => 'admin.plugin.coupon.label.discount_rate',
                 'required' => false,
                 'constraints' => array(
                     new Assert\Range(array(
@@ -164,7 +164,7 @@ class CouponType extends AbstractType
             ))
             // 有効期間(FROM)
             ->add('available_from_date', DateType::class, array(
-                'label' => '有効期間',
+                'label' => 'admin.plugin.coupon.label.available_from_date',
                 'required' => true,
                 'input' => 'datetime',
                 'widget' => 'single_text',
@@ -174,7 +174,7 @@ class CouponType extends AbstractType
             ))
             // 有効期間(TO)
             ->add('available_to_date', DateType::class, array(
-                'label' => '有効期間日(TO)',
+                'label' => 'admin.plugin.coupon.label.available_to_date',
                 'required' => true,
                 'input' => 'datetime',
                 'widget' => 'single_text',
@@ -183,7 +183,7 @@ class CouponType extends AbstractType
                 ),
             ))
             ->add('coupon_release', IntegerType::class, array(
-                'label' => '発行枚数',
+                'label' => 'admin.plugin.coupon.label.coupon_release',
                 'required' => true,
                 'constraints' => array(
                     new Assert\NotBlank(),

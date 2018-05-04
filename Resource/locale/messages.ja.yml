@@ -1,3 +1,4 @@
+# the coupon index page
 admin.plugin.coupon.index.title: クーポン管理
 admin.plugin.coupon.index.subtitle: クーポン内容設定
 admin.plugin.coupon.index.number: <strong>%number% 件</strong> が該当しました
@@ -20,6 +21,22 @@ admin.plugin.coupon.coupon_type.product: 商品
 admin.plugin.coupon.coupon_type.category: カテゴリ
 admin.plugin.coupon.coupon_type.all: 全商品
 admin.plugin.coupon.index.create_button: クーポンを新規登録
+# register page
+admin.plugin.coupon.regist.title: クーポン管理
+admin.plugin.coupon.regist.subtitle: クーポン内容設定
+admin.plugin.coupon.regist.header: クーポン情報
+admin.plugin.coupon.regist.discount_price.note: 合計金額から設定金額を値引きします。
+admin.plugin.coupon.regist.discount_rate.note: 対象商品の合計金額から設定した率を値引きします。
+admin.plugin.coupon.regist.coupon_lower_limit.note: 対象商品の合計金額が、下限金額以上の場合にクーポンを利用できます。
+admin.plugin.coupon.regist.header.product: 商品情報
+admin.plugin.coupon.regist.header.category: カテゴリ情報
+admin.plugin.coupon.regist.modal.product: 商品検索
+admin.plugin.coupon.regist.modal.category: カテゴリ検索
+admin.plugin.coupon.regist.modal.search: 検索
+admin.plugin.coupon.regist.remove_product_confirm: 登録済みの商品があります。削除してよろしいですか。
+admin.plugin.coupon.regist.remove_category_confirm: 登録済みのカテゴリがあります。削除してよろしいですか。
+admin.plugin.coupon.regist.remove_both_confirm: 登録済みの商品・カテゴリがあります。削除してよろしいですか。
+
 admin.plugin.coupon.label.coupon_cd: クーポンコード
 admin.plugin.coupon.label.coupon_name: クーポン名
 admin.plugin.coupon.label.coupon_type: 対象商品
@@ -29,10 +46,10 @@ admin.plugin.coupon.label.discount_type.price: 値引き額
 admin.plugin.coupon.label.discount_type.rate: 値引率
 admin.plugin.coupon.label.discount_price: 値引き額(円)
 admin.plugin.coupon.label.discount_rate: 値引率(％)
+admin.plugin.coupon.label.coupon_release: 発行枚数
 admin.plugin.coupon.label.coupon_lower_limit: 下限金額(円)
 admin.plugin.coupon.label.available_from_date: 有効期間
 admin.plugin.coupon.label.available_to_date: 有効期間日(TO)
-admin.plugin.coupon.label.coupon_release: 発行枚数
 
 admin.plugin.coupon.notfound: クーポンが存在しません。
 admin.plugin.coupon.coupon_id.notexists: クーポンIDがありません。
@@ -53,3 +70,9 @@ front.plugin.coupon.shopping.use.minus: クーポン適用後の合計金額が�
 front.plugin.coupon.shopping.member: このクーポンは会員のみ利用できるクーポンです。
 front.plugin.coupon.shopping.lowerlimit: このクーポンを利用するためには、対象商品をlowerLimit円以上購入してください。
 front.plugin.coupon.shopping.notfound: このクーポンコードは利用できません。
+
+front.plugin.coupon.shopping.header: クーポンコードの入力
+front.plugin.coupon.code: クーポンコード
+front.plugin.coupon.code: クーポンコード
+front.plugin.coupon.code: クーポンコード
+

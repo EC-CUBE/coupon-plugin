@@ -12,8 +12,8 @@
 
 {% set menus = ['order', 'plugin_coupon'] %}
 
-{% block title %}クーポン管理{% endblock %}
-{% block sub_title %}クーポン内容設定{% endblock %}
+{% block title %}{{ 'admin.plugin.coupon.index.title'|trans }}{% endblock %}
+{% block sub_title %}{{ 'admin.plugin.coupon.index.subtitle'|trans }}{% endblock %}
 
 {% block main %}
 <form name="search_form" id="search_form" method="post" action="">
@@ -21,23 +21,23 @@
         <div class="c-contentsArea__primaryCol">
             <div class="c-primaryCol">
                 <div class="card rounded border-0 mb-4">
-                    <div class="card-header"><span class="normal">{{ Coupons|length }} 件</strong> が該当しました</span></div>
+                    <div class="card-header"><span class="normal">{{ 'admin.plugin.coupon.index.number'|trans({'%number%': Coupons|length})|raw }}</span></div>
                     <div class="card-body p-0">
                             <table class="table tabel-sm">
                                 <thead>
                                 <tr>
-                                    <th>クーポンID</th>
-                                    <th>クーポンコード</th>
-                                    <th>クーポン名</th>
-                                    <th>種別</th>
-                                    <th>会員のみ</th>
-                                    <th>値引き</th>
-                                    <th>残発行枚数</th>
-                                    <th>下限金額</th>
-                                    <th>有効期間</th>
-                                    <th>編集</th>
-                                    <th>状態</th>
-                                    <th>削除</th>
+                                    <th>{{ 'admin.plugin.coupon.index.col01'|trans }}</th>
+                                    <th>{{ 'admin.plugin.coupon.index.col02'|trans }}</th>
+                                    <th>{{ 'admin.plugin.coupon.index.col03'|trans }}</th>
+                                    <th>{{ 'admin.plugin.coupon.index.col04'|trans }}</th>
+                                    <th>{{ 'admin.plugin.coupon.index.col05'|trans }}</th>
+                                    <th>{{ 'admin.plugin.coupon.index.col06'|trans }}</th>
+                                    <th>{{ 'admin.plugin.coupon.index.col07'|trans }}</th>
+                                    <th>{{ 'admin.plugin.coupon.index.col08'|trans }}</th>
+                                    <th>{{ 'admin.plugin.coupon.index.col09'|trans }}</th>
+                                    <th>{{ 'admin.plugin.coupon.index.col10'|trans }}</th>
+                                    <th>{{ 'admin.plugin.coupon.index.col11'|trans }}</th>
+                                    <th>{{ 'admin.plugin.coupon.index.col12'|trans }}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -48,19 +48,19 @@
                                     <td class="coupon_name">{{ Coupon.coupon_name }}</td>
 
                                     {% if Coupon.coupon_type == 1 %}
-                                        <td class="coupon_type">商品</td>
+                                        <td class="coupon_type">{{ 'admin.plugin.coupon.coupon_type.product'|trans }}</td>
                                     {% elseif Coupon.coupon_type == 2 %}
-                                        <td class="coupon_type">カテゴリ</td>
+                                        <td class="coupon_type">{{ 'admin.plugin.coupon.coupon_type.category'|trans }}</td>
                                     {% elseif Coupon.coupon_type == 3 %}
-                                        <td class="coupon_type">全商品</td>
+                                        <td class="coupon_type">{{ 'admin.plugin.coupon.coupon_type.all'|trans }}</td>
                                     {% else %}
                                         <td class="coupon_type"></td>
                                     {% endif %}
 
                                     {% if Coupon.coupon_member == 1 %}
-                                        <td class="coupon_member">YES</td>
+                                        <td class="coupon_member">{{ 'admin.plugin.coupon.coupon_member.yes'|trans }}</td>
                                     {% else %}
-                                        <td class="coupon_member">NO</td>
+                                        <td class="coupon_member">{{ 'admin.plugin.coupon.coupon_member.no'|trans }}</td>
                                     {% endif %}
 
                                     {% if Coupon.discount_type == 1 %}
@@ -86,7 +86,7 @@
                                         </a>
                                     </td>
                                     <td>
-                                        <a href="{{ url('plugin_coupon_delete', { id : Coupon.id }) }}" {{ csrf_token_for_anchor() }} data-method="delete" data-message="このクーポンを削除しても宜しいですか？">{{ 'common.label.disabled'|trans }}</a>
+                                        <a href="{{ url('plugin_coupon_delete', { id : Coupon.id }) }}" {{ csrf_token_for_anchor() }} data-method="delete" data-message="{{ 'admin.plugin.coupon.index.delete.confirm'|trans }}">{{ 'common.label.delete'|trans }}</a>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -99,7 +99,7 @@
             <div class="card rounded border-0">
                 <div class="card-body p-4">
                     <div class="text-center">
-                        <a href="{{ url('plugin_coupon_new') }}" class="btn btn-ec-regular pl-4 pr-4">クーポンを新規登録</a>
+                        <a href="{{ url('plugin_coupon_new') }}" class="btn btn-ec-regular pl-4 pr-4">{{ 'admin.plugin.coupon.index.create_button'|trans }}</a>
                     </div>
                 </div>
             </div>

@@ -30,7 +30,7 @@ class CouponUseType extends AbstractType
     {
         $builder
             ->add('coupon_cd', TextType::class, array(
-                'label' => 'クーポンコード',
+                'label' => 'front.plugin.coupon.code',
                 'required' => false,
                 'trim' => true,
                 'mapped' => false,
@@ -40,7 +40,6 @@ class CouponUseType extends AbstractType
                 'required' => true,
                 'expanded' => true,
                 'multiple' => false,
-                'label' => '',
                 'data' => 1, // default choice
             ));
     }
