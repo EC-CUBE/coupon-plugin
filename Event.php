@@ -11,7 +11,8 @@
 namespace Plugin\Coupon;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Eccube\Application;
+use Eccube\Common\Constant;
+use Eccube\Entity\Master\OrderStatus;
 use Eccube\Entity\Order;
 use Eccube\Event\EventArgs;
 use Eccube\Event\TemplateEvent;
@@ -20,10 +21,7 @@ use Plugin\Coupon\Entity\Coupon;
 use Plugin\Coupon\Entity\CouponOrder;
 use Plugin\Coupon\Repository\CouponOrderRepository;
 use Plugin\Coupon\Repository\CouponRepository;
-use Plugin\Coupon\Service\CouponService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-//use Plugin\Coupon\Util\Version;
 
 /**
  * Class Event.
@@ -51,26 +49,47 @@ class Event implements EventSubscriberInterface
     private $orderRepository;
 
     /**
+     * @var \Twig_Environment
+     */
+    private $twig;
+
+    /**
      * Event constructor.
      * @param CouponOrderRepository $couponOrderRepository
      * @param EntityManagerInterface $entityManager
      * @param CouponRepository $couponRepository
      * @param OrderRepository $orderRepository
+     * @param \Twig_Environment $twig
      */
-    public function __construct(CouponOrderRepository $couponOrderRepository, EntityManagerInterface $entityManager, CouponRepository $couponRepository, OrderRepository $orderRepository)
+    public function __construct(CouponOrderRepository $couponOrderRepository, EntityManagerInterface $entityManager, CouponRepository $couponRepository, OrderRepository $orderRepository, \Twig_Environment $twig)
     {
         $this->couponOrderRepository = $couponOrderRepository;
         $this->entityManager = $entityManager;
         $this->couponRepository = $couponRepository;
         $this->orderRepository = $orderRepository;
+        $this->twig = $twig;
     }
 
+
+    /**
+     * Todo:
+     * 1. admin/Order/edit.twig cannot catch
+     * 2. admin.order.delete.complete has been deleted.
+     *
+     * @return array
+     */
     public static function getSubscribedEvents()
     {
         return [
             'Shopping/index.twig' => 'index',
             'Shopping/confirm.twig' => 'index',
             'Shopping/complete.twig' => 'complete',
+            'Mypage/history.twig' => 'onRenderMypageHistory',
+            'mail.order' => 'onSendOrderMail',
+            'mail.admin.order' => 'onSendOrderMail',
+            'admin/Order/edit.twig' => 'onRenderAdminOrderEdit', // cannot catch
+            'admin.order.edit.index.complete' => 'onOrderEditComplete',
+            'admin.order.delete.complete' => 'onOrderEditComplete', // has been deleted
         ];
     }
 
@@ -115,43 +134,6 @@ class Event implements EventSubscriberInterface
     }
 
     /**
-     * [order/{id}/edit]表示の時のEvent Fork.
-     * クーポン関連項目を追加する.
-     *
-     * @param TemplateEvent $event
-     */
-    public function onRenderAdminOrderEdit(TemplateEvent $event)
-    {
-        log_info('Coupon trigger onRenderAdminOrderEdit start');
-        $app = $this->app;
-        $parameters = $event->getParameters();
-        if (is_null($parameters['Order'])) {
-            return;
-        }
-        $Order = $parameters['Order'];
-        // クーポン受注情報を取得する
-        $repCouponOrder = $this->app['coupon.repository.coupon_order'];
-        // クーポン受注情報を取得する
-        $CouponOrder = $repCouponOrder->findOneBy(array('order_id' => $Order->getID()));
-        if (is_null($CouponOrder)) {
-            return;
-        }
-        // twigコードを挿入
-        $snipet = $app['twig']->getLoader()->getSource('Coupon/Resource/template/admin/order_edit_coupon.twig');
-        $source = $event->getSource();
-        //find coupon mark
-        $search = '<div id="detail__insert_button" class="row btn_area">';
-        $replace = $snipet.$search;
-        $source = str_replace($search, $replace, $source);
-        $event->setSource($source);
-        //set parameter for twig files
-        $parameters['coupon_cd'] = $CouponOrder->getCouponCd();
-        $parameters['coupon_name'] = $CouponOrder->getCouponName();
-        $event->setParameters($parameters);
-        log_info('Coupon trigger onRenderAdminOrderEdit finish');
-    }
-
-    /**
      * Hook point add coupon information to mypage history.
      *
      * @param TemplateEvent $event
@@ -159,36 +141,37 @@ class Event implements EventSubscriberInterface
     public function onRenderMypageHistory(TemplateEvent $event)
     {
         log_info('Coupon trigger onRenderMypageHistory start');
-        $app = $this->app;
         $parameters = $event->getParameters();
         if (is_null($parameters['Order'])) {
             return;
         }
         $Order = $parameters['Order'];
         // クーポン受注情報を取得する
-        $repCouponOrder = $this->app['coupon.repository.coupon_order'];
+//        $repCouponOrder = $this->app['coupon.repository.coupon_order'];
         // クーポン受注情報を取得する
-        $CouponOrder = $repCouponOrder->findOneBy(array(
+        $CouponOrder = $this->couponOrderRepository->findOneBy(array(
             'order_id' => $Order->getId(),
         ));
         if (is_null($CouponOrder)) {
             return;
         }
+
         // twigコードを挿入
-        $snipet = $app['twig']->getLoader()->getSource('Coupon/Resource/template/default/mypage_history_coupon.twig');
-        $source = $event->getSource();
-        if (strpos($source, self::COUPON_TAG)) {
-            log_info('Render coupon with ', array('COUPON_TAG' => self::COUPON_TAG));
-            $search = self::COUPON_TAG;
-            $replace = $snipet.$search;
-        } else {
-            $search = '<h2 class="heading02">お問い合わせ</h2>';
-            $replace = $snipet.$search;
-        }
+//        $snipet = $app['twig']->getLoader()->getSource('Coupon/Resource/template/default/mypage_history_coupon.twig');
+//        $source = $event->getSource();
+//        if (strpos($source, self::COUPON_TAG)) {
+//            log_info('Render coupon with ', array('COUPON_TAG' => self::COUPON_TAG));
+//            $search = self::COUPON_TAG;
+//            $replace = $snipet.$search;
+//        } else {
+//            $search = '<h2 class="heading02">お問い合わせ</h2>';
+//            $replace = $snipet.$search;
+//        }
         //find coupon mark
-        $source = str_replace($search, $replace, $source);
-        $event->setSource($source);
-        //set parameter for twig files
+//        $source = str_replace($search, $replace, $source);
+//        $event->setSource($source);
+
+        // set parameter for twig files
         $parameters['coupon_cd'] = $CouponOrder->getCouponCd();
         $parameters['coupon_name'] = $CouponOrder->getCouponName();
         $event->setParameters($parameters);
@@ -203,33 +186,20 @@ class Event implements EventSubscriberInterface
     public function onSendOrderMail(EventArgs $event)
     {
         log_info('Coupon trigger onSendOrderMail start');
-        $repository = $this->app['coupon.repository.coupon_order'];
         $CouponOrder = null;
-        $Coupon = null;
-        $message = null;
         if ($event->hasArgument('Order')) {
             $Order = $event->getArgument('Order');
             // クーポン受注情報を取得する
-            $CouponOrder = $repository->findOneBy(array(
+            $CouponOrder = $this->couponOrderRepository->findOneBy(array(
                 'order_id' => $Order->getId(),
             ));
             if (is_null($CouponOrder)) {
                 return;
             }
-            // クーポン受注情報からクーポン情報を取得する
-            $repCoupon = $this->app['coupon.repository.coupon'];
-            /* @var $Coupon Coupon */
-            $Coupon = $repCoupon->find($CouponOrder->getCouponId());
-            if (is_null($Coupon)) {
-                return;
-            }
         }
 
-        if ($event->hasArgument('message')) {
+        if ($CouponOrder) {
             $message = $event->getArgument('message');
-        }
-
-        if (!is_null($CouponOrder)) {
             // メールボディ取得
             $body = $message->getBody();
             // 情報置換用のキーを取得
@@ -253,6 +223,40 @@ class Event implements EventSubscriberInterface
     }
 
     /**
+     * [order/{id}/edit]表示の時のEvent Fork.
+     * クーポン関連項目を追加する.
+     *
+     * @param TemplateEvent $event
+     */
+    public function onRenderAdminOrderEdit(TemplateEvent $event)
+    {
+        log_info('Coupon trigger onRenderAdminOrderEdit start');
+        $parameters = $event->getParameters();
+        if (is_null($parameters['Order'])) {
+            return;
+        }
+        $Order = $parameters['Order'];
+        // クーポン受注情報を取得する
+        $CouponOrder = $this->couponOrderRepository->findOneBy(array('order_id' => $Order->getId()));
+        if (is_null($CouponOrder)) {
+            return;
+        }
+        // twigコードを挿入
+//        $snipet = $this->twig->getLoader()->getSourceContext('Coupon/Resource/template/admin/order_edit_coupon.twig')->getCode();
+//        $source = $event->getSource();
+//        //find coupon mark
+//        $search = '<div class="card rounded border-0 mb-4">';
+//        $replace = $snipet.$search;
+//        $source = str_replace($search, $replace, $source);
+//        $event->setSource($source);
+        //set parameter for twig files
+        $parameters['coupon_cd'] = $CouponOrder->getCouponCd();
+        $parameters['coupon_name'] = $CouponOrder->getCouponName();
+        $event->setParameters($parameters);
+        log_info('Coupon trigger onRenderAdminOrderEdit finish');
+    }
+
+    /**
      * Hook point order edit completed.
      *
      * @param EventArgs $event
@@ -261,7 +265,6 @@ class Event implements EventSubscriberInterface
     {
         log_info('Coupon trigger onOrderEditComplete start');
         $Order = null;
-        $app = $this->app;
         $delFlg = false;
         //for edit event
         if ($event->hasArgument('TargetOrder')) {
@@ -280,10 +283,9 @@ class Event implements EventSubscriberInterface
             }
             $delFlg = true;
         }
-        $repository = $this->app['coupon.repository.coupon_order'];
         // クーポン受注情報を取得する
         /* @var CouponOrder $CouponOrder */
-        $CouponOrder = $repository->findOneBy(array(
+        $CouponOrder = $this->couponOrderRepository->findOneBy(array(
             'order_id' => $Order->getId(),
         ));
         if (is_null($CouponOrder)) {
@@ -291,16 +293,16 @@ class Event implements EventSubscriberInterface
         }
         $status = $Order->getOrderStatus()->getId();
         $orderStatusFlg = $CouponOrder->getOrderChangeStatus();
-        if ($status == $app['config']['order_cancel'] || $status == $app['config']['order_processing'] || $delFlg) {
+        if ($status == OrderStatus::CANCEL || $status == OrderStatus::PROCESSING || $delFlg) {
             if ($orderStatusFlg != Constant::ENABLED) {
                 /* @var Coupon $Coupon */
-                $Coupon = $this->app['coupon.repository.coupon']->find($CouponOrder->getCouponId());
+                $Coupon = $this->couponRepository->find($CouponOrder->getCouponId());
                 // クーポンの発行枚数を上がる
                 if (!is_null($Coupon)) {
                     // 更新対象データ
                     $CouponOrder->setOrderDate(null);
                     $CouponOrder->setOrderChangeStatus(Constant::ENABLED);
-                    $repository->save($CouponOrder);
+                    $this->couponOrderRepository->save($CouponOrder);
                     $couponUseTime = $Coupon->getCouponUseTime() + 1;
                     $couponRelease = $Coupon->getCouponRelease();
                     if ($couponUseTime <= $couponRelease) {
@@ -308,25 +310,25 @@ class Event implements EventSubscriberInterface
                     } else {
                         $Coupon->setCouponUseTime($couponRelease);
                     }
-                    $this->app['orm.em']->persist($Coupon);
-                    $this->app['orm.em']->flush($Coupon);
+                    $this->entityManager->persist($Coupon);
+                    $this->entityManager->flush($Coupon);
                 }
             }
         }
 
-        if ($status != $app['config']['order_cancel'] && $status != $app['config']['order_processing']) {
+        if ($status != OrderStatus::CANCEL && $status != OrderStatus::PROCESSING) {
             if ($orderStatusFlg == Constant::ENABLED) {
-                $Coupon = $this->app['coupon.repository.coupon']->find($CouponOrder->getCouponId());
+                $Coupon = $this->couponRepository->find($CouponOrder->getCouponId());
                 // クーポンの発行枚数を上がる
                 if (!is_null($Coupon)) {
                     // 更新対象データ
                     $now = new \DateTime();
                     $CouponOrder->setOrderDate($now);
                     $CouponOrder->setOrderChangeStatus(Constant::DISABLED);
-                    $repository->save($CouponOrder);
+                    $this->couponOrderRepository->save($CouponOrder);
                     $Coupon->setCouponUseTime($Coupon->getCouponUseTime() - 1);
-                    $this->app['orm.em']->persist($Coupon);
-                    $this->app['orm.em']->flush($Coupon);
+                    $this->entityManager->persist($Coupon);
+                    $this->entityManager->flush($Coupon);
                 }
             }
         }

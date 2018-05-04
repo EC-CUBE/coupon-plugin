@@ -51,21 +51,21 @@
 #front.shopping.confirm.initialize:
 #    - [onShoppingConfirmInit, NORMAL]
 #
-admin.order.edit.index.complete:
-    - [onOrderEditComplete, NORMAL]
-
-admin.order.delete.complete:
-    - [onOrderEditComplete, NORMAL]
-
-mail.order:
-    - [onSendOrderMail, NORMAL]
-
-##  メール通知
-mail.admin.order:
-    - [onSendOrderMail, NORMAL]
-
-Admin/Order/edit.twig:
-    - [onRenderAdminOrderEdit, NORMAL]
+#admin.order.edit.index.complete:
+#    - [onOrderEditComplete, NORMAL]
+#
+#admin.order.delete.complete:
+#    - [onOrderEditComplete, NORMAL]
+#
+#mail.order:
+#    - [onSendOrderMail, NORMAL]
+#
+###  メール通知
+#mail.admin.order:
+#    - [onSendOrderMail, NORMAL]
+#
+#Admin/Order/edit.twig:
+#    - [onRenderAdminOrderEdit, NORMAL]
 #
 ## 配送先関連
 #front.shopping.delivery.complete:

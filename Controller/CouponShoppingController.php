@@ -1,11 +1,12 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: lqdung
- * Date: 4/27/2018
- * Time: 2:32 PM
+/*
+ * This file is part of the Coupon plugin
+ *
+ * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
-
 namespace Plugin\Coupon\Controller;
 
 
@@ -13,7 +14,6 @@ use Eccube\Controller\AbstractController;
 use Eccube\Entity\Customer;
 use Eccube\Entity\Master\OrderStatus;
 use Eccube\Entity\Order;
-use Eccube\Entity\Shipping;
 use Eccube\Repository\DeliveryTimeRepository;
 use Eccube\Service\CartService;
 use Eccube\Service\ShoppingService;
@@ -237,51 +237,6 @@ class CouponShoppingController extends AbstractController
     }
 
     /**
-     *  save delivery.
-     *
-     * @param Request     $request
-     *
-     * @return Response
-     * @Route("/plugin/coupon/save/delivery", name="plugin_coupon_save_delivery")
-     */
-    public function saveDelivery(Request $request)
-    {
-        if ($request->isXmlHttpRequest()) {
-            $date = explode(',', $request->get('coupon_delivery_date'));
-            $time = explode(',', $request->get('coupon_delivery_time'));
-            $message = $request->get('message');
-            /* @var Order $Order */
-            $Order = $this->shoppingService->getOrder(OrderStatus::PROCESSING);
-            /* @var Shipping $Shipping */
-            $Shippings = $Order->getShippings();
-            $index = 0;
-            foreach ($Shippings as $Shipping) {
-                if ($time[$index]) {
-                    $DeliveryTime = $this->deliveryTimeRepository->find($time[$index]);
-                    $Shipping->setDeliveryTime($DeliveryTime);
-                } else {
-                    $Shipping->setDeliveryTime(null);
-                }
-
-                if ($date[$index]) {
-                    $Shipping->setShippingDeliveryDate(new \DateTime($date[$index]));
-                } else {
-                    $Shipping->setShippingDeliveryDate(null);
-                }
-
-                ++$index;
-                $this->entityManager->persist($Shipping);
-                $this->entityManager->flush($Shipping);
-            }
-            $Order->setMessage($message);
-            $this->entityManager->persist($Order);
-            $this->entityManager->flush($Order);
-        }
-
-        return new Response();
-    }
-
-    /**
      * クーポン情報に登録.
      *
      * @param Order       $Order
@@ -292,14 +247,7 @@ class CouponShoppingController extends AbstractController
      */
     private function setCouponOrder(Order $Order, Coupon $Coupon, $couponCd, Customer $Customer, $discount)
     {
-//        $total = $Order->getTotal() - $discount;
-//        $Order->setDiscount($Order->getDiscount() + $discount);
-//        $Order->setTotal($total);
-//        $Order->setPaymentTotal($total);
         // クーポン受注情報を保存する
         $this->couponService->saveCouponOrder($Order, $Coupon, $couponCd, $Customer, $discount);
-        // 合計、値引きを再計算し、dtb_orderを更新する
-//        $this->entityManager->persist($Order);
-//        $this->entityManager->flush($Order);
     }
 }

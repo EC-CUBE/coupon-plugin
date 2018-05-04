@@ -10,23 +10,11 @@
 <script type="text/javascript">
     $(function () {
         $('#coupon_button').click(function () {
-            var date = '';
-            var time = '';
-            $("select[id^=shopping_order_Shippings_][id$=_shipping_delivery_date]").each(function () {
-                date += $(this).val() + ',';
-            });
-            $("select[id^=shopping_order_Shippings_][id$=_DeliveryTime]").each(function () {
-                time += $(this).val() + ',';
-            });
             $(this).attr('disabled', 'disabled');
             $.ajax({
                 type: 'POST',
-                data: {
-                    'coupon_delivery_date' : date,
-                    'coupon_delivery_time' : time,
-                    'message' : $('#shopping_order_message').val()
-                },
-                url: '{{ url('plugin_coupon_save_delivery') }}',
+                data: $('#shopping-form').serialize(),
+                url: '{{ url("shopping_redirect_to") }}',
                 success: function(data) {
                     window.location.href = '{{ url('plugin_coupon_shopping') }}';
                 },

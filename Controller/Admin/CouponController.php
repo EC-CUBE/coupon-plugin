@@ -10,11 +10,7 @@
 
 namespace Plugin\Coupon\Controller\Admin;
 
-use Eccube\Application;
 use Eccube\Common\Constant;
-use Eccube\Entity\Customer;
-use Eccube\Entity\Order;
-use Eccube\Entity\Shipping;
 use Eccube\Form\Type\Admin\SearchProductType;
 use Plugin\Coupon\Entity\Coupon;
 use Plugin\Coupon\Entity\CouponDetail;
@@ -24,7 +20,6 @@ use Plugin\Coupon\Repository\CouponDetailRepository;
 use Plugin\Coupon\Repository\CouponRepository;
 use Plugin\Coupon\Service\CouponService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -67,6 +62,8 @@ class CouponController extends AbstractController
     }
 
     /**
+     * @param Request $request
+     * @return RedirectResponse|Response
      * @Route("/%eccube_admin_route%/plugin/coupon/", name="plugin_coupon_list")
      */
     public function index(Request $request)
