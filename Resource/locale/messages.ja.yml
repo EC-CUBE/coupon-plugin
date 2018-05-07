@@ -61,7 +61,7 @@ admin.plugin.coupon.delete.error: クーポンの削除に失敗しました。
 # Order edit
 admin.plugin.coupon.order_edit.header: ご利用クーポンコード
 admin.plugin.coupon.order_edit.body: クーポンコード
-
+# front
 front.plugin.coupon.shopping.notexists: クーポン対象商品はございません。クーポンコードをご確認ください。
 front.plugin.coupon.shopping.sameuser: このクーポンは既にご利用いただいています。
 front.plugin.coupon.shopping.couponusetime: このクーポンはご利用いただくことができません。
@@ -80,3 +80,4 @@ front.plugin.coupon.shopping_coupon.use: クーポンを利用する
 front.plugin.coupon.shopping_coupon.remove: クーポンを利用しない
 front.plugin.coupon.mypage.header: ご利用クーポンコード
 front.plugin.coupon.mypage.body: クーポンコード
+front.plugin.coupon.code: クーポンコード

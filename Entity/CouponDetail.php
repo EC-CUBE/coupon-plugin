@@ -145,13 +145,13 @@ class CouponDetail extends AbstractEntity
     /**
      * Set del_flg.
      *
-     * @param int $delFlg
+     * @param int $visible
      *
      * @return CouponDetail
      */
-    public function setVisible($delFlg)
+    public function setVisible($visible)
     {
-        $this->visible = $delFlg;
+        $this->visible = $visible;
 
         return $this;
     }

@@ -88,7 +88,7 @@ class CouponRepository extends AbstractRepository
         // 時分秒を0に設定する
         $currenDateTime->setTime(0, 0, 0);
 
-        $qb = $this->createQueryBuilder('c')->select('c')->Where('c.del_flg = 0');
+        $qb = $this->createQueryBuilder('c')->select('c')->Where('c.visible = 1');
 
         // クーポンコード有効
         $qb->andWhere('c.enable_flag = :enable_flag')
