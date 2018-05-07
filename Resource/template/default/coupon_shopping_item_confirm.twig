@@ -7,21 +7,16 @@
  For the full copyright and license information, please view the LICENSE
  file that was distributed with this source code.
 #}
-<script type="text/javascript">
-    $(function () {
-    })
-</script>
-
 <div class="ec-orderConfirm">
     <div class="ec-rectHeading">
-        <h2>クーポン</h2>
+        <h2>{{ 'front.plugin.coupon.shopping.header'|trans }}</h2>
     </div>
 
-<div id="customer_detail_box" class="column is-edit">
-    {% if CouponOrder %}
-        <strong class="text-danger">クーポンコード {{ CouponOrder.coupon_cd }} を利用しています。</strong>
-    {% else %}
-        クーポンをお持ちの方はクーポンコードを入力してください。
-    {% endif %}
-</div>
+    <div id="customer_detail_box" class="column is-edit">
+        {% if CouponOrder %}
+            <strong class="text-danger">{{ 'front.plugin.coupon.shopping.message.use_code'|trans({'%code%': CouponOrder.coupon_cd }) }}</strong>
+        {% else %}
+            {{ 'front.plugin.coupon.shopping.message.empty'|trans }}
+        {% endif %}
+    </div>
 </div>

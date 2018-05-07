@@ -87,7 +87,7 @@ class Event implements EventSubscriberInterface
             'Mypage/history.twig' => 'onRenderMypageHistory',
             'mail.order' => 'onSendOrderMail',
             'mail.admin.order' => 'onSendOrderMail',
-            'admin/Order/edit.twig' => 'onRenderAdminOrderEdit', // cannot catch
+            'Admin/@admin/Order/edit.twig' => 'onRenderAdminOrderEdit',
             'admin.order.edit.index.complete' => 'onOrderEditComplete',
             'admin.order.delete.complete' => 'onOrderEditComplete', // has been deleted
         ];
@@ -242,14 +242,15 @@ class Event implements EventSubscriberInterface
             return;
         }
         // twigコードを挿入
-//        $snipet = $this->twig->getLoader()->getSourceContext('Coupon/Resource/template/admin/order_edit_coupon.twig')->getCode();
-//        $source = $event->getSource();
-//        //find coupon mark
-//        $search = '<div class="card rounded border-0 mb-4">';
-//        $replace = $snipet.$search;
-//        $source = str_replace($search, $replace, $source);
-//        $event->setSource($source);
-        //set parameter for twig files
+        $snipet = $this->twig->getLoader()->getSourceContext('Coupon/Resource/template/admin/order_edit_coupon.twig')->getCode();
+        $source = $event->getSource();
+        preg_match_all('/(<div class="card rounded border-0 mb-4">)/i', $source, $matches, PREG_OFFSET_CAPTURE);
+        $pos = $matches[0][count($matches[0]) - 1][1];
+        $aboveSection = substr($source, 0, $pos);
+        $belowSection = substr($source, $pos);
+        $newSource = $aboveSection . $snipet . $belowSection;
+        $event->setSource($newSource);
+        // set parameter for twig files
         $parameters['coupon_cd'] = $CouponOrder->getCouponCd();
         $parameters['coupon_name'] = $CouponOrder->getCouponName();
         $event->setParameters($parameters);

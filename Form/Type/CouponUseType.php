@@ -36,7 +36,7 @@ class CouponUseType extends AbstractType
                 'mapped' => false,
             ))
             ->add('coupon_use', ChoiceType::class, array(
-                'choices' => array_flip([0 => 'front.plugin.coupon.shopping.remove', 1 => 'front.plugin.coupon.shopping.use']),
+                'choices' => array_flip([0 => 'front.plugin.coupon.shopping_coupon.remove', 1 => 'front.plugin.coupon.shopping_coupon.use']),
                 'required' => true,
                 'expanded' => true,
                 'multiple' => false,

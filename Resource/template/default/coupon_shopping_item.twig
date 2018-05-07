@@ -29,17 +29,14 @@
 
 <div class="ec-orderConfirm">
     <div class="ec-rectHeading">
-        <h2>クーポン</h2>
+        <h2>{{ 'front.plugin.coupon.shopping.header'|trans }}</h2>
     </div>
-
-<div id="customer_detail_box" class="column is-edit">
-    {% if CouponOrder %}
-        <strong class="text-danger">クーポンコード {{ CouponOrder.coupon_cd }} を利用しています。</strong>
-        <p><a class="btn btn-default btn-sm" id="coupon_button" href="{{ url('plugin_coupon_shopping') }}">クーポンを変更する</a>
-    {% else %}
-        クーポンをお持ちの方はクーポンコードを入力してください。
-        <p><a class="btn btn-default btn-sm" id="coupon_button" href="{{ url('plugin_coupon_shopping') }}">クーポンを利用する</a>
-    {% endif %}
-    </p>
-</div>
+    <div id="customer_detail_box" class="column is-edit">
+        {% if CouponOrder %}
+            <strong class="text-danger">{{ 'front.plugin.coupon.shopping.message.use_code'|trans({'%code%': CouponOrder.coupon_cd }) }}</strong>
+        {% else %}
+            {{ 'front.plugin.coupon.shopping.message.empty'|trans }}
+        {% endif %}
+        <p><a class="btn btn-default btn-sm" id="coupon_button" href="{{ url('plugin_coupon_shopping') }}">{{ 'front.plugin.coupon.shopping.button.add_coupon'|trans }}</a></p>
+    </div>
 </div>

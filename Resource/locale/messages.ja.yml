@@ -36,7 +36,6 @@ admin.plugin.coupon.regist.modal.search: 検索
 admin.plugin.coupon.regist.remove_product_confirm: 登録済みの商品があります。削除してよろしいですか。
 admin.plugin.coupon.regist.remove_category_confirm: 登録済みのカテゴリがあります。削除してよろしいですか。
 admin.plugin.coupon.regist.remove_both_confirm: 登録済みの商品・カテゴリがあります。削除してよろしいですか。
-
 admin.plugin.coupon.label.coupon_cd: クーポンコード
 admin.plugin.coupon.label.coupon_name: クーポン名
 admin.plugin.coupon.label.coupon_type: 対象商品
@@ -50,17 +49,18 @@ admin.plugin.coupon.label.coupon_release: 発行枚数
 admin.plugin.coupon.label.coupon_lower_limit: 下限金額(円)
 admin.plugin.coupon.label.available_from_date: 有効期間
 admin.plugin.coupon.label.available_to_date: 有効期間日(TO)
-
 admin.plugin.coupon.notfound: クーポンが存在しません。
 admin.plugin.coupon.coupon_id.notexists: クーポンIDがありません。
 admin.plugin.coupon.duplicate: 既に利用されているクーポンコードです。
 admin.plugin.coupon.avaiabledate: 有効期間に誤りがあります。
 admin.plugin.coupon.coupontype: クーポン有効対象となる商品情報またはカテゴリ情報を設定してください。
-
 admin.plugin.coupon.regist.success: クーポンを登録しました。
 admin.plugin.coupon.delete.success: クーポンを削除しました。
 admin.plugin.coupon.enable.success: クーポンの状態を変更しました。
 admin.plugin.coupon.delete.error: クーポンの削除に失敗しました。
+# Order edit
+admin.plugin.coupon.order_edit.header: ご利用クーポンコード
+admin.plugin.coupon.order_edit.body: クーポンコード
 
 front.plugin.coupon.shopping.notexists: クーポン対象商品はございません。クーポンコードをご確認ください。
 front.plugin.coupon.shopping.sameuser: このクーポンは既にご利用いただいています。
@@ -70,9 +70,13 @@ front.plugin.coupon.shopping.use.minus: クーポン適用後の合計金額が�
 front.plugin.coupon.shopping.member: このクーポンは会員のみ利用できるクーポンです。
 front.plugin.coupon.shopping.lowerlimit: このクーポンを利用するためには、対象商品をlowerLimit円以上購入してください。
 front.plugin.coupon.shopping.notfound: このクーポンコードは利用できません。
-
-front.plugin.coupon.shopping.header: クーポンコードの入力
-front.plugin.coupon.shopping.body: 利用するクーポンコードを入力してください。
-front.plugin.coupon.shopping.use: クーポンを利用する
-front.plugin.coupon.shopping.remove: クーポンを利用しない
-
+front.plugin.coupon.shopping.header: クーポン
+front.plugin.coupon.shopping.message.use_code: クーポンコード %code% を利用しています。
+front.plugin.coupon.shopping.message.empty: クーポンをお持ちの方はクーポンコードを入力してください。
+front.plugin.coupon.shopping.button.add_coupon: クーポンを変更する
+front.plugin.coupon.shopping_coupon.header: クーポンコードの入力
+front.plugin.coupon.shopping_coupon.body: 利用するクーポンコードを入力してください。
+front.plugin.coupon.shopping_coupon.use: クーポンを利用する
+front.plugin.coupon.shopping_coupon.remove: クーポンを利用しない
+front.plugin.coupon.mypage.header: ご利用クーポンコード
+front.plugin.coupon.mypage.body: クーポンコード
