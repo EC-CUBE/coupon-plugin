@@ -72,7 +72,7 @@ front.plugin.coupon.shopping.lowerlimit: このクーポンを利用するため
 front.plugin.coupon.shopping.notfound: このクーポンコードは利用できません。
 
 front.plugin.coupon.shopping.header: クーポンコードの入力
-front.plugin.coupon.code: クーポンコード
-front.plugin.coupon.code: クーポンコード
-front.plugin.coupon.code: クーポンコード
+front.plugin.coupon.shopping.body: 利用するクーポンコードを入力してください。
+front.plugin.coupon.shopping.use: クーポンを利用する
+front.plugin.coupon.shopping.remove: クーポンを利用しない
 

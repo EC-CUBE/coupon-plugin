@@ -64,7 +64,6 @@ class CouponType extends AbstractType
         $this->container = $container;
     }
 
-
     /**
      * buildForm.
      *
