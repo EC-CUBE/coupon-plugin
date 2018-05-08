@@ -72,9 +72,7 @@ class Event implements EventSubscriberInterface
 
 
     /**
-     * Todo:
-     * 1. admin/Order/edit.twig cannot catch
-     * 2. admin.order.delete.complete has been deleted.
+     * Todo: admin.order.delete.complete has been deleted.
      *
      * @return array
      */
