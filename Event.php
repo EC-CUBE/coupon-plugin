@@ -147,29 +147,12 @@ class Event implements EventSubscriberInterface
         }
         $Order = $parameters['Order'];
         // クーポン受注情報を取得する
-//        $repCouponOrder = $this->app['coupon.repository.coupon_order'];
-        // クーポン受注情報を取得する
         $CouponOrder = $this->couponOrderRepository->findOneBy(array(
             'order_id' => $Order->getId(),
         ));
         if (is_null($CouponOrder)) {
             return;
         }
-
-        // twigコードを挿入
-//        $snipet = $app['twig']->getLoader()->getSource('Coupon/Resource/template/default/mypage_history_coupon.twig');
-//        $source = $event->getSource();
-//        if (strpos($source, self::COUPON_TAG)) {
-//            log_info('Render coupon with ', array('COUPON_TAG' => self::COUPON_TAG));
-//            $search = self::COUPON_TAG;
-//            $replace = $snipet.$search;
-//        } else {
-//            $search = '<h2 class="heading02">お問い合わせ</h2>';
-//            $replace = $snipet.$search;
-//        }
-        //find coupon mark
-//        $source = str_replace($search, $replace, $source);
-//        $event->setSource($source);
 
         // set parameter for twig files
         $parameters['coupon_cd'] = $CouponOrder->getCouponCd();
