@@ -69,7 +69,7 @@ class CouponController extends AbstractController
     public function index(Request $request)
     {
         $coupons = $this->couponRepository->findBy(
-            array(),
+            array('visible' => Constant::ENABLED),
             array('id' => 'DESC')
         );
 
