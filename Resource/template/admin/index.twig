@@ -46,7 +46,6 @@
                                     <td class="coupon_id">{{ Coupon.id }}</td>
                                     <td class="coupon_cd">{{ Coupon.coupon_cd }}</td>
                                     <td class="coupon_name">{{ Coupon.coupon_name }}</td>
-
                                     {% if Coupon.coupon_type == 1 %}
                                         <td class="coupon_type">{{ 'admin.plugin.coupon.coupon_type.product'|trans }}</td>
                                     {% elseif Coupon.coupon_type == 2 %}
@@ -86,7 +85,6 @@
                                         </a>
                                     </td>
                                     <td>
-                                        {#<a href="{{ url('plugin_coupon_delete', { id : Coupon.id }) }}" {{ csrf_token_for_anchor() }} data-method="delete" data-message="{{ 'admin.plugin.coupon.index.delete.confirm'|trans }}">{{ 'common.label.delete'|trans }}</a>#}
                                         <a class="" data-toggle="modal" data-target="#confirmModal-{{ Coupon.id }}" data-tooltip="tooltip" data-placement="top" title="{{ 'admin.product.tag.delete'|trans }}">
                                             <i class="fa fa-close fa-lg text-secondary"></i>
                                         </a>
