@@ -76,7 +76,6 @@
 
 ## オプション
 
-以下のページのtwigファイルに`<!--# coupon-plugin-tag #-->`と入力すると、その位置に表示を行うことができる。
-
-- 商品購入
-- MYページ/購入履歴詳細
+- Shopping index: {{ include('Coupon/coupon_shopping_item.twig', ignore_missing = true) }}
+- Shopping confirm: {{ include('Coupon/coupon_shopping_item_confirm.twig', ignore_missing = true) }}
+- Mypage history: {{ include('Coupon/mypage_history_coupon.twig', ignore_missing = true) }}

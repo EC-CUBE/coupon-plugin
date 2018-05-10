@@ -21,14 +21,24 @@ use Eccube\Repository\Master\DeviceTypeRepository;
 use Eccube\Repository\PageLayoutRepository;
 use Eccube\Repository\PageRepository;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Class PluginManager.
  */
 class PluginManager extends AbstractPluginManager
 {
+    private $originalDir = __DIR__ . '/Resource/template/default/';
+
+    private $template1 = 'coupon_shopping_item.twig';
+
+    private $template2 = 'coupon_shopping_item_confirm.twig';
+
+    private $template3 = 'mypage_history_coupon.twig';
+
     public function enable($meta = null, Application $app = null, ContainerInterface $container)
     {
+        $this->copyBlock($container);
         $PageLayout = $container->get(PageRepository::class)->findOneBy(array('url' => 'plugin_coupon_shopping'));
         if (is_null($PageLayout)) {
             // pagelayoutの作成
@@ -43,6 +53,7 @@ class PluginManager extends AbstractPluginManager
      */
     public function disable($meta = null, Application $app = null, ContainerInterface $container)
     {
+        $this->removeBlock($container);
         // pagelayoutの削除
         $this->removePageLayout($container);
     }
@@ -110,8 +121,37 @@ class PluginManager extends AbstractPluginManager
             $entityManager = $container->get('doctrine.orm.entity_manager');
             $entityManager->remove($PageLayout);
             $entityManager->remove($Page);
-            $entityManager->flush($PageLayout);
-            $entityManager->flush($Page);
+            $entityManager->flush();
         }
+    }
+
+    /**
+     * Copy block template.
+     *
+     * @param ContainerInterface $container
+     */
+    private function copyBlock(ContainerInterface $container)
+    {
+        $templateDir = $container->getParameter('eccube_theme_front_dir');
+        // ファイルコピー
+        $file = new Filesystem();
+        // ブロックファイルをコピー
+        $file->copy($this->originalDir . $this->template1, $templateDir.'/Coupon/'. $this->template1);
+        $file->copy($this->originalDir . $this->template2, $templateDir.'/Coupon/'. $this->template2);
+        $file->copy($this->originalDir . $this->template3, $templateDir.'/Coupon/'. $this->template3);
+    }
+
+    /**
+     * Remove block template.
+     *
+     * @param ContainerInterface $container
+     */
+    private function removeBlock(ContainerInterface $container)
+    {
+        $templateDir = $container->getParameter('eccube_theme_front_dir');
+        $file = new Filesystem();
+        $file->remove($templateDir.'/Coupon/'.$this->template1);
+        $file->remove($templateDir.'/Coupon/'.$this->template2);
+        $file->remove($templateDir.'/Coupon/'.$this->template3);
     }
 }
