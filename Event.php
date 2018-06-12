@@ -1,8 +1,11 @@
 <?php
+
 /*
- * This file is part of the Coupon plugin
+ * This file is part of EC-CUBE
  *
- * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -55,6 +58,7 @@ class Event implements EventSubscriberInterface
 
     /**
      * Event constructor.
+     *
      * @param CouponOrderRepository $couponOrderRepository
      * @param EntityManagerInterface $entityManager
      * @param CouponRepository $couponRepository
@@ -69,7 +73,6 @@ class Event implements EventSubscriberInterface
         $this->orderRepository = $orderRepository;
         $this->twig = $twig;
     }
-
 
     /**
      * Todo: admin.order.delete.complete has been deleted.
@@ -145,9 +148,9 @@ class Event implements EventSubscriberInterface
         }
         $Order = $parameters['Order'];
         // クーポン受注情報を取得する
-        $CouponOrder = $this->couponOrderRepository->findOneBy(array(
+        $CouponOrder = $this->couponOrderRepository->findOneBy([
             'order_id' => $Order->getId(),
-        ));
+        ]);
         if (is_null($CouponOrder)) {
             return;
         }
@@ -171,9 +174,9 @@ class Event implements EventSubscriberInterface
         if ($event->hasArgument('Order')) {
             $Order = $event->getArgument('Order');
             // クーポン受注情報を取得する
-            $CouponOrder = $this->couponOrderRepository->findOneBy(array(
+            $CouponOrder = $this->couponOrderRepository->findOneBy([
                 'order_id' => $Order->getId(),
-            ));
+            ]);
             if (is_null($CouponOrder)) {
                 return;
             }
@@ -184,7 +187,7 @@ class Event implements EventSubscriberInterface
             // メールボディ取得
             $body = $message->getBody();
             // 情報置換用のキーを取得
-            $search = array();
+            $search = [];
             preg_match_all('/合　計.*\\n/u', $body, $search);
             // メール本文置換
             $snippet = PHP_EOL;
@@ -218,7 +221,7 @@ class Event implements EventSubscriberInterface
         }
         $Order = $parameters['Order'];
         // クーポン受注情報を取得する
-        $CouponOrder = $this->couponOrderRepository->findOneBy(array('order_id' => $Order->getId()));
+        $CouponOrder = $this->couponOrderRepository->findOneBy(['order_id' => $Order->getId()]);
         if (is_null($CouponOrder)) {
             return;
         }
@@ -229,7 +232,7 @@ class Event implements EventSubscriberInterface
         $pos = $matches[0][count($matches[0]) - 1][1];
         $aboveSection = substr($source, 0, $pos);
         $belowSection = substr($source, $pos);
-        $newSource = $aboveSection . $snipet . $belowSection;
+        $newSource = $aboveSection.$snipet.$belowSection;
         $event->setSource($newSource);
         // set parameter for twig files
         $parameters['coupon_cd'] = $CouponOrder->getCouponCd();
@@ -267,9 +270,9 @@ class Event implements EventSubscriberInterface
         }
         // クーポン受注情報を取得する
         /* @var CouponOrder $CouponOrder */
-        $CouponOrder = $this->couponOrderRepository->findOneBy(array(
+        $CouponOrder = $this->couponOrderRepository->findOneBy([
             'order_id' => $Order->getId(),
-        ));
+        ]);
         if (is_null($CouponOrder)) {
             return;
         }

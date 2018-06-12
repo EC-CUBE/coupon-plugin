@@ -1,8 +1,11 @@
 <?php
+
 /*
- * This file is part of the Coupon plugin
+ * This file is part of EC-CUBE
  *
- * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -48,7 +51,7 @@ class CouponControllerTest extends AbstractAdminWebTestCase
         $this->Customer = $this->createCustomer();
         $this->couponRepository = $this->container->get(CouponRepository::class);
         $this->productRepository = $this->container->get(ProductRepository::class);
-        $this->deleteAllRows(array('plg_coupon_order', 'plg_coupon_detail', 'plg_coupon'));
+        $this->deleteAllRows(['plg_coupon_order', 'plg_coupon_detail', 'plg_coupon']);
     }
 
     /**
@@ -82,7 +85,7 @@ class CouponControllerTest extends AbstractAdminWebTestCase
         $this->assertTrue($this->client->getResponse()->isSuccessful());
         $form = $this->getForm($crawler);
 
-        /** @var \Symfony\Component\DomCrawler\Crawler $crawler */
+        /* @var \Symfony\Component\DomCrawler\Crawler $crawler */
         $this->client->submit($form);
         $this->assertTrue($this->client->getResponse()->isRedirect($this->generateUrl('plugin_coupon_list')));
     }
@@ -93,7 +96,7 @@ class CouponControllerTest extends AbstractAdminWebTestCase
     public function testEdit()
     {
         $Coupon = $this->getCoupon();
-        $crawler = $this->client->request('GET', $this->generateUrl('plugin_coupon_edit', array('id' => $Coupon->getId())));
+        $crawler = $this->client->request('GET', $this->generateUrl('plugin_coupon_edit', ['id' => $Coupon->getId()]));
         $this->assertTrue($this->client->getResponse()->isSuccessful());
         $form = $this->getForm($crawler);
         $this->client->submit($form);
@@ -106,7 +109,7 @@ class CouponControllerTest extends AbstractAdminWebTestCase
     public function testEnable()
     {
         $Coupon = $this->getTestData();
-        $this->client->request('GET', $this->generateUrl('plugin_coupon_enable', array('id' => $Coupon->getId())));
+        $this->client->request('GET', $this->generateUrl('plugin_coupon_enable', ['id' => $Coupon->getId()]));
         $this->assertTrue($this->client->getResponse()->isRedirect($this->generateUrl('plugin_coupon_list')));
     }
 
@@ -116,7 +119,7 @@ class CouponControllerTest extends AbstractAdminWebTestCase
     public function testDelete()
     {
         $Coupon = $this->getTestData();
-        $this->client->request('DELETE', $this->generateUrl('plugin_coupon_delete', array('id' => $Coupon->getId())));
+        $this->client->request('DELETE', $this->generateUrl('plugin_coupon_delete', ['id' => $Coupon->getId()]));
         $this->assertTrue($this->client->getResponse()->isRedirect($this->generateUrl('plugin_coupon_list')));
     }
 
@@ -127,10 +130,10 @@ class CouponControllerTest extends AbstractAdminWebTestCase
     {
         $crawler = $this->client->request(
             'POST',
-            $this->generateUrl('plugin_coupon_search_product', array('id' => '', 'category_id' => '', '_token' => 'dummy')),
-            array(),
-            array(),
-            array('HTTP_X-Requested-With' => 'XMLHttpRequest')
+            $this->generateUrl('plugin_coupon_search_product', ['id' => '', 'category_id' => '', '_token' => 'dummy']),
+            [],
+            [],
+            ['HTTP_X-Requested-With' => 'XMLHttpRequest']
         );
         $productList = $crawler->html();
         $this->assertContains('ディナーフォーク', $productList);
@@ -144,10 +147,10 @@ class CouponControllerTest extends AbstractAdminWebTestCase
     {
         $crawler = $this->client->request(
             'POST',
-            $this->generateUrl('plugin_coupon_search_category', array('category_id' => '', '_token' => 'dummy')),
-            array(),
-            array(),
-            array('HTTP_X-Requested-With' => 'XMLHttpRequest')
+            $this->generateUrl('plugin_coupon_search_category', ['category_id' => '', '_token' => 'dummy']),
+            [],
+            [],
+            ['HTTP_X-Requested-With' => 'XMLHttpRequest']
         );
         $categoryList = $crawler->html();
         $this->assertContains('新入荷', $categoryList);

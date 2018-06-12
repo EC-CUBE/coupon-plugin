@@ -1,8 +1,11 @@
 <?php
+
 /*
- * This file is part of the Coupon plugin
+ * This file is part of EC-CUBE
  *
- * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -26,10 +29,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Eccube\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
-
 /**
  * Class CouponController
- * @package Plugin\Coupon\controller\Admin
  */
 class CouponController extends AbstractController
 {
@@ -50,6 +51,7 @@ class CouponController extends AbstractController
 
     /**
      * CouponController constructor.
+     *
      * @param CouponRepository $couponRepository
      * @param CouponService $couponService
      * @param CouponDetailRepository $couponDetailRepository
@@ -63,19 +65,20 @@ class CouponController extends AbstractController
 
     /**
      * @param Request $request
+     *
      * @return RedirectResponse|Response
      * @Route("/%eccube_admin_route%/plugin/coupon/", name="plugin_coupon_list")
      */
     public function index(Request $request)
     {
         $coupons = $this->couponRepository->findBy(
-            array('visible' => Constant::ENABLED),
-            array('id' => 'DESC')
+            ['visible' => Constant::ENABLED],
+            ['id' => 'DESC']
         );
 
-        return $this->render('Coupon/Resource/template/admin/index.twig', array(
+        return $this->render('Coupon/Resource/template/admin/index.twig', [
             'Coupons' => $coupons,
-        ));
+        ]);
     }
 
     /**
@@ -83,6 +86,7 @@ class CouponController extends AbstractController
      *
      * @param Request $request
      * @param int     $id
+     *
      * @return RedirectResponse|Response
      * @Route("/%eccube_admin_route%/plugin/coupon/new", name="plugin_coupon_new", requirements={"id" = "\d+"})
      * @Route("/%eccube_admin_route%/plugin/coupon/{id}/edit", name="plugin_coupon_edit", requirements={"id" = "\d+"})
@@ -110,7 +114,7 @@ class CouponController extends AbstractController
         if (!$id) {
             $form->get('coupon_cd')->setData($this->couponService->generateCouponCd());
         }
-        $details = array();
+        $details = [];
         $CouponDetails = $Coupon->getCouponDetails();
         foreach ($CouponDetails as $CouponDetail) {
             $details[] = clone $CouponDetail;
@@ -130,9 +134,9 @@ class CouponController extends AbstractController
                 }
             }
 
-            $CouponDetails = $this->couponDetailRepository->findBy(array(
+            $CouponDetails = $this->couponDetailRepository->findBy([
                 'Coupon' => $Coupon,
-            ));
+            ]);
             foreach ($CouponDetails as $CouponDetail) {
                 $Coupon->removeCouponDetail($CouponDetail);
                 $this->entityManager->remove($CouponDetail);
@@ -155,10 +159,10 @@ class CouponController extends AbstractController
             return $this->redirectToRoute('plugin_coupon_list');
         }
 
-        return $this->renderRegistView(array(
+        return $this->renderRegistView([
             'form' => $form->createView(),
             'id' => $id,
-        ));
+        ]);
     }
 
     /**
@@ -166,6 +170,7 @@ class CouponController extends AbstractController
      *
      * @param Request $request
      * @param Coupon  $Coupon
+     *
      * @return RedirectResponse
      * @Route("/%eccube_admin_route%/plugin/coupon/{id}/enable", name="plugin_coupon_enable", requirements={"id" = "\d+"})
      * @ParamConverter("Coupon")
@@ -178,7 +183,7 @@ class CouponController extends AbstractController
         $status = $this->couponRepository->enableCoupon($Coupon);
         if ($status) {
             $this->addSuccess('admin.plugin.coupon.enable.success', 'admin');
-            log_info('Change status a coupon with ', array('ID' => $Coupon->getId()));
+            log_info('Change status a coupon with ', ['ID' => $Coupon->getId()]);
         } else {
             $this->addError('admin.plugin.coupon.notfound', 'admin');
         }
@@ -188,8 +193,10 @@ class CouponController extends AbstractController
 
     /**
      * クーポンの削除.
+     *
      * @param Request $request
      * @param Coupon  $Coupon
+     *
      * @return RedirectResponse
      * @Route("/%eccube_admin_route%/plugin/coupon/{id}/delete", name="plugin_coupon_delete", requirements={"id" = "\d+"})
      * @ParamConverter("Coupon")
@@ -200,7 +207,7 @@ class CouponController extends AbstractController
         // クーポン情報を削除する
         if ($this->couponRepository->deleteCoupon($Coupon)) {
             $this->addSuccess('admin.plugin.coupon.delete.success', 'admin');
-            log_info('Delete a coupon with ', array('ID' => $Coupon->getId()));
+            log_info('Delete a coupon with ', ['ID' => $Coupon->getId()]);
         } else {
             $this->addError('admin.plugin.coupon.notfound', 'admin');
         }
@@ -215,16 +222,16 @@ class CouponController extends AbstractController
      *
      * @return Response
      */
-    protected function renderRegistView($parameters = array())
+    protected function renderRegistView($parameters = [])
     {
         // 商品検索フォーム
         $searchProductModalForm = $this->formFactory->createBuilder(SearchProductType::class)->getForm();
         // カテゴリ検索フォーム
         $searchCategoryModalForm = $this->formFactory->createBuilder(CouponSearchCategoryType::class)->getForm();
-        $viewParameters = array(
+        $viewParameters = [
             'searchProductModalForm' => $searchProductModalForm->createView(),
             'searchCategoryModalForm' => $searchCategoryModalForm->createView(),
-        );
+        ];
         $viewParameters += $parameters;
 
         return $this->render('Coupon/Resource/template/admin/regist.twig', $viewParameters);

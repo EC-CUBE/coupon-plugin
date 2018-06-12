@@ -1,8 +1,11 @@
 <?php
+
 /*
- * This file is part of the Coupon plugin
+ * This file is part of EC-CUBE
  *
- * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -29,13 +32,13 @@ class CouponDetailType extends AbstractType
 
     /**
      * CouponDetailType constructor.
+     *
      * @param EntityManagerInterface $entityManager
      */
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
     }
-
 
     /**
      * buildForm.
@@ -54,13 +57,13 @@ class CouponDetailType extends AbstractType
                 $builder->create('Category', HiddenType::class)
                     ->addModelTransformer(new DataTransformer\EntityToIdTransformer($this->entityManager, '\Eccube\Entity\Category'))
             )
-            ->add('id', HiddenType::class, array(
+            ->add('id', HiddenType::class, [
                 'label' => 'クーポン詳細ID',
                 'required' => false,
-            ))
-            ->add('coupon_type', HiddenType::class, array(
+            ])
+            ->add('coupon_type', HiddenType::class, [
                 'required' => false,
-            ));
+            ]);
     }
 
     /**
@@ -70,9 +73,9 @@ class CouponDetailType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'data_class' => 'Plugin\Coupon\Entity\CouponDetail',
-        ));
+        ]);
     }
 
     /**

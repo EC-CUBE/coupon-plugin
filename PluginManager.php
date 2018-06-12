@@ -1,8 +1,11 @@
 <?php
+
 /*
- * This file is part of the Coupon plugin
+ * This file is part of EC-CUBE
  *
- * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -28,7 +31,7 @@ use Symfony\Component\Filesystem\Filesystem;
  */
 class PluginManager extends AbstractPluginManager
 {
-    private $originalDir = __DIR__ . '/Resource/template/default/';
+    private $originalDir = __DIR__.'/Resource/template/default/';
 
     private $template1 = 'coupon_shopping_item.twig';
 
@@ -39,7 +42,7 @@ class PluginManager extends AbstractPluginManager
     public function enable($meta = null, Application $app = null, ContainerInterface $container)
     {
         $this->copyBlock($container);
-        $PageLayout = $container->get(PageRepository::class)->findOneBy(array('url' => 'plugin_coupon_shopping'));
+        $PageLayout = $container->get(PageRepository::class)->findOneBy(['url' => 'plugin_coupon_shopping']);
         if (is_null($PageLayout)) {
             // pagelayoutの作成
             $this->createPageLayout($container);
@@ -65,7 +68,7 @@ class PluginManager extends AbstractPluginManager
      */
     public function update($meta = null, Application $app = null, ContainerInterface $container)
     {
-        $PageLayout = $container->get(PageRepository::class)->findOneBy(array('url' => 'plugin_coupon_shopping'));
+        $PageLayout = $container->get(PageRepository::class)->findOneBy(['url' => 'plugin_coupon_shopping']);
         if (is_null($PageLayout)) {
             // pagelayoutの作成
             $this->createPageLayout($container);
@@ -113,7 +116,7 @@ class PluginManager extends AbstractPluginManager
     private function removePageLayout(ContainerInterface $container)
     {
         // ページ情報の削除
-        $Page = $container->get(PageRepository::class)->findOneBy(array('url' => 'plugin_coupon_shopping'));
+        $Page = $container->get(PageRepository::class)->findOneBy(['url' => 'plugin_coupon_shopping']);
         if ($Page) {
             $Layout = $container->get(LayoutRepository::class)->find(Layout::DEFAULT_LAYOUT_UNDERLAYER_PAGE);
             $PageLayout = $container->get(PageLayoutRepository::class)->findOneBy(['Page' => $Page, 'Layout' => $Layout]);
@@ -136,9 +139,9 @@ class PluginManager extends AbstractPluginManager
         // ファイルコピー
         $file = new Filesystem();
         // ブロックファイルをコピー
-        $file->copy($this->originalDir . $this->template1, $templateDir.'/Coupon/'. $this->template1);
-        $file->copy($this->originalDir . $this->template2, $templateDir.'/Coupon/'. $this->template2);
-        $file->copy($this->originalDir . $this->template3, $templateDir.'/Coupon/'. $this->template3);
+        $file->copy($this->originalDir.$this->template1, $templateDir.'/Coupon/'.$this->template1);
+        $file->copy($this->originalDir.$this->template2, $templateDir.'/Coupon/'.$this->template2);
+        $file->copy($this->originalDir.$this->template3, $templateDir.'/Coupon/'.$this->template3);
     }
 
     /**

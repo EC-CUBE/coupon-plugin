@@ -1,8 +1,11 @@
 <?php
+
 /*
- * This file is part of the Coupon plugin
+ * This file is part of EC-CUBE
  *
- * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -12,12 +15,9 @@ namespace Plugin\Coupon\Tests\Repository;
 
 use Eccube\Common\Constant;
 use Eccube\Entity\Customer;
-use Eccube\Entity\OrderDetail;
 use Eccube\Entity\OrderItem;
-use Eccube\Repository\OrderRepository;
 use Eccube\Repository\TaxRuleRepository;
 use Eccube\Tests\EccubeTestCase;
-use Eccube\Util\Str;
 use Eccube\Util\StringUtil;
 use Plugin\Coupon\Entity\Coupon;
 use Plugin\Coupon\Entity\CouponDetail;
@@ -71,7 +71,7 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
         $CouponOrder = $this->getCouponOrder($Coupon, $discount, $preOrderId);
         $this->couponOrderRepository->save($CouponOrder);
 
-        $CouponOrder1 = $this->couponOrderRepository->findOneBy(array('pre_order_id' => $preOrderId));
+        $CouponOrder1 = $this->couponOrderRepository->findOneBy(['pre_order_id' => $preOrderId]);
 
         $this->actual = $CouponOrder1->getDiscount();
         $this->expected = $discount;
@@ -175,7 +175,7 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
         $this->getTestData($couponType);
 
         /** @var Coupon $Coupon */
-        $Coupon = $this->couponRepository->findOneBy(array('coupon_cd' => 'aaaaaaaa'));
+        $Coupon = $this->couponRepository->findOneBy(['coupon_cd' => 'aaaaaaaa']);
 
         $Product = $this->createProduct();
         $CouponDetail = new CouponDetail();

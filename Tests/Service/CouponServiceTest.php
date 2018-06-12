@@ -1,8 +1,11 @@
 <?php
+
 /*
- * This file is part of the Coupon plugin
+ * This file is part of EC-CUBE
  *
- * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -12,7 +15,6 @@ namespace Plugin\Coupon\Tests\Service;
 
 use Eccube\Common\Constant;
 use Eccube\Entity\Master\OrderItemType;
-use Eccube\Entity\OrderDetail;
 use Eccube\Entity\OrderItem;
 use Eccube\Entity\ProductCategory;
 use Eccube\Repository\Master\OrderItemTypeRepository;
@@ -211,7 +213,7 @@ class CouponServiceTest extends EccubeTestCase
         $this->couponService->saveCouponOrder($Order, $Coupon, $Coupon->getCouponCd(), $Customer, $discount);
 
         /** @var \Plugin\Coupon\Entity\CouponOrder $CouponOrder */
-        $CouponOrder = $this->couponOrderRepository->findOneBy(array('coupon_cd' => $Coupon->getCouponCd()));
+        $CouponOrder = $this->couponOrderRepository->findOneBy(['coupon_cd' => $Coupon->getCouponCd()]);
 
         $this->actual = $discount;
         $this->expected = $CouponOrder->getDiscount();
@@ -318,11 +320,11 @@ class CouponServiceTest extends EccubeTestCase
         $total = 0;
         // include tax
         foreach ($products as $key => $value) {
-            $total += ($value['price'] + $value['price'] * $TaxRule->getTaxRate()/100) * $value['quantity'];
+            $total += ($value['price'] + $value['price'] * $TaxRule->getTaxRate() / 100) * $value['quantity'];
         }
 
         $this->actual = $discount;
-        $this->expected = (int) round($total * $discountRate/100);
+        $this->expected = (int) round($total * $discountRate / 100);
         $this->verify();
     }
 

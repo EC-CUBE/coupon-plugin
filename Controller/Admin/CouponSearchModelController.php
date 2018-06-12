@@ -1,8 +1,11 @@
 <?php
+
 /*
- * This file is part of the Coupon plugin
+ * This file is part of EC-CUBE
  *
- * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -36,6 +39,7 @@ class CouponSearchModelController extends AbstractController
 
     /**
      * CouponSearchModelController constructor.
+     *
      * @param CategoryRepository $categoryRepository
      * @param ProductRepository $productRepository
      */
@@ -44,7 +48,6 @@ class CouponSearchModelController extends AbstractController
         $this->categoryRepository = $categoryRepository;
         $this->productRepository = $productRepository;
     }
-
 
     /**
      * search product modal.
@@ -66,11 +69,11 @@ class CouponSearchModelController extends AbstractController
         $pageCount = $this->eccubeConfig['eccube_default_page_count'];
         $session = $this->session;
         if ('POST' === $request->getMethod()) {
-            log_info('get search data with parameters ', array('id' => $request->get('id'), 'category_id' => $request->get('category_id')));
+            log_info('get search data with parameters ', ['id' => $request->get('id'), 'category_id' => $request->get('category_id')]);
             $page_no = 1;
-            $searchData = array(
+            $searchData = [
                 'id' => $request->get('id'),
-            );
+            ];
             if ($categoryId = $request->get('category_id')) {
                 $searchData['category_id'] = $categoryId;
             }
@@ -102,12 +105,12 @@ class CouponSearchModelController extends AbstractController
             $qb,
             $page_no,
             $pageCount,
-            array('wrap-queries' => true)
+            ['wrap-queries' => true]
         );
 
-        return $this->render('Coupon/Resource/template/admin/search_product.twig', array(
+        return $this->render('Coupon/Resource/template/admin/search_product.twig', [
             'pagination' => $pagination,
-        ));
+        ]);
     }
 
     /**
@@ -124,7 +127,7 @@ class CouponSearchModelController extends AbstractController
             $categoryId = $request->get('category_id');
             $existCategoryId = $request->get('exist_category_id');
 
-            $existCategoryIds = array(0);
+            $existCategoryIds = [0];
             if (strlen($existCategoryId > 0)) {
                 $existCategoryIds = explode(',', $existCategoryId);
             }
@@ -141,16 +144,16 @@ class CouponSearchModelController extends AbstractController
             }
 
             // カテゴリーの一覧を作成する
-            $list = array();
+            $list = [];
             if ($categoryId != 0 && !in_array($categoryId, $existCategoryIds)) {
                 $name = $Category->getName();
-                $list += array($Category->getId() => $name);
+                $list += [$Category->getId() => $name];
             }
             $list += $this->getCategoryList($Categories, $existCategoryIds);
 
-            return $this->render('Coupon/Resource/template/admin/search_category.twig', array(
+            return $this->render('Coupon/Resource/template/admin/search_category.twig', [
                 'Categories' => $list,
-            ));
+            ]);
         }
 
         return new Response();
@@ -166,12 +169,12 @@ class CouponSearchModelController extends AbstractController
      */
     protected function getCategoryList($Categories, $existCategoryIds)
     {
-        $result = array();
+        $result = [];
         foreach ($Categories as $Category) {
             // 除外IDがない場合は配列に値を追加する
             if (count($existCategoryIds) == 0 || !in_array($Category->getId(), $existCategoryIds)) {
                 $name = $this->getCategoryFullName($Category);
-                $result += array($Category->getId() => $name);
+                $result += [$Category->getId() => $name];
             }
             // 子カテゴリがあれば更に一覧を作成する
             if (count(($Category->getChildren())) > 0) {

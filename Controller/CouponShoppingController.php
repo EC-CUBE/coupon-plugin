@@ -1,14 +1,17 @@
 <?php
+
 /*
- * This file is part of the Coupon plugin
+ * This file is part of EC-CUBE
  *
- * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Plugin\Coupon\Controller;
 
+namespace Plugin\Coupon\Controller;
 
 use Eccube\Controller\AbstractController;
 use Eccube\Entity\Customer;
@@ -66,6 +69,7 @@ class CouponShoppingController extends AbstractController
 
     /**
      * CouponShoppingController constructor.
+     *
      * @param ShoppingService $shoppingService
      * @param DeliveryTimeRepository $deliveryTimeRepository
      * @param CartService $cartService
@@ -82,7 +86,6 @@ class CouponShoppingController extends AbstractController
         $this->couponRepository = $couponRepository;
         $this->couponOrderRepository = $couponOrderRepository;
     }
-
 
     /**
      * クーポン入力、登録画面.
@@ -177,7 +180,7 @@ class CouponShoppingController extends AbstractController
                     }
 
                     if (!$checkLowerLimit) {
-                        $message = trans('front.plugin.coupon.shopping.lowerlimit', array('lowerLimit' => number_format($lowerLimit)));
+                        $message = trans('front.plugin.coupon.shopping.lowerlimit', ['lowerLimit' => number_format($lowerLimit)]);
                         $form->get('coupon_cd')->addError(new FormError($message));
                         $error = true;
                     }
@@ -230,10 +233,10 @@ class CouponShoppingController extends AbstractController
             }
         }
 
-        return $this->render('Coupon/Resource/template/default/shopping_coupon.twig', array(
+        return $this->render('Coupon/Resource/template/default/shopping_coupon.twig', [
             'form' => $form->createView(),
             'Order' => $Order,
-        ));
+        ]);
     }
 
     /**

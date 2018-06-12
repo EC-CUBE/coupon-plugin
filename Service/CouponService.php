@@ -1,8 +1,11 @@
 <?php
+
 /*
- * This file is part of the Coupon plugin
+ * This file is part of EC-CUBE
  *
- * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -39,7 +42,6 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class CouponService
 {
-
     /**
      * @var AuthorizationCheckerInterface
      */
@@ -102,6 +104,7 @@ class CouponService
 
     /**
      * CouponService constructor.
+     *
      * @param AuthorizationCheckerInterface $authorizationChecker
      * @param CouponRepository $couponRepository
      * @param CouponOrderRepository $couponOrderRepository
@@ -130,7 +133,6 @@ class CouponService
         $this->entityManager = $entityManager;
         $this->orderItemRepository = $orderItemRepository;
     }
-
 
     /**
      * クーポンコードを生成する.
@@ -196,9 +198,9 @@ class CouponService
         $repository = $this->couponOrderRepository;
         // クーポン受注情報を取得する
         /** @var CouponOrder $CouponOrder */
-        $CouponOrder = $repository->findOneBy(array(
+        $CouponOrder = $repository->findOneBy([
             'pre_order_id' => $Order->getPreOrderId(),
-        ));
+        ]);
 
         if (is_null($CouponOrder)) {
             $currency = $this->container->getParameter('currency');
@@ -388,8 +390,8 @@ class CouponService
     private function containsProduct(Coupon $Coupon, Order $Order)
     {
         // クーポンの対象商品IDを配列にする
-        $targetProductIds = array();
-        $couponProducts = array();
+        $targetProductIds = [];
+        $couponProducts = [];
         foreach ($Coupon->getCouponDetails() as $detail) {
             $targetProductIds[] = $detail->getProduct()->getId();
         }
@@ -417,8 +419,8 @@ class CouponService
     private function containsCategory(Coupon $Coupon, Order $Order)
     {
         // クーポンの対象カテゴリIDを配列にする
-        $targetCategoryIds = array();
-        $couponProducts = array();
+        $targetCategoryIds = [];
+        $couponProducts = [];
         foreach ($Coupon->getCouponDetails() as $detail) {
             $targetCategoryIds[] = $detail->getCategory()->getId();
         }
@@ -473,6 +475,7 @@ class CouponService
 
     /**
      * @param $orderItem
+     *
      * @return mixed
      */
     private function getCouponProducts(OrderItem $orderItem)

@@ -1,8 +1,11 @@
 <?php
+
 /*
- * This file is part of the Coupon plugin
+ * This file is part of EC-CUBE
  *
- * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -150,7 +153,7 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
         /** @var \Swift_Message $Message */
         $Message = $Messages[0];
 
-        $this->expected = '[' . $BaseInfo->getShopName() . '] ご注文ありがとうございます';
+        $this->expected = '['.$BaseInfo->getShopName().'] ご注文ありがとうございます';
         $this->actual = $Message->getSubject();
         $this->verify();
 
@@ -160,9 +163,9 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
         // 生成された受注のチェック
         /** @var Order $Order */
         $Order = $this->container->get(OrderRepository::class)->findOneBy(
-            array(
-                'Customer' => $this->Customer
-            )
+            [
+                'Customer' => $this->Customer,
+            ]
         );
 
         $this->expected = round(0 - $Coupon->getDiscountPrice(), 2);
@@ -197,12 +200,12 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
         $this->assertTrue($this->client->getResponse()->isRedirect($this->generateUrl('shopping_complete')));
 
         // クーポン受注情報を取得する
-        $CouponOrder = $this->couponOrderRepository->findOneBy(array(
+        $CouponOrder = $this->couponOrderRepository->findOneBy([
             'coupon_id' => $Coupon->getId(),
-        ));
+        ]);
 
-        $Order =  $this->orderRepository->find($CouponOrder->getOrderId());
-        $crawler = $this->client->request('GET', $this->generateUrl('mypage_history', array('id' => $Order->getId())));
+        $Order = $this->orderRepository->find($CouponOrder->getOrderId());
+        $crawler = $this->client->request('GET', $this->generateUrl('mypage_history', ['id' => $Order->getId()]));
         $this->assertContains('ご利用クーポンコード', $crawler->html());
     }
 
@@ -220,7 +223,7 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
         $this->entityManager->flush($Coupon);
         $form = $this->getForm($crawler, $Coupon->getCouponCd());
 
-        /** @var \Symfony\Component\DomCrawler\Crawler $crawler */
+        /* @var \Symfony\Component\DomCrawler\Crawler $crawler */
         $this->client->submit($form);
         $this->assertFalse($this->client->getResponse()->isRedirection());
     }
@@ -252,9 +255,9 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
 
         /** @var Order $Order */
         $Order = $this->orderRepository->findOneBy(
-            array(
+            [
                 'Customer' => $this->Customer,
-            )
+            ]
         );
 
         $this->actual = $Coupon->getDiscountPrice();
@@ -291,12 +294,12 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
 
         /** @var Order $Order */
         $Order = $this->orderRepository->findOneBy(
-            array(
+            [
                 'Customer' => $this->Customer,
-            )
+            ]
         );
 
-        $CouponOrder = $this->couponOrderRepository->findOneBy(array('pre_order_id' => $Order->getPreOrderId()));
+        $CouponOrder = $this->couponOrderRepository->findOneBy(['pre_order_id' => $Order->getPreOrderId()]);
 
         $this->actual = $CouponOrder->getDiscount();
         $this->expected = 0 - $Order->getItems()->getDiscounts()->first()->getPrice();
