@@ -97,11 +97,6 @@ class CouponShoppingController extends AbstractController
      */
     public function shoppingCoupon(Request $request)
     {
-        // カートチェック
-        if (!$this->cartService->isLocked()) {
-            // カートが存在しない、カートがロックされていない時はエラー
-            return $this->redirectToRoute('cart');
-        }
         /** @var Order $Order */
         $Order = $this->shoppingService->getOrder(OrderStatus::PROCESSING);
 

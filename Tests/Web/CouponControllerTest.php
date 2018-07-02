@@ -100,16 +100,6 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
     }
 
     /**
-     * testRoutingShoppingCouponNot.
-     */
-    public function testRoutingShoppingCouponNot()
-    {
-        $client = $this->client;
-        $client->request('GET', $this->generateUrl('plugin_coupon_shopping'));
-        $this->assertFalse($client->getResponse()->isSuccessful());
-    }
-
-    /**
      * testShoppingCouponPostError.
      */
     public function testShoppingCouponPostError()
