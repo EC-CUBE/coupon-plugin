@@ -229,7 +229,6 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
     {
         $this->markTestIncomplete('Need to add a coupon_shopping template manually to the shopping page.');
 
-
         $this->routingShopping();
         $crawler = $this->client->request('GET', $this->generateUrl('plugin_coupon_shopping'));
         $Coupon = $this->getCoupon(Coupon::ALL, Coupon::DISCOUNT_PRICE);
