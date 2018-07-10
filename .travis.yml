@@ -16,9 +16,8 @@ env:
   global:
     PLUGIN_CODE=Coupon
   matrix:
-    # ec-cube master
-#    - ECCUBE_VERSION=master BRANCH=sf-fix-plugin-phpunit DB=mysql USER=root DBNAME=myapp_test DBPASS=' ' DBUSER=root
-    - ECCUBE_VERSION=master BRANCH=sf-fix-plugin-phpunit DATABASE_URL=mysql://root:@localhost/cube4_dev DATABASE_SERVER_VERSION=5
+    # ec-cube experimental/sf
+    - ECCUBE_VERSION=experimental/sf BRANCH=sf-fix-plugin-phpunit DATABASE_URL=mysql://root:@localhost/cube4_dev DATABASE_SERVER_VERSION=5
 
 eccube_setup: &eccube_setup |
   echo "APP_ENV=test" > .env
@@ -36,7 +35,6 @@ jobs:
         - echo "opcache.enable_cli=1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
         - echo "apc.enable_cli=1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
         - echo "memory_limit=-1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
-#      env: ECCUBE_VERSION=master BRANCH=sf-fix-plugin-phpunit DATABASE_URL=mysql://root:@localhost/cube4_dev DATABASE_SERVER_VERSION=5
       install:
         - gem install mime-types -v 2.99.1
         - gem install mailcatcher
