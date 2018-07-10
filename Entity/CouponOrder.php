@@ -339,7 +339,7 @@ class CouponOrder extends AbstractEntity
     /**
      * Set del_flg.
      *
-     * @param int $visible
+     * @param bool $visible
      *
      * @return CouponOrder
      */

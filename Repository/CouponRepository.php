@@ -51,7 +51,7 @@ class CouponRepository extends AbstractRepository
         // 時分秒を0に設定する
         $currenDateTime->setTime(0, 0, 0);
 
-        $qb = $this->createQueryBuilder('c')->setMaxResults(1)->select('c')->Where('c.visible = 1');
+        $qb = $this->createQueryBuilder('c')->setMaxResults(1)->select('c')->Where('c.visible = true');
 
         // クーポンコード
         $qb->andWhere('c.coupon_cd = :coupon_cd')
@@ -91,7 +91,7 @@ class CouponRepository extends AbstractRepository
         // 時分秒を0に設定する
         $currenDateTime->setTime(0, 0, 0);
 
-        $qb = $this->createQueryBuilder('c')->select('c')->Where('c.visible = 1');
+        $qb = $this->createQueryBuilder('c')->select('c')->Where('c.visible = true');
 
         // クーポンコード有効
         $qb->andWhere('c.enable_flag = :enable_flag')
@@ -140,7 +140,7 @@ class CouponRepository extends AbstractRepository
         $em = $this->getEntityManager();
 
         // クーポン情報を書き換える
-        $Coupon->setVisible(Constant::DISABLED);
+        $Coupon->setVisible((bool) Constant::DISABLED);
         // クーポン情報を登録する
         $em->persist($Coupon);
         $em->flush($Coupon);
@@ -149,7 +149,7 @@ class CouponRepository extends AbstractRepository
         /** @var CouponDetail $detail */
         foreach ($details as $detail) {
             // クーポン詳細情報を書き換える
-            $detail->setVisible(Constant::DISABLED);
+            $detail->setVisible((bool) Constant::DISABLED);
             $em->persist($detail);
             $em->flush($detail);
         }

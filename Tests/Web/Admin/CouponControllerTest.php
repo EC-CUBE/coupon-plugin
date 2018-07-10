@@ -202,7 +202,7 @@ class CouponControllerTest extends AbstractAdminWebTestCase
         $CouponDetail->setCouponType($Coupon->getCouponType());
         $CouponDetail->setUpdateDate($Coupon->getUpdateDate());
         $CouponDetail->setCreateDate($Coupon->getCreateDate());
-        $CouponDetail->setVisible(Constant::ENABLED);
+        $CouponDetail->setVisible((bool) Constant::ENABLED);
 
         switch ($couponType) {
             case Coupon::PRODUCT:
@@ -247,7 +247,7 @@ class CouponControllerTest extends AbstractAdminWebTestCase
         $Coupon->setCouponLowerLimit(100);
         $Coupon->setCouponMember(0);
         $Coupon->setEnableFlag(1);
-        $Coupon->setVisible(1);
+        $Coupon->setVisible(true);
         $d1 = $date1->setDate(2016, 1, 1);
         $Coupon->setAvailableFromDate($d1);
         $d2 = $date2->setDate(2040, 12, 31);
