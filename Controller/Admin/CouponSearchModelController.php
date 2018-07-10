@@ -19,8 +19,8 @@ use Eccube\Repository\CategoryRepository;
 use Eccube\Repository\ProductRepository;
 use Knp\Component\Pager\Paginator;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class CouponSearchModelController.
@@ -56,9 +56,10 @@ class CouponSearchModelController extends AbstractController
      * @param int       $page_no
      * @param Paginator $paginator
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return array
      * @Route("/%eccube_admin_route%/plugin/coupon/search/product", name="plugin_coupon_search_product")
      * @Route("/%eccube_admin_route%/plugin/coupon/search/product/page/{page_no}", requirements={"page_no" = "\d+"}, name="plugin_coupon_search_product_page")
+     * @Template("@Coupon/admin/search_product.twig")
      */
     public function searchProduct(Request $request, $page_no = null, Paginator $paginator)
     {
@@ -108,9 +109,9 @@ class CouponSearchModelController extends AbstractController
             ['wrap-queries' => true]
         );
 
-        return $this->render('Coupon/Resource/template/admin/search_product.twig', [
+        return [
             'pagination' => $pagination,
-        ]);
+        ];
     }
 
     /**
@@ -118,8 +119,9 @@ class CouponSearchModelController extends AbstractController
      *
      * @param Request     $request
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return array
      * @Route("/%eccube_admin_route%/plugin/coupon/search/category", name="plugin_coupon_search_category")
+     * @Template("@Coupon/admin/search_category.twig")
      */
     public function searchCategory(Request $request)
     {
@@ -151,12 +153,12 @@ class CouponSearchModelController extends AbstractController
             }
             $list += $this->getCategoryList($Categories, $existCategoryIds);
 
-            return $this->render('Coupon/Resource/template/admin/search_category.twig', [
+            return [
                 'Categories' => $list,
-            ]);
+            ];
         }
 
-        return new Response();
+        return [];
     }
 
     /**

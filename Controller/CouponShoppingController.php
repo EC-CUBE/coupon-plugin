@@ -29,7 +29,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 class CouponShoppingController extends AbstractController
 {
@@ -93,7 +92,7 @@ class CouponShoppingController extends AbstractController
      *
      * @param Request     $request
      *
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+     * @return array
      * @Route("/plugin/coupon/shopping/shopping_coupon", name="plugin_coupon_shopping")
      * @Template("@Coupon/default/shopping_coupon.twig")
      */
