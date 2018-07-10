@@ -58,6 +58,7 @@ admin.plugin.coupon.regist.success: クーポンを登録しました。
 admin.plugin.coupon.delete.success: クーポンを削除しました。
 admin.plugin.coupon.enable.success: クーポンの状態を変更しました。
 admin.plugin.coupon.delete.error: クーポンの削除に失敗しました。
+admin.plugin.coupon.pager.failed: ページング担当者が失敗しました。
 # Order edit
 admin.plugin.coupon.order_edit.header: ご利用クーポンコード
 admin.plugin.coupon.order_edit.body: クーポンコード

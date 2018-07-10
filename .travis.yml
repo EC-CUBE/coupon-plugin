@@ -17,7 +17,8 @@ env:
     PLUGIN_CODE=Coupon
   matrix:
     # ec-cube experimental/sf
-    - ECCUBE_VERSION=experimental/sf BRANCH=sf-fix-plugin-phpunit DATABASE_URL=mysql://root:@localhost/cube4_dev DATABASE_SERVER_VERSION=5
+    - ECCUBE_VERSION=experimental/sf BRANCH=experimental/sf DATABASE_URL=mysql://root:@localhost/cube4_dev DATABASE_SERVER_VERSION=5 COVERAGE=0
+    - ECCUBE_VERSION=experimental/sf BRANCH=experimental/sf DATABASE_URL=postgres://postgres:password@localhost/cube4_dev DATABASE_SERVER_VERSION=9 COVERAGE=1
 
 eccube_setup: &eccube_setup |
   echo "APP_ENV=test" > .env
@@ -27,40 +28,47 @@ eccube_setup: &eccube_setup |
   bin/console eccube:plugin:install --path=${HOME}/${PLUGIN_CODE}.tar.gz
   bin/console eccube:plugin:enable --code=${PLUGIN_CODE}
 
-jobs:
+matrix:
   fast_finish: true
   include:
-      before_install:
-        - phpenv config-rm xdebug.ini || true
-        - echo "opcache.enable_cli=1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
-        - echo "apc.enable_cli=1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
-        - echo "memory_limit=-1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
-      install:
-        - gem install mime-types -v 2.99.1
-        - gem install mailcatcher
-      before_script:
-        # archive plugin
-        - tar cvzf ${HOME}/${PLUGIN_CODE}.tar.gz ./*
-        # clone ec-cube
-        - git clone https://github.com/eccubevn/ec-cube.git
-        - cd ec-cube
-        # checkout version
-        - git checkout -b ${BRANCH} origin/${BRANCH}
-        # update composer
-        - composer selfupdate
-        - composer install --dev --no-interaction -o --apcu-autoloader
-        # install ec-cube
-        - *eccube_setup
-        # mail catcher
-        - mailcatcher
-      script:
-        - ./bin/phpunit app/Plugin/${PLUGIN_CODE}/Tests
-      after_script:
-        # disable plugin
-        - bin/console eccube:plugin:disable --code=${PLUGIN_CODE}
-        # uninstall plugin
-        - bin/console eccube:plugin:uninstall --code=${PLUGIN_CODE}
-        # re install plugin
-        - bin/console eccube:plugin:install --code=${PLUGIN_CODE}
-        # re enable plugin
-        - bin/console eccube:plugin:enable --code=${PLUGIN_CODE}
+  allow_failures:
+
+before_install:
+  - phpenv config-rm xdebug.ini || true
+  - echo "opcache.enable_cli=1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+  - echo "apc.enable_cli=1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+  - echo "memory_limit=-1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+install:
+  - gem install mime-types -v 2.99.1
+  - gem install mailcatcher
+before_script:
+  # archive plugin
+  - tar cvzf ${HOME}/${PLUGIN_CODE}.tar.gz ./*
+  # clone ec-cube
+  - git clone https://github.com/EC-CUBE/ec-cube.git
+  - cd ec-cube
+  # checkout version
+  - git checkout -b ${BRANCH} origin/${BRANCH}
+  # update composer
+  - composer selfupdate
+  - composer install --dev --no-interaction -o --apcu-autoloader
+  # install ec-cube
+  - *eccube_setup
+  # mail catcher
+  - mailcatcher
+script:
+  - ./bin/phpunit app/Plugin/${PLUGIN_CODE}/Tests
+  - if [[ ${COVERAGE} == 1 ]]; then ./bin/phpunit -c app/Plugin/${PLUGIN_CODE}/phpunit.xml.dist --coverage-clover=coverage.clover ; fi
+after_script:
+  # disable plugin
+  - bin/console eccube:plugin:disable --code=${PLUGIN_CODE}
+  # uninstall plugin
+  - bin/console eccube:plugin:uninstall --code=${PLUGIN_CODE}
+  # re install plugin
+  - bin/console eccube:plugin:install --code=${PLUGIN_CODE}
+  # re enable plugin
+  - bin/console eccube:plugin:enable --code=${PLUGIN_CODE}
+
+after_success:
+  # for coveralls
+  - if [[ ${COVERAGE} == 1 ]]; then php vendor/bin/php-coveralls -v -x coverage.clover; fi

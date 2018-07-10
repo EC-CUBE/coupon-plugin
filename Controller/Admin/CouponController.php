@@ -23,6 +23,7 @@ use Plugin\Coupon\Repository\CouponDetailRepository;
 use Plugin\Coupon\Repository\CouponRepository;
 use Plugin\Coupon\Service\CouponService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -66,8 +67,9 @@ class CouponController extends AbstractController
     /**
      * @param Request $request
      *
-     * @return RedirectResponse|Response
-     * @Route("/%eccube_admin_route%/plugin/coupon/", name="plugin_coupon_list")
+     * @return array
+     * @Route("/%eccube_admin_route%/plugin/coupon", name="plugin_coupon_list")
+     * @Template("@Coupon/admin/index.twig")
      */
     public function index(Request $request)
     {
@@ -76,9 +78,9 @@ class CouponController extends AbstractController
             ['id' => 'DESC']
         );
 
-        return $this->render('Coupon/Resource/template/admin/index.twig', [
+        return [
             'Coupons' => $coupons,
-        ]);
+        ];
     }
 
     /**
@@ -234,6 +236,6 @@ class CouponController extends AbstractController
         ];
         $viewParameters += $parameters;
 
-        return $this->render('Coupon/Resource/template/admin/regist.twig', $viewParameters);
+        return $this->render('@Coupon/admin/regist.twig', $viewParameters);
     }
 }

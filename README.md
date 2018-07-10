@@ -75,7 +75,3 @@
 	- 調整金額
 
 ## オプション
-
-- Shopping index: {{ include('Coupon/coupon_shopping_item.twig', ignore_missing = true) }}
-- Shopping confirm: {{ include('Coupon/coupon_shopping_item_confirm.twig', ignore_missing = true) }}
-- Mypage history: {{ include('Coupon/mypage_history_coupon.twig', ignore_missing = true) }}

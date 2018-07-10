@@ -66,7 +66,7 @@
                 list.html(data);
             },
             error: function() {
-                alert('paginator failed.');
+                alert('{{ 'admin.plugin.coupon.pager.failed'|trans }}');
             }
         });
         event.preventDefault();
@@ -101,7 +101,7 @@
     {% if pagination.totalItemCount > 0 %}
         <div class="col box-footer">
             <div class="row justify-content-md-center mb-4">
-                {% include "@admin/styleguide_pager.twig" with {'pages': pagination.paginationData, 'routes': 'plugin_coupon_search_product_page'} %}
+                {% include "@admin/pager.twig" with {'pages': pagination.paginationData, 'routes': 'plugin_coupon_search_product_page'} %}
             </div>
         </div>
     {% endif %}

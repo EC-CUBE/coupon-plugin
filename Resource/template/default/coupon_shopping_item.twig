@@ -9,7 +9,7 @@
 #}
 <script type="text/javascript">
     $(function () {
-        $('#coupon_button').click(function () {
+        $('#coupon_button').on("click", function () {
             $(this).attr('disabled', 'disabled');
             $.ajax({
                 type: 'POST',
@@ -24,14 +24,17 @@
             });
             return false;
         });
+
+        // append to layout
+        $(".ec-orderConfirm").last().before($("#coupon").detach());
     })
 </script>
 
-<div class="ec-orderConfirm">
+<div id="coupon" class="ec-orderCoupon">
     <div class="ec-rectHeading">
         <h2>{{ 'front.plugin.coupon.shopping.header'|trans }}</h2>
     </div>
-    <div id="customer_detail_box" class="column is-edit">
+    <div id="customer_detail_box" class="column">
         {% if CouponOrder %}
             <strong class="text-danger">{{ 'front.plugin.coupon.shopping.message.use_code'|trans({'%code%': CouponOrder.coupon_cd }) }}</strong>
         {% else %}

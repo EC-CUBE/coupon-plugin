@@ -7,7 +7,14 @@
  For the full copyright and license information, please view the LICENSE
  file that was distributed with this source code.
 #}
-<div class="ec-orderConfirm">
+<script type="text/javascript">
+    $(function () {
+        // append to layout
+        $(".ec-orderConfirm").last().before($("#coupon").detach());
+    })
+</script>
+
+<div id="coupon" class="ec-orderCoupon">
     <div class="ec-rectHeading">
         <h2>{{ 'front.plugin.coupon.shopping.header'|trans }}</h2>
     </div>

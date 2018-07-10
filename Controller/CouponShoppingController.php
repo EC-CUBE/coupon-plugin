@@ -26,6 +26,7 @@ use Plugin\Coupon\Repository\CouponOrderRepository;
 use Plugin\Coupon\Repository\CouponRepository;
 use Plugin\Coupon\Service\CouponService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -94,6 +95,7 @@ class CouponShoppingController extends AbstractController
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      * @Route("/plugin/coupon/shopping/shopping_coupon", name="plugin_coupon_shopping")
+     * @Template("@Coupon/default/shopping_coupon.twig")
      */
     public function shoppingCoupon(Request $request)
     {
@@ -228,10 +230,10 @@ class CouponShoppingController extends AbstractController
             }
         }
 
-        return $this->render('Coupon/Resource/template/default/shopping_coupon.twig', [
+        return [
             'form' => $form->createView(),
             'Order' => $Order,
-        ]);
+        ];
     }
 
     /**

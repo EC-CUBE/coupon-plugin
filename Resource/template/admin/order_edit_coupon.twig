@@ -7,8 +7,13 @@
  For the full copyright and license information, please view the LICENSE
  file that was distributed with this source code.
 #}
+<script type="text/javascript">
+    $(function () {
+        $(".c-primaryCol .card").last().before($("#coupon").detach());
+    });
+</script>
 {# クーポン情報 #}
-<div class="card rounded border-0 mb-4">
+<div id="coupon" class="card rounded border-0 mb-4">
     <div class="card-header">
         <div class="row">
             <div class="col-8">
