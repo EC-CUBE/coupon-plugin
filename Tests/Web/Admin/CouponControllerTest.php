@@ -14,7 +14,6 @@
 namespace Plugin\Coupon\Tests\Web\Admin;
 
 use Eccube\Entity\Customer;
-use Eccube\Common\Constant;
 use Eccube\Repository\ProductRepository;
 use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;
 use Plugin\Coupon\Entity\Coupon;

@@ -13,7 +13,6 @@
 
 namespace Plugin\Coupon\Tests\Service;
 
-use Eccube\Common\Constant;
 use Eccube\Entity\Master\OrderItemType;
 use Eccube\Entity\OrderItem;
 use Eccube\Entity\ProductCategory;

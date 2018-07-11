@@ -13,7 +13,6 @@
 
 namespace Plugin\Coupon\Tests\Web;
 
-use Eccube\Common\Constant;
 use Eccube\Entity\Customer;
 use Eccube\Entity\Order;
 use Eccube\Repository\BaseInfoRepository;

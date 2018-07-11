@@ -13,7 +13,6 @@
 
 namespace Plugin\Coupon\Tests\Repository;
 
-use Eccube\Common\Constant;
 use Eccube\Tests\EccubeTestCase;
 use Plugin\Coupon\Entity\Coupon;
 use Plugin\Coupon\Entity\CouponDetail;
