@@ -116,7 +116,7 @@ class CouponCouponRepositoryTest extends EccubeTestCase
         $CouponDetail->setCouponType($Coupon->getCouponType());
         $CouponDetail->setUpdateDate($Coupon->getUpdateDate());
         $CouponDetail->setCreateDate($Coupon->getCreateDate());
-        $CouponDetail->setVisible((bool) Constant::ENABLED);
+        $CouponDetail->setVisible(true);
         $Categories = $Product->getProductCategories();
         /** @var \Eccube\Entity\ProductCategory $Category */
         $ProductCategory = $Categories[0];

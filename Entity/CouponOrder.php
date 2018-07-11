@@ -353,7 +353,7 @@ class CouponOrder extends AbstractEntity
     /**
      * Get del_flg.
      *
-     * @return int
+     * @return bool
      */
     public function getVisible()
     {

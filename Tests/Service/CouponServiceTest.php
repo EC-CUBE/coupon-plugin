@@ -347,7 +347,7 @@ class CouponServiceTest extends EccubeTestCase
         $CouponDetail->setCouponType($Coupon->getCouponType());
         $CouponDetail->setUpdateDate($Coupon->getUpdateDate());
         $CouponDetail->setCreateDate($Coupon->getCreateDate());
-        $CouponDetail->setVisible((bool) Constant::ENABLED);
+        $CouponDetail->setVisible(true);
 
         switch ($couponType) {
             case Coupon::PRODUCT:

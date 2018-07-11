@@ -140,7 +140,7 @@ class CouponRepository extends AbstractRepository
         $em = $this->getEntityManager();
 
         // クーポン情報を書き換える
-        $Coupon->setVisible((bool) Constant::DISABLED);
+        $Coupon->setVisible(false);
         // クーポン情報を登録する
         $em->persist($Coupon);
         $em->flush($Coupon);
@@ -149,7 +149,7 @@ class CouponRepository extends AbstractRepository
         /** @var CouponDetail $detail */
         foreach ($details as $detail) {
             // クーポン詳細情報を書き換える
-            $detail->setVisible((bool) Constant::DISABLED);
+            $detail->setVisible(false);
             $em->persist($detail);
             $em->flush($detail);
         }

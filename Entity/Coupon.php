@@ -428,13 +428,13 @@ class Coupon extends AbstractEntity
     /**
      * Set del_flg.
      *
-     * @param int $visable
+     * @param bool $visible
      *
      * @return Coupon
      */
-    public function setVisible($visable)
+    public function setVisible($visible)
     {
-        $this->visible = $visable;
+        $this->visible = $visible;
 
         return $this;
     }
@@ -442,7 +442,7 @@ class Coupon extends AbstractEntity
     /**
      * Get del_flg.
      *
-     * @return int
+     * @return bool
      */
     public function getVisible()
     {

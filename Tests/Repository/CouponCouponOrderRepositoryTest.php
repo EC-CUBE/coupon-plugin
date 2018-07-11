@@ -150,7 +150,7 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
         $Order->addItem($orderItem);
 
         $CouponOrder = new CouponOrder();
-        $CouponOrder->setVisible((bool) Constant::DISABLED);
+        $CouponOrder->setVisible(false);
         $CouponOrder->setDiscount($discount);
         $CouponOrder->setUserId($this->Customer->getId());
         $CouponOrder->setCouponId($Coupon->getId());
@@ -184,7 +184,7 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
         $CouponDetail->setCouponType($Coupon->getCouponType());
         $CouponDetail->setUpdateDate($Coupon->getUpdateDate());
         $CouponDetail->setCreateDate($Coupon->getCreateDate());
-        $CouponDetail->setVisible((bool) Constant::ENABLED);
+        $CouponDetail->setVisible(true);
 
         $Categories = $Product->getProductCategories();
 

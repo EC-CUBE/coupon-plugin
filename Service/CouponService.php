@@ -227,7 +227,7 @@ class CouponService
             $CouponOrder = new CouponOrder();
             $CouponOrder->setOrderId($Order->getId());
             $CouponOrder->setPreOrderId($Order->getPreOrderId());
-            $CouponOrder->setVisible((bool) Constant::ENABLED);
+            $CouponOrder->setVisible(true);
             $CouponOrder->setOrderItemId($OrderItem->getId());
         } else {
             $orderItemId = $CouponOrder->getOrderItemId();

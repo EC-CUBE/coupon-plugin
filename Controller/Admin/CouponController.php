@@ -74,7 +74,7 @@ class CouponController extends AbstractController
     public function index(Request $request)
     {
         $coupons = $this->couponRepository->findBy(
-            ['visible' => (bool) Constant::ENABLED],
+            ['visible' => true],
             ['id' => 'DESC']
         );
 
@@ -100,7 +100,7 @@ class CouponController extends AbstractController
             // 新規登録
             $Coupon = new Coupon();
             $Coupon->setEnableFlag(Constant::ENABLED);
-            $Coupon->setVisible((bool) Constant::ENABLED);
+            $Coupon->setVisible(true);
         } else {
             // 更新
             $Coupon = $this->couponRepository->find($id);
@@ -149,7 +149,7 @@ class CouponController extends AbstractController
             foreach ($CouponDetails as $CouponDetail) {
                 $CouponDetail->setCoupon($Coupon);
                 $CouponDetail->setCouponType($Coupon->getCouponType());
-                $CouponDetail->setVisible((bool) Constant::DISABLED);
+                $CouponDetail->setVisible(false);
                 $Coupon->addCouponDetail($CouponDetail);
                 $this->entityManager->persist($CouponDetail);
             }
