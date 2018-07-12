@@ -1,48 +1,80 @@
 <?php
+
 /*
- * This file is part of the Coupon plugin
+ * This file is part of EC-CUBE
  *
- * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon\Controller;
+namespace Plugin\Coupon\Controller\Admin;
 
-use Eccube\Application;
+use Eccube\Controller\AbstractController;
 use Eccube\Entity\Category;
+use Eccube\Repository\CategoryRepository;
+use Eccube\Repository\ProductRepository;
+use Knp\Component\Pager\Paginator;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class CouponSearchModelController.
  */
-class CouponSearchModelController
+class CouponSearchModelController extends AbstractController
 {
+    /**
+     * @var CategoryRepository
+     */
+    private $categoryRepository;
+
+    /**
+     * @var ProductRepository
+     */
+    private $productRepository;
+
+    /**
+     * CouponSearchModelController constructor.
+     *
+     * @param CategoryRepository $categoryRepository
+     * @param ProductRepository $productRepository
+     */
+    public function __construct(CategoryRepository $categoryRepository, ProductRepository $productRepository)
+    {
+        $this->categoryRepository = $categoryRepository;
+        $this->productRepository = $productRepository;
+    }
+
     /**
      * search product modal.
      *
-     * @param Application $app
-     * @param Request     $request
-     * @param int         $page_no
+     * @param Request   $request
+     * @param int       $page_no
+     * @param Paginator $paginator
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return array
+     * @Route("/%eccube_admin_route%/plugin/coupon/search/product", name="plugin_coupon_search_product")
+     * @Route("/%eccube_admin_route%/plugin/coupon/search/product/page/{page_no}", requirements={"page_no" = "\d+"}, name="plugin_coupon_search_product_page")
+     * @Template("@Coupon/admin/search_product.twig")
      */
-    public function searchProduct(Application $app, Request $request, $page_no = null)
+    public function searchProduct(Request $request, $page_no = null, Paginator $paginator)
     {
         if (!$request->isXmlHttpRequest()) {
             return null;
         }
 
-        $pageCount = $app['config']['default_page_count'];
-        $session = $app['session'];
+        $pageCount = $this->eccubeConfig['eccube_default_page_count'];
+        $session = $this->session;
         if ('POST' === $request->getMethod()) {
-            log_info('get search data with parameters ', array('id' => $request->get('id'), 'category_id' => $request->get('category_id')));
+            log_info('get search data with parameters ', ['id' => $request->get('id'), 'category_id' => $request->get('category_id')]);
             $page_no = 1;
-            $searchData = array(
+            $searchData = [
                 'id' => $request->get('id'),
-            );
+            ];
             if ($categoryId = $request->get('category_id')) {
                 $searchData['category_id'] = $categoryId;
             }
@@ -58,10 +90,10 @@ class CouponSearchModelController
         }
 
         if (!empty($searchData['category_id'])) {
-            $searchData['category_id'] = $app['eccube.repository.category']->find($searchData['category_id']);
+            $searchData['category_id'] = $this->categoryRepository->find($searchData['category_id']);
         }
 
-        $qb = $app['eccube.repository.product']->getQueryBuilderBySearchDataForAdmin($searchData);
+        $qb = $this->productRepository->getQueryBuilderBySearchDataForAdmin($searchData);
         // 除外するproduct_idを設定する
         $existProductId = $request->get('exist_product_id');
         if (strlen($existProductId > 0)) {
@@ -70,37 +102,34 @@ class CouponSearchModelController
         }
 
         /** @var \Knp\Component\Pager\Pagination\SlidingPagination $pagination */
-        $pagination = $app['paginator']()->paginate(
+        $pagination = $paginator->paginate(
             $qb,
             $page_no,
             $pageCount,
-            array('wrap-queries' => true)
+            ['wrap-queries' => true]
         );
 
-        $paths = array();
-        $paths[] = $app['config']['template_admin_realdir'];
-        $app['twig.loader']->addLoader(new \Twig_Loader_Filesystem($paths));
-
-        return $app->render('Coupon/Resource/template/admin/search_product.twig', array(
+        return [
             'pagination' => $pagination,
-        ));
+        ];
     }
 
     /**
      * カテゴリ検索画面を表示する.
      *
-     * @param Application $app
      * @param Request     $request
      *
-     * @return \Symfony\Component\HttpFoundation\Response|null
+     * @return array
+     * @Route("/%eccube_admin_route%/plugin/coupon/search/category", name="plugin_coupon_search_category")
+     * @Template("@Coupon/admin/search_category.twig")
      */
-    public function searchCategory(Application $app, Request $request)
+    public function searchCategory(Request $request)
     {
         if ($request->isXmlHttpRequest()) {
             $categoryId = $request->get('category_id');
             $existCategoryId = $request->get('exist_category_id');
 
-            $existCategoryIds = array(0);
+            $existCategoryIds = [0];
             if (strlen($existCategoryId > 0)) {
                 $existCategoryIds = explode(',', $existCategoryId);
             }
@@ -109,27 +138,27 @@ class CouponSearchModelController
                 $categoryId = 0;
             }
 
-            $Category = $app['eccube.repository.category']->find($categoryId);
-            $Categories = $app['eccube.repository.category']->getList($Category);
+            $Category = $this->categoryRepository->find($categoryId);
+            $Categories = $this->categoryRepository->getList($Category);
 
             if (empty($Categories)) {
                 log_info('search category not found.');
             }
 
             // カテゴリーの一覧を作成する
-            $list = array();
+            $list = [];
             if ($categoryId != 0 && !in_array($categoryId, $existCategoryIds)) {
                 $name = $Category->getName();
-                $list += array($Category->getId() => $name);
+                $list += [$Category->getId() => $name];
             }
             $list += $this->getCategoryList($Categories, $existCategoryIds);
 
-            return $app->render('Coupon/Resource/template/admin/search_category.twig', array(
+            return [
                 'Categories' => $list,
-            ));
+            ];
         }
 
-        return new Response();
+        return [];
     }
 
     /**
@@ -142,12 +171,12 @@ class CouponSearchModelController
      */
     protected function getCategoryList($Categories, $existCategoryIds)
     {
-        $result = array();
+        $result = [];
         foreach ($Categories as $Category) {
             // 除外IDがない場合は配列に値を追加する
             if (count($existCategoryIds) == 0 || !in_array($Category->getId(), $existCategoryIds)) {
                 $name = $this->getCategoryFullName($Category);
-                $result += array($Category->getId() => $name);
+                $result += [$Category->getId() => $name];
             }
             // 子カテゴリがあれば更に一覧を作成する
             if (count(($Category->getChildren())) > 0) {

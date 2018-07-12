@@ -8,63 +8,58 @@
  file that was distributed with this source code.
 #}
 
-{% extends 'default_frame.twig' %}
+{% extends '@admin/default_frame.twig' %}
 
 {% set menus = ['order', 'plugin_coupon'] %}
 
-{% block title %}クーポン管理{% endblock %}
-{% block sub_title %}クーポン内容設定{% endblock %}
+{% block title %}{{ 'plugin_coupon.admin.index.title'|trans }}{% endblock %}
+{% block sub_title %}{{ 'plugin_coupon.admin.index.subtitle'|trans }}{% endblock %}
 
 {% block main %}
 <form name="search_form" id="search_form" method="post" action="">
-    {{ form_widget(searchForm._token) }}
-    <div class="row">
-        <div class="col-md-12">
-            <div class="box">
-                <div class="box-header with-arrow">
-                    <h3 class="box-title"><span class="normal"><strong>{{ totalItemCount }} 件</strong> が該当しました</span></h3>
-                </div><!-- /.box-header -->
-                <div class="box-body">
-                    <div class="table_list">
-                        <div class="table-responsive with-border">
-                            <table class="table table-hover">
+    <div class="c-contentsArea__cols">
+        <div class="c-contentsArea__primaryCol">
+            <div class="c-primaryCol">
+                <div class="card rounded border-0 mb-4">
+                    <div class="card-header"><span class="normal">{{ 'plugin_coupon.admin.index.number'|trans({'%number%': Coupons|length})|raw }}</span></div>
+                    <div class="card-body p-0">
+                            <table class="table tabel-sm">
                                 <thead>
                                 <tr>
-                                    <th>クーポンID</th>
-                                    <th>クーポンコード</th>
-                                    <th>クーポン名</th>
-                                    <th>種別</th>
-                                    <th>会員のみ</th>
-                                    <th>値引き</th>
-                                    <th>残発行枚数</th>
-                                    <th>下限金額</th>
-                                    <th>有効期間</th>
-                                    <th>編集</th>
-                                    <th>状態</th>
-                                    <th>削除</th>
+                                    <th>{{ 'plugin_coupon.admin.index.col01'|trans }}</th>
+                                    <th>{{ 'plugin_coupon.admin.index.col02'|trans }}</th>
+                                    <th>{{ 'plugin_coupon.admin.index.col03'|trans }}</th>
+                                    <th>{{ 'plugin_coupon.admin.index.col04'|trans }}</th>
+                                    <th>{{ 'plugin_coupon.admin.index.col05'|trans }}</th>
+                                    <th>{{ 'plugin_coupon.admin.index.col06'|trans }}</th>
+                                    <th>{{ 'plugin_coupon.admin.index.col07'|trans }}</th>
+                                    <th>{{ 'plugin_coupon.admin.index.col08'|trans }}</th>
+                                    <th>{{ 'plugin_coupon.admin.index.col09'|trans }}</th>
+                                    <th>{{ 'plugin_coupon.admin.index.col10'|trans }}</th>
+                                    <th>{{ 'plugin_coupon.admin.index.col11'|trans }}</th>
+                                    <th>{{ 'plugin_coupon.admin.index.col12'|trans }}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {% for Coupon in pagination %}
+                                {% for Coupon in Coupons %}
                                 <tr class="{% if Coupon.enable_flag == 0 %}active{% endif %}">
                                     <td class="coupon_id">{{ Coupon.id }}</td>
                                     <td class="coupon_cd">{{ Coupon.coupon_cd }}</td>
                                     <td class="coupon_name">{{ Coupon.coupon_name }}</td>
-
                                     {% if Coupon.coupon_type == 1 %}
-                                        <td class="coupon_type">商品</td>
+                                        <td class="coupon_type">{{ 'plugin_coupon.admin.coupon_type.product'|trans }}</td>
                                     {% elseif Coupon.coupon_type == 2 %}
-                                        <td class="coupon_type">カテゴリ</td>
+                                        <td class="coupon_type">{{ 'plugin_coupon.admin.coupon_type.category'|trans }}</td>
                                     {% elseif Coupon.coupon_type == 3 %}
-                                        <td class="coupon_type">全商品</td>
+                                        <td class="coupon_type">{{ 'plugin_coupon.admin.coupon_type.all'|trans }}</td>
                                     {% else %}
                                         <td class="coupon_type"></td>
                                     {% endif %}
 
                                     {% if Coupon.coupon_member == 1 %}
-                                        <td class="coupon_member">YES</td>
+                                        <td class="coupon_member">{{ 'plugin_coupon.admin.coupon_member.yes'|trans }}</td>
                                     {% else %}
-                                        <td class="coupon_member">NO</td>
+                                        <td class="coupon_member">{{ 'plugin_coupon.admin.coupon_member.no'|trans }}</td>
                                     {% endif %}
 
                                     {% if Coupon.discount_type == 1 %}
@@ -79,33 +74,66 @@
                                     <td>{{ Coupon.coupon_lower_limit|price }}</td>
                                     <td>{{ Coupon.available_from_date|date_format }} ～ {{ Coupon.available_to_date|date_format }}</td>
 
-                                    <td><a href="{{ url('plugin_coupon_edit', { id: Coupon.id }) }}">編集</a></td>
+                                    <td><a href="{{ url('plugin_coupon_edit', { id: Coupon.id }) }}">{{ 'common.label.edit'|trans }}</a></td>
                                     <td>
                                         <a href="{{ url('plugin_coupon_enable', { id: Coupon.id }) }}">
                                         {% if Coupon.enable_flag == 1 %}
-                                            有効
+                                            {{ 'common.label.enabled'|trans }}
                                         {% else %}
-                                            無効
+                                            {{ 'common.label.disabled'|trans }}
                                         {% endif %}
                                         </a>
                                     </td>
                                     <td>
-                                        <a href="{{ url('plugin_coupon_delete', { id : Coupon.id }) }}" {{ csrf_token_for_anchor() }} data-method="delete" data-message="このクーポンを削除しても宜しいですか？">削除</a>
+                                        <a class="" data-toggle="modal" data-target="#confirmModal-{{ Coupon.id }}" data-tooltip="tooltip" data-placement="top" title="{{ 'common.label.delete'|trans }}">
+                                            <i class="fa fa-close fa-lg text-secondary"></i>
+                                        </a>
+
+                                        <div class="modal fade" id="confirmModal-{{ Coupon.id }}" tabindex="-1"
+                                             role="dialog"
+                                             aria-labelledby="confirmModal-{{ Coupon.id }}" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title font-weight-bold">
+                                                            {{ 'plugin_coupon.admin.index.delete.confirm'|trans }}</h5>
+                                                        <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body text-left">
+                                                        <p class="text-left">
+                                                            {{ 'plugin_coupon.admin.index.delete.confirm'|trans }}</p>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button class="btn btn-ec-sub" type="button"
+                                                                data-dismiss="modal">{{ 'common.label.cancel'|trans }}
+                                                        </button>
+                                                        <a href="{{ url('plugin_coupon_delete', {'id' : Coupon.id}) }}" class="btn btn-ec-delete" data-confirm="false" {{ csrf_token_for_anchor() }} data-method="delete">
+                                                            {{ 'common.label.delete'|trans }}
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                     </td>
                                 </tr>
                                 {% endfor %}
                                 </tbody>
                             </table>
-                        </div>
                     </div>
-                </div><!-- /.box-body -->
-            </div><!-- /.box -->
-        </div><!-- /.col -->
+                </div>
+            </div>
+
+            <div class="card rounded border-0">
+                <div class="card-body p-4">
+                    <div class="text-center">
+                        <a href="{{ url('plugin_coupon_new') }}" class="btn btn-ec-regular pl-4 pr-4">{{ 'plugin_coupon.admin.index.create_button'|trans }}</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </div>
-<div class="row">
-    <div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3 text-center btn_area">
-        <a href="{{ url('plugin_coupon_new') }}" class="btn btn-primary btn-block btn-lg">クーポンを新規登録</a>
-    </div>
-</div>
 </form>
 {% endblock %}

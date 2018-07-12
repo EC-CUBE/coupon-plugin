@@ -1,8 +1,11 @@
 <?php
+
 /*
- * This file is part of the Coupon plugin
+ * This file is part of EC-CUBE
  *
- * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -10,8 +13,10 @@
 
 namespace Plugin\Coupon\Form\Type;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Eccube\Form\DataTransformer;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -21,18 +26,18 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class CouponDetailType extends AbstractType
 {
     /**
-     * @var \Eccube\Application
+     * @var EntityManagerInterface
      */
-    protected $app;
+    protected $entityManager;
 
     /**
      * CouponDetailType constructor.
      *
-     * @param \Eccube\Application $app
+     * @param EntityManagerInterface $entityManager
      */
-    public function __construct($app)
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->app = $app;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -45,20 +50,20 @@ class CouponDetailType extends AbstractType
     {
         $builder
             ->add(
-                $builder->create('Product', 'hidden')
-                    ->addModelTransformer(new DataTransformer\EntityToIdTransformer($this->app['orm.em'], '\Eccube\Entity\Product'))
+                $builder->create('Product', HiddenType::class)
+                    ->addModelTransformer(new DataTransformer\EntityToIdTransformer($this->entityManager, '\Eccube\Entity\Product'))
             )
             ->add(
-                $builder->create('Category', 'hidden')
-                    ->addModelTransformer(new DataTransformer\EntityToIdTransformer($this->app['orm.em'], '\Eccube\Entity\Category'))
+                $builder->create('Category', HiddenType::class)
+                    ->addModelTransformer(new DataTransformer\EntityToIdTransformer($this->entityManager, '\Eccube\Entity\Category'))
             )
-            ->add('id', 'hidden', array(
+            ->add('id', HiddenType::class, [
                 'label' => 'クーポン詳細ID',
                 'required' => false,
-            ))
-            ->add('coupon_type', 'hidden', array(
+            ])
+            ->add('coupon_type', HiddenType::class, [
                 'required' => false,
-            ));
+            ]);
     }
 
     /**
@@ -68,9 +73,9 @@ class CouponDetailType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'data_class' => 'Plugin\Coupon\Entity\CouponDetail',
-        ));
+        ]);
     }
 
     /**

@@ -9,24 +9,12 @@
 #}
 <script type="text/javascript">
     $(function () {
-        $('#coupon_button').click(function () {
-            var date = '';
-            var time = '';
-            $("select[id^=shopping_shippings_][id$=_shippingDeliveryDate]").each(function () {
-                date += $(this).val() + ',';
-            });
-            $("select[id^=shopping_shippings_][id$=_deliveryTime]").each(function () {
-                time += $(this).val() + ',';
-            });
+        $('#coupon_button').on("click", function () {
             $(this).attr('disabled', 'disabled');
             $.ajax({
                 type: 'POST',
-                data: {
-                    'coupon_delivery_date' : date,
-                    'coupon_delivery_time' : time,
-                    'message' : $('#shopping_message').val()
-                },
-                url: '{{ url('plugin_coupon_save_delivery') }}',
+                data: $('#shopping-form').serialize(),
+                url: '{{ url("shopping_redirect_to") }}',
                 success: function(data) {
                     window.location.href = '{{ url('plugin_coupon_shopping') }}';
                 },
@@ -36,16 +24,22 @@
             });
             return false;
         });
+
+        // append to layout
+        $(".ec-orderConfirm").last().before($("#coupon").detach());
     })
 </script>
-<h2 class="heading02">クーポン</h2>
-<div id="customer_detail_box" class="column is-edit">
-    {% if CouponOrder %}
-        <strong class="text-danger">クーポンコード {{ CouponOrder.coupon_cd }} を利用しています。</strong>
-        <p><a class="btn btn-default btn-sm" id="coupon_button" href="{{ url('plugin_coupon_shopping') }}">クーポンを変更する</a>
-    {% else %}
-        クーポンをお持ちの方はクーポンコードを入力してください。
-        <p><a class="btn btn-default btn-sm" id="coupon_button" href="{{ url('plugin_coupon_shopping') }}">クーポンを利用する</a>
-    {% endif %}
-    </p>
+
+<div id="coupon" class="ec-orderCoupon">
+    <div class="ec-rectHeading">
+        <h2>{{ 'plugin_coupon.front.shopping.header'|trans }}</h2>
+    </div>
+    <div id="customer_detail_box" class="column">
+        {% if CouponOrder %}
+            <strong class="text-danger">{{ 'plugin_coupon.front.shopping.message.use_code'|trans({'%code%': CouponOrder.coupon_cd }) }}</strong>
+        {% else %}
+            {{ 'plugin_coupon.front.shopping.message.empty'|trans }}
+        {% endif %}
+        <p><a class="btn btn-default btn-sm" id="coupon_button" href="{{ url('plugin_coupon_shopping') }}">{{ 'plugin_coupon.front.shopping.button.add_coupon'|trans }}</a></p>
+    </div>
 </div>

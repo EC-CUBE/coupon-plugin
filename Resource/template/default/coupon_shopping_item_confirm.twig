@@ -14,12 +14,16 @@
     })
 </script>
 
-{# クーポン情報 #}
 <div id="coupon" class="ec-orderCoupon">
     <div class="ec-rectHeading">
-        <h2>{{ 'plugin_coupon.front.mypage.header'|trans }}</h2>
+        <h2>{{ 'plugin_coupon.front.shopping.header'|trans }}</h2>
     </div>
-    <p>
-        {{ 'plugin_coupon.front.mypage.body'|trans }} ： {{ coupon_cd }} {{ coupon_name}}
-    </p>
+
+    <div id="customer_detail_box" class="column is-edit">
+        {% if CouponOrder %}
+            <strong class="text-danger">{{ 'plugin_coupon.front.shopping.message.use_code'|trans({'%code%': CouponOrder.coupon_cd }) }}</strong>
+        {% else %}
+            {{ 'plugin_coupon.front.shopping.message.empty'|trans }}
+        {% endif %}
+    </div>
 </div>

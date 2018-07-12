@@ -1,8 +1,11 @@
 <?php
+
 /*
- * This file is part of the Coupon plugin
+ * This file is part of EC-CUBE
  *
- * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -10,10 +13,10 @@
 
 namespace Plugin\Coupon\Tests\Repository;
 
-use Eccube\Common\Constant;
 use Eccube\Tests\EccubeTestCase;
 use Plugin\Coupon\Entity\Coupon;
 use Plugin\Coupon\Entity\CouponDetail;
+use Plugin\Coupon\Repository\CouponRepository;
 
 /**
  * Class CouponCouponRepositoryTest.
@@ -21,13 +24,27 @@ use Plugin\Coupon\Entity\CouponDetail;
 class CouponCouponRepositoryTest extends EccubeTestCase
 {
     /**
+     * @var CouponRepository
+     */
+    private $couponRepository;
+
+    /**
+     * Set up
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        $this->couponRepository = $this->container->get(CouponRepository::class);
+    }
+
+    /**
      * testFindActiveCoupon.
      */
     public function testFindActiveCoupon()
     {
         $Coupon = $this->getCoupon();
         $couponCd = 'aaaaaaaa';
-        $Coupon1 = $this->app['coupon.repository.coupon']->findActiveCoupon($couponCd);
+        $this->couponRepository->findActiveCoupon($couponCd);
         $this->actual = $Coupon->getCouponCd();
         $this->expected = $couponCd;
         $this->verify();
@@ -39,9 +56,45 @@ class CouponCouponRepositoryTest extends EccubeTestCase
     public function testFindActiveCouponAll()
     {
         $this->getCoupon();
-        $coupons = $this->app['coupon.repository.coupon']->findActiveCouponAll();
+        $coupons = $this->couponRepository->findActiveCouponAll();
         $this->actual = count($coupons);
         $this->assertGreaterThan(0, $this->actual);
+    }
+
+    /**
+     * testEnableCoupon.
+     */
+    public function testEnableCoupon()
+    {
+        /** @var Coupon $Coupon */
+        $Coupon = $this->getCoupon();
+
+        $this->actual = $this->couponRepository->enableCoupon($Coupon);
+        $this->expected = true;
+        $this->verify();
+    }
+
+    /**
+     * testDeleteCoupon.
+     */
+    public function testDeleteCoupon()
+    {
+        /** @var Coupon $Coupon */
+        $Coupon = $this->getCoupon();
+
+        $this->actual = $this->couponRepository->deleteCoupon($Coupon);
+        $this->expected = true;
+        $this->verify();
+    }
+
+    public function testCheckCouponUseTime()
+    {
+        $Coupon = $this->getCoupon();
+        $Coupon->setCouponUseTime(0);
+
+        $this->actual = $this->couponRepository->checkCouponUseTime($Coupon->getCouponCd());
+        $this->expected = false;
+        $this->verify();
     }
 
     /**
@@ -54,7 +107,7 @@ class CouponCouponRepositoryTest extends EccubeTestCase
         $this->getTestData($couponType);
 
         /** @var Coupon $Coupon */
-        $Coupon = $this->app['coupon.repository.coupon']->findOneBy(array('coupon_cd' => 'aaaaaaaa'));
+        $Coupon = $this->couponRepository->findOneBy(['coupon_cd' => 'aaaaaaaa']);
 
         $Product = $this->createProduct();
         $CouponDetail = new CouponDetail();
@@ -62,7 +115,7 @@ class CouponCouponRepositoryTest extends EccubeTestCase
         $CouponDetail->setCouponType($Coupon->getCouponType());
         $CouponDetail->setUpdateDate($Coupon->getUpdateDate());
         $CouponDetail->setCreateDate($Coupon->getCreateDate());
-        $CouponDetail->setDelFlg(Constant::DISABLED);
+        $CouponDetail->setVisible(true);
         $Categories = $Product->getProductCategories();
         /** @var \Eccube\Entity\ProductCategory $Category */
         $ProductCategory = $Categories[0];
@@ -98,16 +151,15 @@ class CouponCouponRepositoryTest extends EccubeTestCase
         $Coupon->setCouponLowerLimit(100);
         $Coupon->setCouponMember(0);
         $Coupon->setEnableFlag(1);
-        $Coupon->setDelFlg(0);
+        $Coupon->setVisible(true);
         $d1 = $date1->setDate(2016, 1, 1);
         $Coupon->setAvailableFromDate($d1);
         $d2 = $date2->setDate(2040, 12, 31);
         $Coupon->setAvailableToDate($d2);
 
-        $em = $this->app['orm.em'];
         // クーポン情報を登録する
-        $em->persist($Coupon);
-        $em->flush($Coupon);
+        $this->entityManager->persist($Coupon);
+        $this->entityManager->flush($Coupon);
 
         return $Coupon;
     }

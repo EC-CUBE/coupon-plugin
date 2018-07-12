@@ -1,8 +1,6 @@
 name: Coupon
-event: Event
+#event: Event
 code: Coupon
 version: 2.0.1
-service:
-    - CouponServiceProvider
-orm.path:
-    - /Resource/doctrine
+#service:
+#    - /Resource/config/services.yaml
