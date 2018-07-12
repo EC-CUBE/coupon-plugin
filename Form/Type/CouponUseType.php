@@ -33,13 +33,13 @@ class CouponUseType extends AbstractType
     {
         $builder
             ->add('coupon_cd', TextType::class, [
-                'label' => 'front.plugin.coupon.code',
+                'label' => 'plugin_coupon.front.code',
                 'required' => false,
                 'trim' => true,
                 'mapped' => false,
             ])
             ->add('coupon_use', ChoiceType::class, [
-                'choices' => array_flip([0 => 'front.plugin.coupon.shopping_coupon.remove', 1 => 'front.plugin.coupon.shopping_coupon.use']),
+                'choices' => array_flip([0 => 'plugin_coupon.front.shopping_coupon.remove', 1 => 'plugin_coupon.front.shopping_coupon.use']),
                 'required' => true,
                 'expanded' => true,
                 'multiple' => false,

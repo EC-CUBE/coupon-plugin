@@ -12,8 +12,8 @@
 
 {% set menus = ['order', 'plugin_coupon'] %}
 
-{% block title %}{{ 'admin.plugin.coupon.index.title'|trans }}{% endblock %}
-{% block sub_title %}{{ 'admin.plugin.coupon.index.subtitle'|trans }}{% endblock %}
+{% block title %}{{ 'plugin_coupon.admin.index.title'|trans }}{% endblock %}
+{% block sub_title %}{{ 'plugin_coupon.admin.index.subtitle'|trans }}{% endblock %}
 
 {% block main %}
 <form name="search_form" id="search_form" method="post" action="">
@@ -21,23 +21,23 @@
         <div class="c-contentsArea__primaryCol">
             <div class="c-primaryCol">
                 <div class="card rounded border-0 mb-4">
-                    <div class="card-header"><span class="normal">{{ 'admin.plugin.coupon.index.number'|trans({'%number%': Coupons|length})|raw }}</span></div>
+                    <div class="card-header"><span class="normal">{{ 'plugin_coupon.admin.index.number'|trans({'%number%': Coupons|length})|raw }}</span></div>
                     <div class="card-body p-0">
                             <table class="table tabel-sm">
                                 <thead>
                                 <tr>
-                                    <th>{{ 'admin.plugin.coupon.index.col01'|trans }}</th>
-                                    <th>{{ 'admin.plugin.coupon.index.col02'|trans }}</th>
-                                    <th>{{ 'admin.plugin.coupon.index.col03'|trans }}</th>
-                                    <th>{{ 'admin.plugin.coupon.index.col04'|trans }}</th>
-                                    <th>{{ 'admin.plugin.coupon.index.col05'|trans }}</th>
-                                    <th>{{ 'admin.plugin.coupon.index.col06'|trans }}</th>
-                                    <th>{{ 'admin.plugin.coupon.index.col07'|trans }}</th>
-                                    <th>{{ 'admin.plugin.coupon.index.col08'|trans }}</th>
-                                    <th>{{ 'admin.plugin.coupon.index.col09'|trans }}</th>
-                                    <th>{{ 'admin.plugin.coupon.index.col10'|trans }}</th>
-                                    <th>{{ 'admin.plugin.coupon.index.col11'|trans }}</th>
-                                    <th>{{ 'admin.plugin.coupon.index.col12'|trans }}</th>
+                                    <th>{{ 'plugin_coupon.admin.index.col01'|trans }}</th>
+                                    <th>{{ 'plugin_coupon.admin.index.col02'|trans }}</th>
+                                    <th>{{ 'plugin_coupon.admin.index.col03'|trans }}</th>
+                                    <th>{{ 'plugin_coupon.admin.index.col04'|trans }}</th>
+                                    <th>{{ 'plugin_coupon.admin.index.col05'|trans }}</th>
+                                    <th>{{ 'plugin_coupon.admin.index.col06'|trans }}</th>
+                                    <th>{{ 'plugin_coupon.admin.index.col07'|trans }}</th>
+                                    <th>{{ 'plugin_coupon.admin.index.col08'|trans }}</th>
+                                    <th>{{ 'plugin_coupon.admin.index.col09'|trans }}</th>
+                                    <th>{{ 'plugin_coupon.admin.index.col10'|trans }}</th>
+                                    <th>{{ 'plugin_coupon.admin.index.col11'|trans }}</th>
+                                    <th>{{ 'plugin_coupon.admin.index.col12'|trans }}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -47,19 +47,19 @@
                                     <td class="coupon_cd">{{ Coupon.coupon_cd }}</td>
                                     <td class="coupon_name">{{ Coupon.coupon_name }}</td>
                                     {% if Coupon.coupon_type == 1 %}
-                                        <td class="coupon_type">{{ 'admin.plugin.coupon.coupon_type.product'|trans }}</td>
+                                        <td class="coupon_type">{{ 'plugin_coupon.admin.coupon_type.product'|trans }}</td>
                                     {% elseif Coupon.coupon_type == 2 %}
-                                        <td class="coupon_type">{{ 'admin.plugin.coupon.coupon_type.category'|trans }}</td>
+                                        <td class="coupon_type">{{ 'plugin_coupon.admin.coupon_type.category'|trans }}</td>
                                     {% elseif Coupon.coupon_type == 3 %}
-                                        <td class="coupon_type">{{ 'admin.plugin.coupon.coupon_type.all'|trans }}</td>
+                                        <td class="coupon_type">{{ 'plugin_coupon.admin.coupon_type.all'|trans }}</td>
                                     {% else %}
                                         <td class="coupon_type"></td>
                                     {% endif %}
 
                                     {% if Coupon.coupon_member == 1 %}
-                                        <td class="coupon_member">{{ 'admin.plugin.coupon.coupon_member.yes'|trans }}</td>
+                                        <td class="coupon_member">{{ 'plugin_coupon.admin.coupon_member.yes'|trans }}</td>
                                     {% else %}
-                                        <td class="coupon_member">{{ 'admin.plugin.coupon.coupon_member.no'|trans }}</td>
+                                        <td class="coupon_member">{{ 'plugin_coupon.admin.coupon_member.no'|trans }}</td>
                                     {% endif %}
 
                                     {% if Coupon.discount_type == 1 %}
@@ -96,13 +96,13 @@
                                                 <div class="modal-content">
                                                     <div class="modal-header">
                                                         <h5 class="modal-title font-weight-bold">
-                                                            {{ 'admin.plugin.coupon.index.delete.confirm'|trans }}</h5>
+                                                            {{ 'plugin_coupon.admin.index.delete.confirm'|trans }}</h5>
                                                         <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
                                                         </button>
                                                     </div>
                                                     <div class="modal-body text-left">
                                                         <p class="text-left">
-                                                            {{ 'admin.plugin.coupon.index.delete.confirm'|trans }}</p>
+                                                            {{ 'plugin_coupon.admin.index.delete.confirm'|trans }}</p>
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button class="btn btn-ec-sub" type="button"
@@ -128,7 +128,7 @@
             <div class="card rounded border-0">
                 <div class="card-body p-4">
                     <div class="text-center">
-                        <a href="{{ url('plugin_coupon_new') }}" class="btn btn-ec-regular pl-4 pr-4">{{ 'admin.plugin.coupon.index.create_button'|trans }}</a>
+                        <a href="{{ url('plugin_coupon_new') }}" class="btn btn-ec-regular pl-4 pr-4">{{ 'plugin_coupon.admin.index.create_button'|trans }}</a>
                     </div>
                 </div>
             </div>

@@ -32,14 +32,14 @@
 
 <div id="coupon" class="ec-orderCoupon">
     <div class="ec-rectHeading">
-        <h2>{{ 'front.plugin.coupon.shopping.header'|trans }}</h2>
+        <h2>{{ 'plugin_coupon.front.shopping.header'|trans }}</h2>
     </div>
     <div id="customer_detail_box" class="column">
         {% if CouponOrder %}
-            <strong class="text-danger">{{ 'front.plugin.coupon.shopping.message.use_code'|trans({'%code%': CouponOrder.coupon_cd }) }}</strong>
+            <strong class="text-danger">{{ 'plugin_coupon.front.shopping.message.use_code'|trans({'%code%': CouponOrder.coupon_cd }) }}</strong>
         {% else %}
-            {{ 'front.plugin.coupon.shopping.message.empty'|trans }}
+            {{ 'plugin_coupon.front.shopping.message.empty'|trans }}
         {% endif %}
-        <p><a class="btn btn-default btn-sm" id="coupon_button" href="{{ url('plugin_coupon_shopping') }}">{{ 'front.plugin.coupon.shopping.button.add_coupon'|trans }}</a></p>
+        <p><a class="btn btn-default btn-sm" id="coupon_button" href="{{ url('plugin_coupon_shopping') }}">{{ 'plugin_coupon.front.shopping.button.add_coupon'|trans }}</a></p>
     </div>
 </div>

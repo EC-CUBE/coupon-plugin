@@ -11,8 +11,8 @@
 
 {% set menus = ['order', 'plugin_coupon'] %}
 
-{% block title %}{{ 'admin.plugin.coupon.regist.title'|trans }}{% endblock %}
-{% block sub_title %}{{ 'admin.plugin.coupon.regist.subtitle'|trans }}{% endblock %}
+{% block title %}{{ 'plugin_coupon.admin.regist.title'|trans }}{% endblock %}
+{% block sub_title %}{{ 'plugin_coupon.admin.regist.subtitle'|trans }}{% endblock %}
 
 {% form_theme form '@admin/Form/bootstrap_4_horizontal_layout.html.twig' %}
 {% form_theme searchProductModalForm '@admin/Form/bootstrap_4_horizontal_layout.html.twig' %}
@@ -176,7 +176,7 @@
             // クーポン種別 - 商品
             $("#coupon_coupon_type_0").on("click", function(){
                 if($("#category_area").find(".item_box").length > 0) {
-                    if(confirm("{{ 'admin.plugin.coupon.regist.remove_category_confirm'|trans }}")) {
+                    if(confirm("{{ 'plugin_coupon.admin.regist.remove_category_confirm'|trans }}")) {
                         $("#category_area").find(".item_box").remove();
                     } else {
                         return false;
@@ -188,7 +188,7 @@
             // クーポン種別 - カテゴリ
             $("#coupon_coupon_type_1").on("click", function(){
                 if($("#product_area").find(".item_box").length > 0) {
-                    if(confirm("{{ 'admin.plugin.coupon.regist.remove_product_confirm'|trans }}")) {
+                    if(confirm("{{ 'plugin_coupon.admin.regist.remove_product_confirm'|trans }}")) {
                         $("#product_area").find(".item_box").remove();
                     } else {
                         return false;
@@ -200,7 +200,7 @@
 
             $("#coupon_coupon_type_2").on("click", function(){
                 if($("#product_area").find(".item_box").length > 0 || $("#category_area").find(".item_box").length) {
-                    if(confirm("{{ 'admin.plugin.coupon.regist.remove_both_confirm'|trans }}")) {
+                    if(confirm("{{ 'plugin_coupon.admin.regist.remove_both_confirm'|trans }}")) {
                         $("#product_area").find(".item_box").remove();
                         $("#category_area").find(".item_box").remove();
                     } else {
@@ -262,7 +262,7 @@
                 <div class="c-primaryCol">
                     <div class="card rounded border-0 mb-4">
                         <div class="card-header">
-                            <span>{{ 'admin.plugin.coupon.regist.header'|trans }}</span>
+                            <span>{{ 'plugin_coupon.admin.regist.header'|trans }}</span>
                         </div><!-- /.box-header -->
                         <div class="card-body">
                             {# クーポンコード #}
@@ -313,7 +313,7 @@
                                 <div class="col mb-2">
                                     {{ form_widget(form.discount_price) }}
                                     {{ form_errors(form.discount_price) }}
-                                    <span id="discount_type_price_description" class="small">{{ 'admin.plugin.coupon.regist.discount_price.note'|trans }}</span>
+                                    <span id="discount_type_price_description" class="small">{{ 'plugin_coupon.admin.regist.discount_price.note'|trans }}</span>
                                 </div>
                             </div>
                             {# 値引き率 #}
@@ -322,7 +322,7 @@
                                 <div class="col mb-2">
                                     {{ form_widget(form.discount_rate) }}
                                     {{ form_errors(form.discount_rate) }}
-                                    <span id="discount_type_rate_description" class="small">{{ 'admin.plugin.coupon.regist.discount_rate.note'|trans }}</span>
+                                    <span id="discount_type_rate_description" class="small">{{ 'plugin_coupon.admin.regist.discount_rate.note'|trans }}</span>
                                 </div>
                             </div>
                             {# 使用回数 #}
@@ -341,7 +341,7 @@
                                 <div class="col mb-2">
                                     {{ form_widget(form.coupon_lower_limit) }}
                                     {{ form_errors(form.coupon_lower_limit) }}
-                                    <span id="coupon_lower_limit_description" class="small">{{ 'admin.plugin.coupon.regist.coupon_lower_limit.note'|trans }}</span>
+                                    <span id="coupon_lower_limit_description" class="small">{{ 'plugin_coupon.admin.regist.coupon_lower_limit.note'|trans }}</span>
                                 </div>
                             </div>
                             {# 有効期間 #}
@@ -374,7 +374,7 @@
                             <div class="row">
                                 <div class="col-8">
                                     <div class="d-inline-block">
-                                        <span class="card-title">{{ 'admin.plugin.coupon.regist.header.product'|trans }}</span>
+                                        <span class="card-title">{{ 'plugin_coupon.admin.regist.header.product'|trans }}</span>
                                     </div>
                                 </div>
                                 <div class="col-4 text-right">
@@ -431,7 +431,7 @@
                             <div class="row">
                                 <div class="col-8">
                                     <div class="d-inline-block">
-                                        <span class="card-title">{{ 'admin.plugin.coupon.regist.header.category'|trans }}</span>
+                                        <span class="card-title">{{ 'plugin_coupon.admin.regist.header.category'|trans }}</span>
                                     </div>
                                 </div>
                                 <div class="col-4 text-right">
@@ -521,7 +521,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" id="searchProductModalLabel">{{ 'admin.plugin.coupon.regist.modal.product'|trans }}</h4>
+                    <h4 class="modal-title" id="searchProductModalLabel">{{ 'plugin_coupon.admin.regist.modal.product'|trans }}</h4>
                     <button class="close" type="button" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
@@ -534,7 +534,7 @@
                         {{ form_widget(searchProductModalForm.category_id) }}
                     </div>
                     <div class="form-group text-center">
-                        <button type="button" id="searchProductModalButton" class="btn btn-primary" >{{ 'admin.plugin.coupon.regist.modal.search'|trans }}</button>
+                        <button type="button" id="searchProductModalButton" class="btn btn-primary" >{{ 'plugin_coupon.admin.regist.modal.search'|trans }}</button>
                     </div>
                     <div class="form-group" id="searchProductModalList">
                     </div>
@@ -551,7 +551,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" id="searchCategoryModalLabel">{{ 'admin.plugin.coupon.regist.modal.category'|trans }}</h4>
+                    <h4 class="modal-title" id="searchCategoryModalLabel">{{ 'plugin_coupon.admin.regist.modal.category'|trans }}</h4>
                     <button class="close" type="button" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
@@ -561,7 +561,7 @@
                         {{ form_widget(searchCategoryModalForm.category_id, {'attr': {'class': 'form-control'}}) }}
                     </div>
                     <div class="form-group text-center">
-                        <button type="button" id="searchCategoryModalButton" class="btn btn-primary" >{{ 'admin.plugin.coupon.regist.modal.search'|trans }}</button>
+                        <button type="button" id="searchCategoryModalButton" class="btn btn-primary" >{{ 'plugin_coupon.admin.regist.modal.search'|trans }}</button>
                     </div>
                     <div class="form-group" id="searchCategoryModalList">
                     </div>
