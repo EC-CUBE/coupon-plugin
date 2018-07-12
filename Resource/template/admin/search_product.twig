@@ -27,7 +27,7 @@
 
         $newWidget.find('#coupon_CouponDetails_' + cnt + '_Product').val(product_id);
         $newWidget.find('#coupon_CouponDetails_' + cnt + '_product_name').text(product_name);
-        $newWidget.find('#coupon_CouponDetails_' + cnt + '_coupon_type').val(1);
+        $newWidget.find('#coupon_CouponDetails_' + cnt + '_coupon_type').val({{ constant('Plugin\\Coupon\\Entity\\Coupon::PRODUCT') }});
 
         // 明細行に追加.
         list.append($newWidget);

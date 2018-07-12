@@ -25,7 +25,7 @@
 
         $newWidget.find('#coupon_CouponDetails_' + cnt + '_Category').val(id);
         $newWidget.find('#coupon_CouponDetails_' + cnt + '_category_name').text(name);
-        $newWidget.find('#coupon_CouponDetails_' + cnt + '_coupon_type').val(2);
+        $newWidget.find('#coupon_CouponDetails_' + cnt + '_coupon_type').val({{ constant('Plugin\\Coupon\\Entity\\Coupon::CATEGORY') }});
 
         // 明細行に追加.
         list.append($newWidget);
