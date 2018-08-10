@@ -164,7 +164,7 @@ class CouponDetail extends AbstractEntity
      *
      * @return bool
      */
-    public function getVisible()
+    public function isVisible()
     {
         return $this->visible;
     }

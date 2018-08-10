@@ -19,6 +19,7 @@ use Eccube\Entity\Customer;
 use Eccube\Entity\Master\OrderItemType;
 use Eccube\Entity\Master\TaxDisplayType;
 use Eccube\Entity\Master\TaxType;
+use Eccube\Entity\Master\RoundingType;
 use Eccube\Entity\Order;
 use Eccube\Entity\OrderItem;
 use Eccube\Entity\TaxRule;
@@ -203,43 +204,42 @@ class CouponService
         ]);
 
         if (is_null($CouponOrder)) {
-            $currency = $this->container->getParameter('currency');
-            $TaxType = $this->taxTypeRepository->find(TaxType::NON_TAXABLE);
-            $TaxDisplayType = $this->taxDisplayTypeRepository->find(TaxDisplayType::INCLUDED);
-            $OrderItemType = $this->orderItemTypeRepository->find(OrderItemType::DISCOUNT);
-            $OrderItem = new OrderItem();
-            $OrderItem->setOrder($Order)
-                ->setTaxType($TaxType)
-                ->setTaxDisplayType($TaxDisplayType)
-                ->setOrderItemType($OrderItemType)
-                ->setProductName(trans('orderitem.text.data.discount'))
-                // todo: currently uses negative numbers
-                ->setPrice(0 - $discount)
-                ->setQuantity(1)
-                ->setTaxRate(0)
-                ->setTaxRule(TaxRule::DEFAULT_TAX_RULE_ID)
-                ->setCurrencyCode($currency);
+            // $currency = $this->container->getParameter('currency');
+            // $TaxType = $this->taxTypeRepository->find(TaxType::NON_TAXABLE);
+            // $TaxDisplayType = $this->taxDisplayTypeRepository->find(TaxDisplayType::INCLUDED);
+            // $OrderItemType = $this->orderItemTypeRepository->find(OrderItemType::DISCOUNT);
+            // $OrderItem = new OrderItem();
+            // $OrderItem->setOrder($Order)
+            //     ->setTaxType($TaxType)
+            //     ->setTaxDisplayType($TaxDisplayType)
+            //     ->setOrderItemType($OrderItemType)
+            //     ->setProductName(trans('orderitem.text.data.discount'))
+            //     // todo: currently uses negative numbers
+            //     ->setPrice(0 - $discount)
+            //     ->setQuantity(1)
+            //     ->setTaxRate(0)
+            //     // ->setTaxRule(TaxRule::DEFAULT_TAX_RULE_ID)
+            //     ->setCurrencyCode($currency);
 
-            $this->entityManager->persist($OrderItem);
-            $this->entityManager->flush($OrderItem);
+            // $this->entityManager->persist($OrderItem);
+            // $this->entityManager->flush($OrderItem);
 
-            // 未登録の場合
+            // // 未登録の場合
             $CouponOrder = new CouponOrder();
             $CouponOrder->setOrderId($Order->getId());
             $CouponOrder->setPreOrderId($Order->getPreOrderId());
             $CouponOrder->setVisible(true);
-            $CouponOrder->setOrderItemId($OrderItem->getId());
         } else {
-            $orderItemId = $CouponOrder->getOrderItemId();
-            /** @var OrderItem $OrderItem */
-            $OrderItem = $this->orderItemRepository->find($orderItemId);
+            // $orderItemId = $CouponOrder->getOrderItemId();
+            // /** @var OrderItem $OrderItem */
+            // $OrderItem = $this->orderItemRepository->find($orderItemId);
 
-            if ($OrderItem) {
-                // set negative numbers
-                $OrderItem->setPrice(0 - $discount);
-            }
-            $this->entityManager->persist($OrderItem);
-            $this->entityManager->flush($OrderItem);
+            // if ($OrderItem) {
+            //     // set negative numbers
+            //     $OrderItem->setPrice(0 - $discount);
+            // }
+            // $this->entityManager->persist($OrderItem);
+            // $this->entityManager->flush($OrderItem);
         }
 
         // 更新対象データ
@@ -298,7 +298,7 @@ class CouponService
                 $total = 0;
                 // include tax
                 foreach ($couponProducts as $key => $value) {
-                    $total += ($value['price'] + $this->taxRuleService->calcTax($value['price'], $value['tax_rate'], $value['tax_rule'])) * $value['quantity'];
+                    $total += ($value['price'] + $this->taxRuleService->calcTax($value['price'], $value['tax_rate'], RoundingType::ROUND)) * $value['quantity'];
                 }
 
                 // 小数点以下は四捨五入
@@ -327,7 +327,7 @@ class CouponService
         $subTotal = 0;
         // price inc tax
         foreach ($productCoupon as $key => $value) {
-            $subTotal += ($value['price'] + $this->taxRuleService->calcTax($value['price'], $value['tax_rate'], $value['tax_rule'])) * $value['quantity'];
+            $subTotal += ($value['price'] + $this->taxRuleService->calcTax($value['price'], $value['tax_rate'], RoundingType::ROUND)) * $value['quantity'];
         }
 
         if ($subTotal < $lowerLimitMoney && $subTotal != 0) {
@@ -518,7 +518,7 @@ class CouponService
         $couponProducts[$orderItem->getProductClass()->getId()]['price'] = $orderItem->getPriceIncTax();
         $couponProducts[$orderItem->getProductClass()->getId()]['quantity'] = $orderItem->getQuantity();
         $couponProducts[$orderItem->getProductClass()->getId()]['tax_rate'] = $orderItem->getTaxRate();
-        $couponProducts[$orderItem->getProductClass()->getId()]['tax_rule'] = $orderItem->getTaxRule();
+        // $couponProducts[$orderItem->getProductClass()->getId()]['tax_rule'] = $orderItem->getTaxRule();
 
         return $couponProducts;
     }

@@ -95,7 +95,7 @@ class CouponOrder extends AbstractEntity
     /**
      * @var int
      *
-     * @ORM\Column(name="order_item_id", type="integer", options={"unsigned":true})
+     * @ORM\Column(name="order_item_id", type="integer", options={"unsigned":true}, nullable=true)
      */
     private $order_item_id;
 
@@ -351,11 +351,11 @@ class CouponOrder extends AbstractEntity
     }
 
     /**
-     * Get del_flg.
+     * is visible.
      *
      * @return bool
      */
-    public function getVisible()
+    public function isVisible()
     {
         return $this->visible;
     }

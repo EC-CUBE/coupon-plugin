@@ -85,7 +85,7 @@ class CouponOrderRepository extends AbstractRepository
      *
      * @param string $preOrderId
      *
-     * @return null|object
+     * @return CouponOrder
      */
     public function getCouponOrder($preOrderId)
     {

@@ -79,6 +79,8 @@ plugin_coupon.front.shopping_coupon.header: クーポンコードの入力
 plugin_coupon.front.shopping_coupon.body: 利用するクーポンコードを入力してください。
 plugin_coupon.front.shopping_coupon.use: クーポンを利用する
 plugin_coupon.front.shopping_coupon.remove: クーポンを利用しない
+plugin_coupon.front.shopping.conflictpoint: クーポンとポイントの併用はできません。
 plugin_coupon.front.mypage.header: ご利用クーポンコード
 plugin_coupon.front.mypage.body: クーポンコード
 plugin_coupon.front.code: クーポンコード
+
