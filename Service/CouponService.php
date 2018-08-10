@@ -204,42 +204,11 @@ class CouponService
         ]);
 
         if (is_null($CouponOrder)) {
-            // $currency = $this->container->getParameter('currency');
-            // $TaxType = $this->taxTypeRepository->find(TaxType::NON_TAXABLE);
-            // $TaxDisplayType = $this->taxDisplayTypeRepository->find(TaxDisplayType::INCLUDED);
-            // $OrderItemType = $this->orderItemTypeRepository->find(OrderItemType::DISCOUNT);
-            // $OrderItem = new OrderItem();
-            // $OrderItem->setOrder($Order)
-            //     ->setTaxType($TaxType)
-            //     ->setTaxDisplayType($TaxDisplayType)
-            //     ->setOrderItemType($OrderItemType)
-            //     ->setProductName(trans('orderitem.text.data.discount'))
-            //     // todo: currently uses negative numbers
-            //     ->setPrice(0 - $discount)
-            //     ->setQuantity(1)
-            //     ->setTaxRate(0)
-            //     // ->setTaxRule(TaxRule::DEFAULT_TAX_RULE_ID)
-            //     ->setCurrencyCode($currency);
-
-            // $this->entityManager->persist($OrderItem);
-            // $this->entityManager->flush($OrderItem);
-
-            // // 未登録の場合
+            // クーポン未登録の場合
             $CouponOrder = new CouponOrder();
             $CouponOrder->setOrderId($Order->getId());
             $CouponOrder->setPreOrderId($Order->getPreOrderId());
             $CouponOrder->setVisible(true);
-        } else {
-            // $orderItemId = $CouponOrder->getOrderItemId();
-            // /** @var OrderItem $OrderItem */
-            // $OrderItem = $this->orderItemRepository->find($orderItemId);
-
-            // if ($OrderItem) {
-            //     // set negative numbers
-            //     $OrderItem->setPrice(0 - $discount);
-            // }
-            // $this->entityManager->persist($OrderItem);
-            // $this->entityManager->flush($OrderItem);
         }
 
         // 更新対象データ
@@ -515,7 +484,7 @@ class CouponService
      */
     private function getCouponProducts(OrderItem $orderItem)
     {
-        $couponProducts[$orderItem->getProductClass()->getId()]['price'] = $orderItem->getPriceIncTax();
+        $couponProducts[$orderItem->getProductClass()->getId()]['price'] = $orderItem->getPrice();
         $couponProducts[$orderItem->getProductClass()->getId()]['quantity'] = $orderItem->getQuantity();
         $couponProducts[$orderItem->getProductClass()->getId()]['tax_rate'] = $orderItem->getTaxRate();
         // $couponProducts[$orderItem->getProductClass()->getId()]['tax_rule'] = $orderItem->getTaxRule();

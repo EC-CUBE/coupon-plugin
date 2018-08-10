@@ -85,10 +85,7 @@ class Event implements EventSubscriberInterface
         return [
             'Shopping/index.twig' => 'index',
             'Shopping/confirm.twig' => 'index',
-            'Shopping/complete.twig' => 'complete',
             'Mypage/history.twig' => 'onRenderMypageHistory',
-            'mail.order' => 'onSendOrderMail',
-            'mail.admin.order' => 'onSendOrderMail',
             '@admin/Order/edit.twig' => 'onRenderAdminOrderEdit',
             EccubeEvents::ADMIN_ORDER_EDIT_INDEX_COMPLETE => 'onOrderEditComplete',
             //'admin.order.delete.complete' => 'onOrderEditComplete', // has been deleted
@@ -114,33 +111,6 @@ class Event implements EventSubscriberInterface
         } else {
             $event->addSnippet('@Coupon/default/coupon_shopping_item_confirm.twig');
         }
-    }
-
-    public function complete(TemplateEvent $event)
-    {
-        // $parameters = $event->getParameters();
-        // /** @var Order $Order */
-        // $Order = $parameters['Order'];
-        // if (!$Order instanceof Order) {
-        //     return;
-        // }
-
-        // /** @var CouponOrder $CouponOrder */
-        // $CouponOrder = $this->couponOrderRepository->getCouponOrder($Order->getPreOrderId());
-        // if (!$CouponOrder) {
-        //     return;
-        // }
-        // $CouponOrder->setOrderDate($Order->getOrderDate());
-        // $this->couponOrderRepository->save($CouponOrder);
-
-        // /** @var Coupon $Coupon */
-        // $Coupon = $this->couponRepository->findActiveCoupon($CouponOrder->getCouponCd());
-        // if (!$Coupon) {
-        //     return;
-        // }
-        // $Coupon->setCouponUseTime($Coupon->getCouponUseTime() - 1);
-        // $this->entityManager->persist($Coupon);
-        // $this->entityManager->flush($Coupon);
     }
 
     /**
@@ -170,50 +140,6 @@ class Event implements EventSubscriberInterface
         $event->setParameters($parameters);
         $event->addSnippet('@Coupon/default/mypage_history_coupon.twig');
         log_info('Coupon trigger onRenderMypageHistory finish');
-    }
-
-    /**
-     * Hook point send mail.
-     *
-     * @param EventArgs $event
-     */
-    public function onSendOrderMail(EventArgs $event)
-    {
-        // log_info('Coupon trigger onSendOrderMail start');
-        // $CouponOrder = null;
-        // if ($event->hasArgument('Order')) {
-        //     $Order = $event->getArgument('Order');
-        //     // クーポン受注情報を取得する
-        //     $CouponOrder = $this->couponOrderRepository->findOneBy([
-        //         'order_id' => $Order->getId(),
-        //     ]);
-        //     if (is_null($CouponOrder)) {
-        //         return;
-        //     }
-        // }
-
-        // if ($CouponOrder) {
-        //     $message = $event->getArgument('message');
-        //     // メールボディ取得
-        //     $body = $message->getBody();
-        //     // 情報置換用のキーを取得
-        //     $search = [];
-        //     preg_match_all('/合　計.*\\n/u', $body, $search);
-        //     // メール本文置換
-        //     $snippet = PHP_EOL;
-        //     $snippet .= PHP_EOL;
-        //     $snippet .= '***********************************************'.PHP_EOL;
-        //     $snippet .= '　クーポン情報                                 '.PHP_EOL;
-        //     $snippet .= '***********************************************'.PHP_EOL;
-        //     $snippet .= PHP_EOL;
-        //     $snippet .= 'クーポンコード: '.$CouponOrder->getCouponCd().' '.$CouponOrder->getCouponName();
-        //     $snippet .= PHP_EOL;
-        //     $replace = $search[0][0].$snippet;
-        //     $body = preg_replace('/'.$search[0][0].'/u', $replace, $body);
-        //     // メッセージにメールボディをセット
-        //     // $message->setBody($body);
-        // }
-        // log_info('Coupon trigger onSendOrderMail finish');
     }
 
     /**
@@ -250,6 +176,8 @@ class Event implements EventSubscriberInterface
      * Hook point order edit completed.
      *
      * @param EventArgs $event
+     *
+     * @deprecated CouponStateProcessor に移植する
      */
     public function onOrderEditComplete(EventArgs $event)
     {
