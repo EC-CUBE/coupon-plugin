@@ -24,12 +24,15 @@ use Eccube\Entity\Master\OrderItemType;
 use Eccube\Entity\Master\TaxDisplayType;
 use Eccube\Entity\Master\TaxType;
 use Eccube\Entity\Master\RoundingType;
+use Eccube\Repository\TaxRuleRepository;
 use Eccube\Service\PurchaseFlow\InvalidItemException;
 use Eccube\Service\PurchaseFlow\ItemValidator;
 use Eccube\Service\PurchaseFlow\ItemHolderPreprocessor;
 use Eccube\Service\PurchaseFlow\ItemHolderValidator;
 use Eccube\Service\PurchaseFlow\PurchaseContext;
 use Eccube\Service\PurchaseFlow\PurchaseProcessor;
+use Eccube\Service\TaxRuleService;
+use Plugin\Coupon\Entity\Coupon;
 use Plugin\Coupon\Entity\CouponOrder;
 use Plugin\Coupon\Service\CouponService;
 use Plugin\Coupon\Repository\CouponRepository;
@@ -63,6 +66,17 @@ class CouponProcessor extends ItemHolderValidator implements ItemHolderPreproces
     protected $couponRepository;
 
     /**
+     * @var TaxRuleService
+     */
+    protected $taxRuleService;
+
+    /**
+     * @var TaxRuleRepository
+     */
+    protected $taxRuleRepository;
+
+
+    /**
      * CouponProcessor constructor.
      *
      * @param EntityManagerInterface $entityManager
@@ -71,12 +85,16 @@ class CouponProcessor extends ItemHolderValidator implements ItemHolderPreproces
         EntityManagerInterface $entityManager,
         CouponService $couponService,
         CouponRepository $couponRepository,
-        CouponOrderRepository $couponOrderRepository
+        CouponOrderRepository $couponOrderRepository,
+        TaxRuleService $taxRuleService,
+        TaxRuleRepository $taxRuleRepository
     ) {
         $this->entityManager = $entityManager;
         $this->couponService = $couponService;
         $this->couponRepository = $couponRepository;
         $this->couponOrderRepository = $couponOrderRepository;
+        $this->taxRuleService = $taxRuleService;
+        $this->taxRuleRepository = $taxRuleRepository;
     }
 
     /*
@@ -97,17 +115,8 @@ class CouponProcessor extends ItemHolderValidator implements ItemHolderPreproces
         // 既存のクーポンを削除し明細追加
         if ($CouponOrder) {
             $this->removeCouponDiscountItem($itemHolder, $CouponOrder);
-            $this->addPointDiscountItem($itemHolder, $CouponOrder);
+            $this->addCouponDiscountItem($itemHolder, $CouponOrder);
         }
-        // // 利用ポイントがある場合は割引明細を追加
-        // if ($itemHolder->getUsePoint() > 0) {
-        //     $discount = $this->pointToPrice($itemHolder->getUsePoint());
-        //     $this->addPointDiscountItem($itemHolder, $discount);
-        // }
-
-        // // 付与ポイントを計算
-        // $addPoint = $this->calculateAddPoint($itemHolder);
-        // $itemHolder->setAddPoint($addPoint);
     }
 
     /*
@@ -131,23 +140,6 @@ class CouponProcessor extends ItemHolderValidator implements ItemHolderPreproces
             $this->couponService->removeCouponOrder($itemHolder);
             $this->throwInvalidItemException(trans('plugin_coupon.front.shopping.conflictpoint'));
         }
-
-
-        // // 所有ポイント < 利用ポイント
-        // $Customer = $itemHolder->getCustomer();
-        // if ($Customer->getPoint() < $itemHolder->getUsePoint()) {
-        //     // 利用ポイントが所有ポイントを上回っていた場合は所有ポイントで上書き
-        //     $itemHolder->setUsePoint($Customer->getPoint());
-        //     $this->throwInvalidItemException('利用ポイントが所有ポイントを上回っています.');
-        // }
-
-        // // 支払い金額 < 利用ポイント
-        // if ($itemHolder->getTotal() < 0) {
-        //     // 利用ポイントが支払い金額を上回っていた場合は支払い金額が0円以上となるようにポイントを調整
-        //     $overPoint = floor($itemHolder->getTotal() / $this->BaseInfo->getPointConversionRate());
-        //     $itemHolder->setUsePoint($itemHolder->getUsePoint() + $overPoint);
-        //     $this->throwInvalidItemException('利用ポイントがお支払い金額を上回っています.');
-        // }
     }
 
     /*
@@ -239,25 +231,48 @@ class CouponProcessor extends ItemHolderValidator implements ItemHolderPreproces
     /**
      * 明細追加処理.
      *
+     * 値引額指定の場合は、税込小計から設定した金額を引く。税区分は不課税(ポイントと同じ)
+     * 税込1080円の商品に、1000円のクーポンを使用すると、80円の支払いになるイメージ
+     *
+     * 値引率指定の場合は、対象の明細ごとに税込の値引額を算出し、税込の明細として差し引く(税区分は課税)
+     * 税込1080円の商品に、10%OFFのクーポンを使用すると、108円の値引きになり、972円の支払いになるイメージ
+     *
      * @param ItemHolderInterface $itemHolder
      * @param CouponOrder $CouponOrder
      * @param integer $discount
      */
-    private function addPointDiscountItem(ItemHolderInterface $itemHolder, CouponOrder $CouponOrder)
+    private function addCouponDiscountItem(ItemHolderInterface $itemHolder, CouponOrder $CouponOrder)
     {
+        $Coupon = $this->couponRepository->find($CouponOrder->getCouponId());
+
+        $taxDisplayType = TaxDisplayType::EXCLUDED; // 税抜
+        $taxType = TaxType::NON_TAXABLE; // 不課税
+        $tax = 0;
+        $taxRate = 0;
+        $taxRuleId = null;
+        $roundingType = null;
+        if ($Coupon->getDiscountType() == Coupon::DISCOUNT_RATE) {
+            $taxDisplayType = TaxDisplayType::INCLUDED; // 税込
+            $taxType = TaxType::TAXATION; // 課税
+            $TaxRule = $this->taxRuleRepository->getByRule(); // XXX 軽減税率に対応していない
+            $taxRuleId = $TaxRule->getId();
+            $taxRate = $TaxRule->getTaxRate();
+            $tax = $CouponOrder->getDiscount() - ($CouponOrder->getDiscount() / 1 + ($taxRate / 100));
+            $roundingType = $TaxRule->getRoundingType();
+        }
         $DiscountType = $this->entityManager->find(OrderItemType::class, OrderItemType::DISCOUNT);
-        $TaxInclude = $this->entityManager->find(TaxDisplayType::class, TaxDisplayType::INCLUDED); // FIXME ポイント種別によって変更する
-        $Taxation = $this->entityManager->find(TaxType::class, TaxType::NON_TAXABLE);
+        $TaxInclude = $this->entityManager->find(TaxDisplayType::class, $taxDisplayType); // FIXME ポイント種別によって変更する
+        $Taxation = $this->entityManager->find(TaxType::class, $taxType);
 
         // TODO TaxProcessorが先行して実行されるため, 税額等の値は個別にセットする.
         $OrderItem = new OrderItem();
         $OrderItem->setProductName($CouponOrder->getCouponName())
             ->setPrice($CouponOrder->getDiscount() * -1)
             ->setQuantity(1)
-            ->setTax(0)
-            ->setTaxRate(0)
-            ->setTaxRuleId(null)
-            ->setRoundingType(null)
+            ->setTax($tax)
+            ->setTaxRate($taxRate)
+            ->setTaxRuleId($taxRuleId)
+            ->setRoundingType($roundingType)
             ->setOrderItemType($DiscountType)
             ->setTaxDisplayType($TaxInclude)
             ->setTaxType($Taxation)

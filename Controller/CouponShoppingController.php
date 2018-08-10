@@ -25,10 +25,10 @@ use Plugin\Coupon\Form\Type\CouponUseType;
 use Plugin\Coupon\Repository\CouponOrderRepository;
 use Plugin\Coupon\Repository\CouponRepository;
 use Plugin\Coupon\Service\CouponService;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 class CouponShoppingController extends AbstractController
 {

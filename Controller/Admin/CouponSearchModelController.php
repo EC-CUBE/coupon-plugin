@@ -18,9 +18,9 @@ use Eccube\Entity\Category;
 use Eccube\Repository\CategoryRepository;
 use Eccube\Repository\ProductRepository;
 use Knp\Component\Pager\Paginator;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Class CouponSearchModelController.
