@@ -14,6 +14,7 @@
 namespace Plugin\Coupon\Tests\Service;
 
 use Eccube\Entity\Master\OrderItemType;
+use Eccube\Entity\Order;
 use Eccube\Entity\OrderItem;
 use Eccube\Entity\ProductCategory;
 use Eccube\Repository\Master\OrderItemTypeRepository;
@@ -325,6 +326,22 @@ class CouponServiceTest extends EccubeTestCase
         $this->actual = $discount;
         $this->expected = (int) round($total * $discountRate / 100);
         $this->verify();
+    }
+
+    public function testSetOrderCompleteMailMessage()
+    {
+        $Order = new Order();
+        $Order->setCompleteMailMessage('追加完了メッセージ'.PHP_EOL);
+        $couponCd = 'aaaaaa';
+        $couponName = 'coupon aaa';
+
+        $this->couponService->setOrderCompleteMailMessage($Order, $couponCd, $couponName);
+        $this->assertRegExp('/クーポン情報/u', $Order->getCompleteMailMessage());
+        $this->assertRegExp('/クーポンコード: '.$couponCd.' '.$couponName.'/u', $Order->getCompleteMailMessage());
+
+        $this->couponService->setOrderCompleteMailMessage($Order, null, null);
+        $this->assertNotRegExp('/クーポン情報/u', $Order->getCompleteMailMessage());
+        $this->assertNotRegExp('/クーポンコード: '.$couponCd.' '.$couponName.'/u', $Order->getCompleteMailMessage());
     }
 
     /**

@@ -247,11 +247,16 @@ class CouponService
             // クーポンがない または クーポンコードが空の場合
             $CouponOrder->setCouponCd($couponCd);
             $CouponOrder->setCouponId(null);
+
+            $this->setOrderCompleteMailMessage($Order, null, null);
         } else {
             $CouponOrder->setCouponId($Coupon->getId());
             $CouponOrder->setCouponCd($Coupon->getCouponCd());
+
+            $this->setOrderCompleteMailMessage($Order, $Coupon->getCouponCd(), $Coupon->getCouponName());
         }
 
+        $this->entityManager->flush($Order);
         $CouponOrder->setCouponName($Coupon->getCouponName());
         $CouponOrder->setOrderChangeStatus(Constant::DISABLED);
         // ログイン済みの場合は, user_id取得
@@ -376,6 +381,36 @@ class CouponService
             }
             $this->entityManager->remove($CouponOrder);
             $this->entityManager->flush($CouponOrder);
+
+            $this->setOrderCompleteMailMessage($Order, null, null);
+            $this->entityManager->flush($Order);
+        }
+    }
+
+    /**
+     * クーポン情報があれば、購入完了メールにメッセージを追加する.
+     *
+     * 無ければ、メッセージを削除する
+     *
+     * @param Order $Order
+     * @param string $couponCd
+     * @param string $couponName
+     */
+    public function setOrderCompleteMailMessage(Order $Order, $couponCd = null, $couponName = null)
+    {
+        $snippet = '***********************************************'.PHP_EOL;
+        $snippet .= '　クーポン情報                                 '.PHP_EOL;
+        $snippet .= '***********************************************'.PHP_EOL;
+        $snippet .= PHP_EOL;
+        $snippet .= 'クーポンコード: ';
+
+        if ($couponCd && $couponName) {
+            $snippet .= $couponCd.' '.$couponName.PHP_EOL;
+            $Order->appendCompleteMailMessage($snippet);
+        } else {
+            $message = $Order->getCompleteMailMessage();
+            $message = preg_replace('/'.preg_quote($snippet).'.*$/m', '', $message);
+            $Order->setCompleteMailMessage($message);
         }
     }
 
