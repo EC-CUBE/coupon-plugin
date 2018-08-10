@@ -17,20 +17,11 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Eccube\Annotation\OrderFlow;
 use Eccube\Entity\Order;
-use Eccube\Entity\OrderItem;
-use Eccube\Entity\ItemInterface;
 use Eccube\Entity\ItemHolderInterface;
-use Eccube\Entity\Master\OrderItemType;
-use Eccube\Entity\Master\TaxDisplayType;
-use Eccube\Entity\Master\TaxType;
-use Eccube\Entity\Master\RoundingType;
-use Eccube\Service\PurchaseFlow\InvalidItemException;
-use Eccube\Service\PurchaseFlow\ItemValidator;
 use Eccube\Service\PurchaseFlow\ItemHolderPreprocessor;
 use Eccube\Service\PurchaseFlow\ItemHolderValidator;
 use Eccube\Service\PurchaseFlow\PurchaseContext;
 use Eccube\Service\PurchaseFlow\PurchaseProcessor;
-use Plugin\Coupon\Entity\CouponOrder;
 use Plugin\Coupon\Service\CouponService;
 use Plugin\Coupon\Repository\CouponRepository;
 use Plugin\Coupon\Repository\CouponOrderRepository;
@@ -39,6 +30,7 @@ use Plugin\Coupon\Repository\CouponOrderRepository;
  * クーポンの状態を制御する.
  *
  * TODO Event::onOrderEditComplete を移植する
+ *
  * @OrderFlow
  */
 class CouponStateProcessor extends ItemHolderValidator implements ItemHolderPreprocessor, PurchaseProcessor
@@ -89,7 +81,7 @@ class CouponStateProcessor extends ItemHolderValidator implements ItemHolderPrep
      * {@inheritdoc}
      */
     public function process(ItemHolderInterface $itemHolder, PurchaseContext $context)
-  {
+    {
         if (!$this->supports($itemHolder)) {
             return;
         }

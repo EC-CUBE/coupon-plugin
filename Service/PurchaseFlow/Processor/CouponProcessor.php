@@ -18,15 +18,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use Eccube\Annotation\ShoppingFlow;
 use Eccube\Entity\Order;
 use Eccube\Entity\OrderItem;
-use Eccube\Entity\ItemInterface;
 use Eccube\Entity\ItemHolderInterface;
 use Eccube\Entity\Master\OrderItemType;
 use Eccube\Entity\Master\TaxDisplayType;
 use Eccube\Entity\Master\TaxType;
-use Eccube\Entity\Master\RoundingType;
 use Eccube\Repository\TaxRuleRepository;
-use Eccube\Service\PurchaseFlow\InvalidItemException;
-use Eccube\Service\PurchaseFlow\ItemValidator;
 use Eccube\Service\PurchaseFlow\ItemHolderPreprocessor;
 use Eccube\Service\PurchaseFlow\ItemHolderValidator;
 use Eccube\Service\PurchaseFlow\PurchaseContext;
@@ -75,7 +71,6 @@ class CouponProcessor extends ItemHolderValidator implements ItemHolderPreproces
      */
     protected $taxRuleRepository;
 
-
     /**
      * CouponProcessor constructor.
      *
@@ -106,7 +101,7 @@ class CouponProcessor extends ItemHolderValidator implements ItemHolderPreproces
      * {@inheritdoc}
      */
     public function process(ItemHolderInterface $itemHolder, PurchaseContext $context)
-  {
+    {
         if (!$this->supports($itemHolder)) {
             return;
         }
