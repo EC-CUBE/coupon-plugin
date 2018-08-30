@@ -31,8 +31,8 @@ class CouponNav implements EccubeNav
                         'id' => 'plugin_coupon',
                         'name' => 'coupon.nav.label',
                         'url' => 'plugin_coupon_list',
-                    ]
-                ]
+                    ],
+                ],
             ],
         ];
     }

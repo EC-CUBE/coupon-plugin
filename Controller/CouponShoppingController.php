@@ -32,7 +32,6 @@ use Eccube\Service\OrderHelper;
 
 class CouponShoppingController extends AbstractController
 {
-
     /**
      * @var DeliveryTimeRepository
      */

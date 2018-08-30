@@ -13,7 +13,6 @@
 
 namespace Plugin\Coupon;
 
-use Eccube\Application;
 use Eccube\Entity\Layout;
 use Eccube\Entity\Page;
 use Eccube\Plugin\AbstractPluginManager;
