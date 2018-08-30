@@ -15,7 +15,7 @@ env:
   # plugin code
   global:
     PLUGIN_CODE=Coupon
-    BRANCH=experimental/sf
+    BRANCH=4.0
 
 before_install: &php_setup |
   phpenv config-rm xdebug.ini || true
