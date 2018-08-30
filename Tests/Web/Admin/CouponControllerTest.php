@@ -166,7 +166,7 @@ class CouponControllerTest extends AbstractAdminWebTestCase
     private function getForm(Crawler $crawler)
     {
         $current = new \DateTime();
-        $form = $crawler->selectButton('登録')->form();
+        $form = $crawler->selectButton('保存')->form();
         $form['coupon[_token]'] = 'dummy';
         $form['coupon[coupon_cd]'] = 'aaaaaaa';
         $form['coupon[coupon_name]'] = 'aaaaaa';
