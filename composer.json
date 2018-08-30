@@ -1,0 +1,9 @@
+{
+  "name": "Coupon",
+  "version": "2.0.1",
+  "description": "Coupon",
+  "type": "eccube-plugin",
+  "extra": {
+    "code": "Coupon"
+  }
+}

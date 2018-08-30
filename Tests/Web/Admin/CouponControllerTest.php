@@ -127,6 +127,7 @@ class CouponControllerTest extends AbstractAdminWebTestCase
      */
     public function testAjaxSearchProductEmpty()
     {
+        $this->createProduct('Product A');
         $crawler = $this->client->request(
             'POST',
             $this->generateUrl('plugin_coupon_search_product', ['id' => '', 'category_id' => '', '_token' => 'dummy']),
@@ -135,8 +136,7 @@ class CouponControllerTest extends AbstractAdminWebTestCase
             ['HTTP_X-Requested-With' => 'XMLHttpRequest']
         );
         $productList = $crawler->html();
-        $this->assertContains('ディナーフォーク', $productList);
-        $this->assertContains('パーコレーター', $productList);
+        $this->assertContains('Product A', $productList);
     }
 
     /**

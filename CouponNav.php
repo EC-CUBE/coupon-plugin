@@ -15,7 +15,7 @@ namespace Plugin\Coupon;
 
 use Eccube\Common\EccubeNav;
 
-class Nav implements EccubeNav
+class CouponNav implements EccubeNav
 {
     /**
      * {@inheritdoc}
@@ -26,9 +26,13 @@ class Nav implements EccubeNav
     {
         return [
             'order' => [
-                'id' => 'plugin_coupon',
-                'name' => 'クーポン',
-                'url' => 'plugin_coupon_list',
+                'children' => [
+                    'plugin_coupon' => [
+                        'id' => 'plugin_coupon',
+                        'name' => 'coupon.nav.label',
+                        'url' => 'plugin_coupon_list',
+                    ]
+                ]
             ],
         ];
     }

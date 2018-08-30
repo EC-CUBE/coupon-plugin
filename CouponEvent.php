@@ -30,7 +30,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 /**
  * Class Event.
  */
-class Event implements EventSubscriberInterface
+class CouponEvent implements EventSubscriberInterface
 {
     /**
      * @var CouponOrderRepository

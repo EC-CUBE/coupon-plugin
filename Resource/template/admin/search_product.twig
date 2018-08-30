@@ -66,7 +66,7 @@
                 list.html(data);
             },
             error: function() {
-                alert('{{ 'plugin_coupon.admin.pager.failed'|trans }}');
+                alert('{{ 'coupon.admin.pager.failed'|trans }}');
             }
         });
         event.preventDefault();
@@ -89,7 +89,7 @@
                     </td>
                     <td class="text-right">
                         <button onclick="fnAddProductDetail($(this).parent().parent(), {{ Product.id }},  '{{ Product.name|escape('js') }}')" type="button" class="btn btn-default btn-sm">
-                            {{ 'admin.common.label.ok'|trans }}
+                            {{ 'common.ok'|trans }}
                         </button>
                     </td>
                 </tr>

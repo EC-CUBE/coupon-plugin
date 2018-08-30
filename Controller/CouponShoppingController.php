@@ -15,11 +15,9 @@ namespace Plugin\Coupon\Controller;
 
 use Eccube\Controller\AbstractController;
 use Eccube\Entity\Customer;
-use Eccube\Entity\Master\OrderStatus;
 use Eccube\Entity\Order;
 use Eccube\Repository\DeliveryTimeRepository;
 use Eccube\Service\CartService;
-use Eccube\Service\ShoppingService;
 use Plugin\Coupon\Entity\Coupon;
 use Plugin\Coupon\Form\Type\CouponUseType;
 use Plugin\Coupon\Repository\CouponOrderRepository;
@@ -29,18 +27,11 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
+use Eccube\Repository\OrderRepository;
+use Eccube\Service\OrderHelper;
 
 class CouponShoppingController extends AbstractController
 {
-    /**
-     * @var string 非会員用セッションキー
-     */
-    private $sessionKey = 'eccube.front.shopping.nonmember';
-
-    /**
-     * @var ShoppingService
-     */
-    private $shoppingService;
 
     /**
      * @var DeliveryTimeRepository
@@ -68,23 +59,41 @@ class CouponShoppingController extends AbstractController
     private $couponOrderRepository;
 
     /**
+     * @var OrderRepository
+     */
+    protected $orderRepository;
+
+    /**
+     * @var OrderHelper
+     */
+    protected $orderHelper;
+
+    /**
      * CouponShoppingController constructor.
      *
-     * @param ShoppingService $shoppingService
      * @param DeliveryTimeRepository $deliveryTimeRepository
      * @param CartService $cartService
      * @param CouponService $couponService
      * @param CouponRepository $couponRepository
      * @param CouponOrderRepository $couponOrderRepository
+     * @param OrderRepository $orderRepository
+     * @param OrderHelper $orderHelper
      */
-    public function __construct(ShoppingService $shoppingService, DeliveryTimeRepository $deliveryTimeRepository, CartService $cartService, CouponService $couponService, CouponRepository $couponRepository, CouponOrderRepository $couponOrderRepository)
-    {
-        $this->shoppingService = $shoppingService;
+    public function __construct(
+        DeliveryTimeRepository $deliveryTimeRepository,
+        CartService $cartService, CouponService $couponService,
+        CouponRepository $couponRepository,
+        CouponOrderRepository $couponOrderRepository,
+        OrderRepository $orderRepository,
+        OrderHelper $orderHelper
+    ) {
         $this->deliveryTimeRepository = $deliveryTimeRepository;
         $this->cartService = $cartService;
         $this->couponService = $couponService;
         $this->couponRepository = $couponRepository;
         $this->couponOrderRepository = $couponOrderRepository;
+        $this->orderRepository = $orderRepository;
+        $this->orderHelper = $orderHelper;
     }
 
     /**
@@ -99,7 +108,7 @@ class CouponShoppingController extends AbstractController
     public function shoppingCoupon(Request $request)
     {
         /** @var Order $Order */
-        $Order = $this->shoppingService->getOrder(OrderStatus::PROCESSING);
+        $Order = $this->orderHelper->getPurchaseProcessingOrder($this->cartService->getPreOrderId());
 
         if (!$Order) {
             $this->addError('front.shopping.order.error');
@@ -140,17 +149,17 @@ class CouponShoppingController extends AbstractController
                 /* @var $Coupon Coupon */
                 $Coupon = $this->couponRepository->findActiveCoupon($formCouponCd);
                 if (!$Coupon) {
-                    $form->get('coupon_cd')->addError(new FormError(trans('plugin_coupon.front.shopping.notexists')));
+                    $form->get('coupon_cd')->addError(new FormError(trans('coupon.front.shopping.notexists')));
                     $error = true;
                 }
 
                 if ($this->isGranted('ROLE_USER')) {
                     $Customer = $this->getUser();
                 } else {
-                    $Customer = $this->shoppingService->getNonMember($this->sessionKey);
+                    $Customer = $this->orderHelper->getNonMember();
                     if ($Coupon) {
                         if ($Coupon->getCouponMember()) {
-                            $form->get('coupon_cd')->addError(new FormError(trans('plugin_coupon.front.shopping.member')));
+                            $form->get('coupon_cd')->addError(new FormError(trans('coupon.front.shopping.member')));
                             $error = true;
                         }
                     }
@@ -171,12 +180,12 @@ class CouponShoppingController extends AbstractController
                     }
 
                     if (!$existCoupon) {
-                        $form->get('coupon_cd')->addError(new FormError(trans('plugin_coupon.front.shopping.notexists')));
+                        $form->get('coupon_cd')->addError(new FormError(trans('coupon.front.shopping.notexists')));
                         $error = true;
                     }
 
                     if (!$checkLowerLimit) {
-                        $message = trans('plugin_coupon.front.shopping.lowerlimit', ['lowerLimit' => number_format($lowerLimit)]);
+                        $message = trans('coupon.front.shopping.lowerlimit', ['lowerLimit' => number_format($lowerLimit)]);
                         $form->get('coupon_cd')->addError(new FormError($message));
                         $error = true;
                     }
@@ -185,21 +194,21 @@ class CouponShoppingController extends AbstractController
                     $couponUsed = $service->checkCouponUsedOrNot($formCouponCd, $Customer);
                     if ($couponUsed) {
                         // 既に存在している
-                        $form->get('coupon_cd')->addError(new FormError(trans('plugin_coupon.front.shopping.sameuser')));
+                        $form->get('coupon_cd')->addError(new FormError(trans('coupon.front.shopping.sameuser')));
                         $error = true;
                     }
 
                     // クーポンの発行枚数チェック
                     $checkCouponUseTime = $this->couponRepository->checkCouponUseTime($formCouponCd);
                     if (!$checkCouponUseTime && $existCoupon) {
-                        $form->get('coupon_cd')->addError(new FormError(trans('plugin_coupon.front.shopping.couponusetime')));
+                        $form->get('coupon_cd')->addError(new FormError(trans('coupon.front.shopping.couponusetime')));
                         $error = true;
                     }
 
                     // Todo: check discount vs total payment
                     // 合計金額より値引き額の方が高いかチェック
 //                    if ($Order->getTotal() < $discount && $existCoupon) {
-//                        $form->get('coupon_cd')->addError(new FormError('plugin_coupon.front.shopping.minus'));
+//                        $form->get('coupon_cd')->addError(new FormError('coupon.front.shopping.minus'));
 //                        $error = true;
 //                    }
                 }

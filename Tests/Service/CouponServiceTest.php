@@ -108,7 +108,7 @@ class CouponServiceTest extends EccubeTestCase
             ->setOrderItemType($OrderItemTypeProduct)
             ->setPrice($ProductClass->getPrice02())
             ->setQuantity(1)
-            ->setTaxRule($TaxRule->getRoundingType()->getId())
+            ->setTaxRuleId($TaxRule->getId())
             ->setTaxRate($TaxRule->getTaxRate());
         $this->entityManager->persist($orderItem);
         $orderItem->setOrder($Order);
@@ -171,7 +171,7 @@ class CouponServiceTest extends EccubeTestCase
             ->setOrderItemType($OrderItemTypeProduct)
             ->setPrice($ProductClass->getPrice02())
             ->setQuantity(1)
-            ->setTaxRule($TaxRule->getRoundingType()->getId())
+            ->setTaxRuleId($TaxRule->getId())
             ->setTaxRate($TaxRule->getTaxRate());
         $this->entityManager->persist($orderItem);
         $orderItem->setOrder($Order);
@@ -252,7 +252,7 @@ class CouponServiceTest extends EccubeTestCase
             ->setOrderItemType($OrderItemTypeProduct)
             ->setPrice($ProductClass->getPrice02())
             ->setQuantity(1)
-            ->setTaxRule($TaxRule->getRoundingType()->getId())
+            ->setTaxRuleId($TaxRule->getId())
             ->setTaxRate($TaxRule->getTaxRate());
         $this->entityManager->persist($orderItem);
         $orderItem->setOrder($Order);
@@ -305,7 +305,7 @@ class CouponServiceTest extends EccubeTestCase
             ->setOrderItemType($OrderItemTypeProduct)
             ->setPrice($ProductClass->getPrice02())
             ->setQuantity(1)
-            ->setTaxRule($TaxRule->getRoundingType()->getId())
+            ->setTaxRuleId($TaxRule->getId())
             ->setTaxRate($TaxRule->getTaxRate());
         $this->entityManager->persist($orderItem);
         $orderItem->setOrder($Order);

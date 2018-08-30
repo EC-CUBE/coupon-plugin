@@ -105,7 +105,7 @@ class CouponController extends AbstractController
             // 更新
             $Coupon = $this->couponRepository->find($id);
             if (!$Coupon) {
-                $this->addError('plugin_coupon.admin.notfound', 'admin');
+                $this->addError('coupon.admin.notfound', 'admin');
 
                 return $this->redirectToRoute('plugin_coupon_list');
             }
@@ -156,7 +156,7 @@ class CouponController extends AbstractController
             $this->entityManager->persist($Coupon);
             $this->entityManager->flush($Coupon);
             // 成功時のメッセージを登録する
-            $this->addSuccess('plugin_coupon.admin.regist.success', 'admin');
+            $this->addSuccess('coupon.admin.regist.success', 'admin');
 
             return $this->redirectToRoute('plugin_coupon_list');
         }
@@ -184,10 +184,10 @@ class CouponController extends AbstractController
         // =============
         $status = $this->couponRepository->enableCoupon($Coupon);
         if ($status) {
-            $this->addSuccess('plugin_coupon.admin.enable.success', 'admin');
+            $this->addSuccess('coupon.admin.enable.success', 'admin');
             log_info('Change status a coupon with ', ['ID' => $Coupon->getId()]);
         } else {
-            $this->addError('plugin_coupon.admin.notfound', 'admin');
+            $this->addError('coupon.admin.notfound', 'admin');
         }
 
         return $this->redirectToRoute('plugin_coupon_list');
@@ -208,10 +208,10 @@ class CouponController extends AbstractController
         $this->isTokenValid();
         // クーポン情報を削除する
         if ($this->couponRepository->deleteCoupon($Coupon)) {
-            $this->addSuccess('plugin_coupon.admin.delete.success', 'admin');
+            $this->addSuccess('coupon.admin.delete.success', 'admin');
             log_info('Delete a coupon with ', ['ID' => $Coupon->getId()]);
         } else {
-            $this->addError('plugin_coupon.admin.notfound', 'admin');
+            $this->addError('coupon.admin.notfound', 'admin');
         }
 
         return $this->redirectToRoute('plugin_coupon_list');

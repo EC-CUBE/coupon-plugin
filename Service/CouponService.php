@@ -212,12 +212,12 @@ class CouponService
                 ->setTaxType($TaxType)
                 ->setTaxDisplayType($TaxDisplayType)
                 ->setOrderItemType($OrderItemType)
-                ->setProductName(trans('orderitem.text.data.discount'))
+                ->setProductName(trans('common.discount'))
                 // todo: currently uses negative numbers
                 ->setPrice(0 - $discount)
                 ->setQuantity(1)
                 ->setTaxRate(0)
-                ->setTaxRule(TaxRule::DEFAULT_TAX_RULE_ID)
+                ->setTaxRuleId(TaxRule::DEFAULT_TAX_RULE_ID)
                 ->setCurrencyCode($currency);
 
             $this->entityManager->persist($OrderItem);
@@ -293,7 +293,14 @@ class CouponService
                 $total = 0;
                 // include tax
                 foreach ($couponProducts as $key => $value) {
-                    $total += ($value['price'] + $this->taxRuleService->calcTax($value['price'], $value['tax_rate'], $value['tax_rule'])) * $value['quantity'];
+                    // 税込表示の場合は, priceが税込金額のため割り戻す.
+                    if ($value['tax_display_type'] == TaxDisplayType::INCLUDED) {
+                        $tax = $this->taxRuleService->calcTaxIncluded(
+                            $value['price'], $value['tax_rate'], $value['tax_rule']->getRoundingType()->getId(), $value['tax_rule']->getTaxAdjust());
+                    } else {
+                        $tax = $this->taxRuleService->calcTax($value['price'], $value['tax_rate'], $value['tax_rule']->getRoundingType()->getId(), $value['tax_rule']->getTaxAdjust());
+                    }
+                    $total += ($value['price'] + $tax) * $value['quantity'];
                 }
 
                 // 小数点以下は四捨五入
@@ -322,7 +329,14 @@ class CouponService
         $subTotal = 0;
         // price inc tax
         foreach ($productCoupon as $key => $value) {
-            $subTotal += ($value['price'] + $this->taxRuleService->calcTax($value['price'], $value['tax_rate'], $value['tax_rule'])) * $value['quantity'];
+            // 税込表示の場合は, priceが税込金額のため割り戻す.
+            if ($value['tax_display_type'] == TaxDisplayType::INCLUDED) {
+                $tax = $this->taxRuleService->calcTaxIncluded(
+                    $value['price'], $value['tax_rate'], $value['tax_rule']->getRoundingType()->getId(), $value['tax_rule']->getTaxAdjust());
+            } else {
+                $tax = $this->taxRuleService->calcTax($value['price'], $value['tax_rate'], $value['tax_rule']->getRoundingType()->getId(), $value['tax_rule']->getTaxAdjust());
+            }
+            $subTotal += ($value['price'] + $tax) * $value['quantity'];
         }
 
         if ($subTotal < $lowerLimitMoney && $subTotal != 0) {
@@ -480,10 +494,16 @@ class CouponService
      */
     private function getCouponProducts(OrderItem $orderItem)
     {
+        $TaxRule = $this->taxRuleRepository->find($orderItem->getTaxRuleId());
+        $TaxRule = $TaxRule ? $TaxRule : $this->taxRuleRepository->find(TaxRule::DEFAULT_TAX_RULE_ID);
+        $couponProducts[$orderItem->getProductClass()->getId()]['tax_rule'] = $TaxRule;
+
         $couponProducts[$orderItem->getProductClass()->getId()]['price'] = $orderItem->getPriceIncTax();
         $couponProducts[$orderItem->getProductClass()->getId()]['quantity'] = $orderItem->getQuantity();
         $couponProducts[$orderItem->getProductClass()->getId()]['tax_rate'] = $orderItem->getTaxRate();
-        $couponProducts[$orderItem->getProductClass()->getId()]['tax_rule'] = $orderItem->getTaxRule();
+
+        $taxDisplayType = $orderItem->getTaxDisplayType() ? $orderItem->getTaxDisplayType()->getId() : TaxDisplayType::EXCLUDED;
+        $couponProducts[$orderItem->getProductClass()->getId()]['tax_display_type'] = $taxDisplayType;
 
         return $couponProducts;
     }
