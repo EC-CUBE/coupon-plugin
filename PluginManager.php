@@ -39,7 +39,11 @@ class PluginManager extends AbstractPluginManager
 
     private $template3 = 'mypage_history_coupon.twig';
 
-    public function enable($meta = null, Application $app = null, ContainerInterface $container)
+    /**
+     * @param array $meta
+     * @param ContainerInterface $container
+     */
+    public function enable(array $meta, ContainerInterface $container)
     {
         $this->copyBlock($container);
         $PageLayout = $container->get(PageRepository::class)->findOneBy(['url' => 'plugin_coupon_shopping']);
@@ -50,11 +54,10 @@ class PluginManager extends AbstractPluginManager
     }
 
     /**
-     * @param null $meta
-     * @param Application|null $app
+     * @param array $meta
      * @param ContainerInterface $container
      */
-    public function disable($meta = null, Application $app = null, ContainerInterface $container)
+    public function disable(array $meta, ContainerInterface $container)
     {
         $this->removeBlock($container);
         // pagelayoutの削除
@@ -62,11 +65,10 @@ class PluginManager extends AbstractPluginManager
     }
 
     /**
-     * @param null $meta
-     * @param Application|null $app
+     * @param array $meta
      * @param ContainerInterface $container
      */
-    public function update($meta = null, Application $app = null, ContainerInterface $container)
+    public function update(array $meta, ContainerInterface $container)
     {
         $PageLayout = $container->get(PageRepository::class)->findOneBy(['url' => 'plugin_coupon_shopping']);
         if (is_null($PageLayout)) {
