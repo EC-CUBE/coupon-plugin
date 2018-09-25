@@ -19,7 +19,6 @@ use Eccube\Entity\Master\OrderStatus;
 use Eccube\Entity\Order;
 use Eccube\Repository\DeliveryTimeRepository;
 use Eccube\Service\CartService;
-use Eccube\Service\ShoppingService;
 use Plugin\Coupon\Entity\Coupon;
 use Plugin\Coupon\Form\Type\CouponUseType;
 use Plugin\Coupon\Repository\CouponOrderRepository;
@@ -70,16 +69,14 @@ class CouponShoppingController extends AbstractController
     /**
      * CouponShoppingController constructor.
      *
-     * @param ShoppingService $shoppingService
      * @param DeliveryTimeRepository $deliveryTimeRepository
      * @param CartService $cartService
      * @param CouponService $couponService
      * @param CouponRepository $couponRepository
      * @param CouponOrderRepository $couponOrderRepository
      */
-    public function __construct(ShoppingService $shoppingService, DeliveryTimeRepository $deliveryTimeRepository, CartService $cartService, CouponService $couponService, CouponRepository $couponRepository, CouponOrderRepository $couponOrderRepository)
+    public function __construct(DeliveryTimeRepository $deliveryTimeRepository, CartService $cartService, CouponService $couponService, CouponRepository $couponRepository, CouponOrderRepository $couponOrderRepository)
     {
-        $this->shoppingService = $shoppingService;
         $this->deliveryTimeRepository = $deliveryTimeRepository;
         $this->cartService = $cartService;
         $this->couponService = $couponService;
