@@ -139,9 +139,9 @@ class PluginManager extends AbstractPluginManager
         // ファイルコピー
         $file = new Filesystem();
         // ブロックファイルをコピー
-        $file->copy($this->originalDir.$this->template1, $templateDir.'/Coupon/'.$this->template1);
-        $file->copy($this->originalDir.$this->template2, $templateDir.'/Coupon/'.$this->template2);
-        $file->copy($this->originalDir.$this->template3, $templateDir.'/Coupon/'.$this->template3);
+        $file->copy($this->originalDir.$this->template1, $templateDir.'/Coupon4/'.$this->template1);
+        $file->copy($this->originalDir.$this->template2, $templateDir.'/Coupon4/'.$this->template2);
+        $file->copy($this->originalDir.$this->template3, $templateDir.'/Coupon4/'.$this->template3);
     }
 
     /**
@@ -153,8 +153,8 @@ class PluginManager extends AbstractPluginManager
     {
         $templateDir = $container->getParameter('eccube_theme_front_dir');
         $file = new Filesystem();
-        $file->remove($templateDir.'/Coupon/'.$this->template1);
-        $file->remove($templateDir.'/Coupon/'.$this->template2);
-        $file->remove($templateDir.'/Coupon/'.$this->template3);
+        $file->remove($templateDir.'/Coupon4/'.$this->template1);
+        $file->remove($templateDir.'/Coupon4/'.$this->template2);
+        $file->remove($templateDir.'/Coupon4/'.$this->template3);
     }
 }
