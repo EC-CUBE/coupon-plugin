@@ -83,14 +83,12 @@ class PluginManager extends AbstractPluginManager
     private function createPageLayout(ContainerInterface $container)
     {
         // ページレイアウトにプラグイン使用時の値を代入
-        $DeviceType = $container->get(DeviceTypeRepository::class)->find(DeviceType::DEVICE_TYPE_PC);
-
         /** @var \Eccube\Entity\Page $Page */
-        $Page = $container->get(PageRepository::class)->findOrCreate(null, $DeviceType);
+        $Page = $container->get(PageRepository::class)->newPage();
         $Page->setEditType(Page::EDIT_TYPE_DEFAULT);
         $Page->setName('商品購入/クーポン利用');
         $Page->setUrl('plugin_coupon_shopping');
-        $Page->setFileName('../../Plugin/Coupon/Resource/template/default/shopping_coupon');
+        $Page->setFileName('Coupon4/Resource/template/default/shopping_coupon');
         $Page->setMetaRobots('noindex');
 
         // DB登録
