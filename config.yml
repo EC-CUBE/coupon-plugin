@@ -1,6 +1,0 @@
-name: Coupon
-#event: Event
-code: Coupon
-version: 2.0.1
-#service:
-#    - /Resource/config/services.yaml
