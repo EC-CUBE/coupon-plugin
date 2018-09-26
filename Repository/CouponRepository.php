@@ -11,12 +11,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon\Repository;
+namespace Plugin\Coupon4\Repository;
 
 use Eccube\Common\Constant;
 use Eccube\Repository\AbstractRepository;
-use Plugin\Coupon\Entity\Coupon;
-use Plugin\Coupon\Entity\CouponDetail;
+use Plugin\Coupon4\Entity\Coupon;
+use Plugin\Coupon4\Entity\CouponDetail;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**

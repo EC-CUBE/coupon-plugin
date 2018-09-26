@@ -11,14 +11,14 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon\Tests\Web\Admin;
+namespace Plugin\Coupon4\Tests\Web\Admin;
 
 use Eccube\Entity\Customer;
 use Eccube\Repository\ProductRepository;
 use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;
-use Plugin\Coupon\Entity\Coupon;
-use Plugin\Coupon\Entity\CouponDetail;
-use Plugin\Coupon\Repository\CouponRepository;
+use Plugin\Coupon4\Entity\Coupon;
+use Plugin\Coupon4\Entity\CouponDetail;
+use Plugin\Coupon4\Repository\CouponRepository;
 use Symfony\Component\DomCrawler\Crawler;
 
 /**

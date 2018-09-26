@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon\Tests\Web;
+namespace Plugin\Coupon4\Tests\Web;
 
 use Eccube\Entity\Customer;
 use Eccube\Entity\Order;
@@ -20,10 +20,10 @@ use Eccube\Repository\OrderRepository;
 use Eccube\Repository\ProductRepository;
 use Eccube\Service\CartService;
 use Eccube\Tests\Web\AbstractShoppingControllerTestCase;
-use Plugin\Coupon\Entity\Coupon;
-use Plugin\Coupon\Entity\CouponDetail;
-use Plugin\Coupon\Repository\CouponOrderRepository;
-use Plugin\Coupon\Repository\CouponRepository;
+use Plugin\Coupon4\Entity\Coupon;
+use Plugin\Coupon4\Entity\CouponDetail;
+use Plugin\Coupon4\Repository\CouponOrderRepository;
+use Plugin\Coupon4\Repository\CouponRepository;
 use Symfony\Component\DomCrawler\Crawler;
 
 /**

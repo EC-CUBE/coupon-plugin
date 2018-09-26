@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon\Tests\Repository;
+namespace Plugin\Coupon4\Tests\Repository;
 
 use Eccube\Common\Constant;
 use Eccube\Entity\Customer;
@@ -19,11 +19,11 @@ use Eccube\Entity\OrderItem;
 use Eccube\Repository\TaxRuleRepository;
 use Eccube\Tests\EccubeTestCase;
 use Eccube\Util\StringUtil;
-use Plugin\Coupon\Entity\Coupon;
-use Plugin\Coupon\Entity\CouponDetail;
-use Plugin\Coupon\Entity\CouponOrder;
-use Plugin\Coupon\Repository\CouponOrderRepository;
-use Plugin\Coupon\Repository\CouponRepository;
+use Plugin\Coupon4\Entity\Coupon;
+use Plugin\Coupon4\Entity\CouponDetail;
+use Plugin\Coupon4\Entity\CouponOrder;
+use Plugin\Coupon4\Repository\CouponOrderRepository;
+use Plugin\Coupon4\Repository\CouponRepository;
 
 /**
  * Class CouponCouponOrderRepositoryTest.

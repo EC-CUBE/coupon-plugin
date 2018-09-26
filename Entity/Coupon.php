@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon\Entity;
+namespace Plugin\Coupon4\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Eccube\Entity\AbstractEntity;
@@ -25,7 +25,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="discriminator_type", type="string", length=255)
  * @ORM\HasLifecycleCallbacks()
- * @ORM\Entity(repositoryClass="Plugin\Coupon\Repository\CouponRepository")
+ * @ORM\Entity(repositoryClass="Plugin\Coupon4\Repository\CouponRepository")
  * @UniqueEntity("coupon_cd")
  */
 class Coupon extends AbstractEntity
@@ -163,7 +163,7 @@ class Coupon extends AbstractEntity
     /**
      * @var \Doctrine\Common\Collections\Collection
      *
-     * @ORM\OneToMany(targetEntity="Plugin\Coupon\Entity\CouponDetail", mappedBy="Coupon", cascade={"persist","remove"})
+     * @ORM\OneToMany(targetEntity="Plugin\Coupon4\Entity\CouponDetail", mappedBy="Coupon", cascade={"persist","remove"})
      */
     private $CouponDetails;
 

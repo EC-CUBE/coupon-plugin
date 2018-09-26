@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon\Form\Type;
+namespace Plugin\Coupon4\Form\Type;
 
 use Eccube\Form\Type\Master\CategoryType;
 use Symfony\Component\Form\AbstractType;

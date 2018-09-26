@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon;
+namespace Plugin\Coupon4;
 
 use Eccube\Application;
 use Eccube\Entity\Layout;

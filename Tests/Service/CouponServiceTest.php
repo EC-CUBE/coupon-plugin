@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon\Tests\Service;
+namespace Plugin\Coupon4\Tests\Service;
 
 use Eccube\Entity\Master\OrderItemType;
 use Eccube\Entity\Order;
@@ -20,11 +20,11 @@ use Eccube\Entity\ProductCategory;
 use Eccube\Repository\Master\OrderItemTypeRepository;
 use Eccube\Repository\TaxRuleRepository;
 use Eccube\Tests\EccubeTestCase;
-use Plugin\Coupon\Entity\Coupon;
-use Plugin\Coupon\Entity\CouponDetail;
-use Plugin\Coupon\Repository\CouponOrderRepository;
-use Plugin\Coupon\Repository\CouponRepository;
-use Plugin\Coupon\Service\CouponService;
+use Plugin\Coupon4\Entity\Coupon;
+use Plugin\Coupon4\Entity\CouponDetail;
+use Plugin\Coupon4\Repository\CouponOrderRepository;
+use Plugin\Coupon4\Repository\CouponRepository;
+use Plugin\Coupon4\Service\CouponService;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 /**
@@ -212,7 +212,7 @@ class CouponServiceTest extends EccubeTestCase
 
         $this->couponService->saveCouponOrder($Order, $Coupon, $Coupon->getCouponCd(), $Customer, $discount);
 
-        /** @var \Plugin\Coupon\Entity\CouponOrder $CouponOrder */
+        /** @var \Plugin\Coupon4\Entity\CouponOrder $CouponOrder */
         $CouponOrder = $this->couponOrderRepository->findOneBy(['coupon_cd' => $Coupon->getCouponCd()]);
 
         $this->actual = $discount;

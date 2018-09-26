@@ -11,12 +11,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon\Tests\Repository;
+namespace Plugin\Coupon4\Tests\Repository;
 
 use Eccube\Tests\EccubeTestCase;
-use Plugin\Coupon\Entity\Coupon;
-use Plugin\Coupon\Entity\CouponDetail;
-use Plugin\Coupon\Repository\CouponRepository;
+use Plugin\Coupon4\Entity\Coupon;
+use Plugin\Coupon4\Entity\CouponDetail;
+use Plugin\Coupon4\Repository\CouponRepository;
 
 /**
  * Class CouponCouponRepositoryTest.

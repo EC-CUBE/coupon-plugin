@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon\Controller\Admin;
+namespace Plugin\Coupon4\Controller\Admin;
 
 use Eccube\Controller\AbstractController;
 use Eccube\Entity\Category;

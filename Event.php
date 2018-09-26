@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon;
+namespace Plugin\Coupon4;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Eccube\Common\Constant;
@@ -21,10 +21,10 @@ use Eccube\Event\EccubeEvents;
 use Eccube\Event\EventArgs;
 use Eccube\Event\TemplateEvent;
 use Eccube\Repository\OrderRepository;
-use Plugin\Coupon\Entity\Coupon;
-use Plugin\Coupon\Entity\CouponOrder;
-use Plugin\Coupon\Repository\CouponOrderRepository;
-use Plugin\Coupon\Repository\CouponRepository;
+use Plugin\Coupon4\Entity\Coupon;
+use Plugin\Coupon4\Entity\CouponOrder;
+use Plugin\Coupon4\Repository\CouponOrderRepository;
+use Plugin\Coupon4\Repository\CouponRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
