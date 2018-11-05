@@ -11,6 +11,7 @@ php:
   - 5.5
   - 5.6
   - 7.0
+  - 7.1
 
 env:
   # plugin code
@@ -24,9 +25,9 @@ env:
     # ec-cube 3.0.13
     - ECCUBE_VERSION=3.0.13 DB=mysql USER=root DBNAME=myapp_test DBPASS=' ' DBUSER=root
     - ECCUBE_VERSION=3.0.13 DB=pgsql USER=postgres DBNAME=myapp_test DBPASS=password DBUSER=postgres
-    # ec-cube 3.0.15
-    - ECCUBE_VERSION=3.0.15 DB=mysql USER=root DBNAME=myapp_test DBPASS=' ' DBUSER=root
-    - ECCUBE_VERSION=3.0.15 DB=pgsql USER=postgres DBNAME=myapp_test DBPASS=password DBUSER=postgres
+    # ec-cube 3.0.16
+    - ECCUBE_VERSION=3.0.16 DB=mysql USER=root DBNAME=myapp_test DBPASS=' ' DBUSER=root
+    - ECCUBE_VERSION=3.0.16 DB=pgsql USER=postgres DBNAME=myapp_test DBPASS=password DBUSER=postgres
 
 matrix:
   fast_finish: true
@@ -44,6 +45,8 @@ matrix:
     - php: 5.6
       env: ECCUBE_VERSION=master DB=sqlite
     - php: 7.0
+      env: ECCUBE_VERSION=master DB=sqlite
+    - php: 7.1
       env: ECCUBE_VERSION=master DB=sqlite
 
 install:
