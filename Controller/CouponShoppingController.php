@@ -91,12 +91,13 @@ class CouponShoppingController extends AbstractController
      *
      * @return array
      * @Route("/plugin/coupon/shopping/shopping_coupon", name="plugin_coupon_shopping")
-     * @Template("@Coupon/default/shopping_coupon.twig")
+     * @Template("@Coupon4/default/shopping_coupon.twig")
      */
     public function shoppingCoupon(Request $request)
     {
+        $preOrderId = $this->cartService->getPreOrderId();
         /** @var Order $Order */
-        $Order = $this->shoppingService->getOrder(OrderStatus::PROCESSING);
+        $Order = $this->orderHelper->getPurchaseProcessingOrder($preOrderId);
 
         if (!$Order) {
             $this->addError('front.shopping.order.error');

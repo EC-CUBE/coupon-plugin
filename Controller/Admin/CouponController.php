@@ -69,7 +69,7 @@ class CouponController extends AbstractController
      *
      * @return array
      * @Route("/%eccube_admin_route%/plugin/coupon", name="plugin_coupon_list")
-     * @Template("@Coupon/admin/index.twig")
+     * @Template("@Coupon4/admin/index.twig")
      */
     public function index(Request $request)
     {
@@ -236,6 +236,6 @@ class CouponController extends AbstractController
         ];
         $viewParameters += $parameters;
 
-        return $this->render('@Coupon/admin/regist.twig', $viewParameters);
+        return $this->render('@Coupon4/admin/regist.twig', $viewParameters);
     }
 }

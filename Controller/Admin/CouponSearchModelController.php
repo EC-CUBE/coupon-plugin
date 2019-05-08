@@ -59,7 +59,7 @@ class CouponSearchModelController extends AbstractController
      * @return array
      * @Route("/%eccube_admin_route%/plugin/coupon/search/product", name="plugin_coupon_search_product")
      * @Route("/%eccube_admin_route%/plugin/coupon/search/product/page/{page_no}", requirements={"page_no" = "\d+"}, name="plugin_coupon_search_product_page")
-     * @Template("@Coupon/admin/search_product.twig")
+     * @Template("@Coupon4/admin/search_product.twig")
      */
     public function searchProduct(Request $request, $page_no = null, Paginator $paginator)
     {
@@ -121,7 +121,7 @@ class CouponSearchModelController extends AbstractController
      *
      * @return array
      * @Route("/%eccube_admin_route%/plugin/coupon/search/category", name="plugin_coupon_search_category")
-     * @Template("@Coupon/admin/search_category.twig")
+     * @Template("@Coupon4/admin/search_category.twig")
      */
     public function searchCategory(Request $request)
     {

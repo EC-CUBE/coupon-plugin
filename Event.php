@@ -107,9 +107,9 @@ class Event implements EventSubscriberInterface
         $event->setParameters($parameters);
 
         if (strpos($event->getView(), 'index.twig') !== false) {
-            $event->addSnippet('@Coupon/default/coupon_shopping_item.twig');
+            $event->addSnippet('@Coupon4/default/coupon_shopping_item.twig');
         } else {
-            $event->addSnippet('@Coupon/default/coupon_shopping_item_confirm.twig');
+            $event->addSnippet('@Coupon4/default/coupon_shopping_item_confirm.twig');
         }
     }
 
@@ -138,7 +138,7 @@ class Event implements EventSubscriberInterface
         $parameters['coupon_cd'] = $CouponOrder->getCouponCd();
         $parameters['coupon_name'] = $CouponOrder->getCouponName();
         $event->setParameters($parameters);
-        $event->addSnippet('@Coupon/default/mypage_history_coupon.twig');
+        $event->addSnippet('@Coupon4/default/mypage_history_coupon.twig');
         log_info('Coupon trigger onRenderMypageHistory finish');
     }
 
@@ -167,7 +167,7 @@ class Event implements EventSubscriberInterface
         $event->setParameters($parameters);
 
         // add twig
-        $event->addSnippet('@Coupon/admin/order_edit_coupon.twig');
+        $event->addSnippet('@Coupon4/admin/order_edit_coupon.twig');
 
         log_info('Coupon trigger onRenderAdminOrderEdit finish');
     }
