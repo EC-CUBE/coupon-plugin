@@ -26,9 +26,12 @@ class Nav implements EccubeNav
     {
         return [
             'order' => [
-                'id' => 'plugin_coupon',
-                'name' => 'クーポン',
-                'url' => 'plugin_coupon_list',
+                'children' => [
+                    'plugin_coupon' => [
+                        'name' => 'クーポン',
+                        'url' => 'plugin_coupon_list',
+                    ],
+                ],
             ],
         ];
     }
