@@ -160,12 +160,13 @@ class CouponRepository extends AbstractRepository
     /**
      *  クーポンの発行枚数のチェック.
      *
-     * @param int         $couponCd
+     * @param string         $couponCd
      *
      * @return bool クーポンの枚数が一枚以上の時にtrueを返す
      */
     public function checkCouponUseTime($couponCd)
     {
+        /** @var Coupon $Coupon */
         $Coupon = $this->findOneBy(['coupon_cd' => $couponCd]);
         // クーポンの発行枚数は購入完了時に減算される、一枚以上残っていれば利用できる
         return $Coupon->getCouponUseTime() >= 1;

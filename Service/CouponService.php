@@ -16,6 +16,7 @@ namespace Plugin\Coupon4\Service;
 use Doctrine\ORM\EntityManagerInterface;
 use Eccube\Common\Constant;
 use Eccube\Entity\Customer;
+use Eccube\Entity\ItemHolderInterface;
 use Eccube\Entity\Master\RoundingType;
 use Eccube\Entity\Order;
 use Eccube\Entity\OrderItem;
@@ -150,11 +151,11 @@ class CouponService
      * 注文にクーポン対象商品が含まれているか確認する.
      *
      * @param Coupon $Coupon
-     * @param Order  $Order
+     * @param ItemHolderInterface  $Order
      *
      * @return array
      */
-    public function existsCouponProduct(Coupon $Coupon, Order $Order)
+    public function existsCouponProduct(Coupon $Coupon, ItemHolderInterface $Order)
     {
         $couponProducts = [];
         if (!is_null($Coupon)) {
@@ -332,9 +333,9 @@ class CouponService
      * クーポンコードが未入力または、クーポンコードを登録後に再度別のクーポンコードが設定された場合、
      * 既存のクーポンを情報削除.
      *
-     * @param Order       $Order
+     * @param ItemHolderInterface       $Order
      */
-    public function removeCouponOrder(Order $Order)
+    public function removeCouponOrder(ItemHolderInterface $Order)
     {
         // クーポンが未入力でクーポン情報が存在すればクーポン情報を削除
         /** @var CouponOrder $CouponOrder */
@@ -384,11 +385,11 @@ class CouponService
      * 商品がクーポン適用の対象か調査する.
      *
      * @param Coupon $Coupon
-     * @param Order  $Order
+     * @param ItemHolderInterface  $Order
      *
      * @return array
      */
-    private function containsProduct(Coupon $Coupon, Order $Order)
+    private function containsProduct(Coupon $Coupon, ItemHolderInterface $Order)
     {
         // クーポンの対象商品IDを配列にする
         $targetProductIds = [];
@@ -413,11 +414,11 @@ class CouponService
      * 下位のカテゴリから上位のカテゴリに向けて検索する.
      *
      * @param Coupon $Coupon
-     * @param Order  $Order
+     * @param ItemHolderInterface  $Order
      *
      * @return array
      */
-    private function containsCategory(Coupon $Coupon, Order $Order)
+    private function containsCategory(Coupon $Coupon, ItemHolderInterface $Order)
     {
         // クーポンの対象カテゴリIDを配列にする
         $targetCategoryIds = [];

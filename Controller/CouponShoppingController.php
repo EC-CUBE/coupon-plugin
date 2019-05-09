@@ -175,7 +175,7 @@ class CouponShoppingController extends AbstractController
                     if (count($couponProducts) == 0) {
                         $existCoupon = false;
                     }
-
+                    /*
                     if (!$existCoupon) {
                         $form->get('coupon_cd')->addError(new FormError(trans('plugin_coupon.front.shopping.notexists')));
                         $error = true;
@@ -208,6 +208,7 @@ class CouponShoppingController extends AbstractController
 //                        $form->get('coupon_cd')->addError(new FormError('plugin_coupon.front.shopping.minus'));
 //                        $error = true;
 //                    }
+*/
                 }
 
                 // ----------------------------------

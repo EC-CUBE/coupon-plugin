@@ -16,6 +16,7 @@ namespace Plugin\Coupon4\Service\PurchaseFlow\Processor;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Eccube\Annotation\ShoppingFlow;
+use Eccube\Entity\Customer;
 use Eccube\Entity\Order;
 use Eccube\Entity\OrderItem;
 use Eccube\Entity\ItemHolderInterface;
@@ -128,13 +129,51 @@ class CouponProcessor extends ItemHolderValidator implements ItemHolderPreproces
             return;
         }
         $CouponOrder = $this->couponOrderRepository->getCouponOrder($itemHolder->getPreOrderId());
+        if (!$CouponOrder) {
+            return;
+        }
+        /** @var Coupon $Coupon */
+        $Coupon = $this->couponRepository->findActiveCoupon($CouponOrder->getCouponCd());
+        if (!$Coupon) {
+            $this->throwInvalidItemException('クーポンが取得できませんでした', null, true);
+            $this->clearCoupon($itemHolder);
+        }
+
+        /** @var Customer $Customer */
+        $Customer = $itemHolder->getCustomer();
+        if (!$Customer->getId() && $Coupon->getCouponMember()) {
+            $this->throwInvalidItemException(trans('plugin_coupon.front.shopping.member'));
+            $this->clearCoupon($itemHolder);
+        }
+
+        $lowerLimit = $Coupon->getCouponLowerLimit();
+        $couponProducts = $this->couponService->existsCouponProduct($Coupon, $itemHolder);
+        if (count($couponProducts) == 0) {
+            $this->throwInvalidItemException(trans('plugin_coupon.front.shopping.couponusetime'), null, true);
+            $this->clearCoupon($itemHolder);
+        }
+
+        $checkLowerLimit = $this->couponService->isLowerLimitCoupon($couponProducts, $lowerLimit);
+        if (!$checkLowerLimit) {
+            $message = trans('plugin_coupon.front.shopping.lowerlimit', ['lowerLimit' => number_format($lowerLimit)]);
+            $this->throwInvalidItemException($message, null, true);
+            $this->clearCoupon($itemHolder);
+        }
+
+        $discount = $this->couponService->recalcOrder($Coupon, $couponProducts);
+
+        $checkCouponUseTime = $this->couponRepository->checkCouponUseTime($CouponOrder->getCouponCd());
+        if (!$checkCouponUseTime) {
+            $this->throwInvalidItemException(trans('plugin_coupon.front.shopping.couponusetime'), null, true);
+            $this->clearCoupon($itemHolder);
+        }
 
         // クーポンとポイント併用不可
-        $usePoint = $itemHolder->getUsePoint();
-        if ($usePoint > 0 && $CouponOrder && $CouponOrder->isVisible()) {
-            $this->couponService->removeCouponOrder($itemHolder);
-            $this->throwInvalidItemException(trans('plugin_coupon.front.shopping.conflictpoint'));
-        }
+        // $usePoint = $itemHolder->getUsePoint();
+        // if ($usePoint > 0 && $CouponOrder && $CouponOrder->isVisible()) {
+        //     $this->couponService->removeCouponOrder($itemHolder);
+        //     $this->throwInvalidItemException(trans('plugin_coupon.front.shopping.conflictpoint'));
+        // }
     }
 
     /*
@@ -173,7 +212,7 @@ class CouponProcessor extends ItemHolderValidator implements ItemHolderPreproces
 
     /**
      * クーポンを取り消す.
-     * {@inheritdoc
+     * {@inheritdoc}
      */
     public function rollback(ItemHolderInterface $itemHolder, PurchaseContext $context)
     {
@@ -278,5 +317,11 @@ class CouponProcessor extends ItemHolderValidator implements ItemHolderPreproces
         $this->entityManager->flush($OrderItem);
 
         $CouponOrder->setOrderItemId($OrderItem->getId());
+    }
+
+    protected function clearCoupon(ItemHolderInterface $Order)
+    {
+        // TODO エラーが発生した場合、前回設定されているクーポンがあればその金額を再設定する
+        $this->couponService->removeCouponOrder($Order);
     }
 }

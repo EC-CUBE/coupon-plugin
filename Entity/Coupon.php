@@ -532,7 +532,7 @@ class Coupon extends AbstractEntity
     }
 
     /**
-     * @return int
+     * @return bool
      */
     public function getCouponMember()
     {
@@ -540,7 +540,7 @@ class Coupon extends AbstractEntity
     }
 
     /**
-     * @param int $couponMember
+     * @param bool $couponMember
      */
     public function setCouponMember($couponMember)
     {
