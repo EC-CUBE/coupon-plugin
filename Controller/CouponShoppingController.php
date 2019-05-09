@@ -89,7 +89,7 @@ class CouponShoppingController extends AbstractController
      *
      * @param Request     $request
      *
-     * @return array
+     * @return array|RedirectResponse
      * @Route("/plugin/coupon/shopping/shopping_coupon", name="plugin_coupon_shopping")
      * @Template("@Coupon4/default/shopping_coupon.twig")
      */
@@ -116,7 +116,7 @@ class CouponShoppingController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             // サービスの取得
-            /* @var $service CouponService */
+            /** @var CouponService $service */
             $service = $this->couponService;
             $formCouponCd = $form->get('coupon_cd')->getData();
             $formCouponCancel = $form->get('coupon_use')->getData();
