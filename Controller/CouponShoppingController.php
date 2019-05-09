@@ -19,6 +19,7 @@ use Eccube\Entity\Master\OrderStatus;
 use Eccube\Entity\Order;
 use Eccube\Repository\DeliveryTimeRepository;
 use Eccube\Service\CartService;
+use Eccube\Service\OrderHelper;
 use Plugin\Coupon4\Entity\Coupon;
 use Plugin\Coupon4\Form\Type\CouponUseType;
 use Plugin\Coupon4\Repository\CouponOrderRepository;
@@ -26,6 +27,7 @@ use Plugin\Coupon4\Repository\CouponRepository;
 use Plugin\Coupon4\Service\CouponService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -52,6 +54,11 @@ class CouponShoppingController extends AbstractController
     private $cartService;
 
     /**
+     * @var OrderHelper
+     */
+    private $orderHelper;
+
+    /**
      * @var CouponService
      */
     private $couponService;
@@ -75,10 +82,11 @@ class CouponShoppingController extends AbstractController
      * @param CouponRepository $couponRepository
      * @param CouponOrderRepository $couponOrderRepository
      */
-    public function __construct(DeliveryTimeRepository $deliveryTimeRepository, CartService $cartService, CouponService $couponService, CouponRepository $couponRepository, CouponOrderRepository $couponOrderRepository)
+    public function __construct(DeliveryTimeRepository $deliveryTimeRepository, CartService $cartService, OrderHelper $orderHelper, CouponService $couponService, CouponRepository $couponRepository, CouponOrderRepository $couponOrderRepository)
     {
         $this->deliveryTimeRepository = $deliveryTimeRepository;
         $this->cartService = $cartService;
+        $this->orderHelper = $orderHelper;
         $this->couponService = $couponService;
         $this->couponRepository = $couponRepository;
         $this->couponOrderRepository = $couponOrderRepository;

@@ -92,7 +92,7 @@ class PluginManager extends AbstractPluginManager
         $Page->setMetaRobots('noindex');
 
         // DB登録
-        $entityManager = $container->get('doctrine.orm.entity_manager');
+        $entityManager = $container->get('doctrine')->getManager();
         $entityManager->persist($Page);
         $entityManager->flush($Page);
 
@@ -121,7 +121,7 @@ class PluginManager extends AbstractPluginManager
             $Layout = $container->get(LayoutRepository::class)->find(Layout::DEFAULT_LAYOUT_UNDERLAYER_PAGE);
             $PageLayout = $container->get(PageLayoutRepository::class)->findOneBy(['Page' => $Page, 'Layout' => $Layout]);
             // Blockの削除
-            $entityManager = $container->get('doctrine.orm.entity_manager');
+            $entityManager = $container->get('doctrine')->getManager();
             $entityManager->remove($PageLayout);
             $entityManager->remove($Page);
             $entityManager->flush();
