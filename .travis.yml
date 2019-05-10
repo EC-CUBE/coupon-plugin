@@ -9,7 +9,9 @@ cache:
       - bin/.phpunit
 
 php:
+  - 7.1
   - 7.2
+  - 7.3
 
 env:
   matrix:
@@ -24,8 +26,8 @@ env:
 matrix:
   allow_failures:
     - env: DATABASE_URL=sqlite:///var/eccube.db DATABASE_SERVER_VERSION=3 COVERAGE=1
+
 before_install: &php_setup |
-  phpenv config-rm xdebug.ini || true
   echo "opcache.enable_cli=1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   echo "extension = apcu.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   echo "apc.enabled=1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
@@ -51,8 +53,11 @@ eccube_setup: &eccube_setup |
   bin/console eccube:plugin:enable --code=${PLUGIN_CODE}
 
 script:
+  - cd ${HOME}/ec-cube
   - ./bin/phpunit app/Plugin/${PLUGIN_CODE}/Tests
+
 after_script:
+  - cd ${HOME}/ec-cube
   # disable plugin
   - bin/console eccube:plugin:disable --code=${PLUGIN_CODE}
   # uninstall plugin
@@ -70,16 +75,12 @@ jobs:
       env: DATABASE_URL=postgres://postgres:password@localhost/cube4_dev DATABASE_SERVER_VERSION=9 COVERAGE=1
       before_install:
         - *php_setup
+        - phpenv config-rm xdebug.ini || true
         - docker pull schickling/mailcatcher
         - docker run -d -p 1080:1080 -p 1025:1025 --name mailcatcher schickling/mailcatcher
       install:
         - *install_eccube
-        - echo "opcache.enable_cli=1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
-        - echo "extension = apcu.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
-        - echo "apc.enabled=1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
-        - echo "apc.enable_cli=1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
-        - echo "memory_limit=-1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
-        - echo "date.timezone=Asia/Tokyo" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+        - *php_setup
       script:
         - ./bin/phpunit -c app/Plugin/${PLUGIN_CODE}/phpunit.xml.dist --coverage-clover=coverage.clover
       after_success:
