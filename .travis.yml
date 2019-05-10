@@ -52,12 +52,15 @@ eccube_setup: &eccube_setup |
   bin/console eccube:plugin:install --path=${HOME}/${PLUGIN_CODE}.tar.gz
   bin/console eccube:plugin:enable --code=${PLUGIN_CODE}
 
+install:
+  - *install_eccube
+  - *eccube_setup
+  - phpenv config-rm xdebug.ini || true
+
 script:
-  - cd ${HOME}/ec-cube
   - ./bin/phpunit app/Plugin/${PLUGIN_CODE}/Tests
 
 after_script:
-  - cd ${HOME}/ec-cube
   # disable plugin
   - bin/console eccube:plugin:disable --code=${PLUGIN_CODE}
   # uninstall plugin
@@ -75,7 +78,6 @@ jobs:
       env: DATABASE_URL=postgres://postgres:password@localhost/cube4_dev DATABASE_SERVER_VERSION=9 COVERAGE=1
       before_install:
         - *php_setup
-        - phpenv config-rm xdebug.ini || true
         - docker pull schickling/mailcatcher
         - docker run -d -p 1080:1080 -p 1025:1025 --name mailcatcher schickling/mailcatcher
       install:
