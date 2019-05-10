@@ -20,7 +20,7 @@ env:
     - DATABASE_URL=sqlite:///var/eccube.db DATABASE_SERVER_VERSION=3 COVERAGE=1
   # plugin code
   global:
-    - PLUGIN_CODE=Coupon
+    - PLUGIN_CODE=Coupon4
     - BRANCH=4.0
 
 matrix:
