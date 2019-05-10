@@ -38,9 +38,8 @@ before_install: &php_setup |
 
 install_eccube: &install_eccube |
   tar cvzf ${HOME}/${PLUGIN_CODE}.tar.gz ./*
-  git clone https://github.com/EC-CUBE/ec-cube.git
+  git clone -b ${BRANCH} https://github.com/EC-CUBE/ec-cube.git
   cd ec-cube
-  git checkout -b ${BRANCH} origin/${BRANCH}
   composer selfupdate
   composer install --dev --no-interaction -o --apcu-autoloader
 
