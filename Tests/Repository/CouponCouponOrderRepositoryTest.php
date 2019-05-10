@@ -142,7 +142,7 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
             ->setProductName('discount')
             ->setPrice((0 - $discount))
             ->setQuantity(1)
-            ->setTaxRule($TaxRule->getRoundingType()->getId())
+            ->setTaxRuleId($TaxRule->getId())
             ->setTaxRate($TaxRule->getTaxRate());
         $this->entityManager->persist($orderItem);
         $this->entityManager->flush($orderItem);
@@ -154,7 +154,7 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
         $CouponOrder->setDiscount($discount);
         $CouponOrder->setUserId($this->Customer->getId());
         $CouponOrder->setCouponId($Coupon->getId());
-        $CouponOrder->setOrderChangeStatus(Constant::DISABLED);
+        $CouponOrder->setOrderChangeStatus(false);
         $CouponOrder->setOrderId($Order->getId());
         $CouponOrder->setPreOrderId($Order->getPreOrderId());
         $CouponOrder->setCouponCd($Coupon->getCouponCd());

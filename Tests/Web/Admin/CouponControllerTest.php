@@ -123,43 +123,9 @@ class CouponControllerTest extends AbstractAdminWebTestCase
     }
 
     /**
-     * search with none condition.
-     */
-    public function testAjaxSearchProductEmpty()
-    {
-        $crawler = $this->client->request(
-            'POST',
-            $this->generateUrl('plugin_coupon_search_product', ['id' => '', 'category_id' => '', '_token' => 'dummy']),
-            [],
-            [],
-            ['HTTP_X-Requested-With' => 'XMLHttpRequest']
-        );
-        $productList = $crawler->html();
-        $this->assertContains('ディナーフォーク', $productList);
-        $this->assertContains('パーコレーター', $productList);
-    }
-
-    /**
-     * search with none condition.
-     */
-    public function testAjaxSearchCategoryEmpty()
-    {
-        $crawler = $this->client->request(
-            'POST',
-            $this->generateUrl('plugin_coupon_search_category', ['category_id' => '', '_token' => 'dummy']),
-            [],
-            [],
-            ['HTTP_X-Requested-With' => 'XMLHttpRequest']
-        );
-        $categoryList = $crawler->html();
-        $this->assertContains('新入荷', $categoryList);
-    }
-
-    /**
      * get coupon form.
      *
      * @param Crawler $crawler
-     * @param string  $couponCd
      *
      * @return \Symfony\Component\DomCrawler\Form
      */
