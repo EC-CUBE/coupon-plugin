@@ -27,7 +27,7 @@
     <div class="collapse show ec-cardCollapse" id="couponArea">
         <div class="card-body">
             <label class="control-label">{{ 'plugin_coupon.admin.order_edit.body'|trans }}</label>　
-            {{ coupon_cd }}　{{ coupon_name}}
+            {{ coupon_cd }}　{{ coupon_name }}  {% if coupon_change_status %}注文がキャンセルされたため、クーポンが適用されていません。お支払い合計を変更する場合は、{{ coupon_name}} の明細を手動で削除してください。{% endif %}
         </div>
     </div>
 </div>

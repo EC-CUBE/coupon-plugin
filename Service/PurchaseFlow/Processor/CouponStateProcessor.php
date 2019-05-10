@@ -16,12 +16,16 @@ namespace Plugin\Coupon4\Service\PurchaseFlow\Processor;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Eccube\Annotation\OrderFlow;
+use Eccube\Common\Constant;
+use Eccube\Entity\Master\OrderStatus;
 use Eccube\Entity\Order;
 use Eccube\Entity\ItemHolderInterface;
 use Eccube\Service\PurchaseFlow\ItemHolderPreprocessor;
 use Eccube\Service\PurchaseFlow\ItemHolderValidator;
 use Eccube\Service\PurchaseFlow\PurchaseContext;
 use Eccube\Service\PurchaseFlow\PurchaseProcessor;
+use Plugin\Coupon4\Entity\Coupon;
+use Plugin\Coupon4\Entity\CouponOrder;
 use Plugin\Coupon4\Service\CouponService;
 use Plugin\Coupon4\Repository\CouponRepository;
 use Plugin\Coupon4\Repository\CouponOrderRepository;
@@ -86,6 +90,48 @@ class CouponStateProcessor extends ItemHolderValidator implements ItemHolderPrep
             return;
         }
         $CouponOrder = $this->couponOrderRepository->getCouponOrder($itemHolder->getPreOrderId());
+
+        $orderStatusId = $itemHolder->getOrderStatus()->getId();
+        $isChanged = $CouponOrder->getOrderChangeStatus(); // 変更されたかどうか？
+        if ($orderStatusId == OrderStatus::CANCEL
+            || $orderStatusId == OrderStatus::PROCESSING
+            || $orderStatusId == OrderStatus::RETURNED) { // TODO Order が取得できない場合も考慮する？
+            if (!$isChanged) {
+                /** @var Coupon $Coupon */
+                $Coupon = $this->couponRepository->find($CouponOrder->getCouponId());
+                if ($Coupon) {
+                    $CouponOrder->setOrderDate(null);
+                    $CouponOrder->setOrderChangeStatus(true);
+                    $this->couponOrderRepository->save($CouponOrder);
+                    $couponUseTime = $Coupon->getCouponUseTime() + 1;
+                    $couponRelease = $Coupon->getCouponRelease();
+                    if ($couponUseTime <= $couponRelease) {
+                        $Coupon->setCouponUseTime($couponUseTime);
+                    } else {
+                        $Coupon->setCouponUseTime($couponRelease);
+                    }
+                    $this->entityManager->persist($Coupon);
+                    $this->entityManager->flush($Coupon);
+                }
+            }
+        }
+        if ($orderStatusId != OrderStatus::CANCEL
+            && $orderStatusId != OrderStatus::PROCESSING
+            && $orderStatusId != OrderStatus::RETURNED) {
+            if ($isChanged) {
+                /** @var Coupon $Coupon */
+                $Coupon = $this->couponRepository->find($CouponOrder->getCouponId());
+                if ($Coupon) {
+                    $CouponOrder->setOrderDate(new \DateTime());
+                    $CouponOrder->setOrderChangeStatus(false);
+                    $this->couponOrderRepository->save($CouponOrder);
+                    $Coupon->setCouponUseTime($Coupon->getCouponUseTime() - 1);
+                    $this->entityManager->persist($Coupon);
+                    $this->entityManager->flush($Coupon);
+                }
+            }
+        }
+
     }
 
     /*
@@ -101,7 +147,6 @@ class CouponStateProcessor extends ItemHolderValidator implements ItemHolderPrep
         if (!$this->supports($itemHolder)) {
             return;
         }
-        $CouponOrder = $this->couponOrderRepository->getCouponOrder($itemHolder->getPreOrderId());
     }
 
     /*
@@ -109,7 +154,6 @@ class CouponStateProcessor extends ItemHolderValidator implements ItemHolderPrep
      */
 
     /**
-     * クーポンを使用状態にする.
      * {@inheritdoc}
      */
     public function prepare(ItemHolderInterface $itemHolder, PurchaseContext $context)
@@ -117,17 +161,6 @@ class CouponStateProcessor extends ItemHolderValidator implements ItemHolderPrep
         if (!$this->supports($itemHolder)) {
             return;
         }
-
-        $CouponOrder = $this->couponOrderRepository->getCouponOrder($itemHolder->getPreOrderId());
-        $CouponOrder->setOrderDate(new \DateTime());
-        $this->entityManager->flush($CouponOrder);
-
-        $Coupon = $this->couponRepository->findActiveCoupon($CouponOrder->getCouponCd());
-        if (!$Coupon) {
-            return;
-        }
-        $Coupon->setCouponUseTime($Coupon->getCouponUseTime() - 1);
-        $this->entityManager->flush($Coupon);
     }
 
     /**
@@ -140,7 +173,7 @@ class CouponStateProcessor extends ItemHolderValidator implements ItemHolderPrep
 
     /**
      * クーポンを取り消す.
-     * {@inheritdoc
+     * {@inheritdoc}
      */
     public function rollback(ItemHolderInterface $itemHolder, PurchaseContext $context)
     {
@@ -176,18 +209,16 @@ class CouponStateProcessor extends ItemHolderValidator implements ItemHolderPrep
             case OrderStatus::PAID:
             case OrderStatus::IN_PROGRESS:
             case OrderStatus::DELIVERED:
+            case OrderStatus::CANCEL:
+            case OrderStatus::RETURNED:
                 break;
             default:
                 return false;
         }
-
-        if (!$itemHolder->getCustomer()) {
+        $CouponOrder = $this->couponOrderRepository->getCouponOrder($itemHolder->getPreOrderId());
+        if (!$CouponOrder) {
             return false;
         }
-
-        // if (is_null($context->getOriginHolder())) {
-        //     return false;
-        // }
 
         return true;
     }

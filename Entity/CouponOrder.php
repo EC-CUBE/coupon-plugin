@@ -291,7 +291,7 @@ class CouponOrder extends AbstractEntity
     /**
      * Set order_date.
      *
-     * @param \DateTime $orderDate
+     * @param \DateTime|null $orderDate
      *
      * @return CouponOrder
      */
@@ -305,7 +305,7 @@ class CouponOrder extends AbstractEntity
     /**
      * Get order_date.
      *
-     * @return \DateTime
+     * @return \DateTime|null
      */
     public function getOrderDate()
     {
