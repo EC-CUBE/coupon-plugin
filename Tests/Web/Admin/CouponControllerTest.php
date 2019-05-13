@@ -102,14 +102,29 @@ class CouponControllerTest extends AbstractAdminWebTestCase
         $this->assertTrue($this->client->getResponse()->isRedirect($this->generateUrl('plugin_coupon_list')));
     }
 
+    public function testEditWithNotFound()
+    {
+        $Coupon = $this->getCoupon();
+        $crawler = $this->client->request('GET', $this->generateUrl('plugin_coupon_edit', ['id' => 999999]));
+        $crawler = $this->client->followRedirect();
+        $this->assertContains('クーポンが存在しません。', $crawler->html());
+    }
+
     /**
      * testEnable.
      */
     public function testEnable()
     {
         $Coupon = $this->getTestData();
-        $this->client->request('GET', $this->generateUrl('plugin_coupon_enable', ['id' => $Coupon->getId()]));
+        $this->client->request('PUT', $this->generateUrl('plugin_coupon_enable', ['id' => $Coupon->getId()]));
         $this->assertTrue($this->client->getResponse()->isRedirect($this->generateUrl('plugin_coupon_list')));
+    }
+
+    public function testEnableWithNotFound()
+    {
+        $Coupon = $this->getTestData();
+        $this->client->request('PUT', $this->generateUrl('plugin_coupon_enable', ['id' => 999999]));
+        $this->assertTrue($this->client->getResponse()->isNotFound());
     }
 
     /**
@@ -120,6 +135,13 @@ class CouponControllerTest extends AbstractAdminWebTestCase
         $Coupon = $this->getTestData();
         $this->client->request('DELETE', $this->generateUrl('plugin_coupon_delete', ['id' => $Coupon->getId()]));
         $this->assertTrue($this->client->getResponse()->isRedirect($this->generateUrl('plugin_coupon_list')));
+    }
+
+    public function testDeleteWithNotFound()
+    {
+        $Coupon = $this->getTestData();
+        $this->client->request('DELETE', $this->generateUrl('plugin_coupon_delete', ['id' => 999999]));
+        $this->assertTrue($this->client->getResponse()->isNotFound());
     }
 
     /**

@@ -174,21 +174,15 @@ class CouponController extends AbstractController
      * @param Coupon  $Coupon
      *
      * @return RedirectResponse
-     * @Route("/%eccube_admin_route%/plugin/coupon/{id}/enable", name="plugin_coupon_enable", requirements={"id" = "\d+"})
+     * @Route("/%eccube_admin_route%/plugin/coupon/{id}/enable", name="plugin_coupon_enable", requirements={"id" = "\d+"}, methods={"put"})
      * @ParamConverter("Coupon")
      */
     public function enable(Request $request, Coupon $Coupon)
     {
-        // =============
-        // 更新処理
-        // =============
-        $status = $this->couponRepository->enableCoupon($Coupon);
-        if ($status) {
-            $this->addSuccess('plugin_coupon.admin.enable.success', 'admin');
-            log_info('Change status a coupon with ', ['ID' => $Coupon->getId()]);
-        } else {
-            $this->addError('plugin_coupon.admin.notfound', 'admin');
-        }
+        $this->isTokenValid();
+        $this->couponRepository->enableCoupon($Coupon);
+        $this->addSuccess('plugin_coupon.admin.enable.success', 'admin');
+        log_info('Change status a coupon with ', ['ID' => $Coupon->getId()]);
 
         return $this->redirectToRoute('plugin_coupon_list');
     }
@@ -200,19 +194,15 @@ class CouponController extends AbstractController
      * @param Coupon  $Coupon
      *
      * @return RedirectResponse
-     * @Route("/%eccube_admin_route%/plugin/coupon/{id}/delete", name="plugin_coupon_delete", requirements={"id" = "\d+"})
+     * @Route("/%eccube_admin_route%/plugin/coupon/{id}/delete", name="plugin_coupon_delete", requirements={"id" = "\d+"}, methods={"delete"})
      * @ParamConverter("Coupon")
      */
     public function delete(Request $request, Coupon $Coupon)
     {
         $this->isTokenValid();
-        // クーポン情報を削除する
-        if ($this->couponRepository->deleteCoupon($Coupon)) {
-            $this->addSuccess('plugin_coupon.admin.delete.success', 'admin');
-            log_info('Delete a coupon with ', ['ID' => $Coupon->getId()]);
-        } else {
-            $this->addError('plugin_coupon.admin.notfound', 'admin');
-        }
+        $this->couponRepository->deleteCoupon($Coupon);
+        $this->addSuccess('plugin_coupon.admin.delete.success', 'admin');
+        log_info('Delete a coupon with ', ['ID' => $Coupon->getId()]);
 
         return $this->redirectToRoute('plugin_coupon_list');
     }

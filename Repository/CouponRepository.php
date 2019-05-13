@@ -120,7 +120,7 @@ class CouponRepository extends AbstractRepository
     {
         $em = $this->getEntityManager();
         // クーポン情報を書き換える
-        $Coupon->setEnableFlag($Coupon->getEnableFlag() == 0 ? Constant::ENABLED : Constant::DISABLED);
+        $Coupon->setEnableFlag(!$Coupon->getEnableFlag());
         // クーポン情報を登録する
         $em->persist($Coupon);
         $em->flush($Coupon);
