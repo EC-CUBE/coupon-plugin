@@ -494,14 +494,14 @@
                     <div class="row justify-content-between align-items-center">
                         <div class="col-6">
                             <div class="c-conversionArea__leftBlockItem">
-                                <a class="c-beseLink" href="{{ url('plugin_coupon_list') }}">
-                                    <i class="fa fa-backward" aria-hidden="true"></i><span>{{ 'common.label.btn.go_back'|trans }}</span></a>
+                                <a class="c-baseLink" href="{{ url('plugin_coupon_list') }}">
+                                    <i class="fa fa-backward" aria-hidden="true"></i><span>{{ 'common.back'|trans }}</span></a>
                             </div>
                         </div>
                         <div class="col-6">
                             <div class="row align-items-center justify-content-end">
                                 <div class="col-auto">
-                                    <button type="submit" class="btn btn-primary btn-block btn-lg">{{ 'common.label.save'|trans }}</button>
+                                    <button type="submit" class="btn btn-primary btn-block btn-lg">{{ 'common.registration'|trans }}</button>
                                 </div>
                             </div>
                         </div>
@@ -528,7 +528,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        {{ form_widget(searchProductModalForm.id, { attr : { placeholder : 'admin.common.label.product_name'|trans } } ) }}
+                        {{ form_widget(searchProductModalForm.id, { attr : { placeholder : 'admin.product.name'|trans } } ) }}
                     </div>
                     <div class="form-group">
                         {{ form_widget(searchProductModalForm.category_id) }}

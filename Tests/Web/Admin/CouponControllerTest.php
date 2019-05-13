@@ -67,7 +67,7 @@ class CouponControllerTest extends AbstractAdminWebTestCase
      */
     public function testIndexList()
     {
-        $this->getCoupon();
+        $Coupon = $this->getCoupon();
         $crawler = $this->client->request('GET', $this->generateUrl('plugin_coupon_list'));
         $this->assertTrue($this->client->getResponse()->isSuccessful());
         $this->expected = '1 件';
@@ -132,7 +132,7 @@ class CouponControllerTest extends AbstractAdminWebTestCase
     private function getForm(Crawler $crawler)
     {
         $current = new \DateTime();
-        $form = $crawler->selectButton('登録')->form();
+        $form = $crawler->selectButton('登録する')->form();
         $form['coupon[_token]'] = 'dummy';
         $form['coupon[coupon_cd]'] = 'aaaaaaa';
         $form['coupon[coupon_name]'] = 'aaaaaa';
@@ -210,8 +210,8 @@ class CouponControllerTest extends AbstractAdminWebTestCase
         $Coupon->setDiscountPrice(100);
         $Coupon->setDiscountRate(10);
         $Coupon->setCouponLowerLimit(100);
-        $Coupon->setCouponMember(0);
-        $Coupon->setEnableFlag(1);
+        $Coupon->setCouponMember(false);
+        $Coupon->setEnableFlag(true);
         $Coupon->setVisible(true);
         $d1 = $date1->setDate(2016, 1, 1);
         $Coupon->setAvailableFromDate($d1);

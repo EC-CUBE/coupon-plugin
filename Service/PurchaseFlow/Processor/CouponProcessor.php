@@ -191,7 +191,7 @@ class CouponProcessor extends ItemHolderValidator implements ItemHolderPreproces
         }
 
         $CouponOrder = $this->couponOrderRepository->getCouponOrder($itemHolder->getPreOrderId());
-        $CouponOrder->setOrderDate(new \DateTime());
+        $CouponOrder->setOrderDate(new \DateTimne());
         $this->entityManager->flush($CouponOrder);
 
         $Coupon = $this->couponRepository->findActiveCoupon($CouponOrder->getCouponCd());

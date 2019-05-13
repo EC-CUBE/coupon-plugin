@@ -74,13 +74,13 @@
                                     <td>{{ Coupon.coupon_lower_limit|price }}</td>
                                     <td>{{ Coupon.available_from_date|date_format }} ～ {{ Coupon.available_to_date|date_format }}</td>
 
-                                    <td><a href="{{ url('plugin_coupon_edit', { id: Coupon.id }) }}">{{ 'common.label.edit'|trans }}</a></td>
+                                    <td><a href="{{ url('plugin_coupon_edit', { id: Coupon.id }) }}">{{ 'admin.common.edit'|trans }}</a></td>
                                     <td>
                                         <a href="{{ url('plugin_coupon_enable', { id: Coupon.id }) }}">
                                         {% if Coupon.enable_flag == 1 %}
-                                            {{ 'common.label.enabled'|trans }}
+                                            {{ 'common.enabled'|trans }}
                                         {% else %}
-                                            {{ 'common.label.disabled'|trans }}
+                                            {{ 'common.disabled'|trans }}
                                         {% endif %}
                                         </a>
                                     </td>
@@ -106,10 +106,10 @@
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button class="btn btn-ec-sub" type="button"
-                                                                data-dismiss="modal">{{ 'common.label.cancel'|trans }}
+                                                                data-dismiss="modal">{{ 'common.cancel'|trans }}
                                                         </button>
                                                         <a href="{{ url('plugin_coupon_delete', {'id' : Coupon.id}) }}" class="btn btn-ec-delete" data-confirm="false" {{ csrf_token_for_anchor() }} data-method="delete">
-                                                            {{ 'common.label.delete'|trans }}
+                                                            {{ 'common.delete'|trans }}
                                                         </a>
                                                     </div>
                                                 </div>
