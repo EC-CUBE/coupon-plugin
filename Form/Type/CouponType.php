@@ -207,7 +207,7 @@ class CouponType extends AbstractType
                 $form = $event->getForm();
                 $data = $form->getData();
                 if (count($data['CouponDetails']) == 0 && $data['coupon_type'] != Coupon::ALL) {
-                    $form['coupon_type']->addError(new FormError('plugin_coupon.admin.coupontype'));
+                    $form['coupon_type']->addError(new FormError(trans('plugin_coupon.admin.coupontype')));
                 }
 
                 if ($data['discount_type'] == Coupon::DISCOUNT_PRICE) {
@@ -242,7 +242,7 @@ class CouponType extends AbstractType
                     $fromDate = Carbon::instance($data['available_from_date']);
                     $toDate = Carbon::instance($data['available_to_date']);
                     if ($fromDate->gt($toDate)) {
-                        $form['available_from_date']->addError(new FormError('plugin_coupon.admin.avaiabledate'));
+                        $form['available_from_date']->addError(new FormError(trans('plugin_coupon.admin.avaiabledate')));
                     }
                 }
             });

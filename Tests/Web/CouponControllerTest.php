@@ -210,15 +210,18 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
         $this->routingShopping();
         $crawler = $this->client->request('GET', $this->generateUrl('plugin_coupon_shopping'));
         $Coupon = $this->getCoupon();
-        $Coupon->setCouponLowerLimit(600000);
+        $Coupon->setCouponLowerLimit(9999999999);
         // クーポン情報を登録する
         $this->entityManager->persist($Coupon);
         $this->entityManager->flush($Coupon);
         $form = $this->getForm($crawler, $Coupon->getCouponCd());
 
-        /* @var \Symfony\Component\DomCrawler\Crawler $crawler */
         $this->client->submit($form);
-        $this->assertFalse($this->client->getResponse()->isRedirection());
+        $this->assertTrue($this->client->getResponse()->isRedirection());
+
+        /* @var \Symfony\Component\DomCrawler\Crawler $crawler */
+        $crawler = $this->client->followRedirect();
+        $this->assertContains('9,999,999,999円以上', $crawler->html());
     }
 
     /**
@@ -399,8 +402,8 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
         $Coupon->setDiscountPrice(100);
         $Coupon->setDiscountRate(10);
         $Coupon->setCouponLowerLimit(100);
-        $Coupon->setCouponMember(0);
-        $Coupon->setEnableFlag(1);
+        $Coupon->setCouponMember(false);
+        $Coupon->setEnableFlag(true);
         $Coupon->setVisible(true);
         $d1 = $date1->setDate(2016, 1, 1);
         $Coupon->setAvailableFromDate($d1);

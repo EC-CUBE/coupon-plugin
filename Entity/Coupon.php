@@ -356,7 +356,7 @@ class Coupon extends AbstractEntity
     /**
      * Set enable_flag.
      *
-     * @param int $enableFlag
+     * @param bool $enableFlag
      *
      * @return Coupon
      */
@@ -370,7 +370,7 @@ class Coupon extends AbstractEntity
     /**
      * Get enable_flag.
      *
-     * @return int
+     * @return bool
      */
     public function getEnableFlag()
     {
