@@ -191,7 +191,7 @@ class CouponProcessor extends ItemHolderValidator implements ItemHolderPreproces
         }
 
         $CouponOrder = $this->couponOrderRepository->getCouponOrder($itemHolder->getPreOrderId());
-        $CouponOrder->setOrderDate(new \DateTimne());
+        $CouponOrder->setOrderDate(new \DateTime());
         $this->entityManager->flush($CouponOrder);
 
         $Coupon = $this->couponRepository->findActiveCoupon($CouponOrder->getCouponCd());
@@ -255,7 +255,7 @@ class CouponProcessor extends ItemHolderValidator implements ItemHolderPreproces
     private function removeCouponDiscountItem(ItemHolderInterface $itemHolder, CouponOrder $CouponOrder)
     {
         foreach ($itemHolder->getItems() as $item) {
-            if ($CouponOrder->getOrderItemId() === $item->getId()) {
+            if (CouponProcessor::class === $item->getProcessorName()) {
                 $itemHolder->removeOrderItem($item);
                 $this->entityManager->remove($item);
             }
@@ -310,13 +310,9 @@ class CouponProcessor extends ItemHolderValidator implements ItemHolderPreproces
             ->setOrderItemType($DiscountType)
             ->setTaxDisplayType($TaxInclude)
             ->setTaxType($Taxation)
-            ->setOrder($itemHolder);
+            ->setOrder($itemHolder)
+            ->setProcessorName(CouponProcessor::class);
         $itemHolder->addItem($OrderItem);
-
-        $this->entityManager->persist($OrderItem);
-        $this->entityManager->flush($OrderItem);
-
-        $CouponOrder->setOrderItemId($OrderItem->getId());
     }
 
     protected function clearCoupon(ItemHolderInterface $Order)
