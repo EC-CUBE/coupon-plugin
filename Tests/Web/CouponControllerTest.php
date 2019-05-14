@@ -119,8 +119,6 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
      */
     public function testShoppingCoupon()
     {
-        $this->markTestIncomplete('Need to add a coupon_shopping template manually to the shopping page.');
-
         $this->routingShopping();
         $crawler = $this->client->request('GET', $this->generateUrl('plugin_coupon_shopping'));
         $Coupon = $this->getCoupon();
@@ -136,6 +134,7 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
         $form = $crawler->selectButton('確認する')->form();
         $crawler = $this->client->submit($form);
 
+        $this->client->enableProfiler();
         // 完了画面
         $formConfirm = $crawler->selectButton('注文する')->form();
         $this->client->submit($formConfirm);
@@ -144,6 +143,7 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
         $BaseInfo = $this->baseInfoRepository->get();
         $mailCollector = $this->getMailCollector(false);
         $Messages = $mailCollector->getMessages();
+
         /** @var \Swift_Message $Message */
         $Message = $Messages[0];
 
@@ -172,8 +172,6 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
      */
     public function testRenderMypage()
     {
-        $this->markTestIncomplete('Need to add a coupon_shopping template manually to the mypage page.');
-
         $this->routingShopping();
         $crawler = $this->client->request('GET', $this->generateUrl('plugin_coupon_shopping'));
         $Coupon = $this->getCoupon();
@@ -201,7 +199,7 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
         ]);
 
         $Order = $this->orderRepository->find($CouponOrder->getOrderId());
-        $crawler = $this->client->request('GET', $this->generateUrl('mypage_history', ['id' => $Order->getId()]));
+        $crawler = $this->client->request('GET', $this->generateUrl('mypage_history', ['order_no' => $Order->getOrderNo()]));
         $this->assertContains('ご利用クーポンコード', $crawler->html());
     }
 
