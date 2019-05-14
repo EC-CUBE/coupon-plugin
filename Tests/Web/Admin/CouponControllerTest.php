@@ -19,6 +19,7 @@ use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;
 use Plugin\Coupon4\Entity\Coupon;
 use Plugin\Coupon4\Entity\CouponDetail;
 use Plugin\Coupon4\Repository\CouponRepository;
+use Plugin\Coupon4\Tests\Fixtures\CreateCouponTrait;
 use Symfony\Component\DomCrawler\Crawler;
 
 /**
@@ -26,6 +27,8 @@ use Symfony\Component\DomCrawler\Crawler;
  */
 class CouponControllerTest extends AbstractAdminWebTestCase
 {
+    use CreateCouponTrait;
+
     /**
      * @var Customer
      */
@@ -168,82 +171,5 @@ class CouponControllerTest extends AbstractAdminWebTestCase
         $form['coupon[coupon_release]'] = 100;
 
         return $form;
-    }
-
-    /**
-     * getCoupon.
-     *
-     * @param int $couponType
-     *
-     * @return Coupon
-     */
-    private function getCoupon($couponType = Coupon::PRODUCT, $discountType = Coupon::DISCOUNT_PRICE)
-    {
-        /** @var Coupon $Coupon */
-        $Coupon = $this->getTestData($couponType, $discountType);
-
-        $Product = $this->createProduct();
-
-        $CouponDetail = new CouponDetail();
-        $CouponDetail->setCoupon($Coupon);
-        $CouponDetail->setCouponType($Coupon->getCouponType());
-        $CouponDetail->setUpdateDate($Coupon->getUpdateDate());
-        $CouponDetail->setCreateDate($Coupon->getCreateDate());
-        $CouponDetail->setVisible(true);
-
-        switch ($couponType) {
-            case Coupon::PRODUCT:
-                $CouponDetail->setProduct($Product);
-                break;
-            case Coupon::CATEGORY:
-                $Categories = $Product->getProductCategories();
-                /** @var \Eccube\Entity\ProductCategory $Category */
-                $ProductCategory = $Categories[0];
-                $CouponDetail->setCategory($ProductCategory->getCategory());
-                break;
-            default:
-                break;
-        }
-        $Coupon->addCouponDetail($CouponDetail);
-
-        return $Coupon;
-    }
-
-    /**
-     * getTestData.
-     *
-     * @param int $couponType
-     *
-     * @return Coupon
-     */
-    private function getTestData($couponType = Coupon::PRODUCT, $discountType = Coupon::DISCOUNT_PRICE)
-    {
-        $Coupon = new Coupon();
-
-        $date1 = new \DateTime();
-        $date2 = new \DateTime();
-
-        $Coupon->setCouponCd('aaaaaaaa');
-        $Coupon->setCouponType($couponType);
-        $Coupon->setCouponName('クーポン');
-        $Coupon->setDiscountType($discountType);
-        $Coupon->setCouponRelease(100);
-        $Coupon->setCouponUseTime(100);
-        $Coupon->setDiscountPrice(100);
-        $Coupon->setDiscountRate(10);
-        $Coupon->setCouponLowerLimit(100);
-        $Coupon->setCouponMember(false);
-        $Coupon->setEnableFlag(true);
-        $Coupon->setVisible(true);
-        $d1 = $date1->setDate(2016, 1, 1);
-        $Coupon->setAvailableFromDate($d1);
-        $d2 = $date2->setDate(2040, 12, 31);
-        $Coupon->setAvailableToDate($d2);
-
-        // クーポン情報を登録する
-        $this->entityManager->persist($Coupon);
-        $this->entityManager->flush($Coupon);
-
-        return $Coupon;
     }
 }
