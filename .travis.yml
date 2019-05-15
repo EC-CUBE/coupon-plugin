@@ -75,12 +75,12 @@ jobs:
       stage: Code Coverage
       env: DATABASE_URL=postgres://postgres:password@localhost/cube4_dev DATABASE_SERVER_VERSION=9 COVERAGE=1
       before_install:
-        - *php_setup
         - docker pull schickling/mailcatcher
         - docker run -d -p 1080:1080 -p 1025:1025 --name mailcatcher schickling/mailcatcher
       install:
         - *install_eccube
         - *php_setup
+        - *eccube_setup
       script:
         - ./bin/phpunit --coverage-clover=coverage.clover app/Plugin/${PLUGIN_CODE}/Tests
       after_success:
