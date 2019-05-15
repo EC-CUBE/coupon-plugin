@@ -82,6 +82,6 @@ jobs:
         - *php_setup
         - *eccube_setup
       script:
-        - ./bin/phpunit --coverage-clover=coverage.clover app/Plugin/${PLUGIN_CODE}/Tests
+        - ./bin/phpunit --coverage-clover=app/Plugin/${PLUGIN_CODE}/coverage.clover app/Plugin/${PLUGIN_CODE}/Tests
       after_success:
-        - php vendor/bin/php-coveralls -v -x coverage.clover
+        - php vendor/bin/php-coveralls -v -x app/Plugin/${PLUGIN_CODE}/coverage.clover
