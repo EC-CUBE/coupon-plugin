@@ -82,6 +82,6 @@ jobs:
         - *php_setup
         - *eccube_setup
       script:
-        - phpdbg -qrr -dmemory_limit=-1 vendor/bin/phpunit --coverage-clover=app/Plugin/${PLUGIN_CODE}/coverage.clover app/Plugin/${PLUGIN_CODE}/Tests
+        - phpdbg -qrr -dmemory_limit=-1 vendor/bin/phpunit -c app/Plugin/${PLUGIN_CODE}/phpunit.xml.dist --coverage-clover=app/Plugin/${PLUGIN_CODE}/coverage.clover app/Plugin/${PLUGIN_CODE}/Tests
       after_success:
         - php vendor/bin/php-coveralls -v -x app/Plugin/${PLUGIN_CODE}/coverage.clover
