@@ -36,7 +36,7 @@ install:
   - git clone https://github.com/EC-CUBE/ec-cube.git %BASE_DIR%
   - cd %BASE_DIR%
   # checkout version
-  - git checkout origin/3.1
+  - git checkout origin/3.0
   # see https://github.com/phpmd/phpmd/blob/master/appveyor.yml#L10-L13
   - cinst -y OpenSSL.Light --version 1.1.1
   - SET PATH=C:\Program Files\OpenSSL;%PATH%
