@@ -265,12 +265,15 @@ class CouponProcessor extends ItemHolderValidator implements ItemHolderPreproces
     /**
      * 明細追加処理.
      *
-     * 値引額指定の場合は、税込小計から設定した金額を引く。税区分は不課税(ポイントと同じ)
-     * 税込1080円の商品に、1000円のクーポンを使用すると、80円の支払いになるイメージ
+     * 値引額の場合の計算方法
+     * クーポンで設定した価格で、クーポン値引の明細を生成する(税込価格、税率0%、課税)
+     * 税込1080円の商品に、1000円のクーポンを使用すると、980円の支払いになるイメージ
      *
-     * 値引率指定の場合は、対象の明細ごとに税込の値引額を算出し、税込の明細として差し引く(税区分は課税)
-     * 税込1080円の商品に、10%OFFのクーポンを使用すると、108円の値引きになり、972円の支払いになるイメージ
+     * 明細ごとに税込の値引額を集計し、クーポン値引の明細を生成する(税込価格、税率0%、課税)
+     * 軽減税率適用により税率が混在する場合もあるため、税込価格、税率0%で明細を生成する
+     * 税込1080円の商品に、10%OFFのクーポンを使用すると、100円の値引きになり、980円の支払いになるイメージ
      *
+     * @see https://github.com/EC-CUBE/coupon-plugin/pull/77
      * @param ItemHolderInterface $itemHolder
      * @param CouponOrder $CouponOrder
      * @param integer $discount
@@ -279,26 +282,16 @@ class CouponProcessor extends ItemHolderValidator implements ItemHolderPreproces
     {
         $Coupon = $this->couponRepository->find($CouponOrder->getCouponId());
 
-        $taxDisplayType = TaxDisplayType::EXCLUDED; // 税抜
-        $taxType = TaxType::NON_TAXABLE; // 不課税
+        $taxDisplayType = TaxDisplayType::INCLUDED; // 税込
+        $taxType = TaxType::TAXATION; // 課税
         $tax = 0;
         $taxRate = 0;
         $taxRuleId = null;
         $roundingType = null;
-        if ($Coupon->getDiscountType() == Coupon::DISCOUNT_RATE) {
-            $taxDisplayType = TaxDisplayType::INCLUDED; // 税込
-            $taxType = TaxType::TAXATION; // 課税
-            $TaxRule = $this->taxRuleRepository->getByRule(); // XXX 軽減税率に対応していない
-            $taxRuleId = $TaxRule->getId();
-            $taxRate = $TaxRule->getTaxRate();
-            $tax = $CouponOrder->getDiscount() - ($CouponOrder->getDiscount() / 1 + ($taxRate / 100));
-            $roundingType = $TaxRule->getRoundingType();
-        }
         $DiscountType = $this->entityManager->find(OrderItemType::class, OrderItemType::DISCOUNT);
-        $TaxInclude = $this->entityManager->find(TaxDisplayType::class, $taxDisplayType); // FIXME ポイント種別によって変更する
+        $TaxInclude = $this->entityManager->find(TaxDisplayType::class, $taxDisplayType);
         $Taxation = $this->entityManager->find(TaxType::class, $taxType);
 
-        // TODO TaxProcessorが先行して実行されるため, 税額等の値は個別にセットする.
         $OrderItem = new OrderItem();
         $OrderItem->setProductName($CouponOrder->getCouponName())
             ->setPrice($CouponOrder->getDiscount() * -1)
