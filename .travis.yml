@@ -33,6 +33,7 @@ before_install: &php_setup |
   echo "apc.enable_cli=1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   echo "memory_limit=-1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   echo "date.timezone=Asia/Tokyo" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+  phpenv config-rm xdebug.ini || true
 
 
 install_eccube: &install_eccube |
@@ -53,7 +54,6 @@ eccube_setup: &eccube_setup |
 install:
   - *install_eccube
   - *eccube_setup
-  - phpenv config-rm xdebug.ini || true
 
 script:
   - ./bin/phpunit app/Plugin/${PLUGIN_CODE}/Tests
@@ -82,6 +82,6 @@ jobs:
         - *php_setup
         - *eccube_setup
       script:
-        - ./bin/phpunit --coverage-clover=app/Plugin/${PLUGIN_CODE}/coverage.clover app/Plugin/${PLUGIN_CODE}/Tests
+        - phpdbg -qrr -dmemory_limit=-1 vendor/bin/phpunit --coverage-clover=app/Plugin/${PLUGIN_CODE}/coverage.clover app/Plugin/${PLUGIN_CODE}/Tests
       after_success:
         - php vendor/bin/php-coveralls -v -x app/Plugin/${PLUGIN_CODE}/coverage.clover
