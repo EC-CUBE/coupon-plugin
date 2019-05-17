@@ -28,7 +28,7 @@ env:
     # ec-cube 3.0.17
     - ECCUBE_VERSION=3.0.17 DB=mysql USER=root DBNAME=myapp_test DBPASS=' ' DBUSER=root
     - ECCUBE_VERSION=3.0.17 DB=pgsql USER=postgres DBNAME=myapp_test DBPASS=password DBUSER=postgres
-    # ec-cube 3.0.18
+    # ec-cube 3.0.x
     - ECCUBE_VERSION=3.0 DB=mysql USER=root DBNAME=myapp_test DBPASS=' ' DBUSER=root
     - ECCUBE_VERSION=3.0 DB=pgsql USER=postgres DBNAME=myapp_test DBPASS=password DBUSER=postgres
 matrix:
