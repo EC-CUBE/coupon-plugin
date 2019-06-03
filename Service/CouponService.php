@@ -33,6 +33,7 @@ use Plugin\Coupon4\Entity\CouponOrder;
 use Eccube\Entity\Category;
 use Plugin\Coupon4\Repository\CouponOrderRepository;
 use Plugin\Coupon4\Repository\CouponRepository;
+use Plugin\Coupon4\Service\PurchaseFlow\Processor\CouponProcessor;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
@@ -341,11 +342,12 @@ class CouponService
         /** @var CouponOrder $CouponOrder */
         $CouponOrder = $this->couponOrderRepository->getCouponOrder($Order->getPreOrderId());
         if ($CouponOrder) {
-            $OrderItem = $this->orderItemRepository->find($CouponOrder->getOrderItemId());
-            if ($OrderItem) {
+            $OrderItems = $this->orderItemRepository->findBy(['processor_name' => CouponProcessor::class]);
+            foreach ($OrderItems as $OrderItem) {
                 $this->entityManager->remove($OrderItem);
                 $this->entityManager->flush($OrderItem);
             }
+
             $this->entityManager->remove($CouponOrder);
             $this->entityManager->flush($CouponOrder);
 
