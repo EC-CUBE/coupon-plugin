@@ -3,9 +3,9 @@
 /*
  * This file is part of EC-CUBE
  *
- * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.lockon.co.jp/
+ * http://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -13,21 +13,14 @@
 
 namespace Plugin\Coupon4\Tests\Web\Admin;
 
-use Eccube\Entity\Customer;
 use Eccube\Entity\Master\OrderStatus;
 use Eccube\Entity\Order;
-use Eccube\Repository\DeliveryRepository;
 use Eccube\Repository\OrderRepository;
-use Eccube\Repository\ProductRepository;
 use Eccube\Service\OrderStateMachine;
 use Eccube\Tests\Web\Admin\Order\AbstractEditControllerTestCase;
-use Plugin\Coupon4\Entity\Coupon;
-use Plugin\Coupon4\Entity\CouponDetail;
 use Plugin\Coupon4\Entity\CouponOrder;
-use Plugin\Coupon4\Repository\CouponRepository;
 use Plugin\Coupon4\Service\CouponService;
 use Plugin\Coupon4\Tests\Fixtures\CreateCouponTrait;
-use Symfony\Component\DomCrawler\Crawler;
 
 /**
  * Class CouponControllerTest.
@@ -60,7 +53,7 @@ class OrderControllerTest extends AbstractEditControllerTestCase
         $Order = $this->createOrder($Customer);
 
         $discount = $this->couponService->recalcOrder($Coupon, $Order->getProductOrderItems());
-        
+
         $CouponOrder = new CouponOrder();
         $CouponOrder->setCouponId($Coupon->getId())
             ->setCouponCd($Coupon->getCouponCd())

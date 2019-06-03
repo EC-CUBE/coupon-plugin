@@ -3,9 +3,9 @@
 /*
  * This file is part of EC-CUBE
  *
- * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.lockon.co.jp/
+ * http://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -16,7 +16,6 @@ namespace Plugin\Coupon4\Service\PurchaseFlow\Processor;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Eccube\Annotation\OrderFlow;
-use Eccube\Common\Constant;
 use Eccube\Entity\Master\OrderStatus;
 use Eccube\Entity\Order;
 use Eccube\Entity\ItemHolderInterface;
@@ -25,7 +24,6 @@ use Eccube\Service\PurchaseFlow\ItemHolderValidator;
 use Eccube\Service\PurchaseFlow\PurchaseContext;
 use Eccube\Service\PurchaseFlow\PurchaseProcessor;
 use Plugin\Coupon4\Entity\Coupon;
-use Plugin\Coupon4\Entity\CouponOrder;
 use Plugin\Coupon4\Service\CouponService;
 use Plugin\Coupon4\Repository\CouponRepository;
 use Plugin\Coupon4\Repository\CouponOrderRepository;
@@ -131,7 +129,6 @@ class CouponStateProcessor extends ItemHolderValidator implements ItemHolderPrep
                 }
             }
         }
-
     }
 
     /*

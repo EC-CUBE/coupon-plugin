@@ -3,9 +3,9 @@
 /*
  * This file is part of EC-CUBE
  *
- * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.lockon.co.jp/
+ * http://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -14,15 +14,10 @@
 namespace Plugin\Coupon4;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Eccube\Common\Constant;
-use Eccube\Entity\Master\OrderStatus;
 use Eccube\Entity\Order;
-use Eccube\Event\EccubeEvents;
-use Eccube\Event\EventArgs;
 use Eccube\Event\TemplateEvent;
 use Eccube\Repository\OrderRepository;
 use Plugin\Coupon4\Entity\Coupon;
-use Plugin\Coupon4\Entity\CouponOrder;
 use Plugin\Coupon4\Repository\CouponOrderRepository;
 use Plugin\Coupon4\Repository\CouponRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -86,7 +81,7 @@ class Event implements EventSubscriberInterface
             'Shopping/index.twig' => 'index',
             'Shopping/confirm.twig' => 'index',
             'Mypage/history.twig' => 'onRenderMypageHistory',
-            '@admin/Order/edit.twig' => 'onRenderAdminOrderEdit'
+            '@admin/Order/edit.twig' => 'onRenderAdminOrderEdit',
         ];
     }
 

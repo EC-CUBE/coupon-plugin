@@ -3,9 +3,9 @@
 /*
  * This file is part of EC-CUBE
  *
- * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.lockon.co.jp/
+ * http://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -267,6 +267,7 @@ class CouponProcessor extends ItemHolderValidator implements ItemHolderPreproces
      * 税込1080円の商品に、10%OFFのクーポンを使用すると、100円の値引きになり、980円の支払いになるイメージ
      *
      * @see https://github.com/EC-CUBE/coupon-plugin/pull/77
+     *
      * @param ItemHolderInterface $itemHolder
      * @param CouponOrder $CouponOrder
      * @param integer $discount
