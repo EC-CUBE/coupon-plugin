@@ -141,31 +141,30 @@ class CouponProcessor extends ItemHolderValidator implements ItemHolderPreproces
 
         /** @var Customer $Customer */
         $Customer = $itemHolder->getCustomer();
-        if (!$Customer->getId() && $Coupon->getCouponMember()) {
-            $this->throwInvalidItemException(trans('plugin_coupon.front.shopping.member'));
+        if (!$Customer && $Coupon->getCouponMember()) {
             $this->clearCoupon($itemHolder);
+            $this->throwInvalidItemException(trans('plugin_coupon.front.shopping.member'));
         }
 
-        $lowerLimit = $Coupon->getCouponLowerLimit();
         $couponProducts = $this->couponService->existsCouponProduct($Coupon, $itemHolder);
         if (count($couponProducts) == 0) {
-            $this->throwInvalidItemException(trans('plugin_coupon.front.shopping.couponusetime'), null, true);
             $this->clearCoupon($itemHolder);
+            $this->throwInvalidItemException(trans('plugin_coupon.front.shopping.couponusetime'), null, true);
         }
 
         $checkLowerLimit = $this->couponService->isLowerLimitCoupon($couponProducts, $lowerLimit);
         if (!$checkLowerLimit) {
+            $this->clearCoupon($itemHolder);
             $message = trans('plugin_coupon.front.shopping.lowerlimit', ['lowerLimit' => number_format($lowerLimit)]);
             $this->throwInvalidItemException($message, null, true);
-            $this->clearCoupon($itemHolder);
         }
 
         $discount = $this->couponService->recalcOrder($Coupon, $couponProducts);
 
         $checkCouponUseTime = $this->couponRepository->checkCouponUseTime($CouponOrder->getCouponCd());
         if (!$checkCouponUseTime) {
-            $this->throwInvalidItemException(trans('plugin_coupon.front.shopping.couponusetime'), null, true);
             $this->clearCoupon($itemHolder);
+            $this->throwInvalidItemException(trans('plugin_coupon.front.shopping.couponusetime'), null, true);
         }
 
         // クーポンとポイント併用不可
