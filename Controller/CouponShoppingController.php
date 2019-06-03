@@ -34,16 +34,6 @@ use Symfony\Component\Routing\Annotation\Route;
 class CouponShoppingController extends AbstractController
 {
     /**
-     * @var string 非会員用セッションキー
-     */
-    private $sessionKey = 'eccube.front.shopping.nonmember';
-
-    /**
-     * @var ShoppingService
-     */
-    private $shoppingService;
-
-    /**
      * @var DeliveryTimeRepository
      */
     private $deliveryTimeRepository;
@@ -153,7 +143,7 @@ class CouponShoppingController extends AbstractController
                 if ($this->isGranted('ROLE_USER')) {
                     $Customer = $this->getUser();
                 } else {
-                    $Customer = $this->shoppingService->getNonMember($this->sessionKey);
+                    $Customer = $this->orderHelper->getNonMember();
                     if ($Coupon) {
                         if ($Coupon->getCouponMember()) {
                             $form->get('coupon_cd')->addError(new FormError(trans('plugin_coupon.front.shopping.member')));
