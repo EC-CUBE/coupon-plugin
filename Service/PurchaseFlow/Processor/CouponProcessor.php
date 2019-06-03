@@ -167,13 +167,6 @@ class CouponProcessor extends ItemHolderValidator implements ItemHolderPreproces
             $this->clearCoupon($itemHolder);
             $this->throwInvalidItemException(trans('plugin_coupon.front.shopping.couponusetime'), null, true);
         }
-
-        // クーポンとポイント併用不可
-        // $usePoint = $itemHolder->getUsePoint();
-        // if ($usePoint > 0 && $CouponOrder && $CouponOrder->isVisible()) {
-        //     $this->couponService->removeCouponOrder($itemHolder);
-        //     $this->throwInvalidItemException(trans('plugin_coupon.front.shopping.conflictpoint'));
-        // }
     }
 
     /*

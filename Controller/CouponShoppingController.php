@@ -165,40 +165,6 @@ class CouponShoppingController extends AbstractController
                     if (count($couponProducts) == 0) {
                         $existCoupon = false;
                     }
-                    /*
-                    if (!$existCoupon) {
-                        $form->get('coupon_cd')->addError(new FormError(trans('plugin_coupon.front.shopping.notexists')));
-                        $error = true;
-                    }
-
-                    if (!$checkLowerLimit) {
-                        $message = trans('plugin_coupon.front.shopping.lowerlimit', ['lowerLimit' => number_format($lowerLimit)]);
-                        $form->get('coupon_cd')->addError(new FormError($message));
-                        $error = true;
-                    }
-
-                    // クーポンが既に利用されているかチェック
-                    $couponUsed = $service->checkCouponUsedOrNot($formCouponCd, $Customer);
-                    if ($couponUsed) {
-                        // 既に存在している
-                        $form->get('coupon_cd')->addError(new FormError(trans('plugin_coupon.front.shopping.sameuser')));
-                        $error = true;
-                    }
-
-                    // クーポンの発行枚数チェック
-                    $checkCouponUseTime = $this->couponRepository->checkCouponUseTime($formCouponCd);
-                    if (!$checkCouponUseTime && $existCoupon) {
-                        $form->get('coupon_cd')->addError(new FormError(trans('plugin_coupon.front.shopping.couponusetime')));
-                        $error = true;
-                    }
-
-                    // Todo: check discount vs total payment
-                    // 合計金額より値引き額の方が高いかチェック
-//                    if ($Order->getTotal() < $discount && $existCoupon) {
-//                        $form->get('coupon_cd')->addError(new FormError('plugin_coupon.front.shopping.minus'));
-//                        $error = true;
-//                    }
-*/
                 }
 
                 // ----------------------------------
