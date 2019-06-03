@@ -135,8 +135,8 @@ class CouponProcessor extends ItemHolderValidator implements ItemHolderPreproces
         /** @var Coupon $Coupon */
         $Coupon = $this->couponRepository->findActiveCoupon($CouponOrder->getCouponCd());
         if (!$Coupon) {
-            $this->throwInvalidItemException('クーポンが取得できませんでした', null, true);
             $this->clearCoupon($itemHolder);
+            $this->throwInvalidItemException('クーポンが取得できませんでした', null, true);
         }
 
         /** @var Customer $Customer */
