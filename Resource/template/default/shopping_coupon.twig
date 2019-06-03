@@ -53,7 +53,7 @@
                             </dd>
                         </dl>
                         <dl id="coupon_box__cd">
-                            <dt>{{ form_label(form.coupon_cd) }}</dt>
+                            <dt><label for="coupon_use_coupon_cd">{{ form.coupon_cd.vars.label|trans }}</label></dt>
                             <dd>
                                 {{ form_widget(form.coupon_cd) }}
                                 {{ form_errors(form.coupon_cd) }}
