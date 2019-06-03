@@ -152,6 +152,7 @@ class CouponProcessor extends ItemHolderValidator implements ItemHolderPreproces
             $this->throwInvalidItemException(trans('plugin_coupon.front.shopping.couponusetime'), null, true);
         }
 
+        $lowerLimit = $Coupon->getCouponLowerLimit();
         $checkLowerLimit = $this->couponService->isLowerLimitCoupon($couponProducts, $lowerLimit);
         if (!$checkLowerLimit) {
             $this->clearCoupon($itemHolder);
