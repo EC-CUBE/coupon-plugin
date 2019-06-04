@@ -303,6 +303,65 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
     }
 
     /**
+     * 非会員情報入力→注文手続画面→購入確認画面→完了画面
+     */
+    public function testCompleteWithNonmember()
+    {
+        $this->scenarioCartIn();
+
+        $formData = $this->createNonmemberFormData();
+        $this->scenarioInput($formData);
+        $this->client->followRedirect();
+
+        $crawler = $this->scenarioConfirm();
+        $this->expected = 'ご注文手続き';
+        $this->actual = $crawler->filter('.ec-pageHeader h1')->text();
+        $this->verify();
+
+        $crawler = $this->scenarioComplete(null, $this->generateUrl('shopping_confirm'),
+                                           [
+                                               [
+                                                   'Delivery' => 1,
+                                                   'DeliveryTime' => '',
+                                               ],
+                                           ]);
+        // $this->expected = 'ご注文内容のご確認';
+        // $this->actual = $crawler->filter('.ec-pageHeader h1')->text();
+        // $this->verify();
+
+        $crawler = $this->client->request('GET', $this->generateUrl('plugin_coupon_shopping'));
+        $Coupon = $this->getCoupon();
+        $form = $this->getForm($crawler, $Coupon->getCouponCd());
+        $this->client->submit($form);
+        $this->assertTrue($this->client->getResponse()->isRedirection());
+
+        $crawler = $this->client->followRedirect();
+        $this->expected = '利用しています。';
+        $this->actual = $crawler->filter('strong.text-danger')->text();
+        $this->assertContains($this->expected, $this->actual);
+
+        $this->scenarioCheckout();
+        $this->assertTrue($this->client->getResponse()->isRedirect($this->generateUrl('shopping_complete')));
+
+        $mailCollector = $this->getMailCollector(false);
+        $Messages = $mailCollector->getMessages();
+        $Message = $Messages[0];
+
+        $this->expected = 'ご注文ありがとうございます';
+        $this->actual = $Message->getSubject();
+        $this->assertContains($this->expected, $this->actual);
+
+        preg_match('/ご注文番号：([0-9]+)/u', $Message->getBody(), $matched);
+        list(, $order_id) =  $matched;
+        /** @var Order $Order */
+        $Order = $this->orderRepository->find($order_id);
+
+        $this->actual = $Coupon->getDiscountPrice();
+        $this->expected = 0 - $Order->getItems()->getDiscounts()->first()->getPrice();
+        $this->verify();
+    }
+
+    /**
      * routingShopping.
      */
     private function routingShopping()
@@ -330,6 +389,19 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
         $form['coupon_use[_token]'] = 'dummy';
         $form['coupon_use[coupon_cd]'] = $couponCd;
         $form['coupon_use[coupon_use]'] = 1;
+
+        return $form;
+    }
+
+    private function createNonmemberFormData()
+    {
+        $faker = $this->getFaker();
+        $email = $faker->safeEmail;
+        $form = parent::createShippingFormData();
+        $form['email'] = [
+            'first' => $email,
+            'second' => $email,
+        ];
 
         return $form;
     }
