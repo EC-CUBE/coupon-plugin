@@ -407,7 +407,7 @@ class CouponService
         /* @var $detail OrderItem */
         foreach ($Order->getItems()->getProductClasses() as $detail) {
             if (in_array($detail->getProduct()->getId(), $targetProductIds)) {
-                $couponProducts = $this->getCouponProducts($detail);
+                $couponProducts = $this->getCouponProducts($detail) + $couponProducts;
             }
         }
 
@@ -431,13 +431,12 @@ class CouponService
         foreach ($Coupon->getCouponDetails() as $detail) {
             $targetCategoryIds[] = $detail->getCategory()->getId();
         }
-
         // 受注データからカテゴリIDを取得する
         /* @var $orderDetail OrderItem */
         foreach ($Order->getItems()->getProductClasses() as $orderDetail) {
             foreach ($orderDetail->getProduct()->getProductCategories() as $productCategory) {
                 if ($this->existsDepthCategory($targetCategoryIds, $productCategory->getCategory())) {
-                    $couponProducts = $this->getCouponProducts($orderDetail);
+                    $couponProducts = $this->getCouponProducts($orderDetail) + $couponProducts ;
                 }
             }
         }
