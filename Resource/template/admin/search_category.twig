@@ -25,7 +25,7 @@
 
         $newWidget.find('#coupon_CouponDetails_' + cnt + '_Category').val(id);
         $newWidget.find('#coupon_CouponDetails_' + cnt + '_category_name').text(name);
-        $newWidget.find('#coupon_CouponDetails_' + cnt + '_coupon_type').val({{ constant('Plugin\\Coupon\\Entity\\Coupon::CATEGORY') }});
+        $newWidget.find('#coupon_CouponDetails_' + cnt + '_coupon_type').val({{ constant('Plugin\\Coupon4\\Entity\\Coupon::CATEGORY') }});
 
         // 明細行に追加.
         list.append($newWidget);
@@ -51,7 +51,7 @@
                     </td>
                     <td class="text-right">
                         <button onclick="fnAddCategoryDetail($(this).parent().parent(), {{ id }},  '{{ name|escape('js') }}')" type="button" class="btn btn-default btn-sm">
-                            {{ 'admin.common.label.ok'|trans }}
+                            {{ 'common.ok'|trans }}
                         </button>
                     </td>
                 </tr>

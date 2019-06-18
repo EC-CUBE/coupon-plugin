@@ -27,7 +27,7 @@
 
         $newWidget.find('#coupon_CouponDetails_' + cnt + '_Product').val(product_id);
         $newWidget.find('#coupon_CouponDetails_' + cnt + '_product_name').text(product_name);
-        $newWidget.find('#coupon_CouponDetails_' + cnt + '_coupon_type').val({{ constant('Plugin\\Coupon\\Entity\\Coupon::PRODUCT') }});
+        $newWidget.find('#coupon_CouponDetails_' + cnt + '_coupon_type').val({{ constant('Plugin\\Coupon4\\Entity\\Coupon::PRODUCT') }});
 
         // 明細行に追加.
         list.append($newWidget);
@@ -89,7 +89,7 @@
                     </td>
                     <td class="text-right">
                         <button onclick="fnAddProductDetail($(this).parent().parent(), {{ Product.id }},  '{{ Product.name|escape('js') }}')" type="button" class="btn btn-default btn-sm">
-                            {{ 'admin.common.label.ok'|trans }}
+                            {{ 'common.ok'|trans }}
                         </button>
                     </td>
                 </tr>

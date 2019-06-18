@@ -34,7 +34,7 @@ class CouponSearchCategoryType extends AbstractType
             ->add('category_id', CategoryType::class, [
                 'label' => 'カテゴリ',
                 'required' => false,
-                'placeholder' => 'searchproduct.placeholder.select',
+                'placeholder' => 'common.select__all_products',
             ]);
     }
 
