@@ -373,13 +373,16 @@ class CouponService
         $snippet .= PHP_EOL;
         $snippet .= 'クーポンコード: ';
 
+        $message = $Order->getCompleteMailMessage();
+        if ($message) {
+            $message = preg_replace('/'.preg_quote($snippet).'.*$/m', '', $message);
+            $Order->setCompleteMailMessage($message ? trim($message) : null);
+            $snippet = PHP_EOL.$snippet; // 行頭に改行コードを追加
+        }
+
         if ($couponCd && $couponName) {
             $snippet .= $couponCd.' '.$couponName.PHP_EOL;
             $Order->appendCompleteMailMessage($snippet);
-        } else {
-            $message = $Order->getCompleteMailMessage();
-            $message = preg_replace('/'.preg_quote($snippet).'.*$/m', '', $message);
-            $Order->setCompleteMailMessage($message);
         }
     }
 
