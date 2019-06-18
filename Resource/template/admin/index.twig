@@ -76,7 +76,7 @@
 
                                     <td><a href="{{ url('plugin_coupon_edit', { id: Coupon.id }) }}">{{ 'admin.common.edit'|trans }}</a></td>
                                     <td>
-                                        <a href="{{ url('plugin_coupon_enable', { id: Coupon.id }) }}" {{ csrf_token_for_anchor() }} data-message="" data-method="put">
+                                        <a href="{{ url('plugin_coupon_enable', { id: Coupon.id }) }}" {{ csrf_token_for_anchor() }} data-confirm="false" data-method="put">
                                         {% if Coupon.enable_flag == 1 %}
                                             {{ 'common.enabled'|trans }}
                                         {% else %}
