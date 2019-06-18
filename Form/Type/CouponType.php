@@ -14,6 +14,7 @@
 namespace Plugin\Coupon4\Form\Type;
 
 use Carbon\Carbon;
+use Eccube\Form\Type\PriceType;
 use Plugin\Coupon4\Entity\Coupon;
 use Plugin\Coupon4\Repository\CouponRepository;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -23,7 +24,6 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
@@ -135,7 +135,7 @@ class CouponType extends AbstractType
                     new Assert\NotBlank(),
                 ],
             ])
-            ->add('coupon_lower_limit', MoneyType::class, [
+            ->add('coupon_lower_limit', PriceType::class, [
                 'label' => 'plugin_coupon.admin.label.coupon_lower_limit',
                 'required' => false,
                 'currency' => $currency,
@@ -145,7 +145,7 @@ class CouponType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('discount_price', MoneyType::class, [
+            ->add('discount_price', PriceType::class, [
                 'label' => 'plugin_coupon.admin.label.discount_price',
                 'required' => false,
                 'currency' => $currency,
