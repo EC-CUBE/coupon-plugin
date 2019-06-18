@@ -20,6 +20,7 @@ use Eccube\Entity\ProductCategory;
 use Eccube\Repository\Master\OrderItemTypeRepository;
 use Eccube\Repository\TaxRuleRepository;
 use Eccube\Tests\EccubeTestCase;
+use Eccube\Tests\Fixture\Generator;
 use Plugin\Coupon4\Entity\Coupon;
 use Plugin\Coupon4\Entity\CouponDetail;
 use Plugin\Coupon4\Repository\CouponOrderRepository;
@@ -145,11 +146,12 @@ class CouponServiceTest extends EccubeTestCase
      */
     public function testExistsCouponProductTypeCategory()
     {
+        /** @var Generator $Generator */
+        $Generator = $this->container->get(Generator::class);
         /** @var Coupon $Coupon */
         $Coupon = $this->getCoupon(Coupon::CATEGORY);
 
         $Customer = $this->createCustomer();
-        $Order = $this->createOrder($Customer);
 
         $details = $Coupon->getCouponDetails();
         /** @var CouponDetail $CouponDetail */
@@ -158,28 +160,13 @@ class CouponServiceTest extends EccubeTestCase
         /** @var ProductCategory $ProductCategory */
         $ProductCategory = $Category->getProductCategories()->first();
         $Product = $ProductCategory->getProduct();
-        $ProductClasses = $Product->getProductClasses();
-        $ProductClass = $ProductClasses[0];
-
-        $orderItem = new OrderItem();
-        // デフォルト課税規則
-        $TaxRule = $this->taxRuleRepository->getByRule();
-        $OrderItemTypeProduct = $this->orderItemTypeRepository->find(OrderItemType::PRODUCT);
-        $orderItem->setProduct($Product)
-            ->setProductClass($ProductClass)
-            ->setProductName($Product->getName())
-            ->setProductCode($ProductClass->getCode())
-            ->setOrderItemType($OrderItemTypeProduct)
-            ->setPrice($ProductClass->getPrice02())
-            ->setQuantity(1)
-            ->setTaxRuleId($TaxRule->getId())
-            ->setTaxRate($TaxRule->getTaxRate());
-        $this->entityManager->persist($orderItem);
-        $orderItem->setOrder($Order);
-        $Order->addOrderItem($orderItem);
-        $this->entityManager->flush();
-
+        $ProductClasses = $Product->getProductClasses()->filter(
+            function ($ProductClass) {
+                return $ProductClass->isVisible();
+            });
+        $Order = $Generator->createOrder($Customer, [$ProductClasses->first()]);
         $products = $this->couponService->existsCouponProduct($Coupon, $Order);
+
         $this->actual = count($products);
 
         $this->expected = 1;
