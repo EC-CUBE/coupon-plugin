@@ -1,6 +1,10 @@
 language: php
 
-sudo: required
+dist: xenial
+
+services:
+  - mysql
+  - postgresql
 
 cache:
   directories:
@@ -73,8 +77,10 @@ jobs:
   include:
     - &coverage
       stage: Code Coverage
-      env: DATABASE_URL=postgres://postgres:password@localhost/cube4_dev DATABASE_SERVER_VERSION=9 COVERAGE=1
+      php: 7.3
+      env: DATABASE_URL=sqlite:///var/eccube.db DATABASE_SERVER_VERSION=3 COVERAGE=1
       before_install:
+        - docker pull nanasess/phpdbg
         - docker pull schickling/mailcatcher
         - docker run -d -p 1080:1080 -p 1025:1025 --name mailcatcher schickling/mailcatcher
       install:
@@ -82,6 +88,7 @@ jobs:
         - *php_setup
         - *eccube_setup
       script:
-        - phpdbg -qrr -dmemory_limit=-1 vendor/bin/phpunit -c app/Plugin/${PLUGIN_CODE}/phpunit.xml.dist --coverage-clover=app/Plugin/${PLUGIN_CODE}/coverage.clover app/Plugin/${PLUGIN_CODE}/Tests
+        - docker run -e DATABASE_URL=sqlite:///var/eccube.db -v "$PWD":/usr/src/myapp:cached -w /usr/src/myapp --rm nanasess/phpdbg phpdbg -qrr -dmemory_limit=-1 ./bin/phpunit -c app/Plugin/${PLUGIN_CODE}/phpunit.xml.dist --coverage-clover=app/Plugin/${PLUGIN_CODE}/coverage.clover app/Plugin/${PLUGIN_CODE}/Tests
       after_success:
+        - sed -i.bak -e 's|/usr/src/myapp/||g' app/Plugin/${PLUGIN_CODE}/coverage.clover
         - php vendor/bin/php-coveralls -v -x app/Plugin/${PLUGIN_CODE}/coverage.clover
