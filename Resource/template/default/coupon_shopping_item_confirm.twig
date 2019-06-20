@@ -9,22 +9,6 @@
 #}
 <script type="text/javascript">
     $(function () {
-        $('#coupon_button').on("click", function () {
-            $(this).attr('disabled', 'disabled');
-            $.ajax({
-                type: 'POST',
-                data: $('#shopping-form').serialize(),
-                url: '{{ url("shopping_redirect_to") }}',
-                success: function(data) {
-                    window.location.href = '{{ url('plugin_coupon_shopping') }}';
-                },
-                error: function() {
-                    window.location.href = '{{ url('plugin_coupon_shopping') }}';
-                }
-            });
-            return false;
-        });
-
         // append to layout
         $(".ec-orderConfirm").last().before($("#coupon").detach());
     })
@@ -34,12 +18,12 @@
     <div class="ec-rectHeading">
         <h2>{{ 'plugin_coupon.front.shopping.header'|trans }}</h2>
     </div>
-    <div id="customer_detail_box" class="column">
+
+    <div id="customer_detail_box" class="column is-edit">
         {% if CouponOrder %}
             <strong class="text-danger">{{ 'plugin_coupon.front.shopping.message.use_code'|trans({'%code%': CouponOrder.coupon_cd }) }}</strong>
         {% else %}
             {{ 'plugin_coupon.front.shopping.message.empty'|trans }}
         {% endif %}
-        <p><a class="btn btn-default btn-sm" id="coupon_button" href="{{ url('plugin_coupon_shopping') }}">{{ 'plugin_coupon.front.shopping.button.add_coupon'|trans }}</a></p>
     </div>
 </div>

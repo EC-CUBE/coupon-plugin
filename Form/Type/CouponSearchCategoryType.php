@@ -1,15 +1,19 @@
 <?php
+
 /*
- * This file is part of the Coupon plugin
+ * This file is part of EC-CUBE
  *
- * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+ *
+ * http://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon\Form\Type;
+namespace Plugin\Coupon4\Form\Type;
 
+use Eccube\Form\Type\Master\CategoryType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -27,51 +31,11 @@ class CouponSearchCategoryType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('category_id', 'category', array(
+            ->add('category_id', CategoryType::class, [
                 'label' => 'カテゴリ',
-                'empty_value' => 'すべて',
                 'required' => false,
-            ))
-            ->add('status', 'disp', array(
-                'label' => '種別',
-                'multiple' => true,
-                'required' => false,
-            ))
-            ->add('create_date_start', 'date', array(
-                'label' => '登録日(FROM)',
-                'required' => false,
-                'input' => 'datetime',
-                'widget' => 'single_text',
-                'format' => 'yyyy-MM-dd',
-                'empty_value' => array('year' => '----', 'month' => '--', 'day' => '--'),
-            ))
-            ->add('create_date_end', 'date', array(
-                'label' => '登録日(TO)',
-                'required' => false,
-                'input' => 'datetime',
-                'widget' => 'single_text',
-                'format' => 'yyyy-MM-dd',
-                'empty_value' => array('year' => '----', 'month' => '--', 'day' => '--'),
-            ))
-            ->add('update_date_start', 'date', array(
-                'label' => '更新日(FROM)',
-                'required' => false,
-                'input' => 'datetime',
-                'widget' => 'single_text',
-                'format' => 'yyyy-MM-dd',
-                'empty_value' => array('year' => '----', 'month' => '--', 'day' => '--'),
-            ))
-            ->add('update_date_end', 'date', array(
-                'label' => '更新日(TO)',
-                'required' => false,
-                'input' => 'datetime',
-                'widget' => 'single_text',
-                'format' => 'yyyy-MM-dd',
-                'empty_value' => array('year' => '----', 'month' => '--', 'day' => '--'),
-            ))
-            ->add('link_status', 'hidden', array(
-                'mapped' => false,
-            ));
+                'placeholder' => 'common.select__all_products',
+            ]);
     }
 
     /**

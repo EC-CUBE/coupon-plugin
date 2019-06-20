@@ -1,93 +1,136 @@
 <?php
+
 /*
- * This file is part of the Coupon plugin
+ * This file is part of EC-CUBE
  *
- * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+ *
+ * http://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon\Entity;
+namespace Plugin\Coupon4\Entity;
 
 use Eccube\Entity\AbstractEntity;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
- * CouponOrder.
+ * Coupon Order
+ *
+ * @ORM\Table(name="plg_coupon_order")
+ * @ORM\InheritanceType("SINGLE_TABLE")
+ * @ORM\DiscriminatorColumn(name="discriminator_type", type="string", length=255)
+ * @ORM\HasLifecycleCallbacks()
+ * @ORM\Entity(repositoryClass="Plugin\Coupon4\Repository\CouponOrderRepository")
  */
 class CouponOrder extends AbstractEntity
 {
     /**
      * @var int
+     *
+     * @ORM\Column(name="coupon_order_id", type="integer", options={"unsigned":true})
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
     /**
      * @var int
+     *
+     * @ORM\Column(name="coupon_id", type="integer", options={"unsigned":true})
      */
     private $coupon_id;
 
     /**
      * @var string
+     *
+     * @ORM\Column(name="coupon_cd", type="string", nullable=true, length=20)
      */
     private $coupon_cd;
 
     /**
      * @var string
+     *
+     * @ORM\Column(name="coupon_name", type="string", nullable=true, length=50)
      */
     private $coupon_name;
 
     /**
      * @var int
+     *
+     * @ORM\Column(name="user_id", type="integer", options={"unsigned":true}, nullable=true)
      */
     private $user_id;
 
     /**
      * @var string
+     *
+     * @ORM\Column(name="email", type="string", length=255, nullable=true)
      */
     private $email;
 
     /**
      * @var int
+     *
+     * @ORM\Column(name="order_id", type="integer", options={"unsigned":true})
      */
     private $order_id;
 
     /**
-     * @var string
+     * @var string|null
+     *
+     * @ORM\Column(name="pre_order_id", type="string", length=255, nullable=true)
      */
     private $pre_order_id;
 
     /**
-     * @var \DateTime
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="order_date", type="datetimetz", nullable=true)
      */
     private $order_date;
 
     /**
+     * @var int
+     *
+     * @ORM\Column(name="order_item_id", type="integer", options={"unsigned":true}, nullable=true)
+     */
+    private $order_item_id;
+
+    /**
      * @var string
+     *
+     * @ORM\Column(name="discount", type="decimal", precision=12, scale=2, options={"unsigned":true,"default":0})
      */
     private $discount = 0;
 
     /**
-     * @var int
+     * @var boolean
+     *
+     * @ORM\Column(name="visible", type="boolean", options={"default":true})
      */
-    private $del_flg;
+    private $visible;
+
     /**
-     * @var int
+     * @var boolean
+     *
+     * @ORM\Column(name="order_change_status", type="boolean", options={"default":true})
      */
     private $order_change_status;
 
     /**
-     * @var int
-     */
-    private $coupon_cancel;
-
-    /**
      * @var \DateTime
+     *
+     * @ORM\Column(name="create_date", type="datetimetz")
      */
     private $create_date;
 
     /**
      * @var \DateTime
+     *
+     * @ORM\Column(name="update_date", type="datetimetz")
      */
     private $update_date;
 
@@ -248,7 +291,7 @@ class CouponOrder extends AbstractEntity
     /**
      * Set order_date.
      *
-     * @param \DateTime $orderDate
+     * @param \DateTime|null $orderDate
      *
      * @return CouponOrder
      */
@@ -262,7 +305,7 @@ class CouponOrder extends AbstractEntity
     /**
      * Get order_date.
      *
-     * @return \DateTime
+     * @return \DateTime|null
      */
     public function getOrderDate()
     {
@@ -296,41 +339,25 @@ class CouponOrder extends AbstractEntity
     /**
      * Set del_flg.
      *
-     * @param int $delFlg
+     * @param bool $visible
      *
      * @return CouponOrder
      */
-    public function setDelFlg($delFlg)
+    public function setVisible($visible)
     {
-        $this->del_flg = $delFlg;
+        $this->visible = $visible;
 
         return $this;
     }
 
     /**
-     * Get del_flg.
+     * is visible.
      *
-     * @return int
+     * @return bool
      */
-    public function getDelFlg()
+    public function isVisible()
     {
-        return $this->del_flg;
-    }
-
-    /**
-     * @return int
-     */
-    public function getCouponCancel()
-    {
-        return $this->coupon_cancel;
-    }
-
-    /**
-     * @param int $couponCancel
-     */
-    public function setCouponCancel($couponCancel)
-    {
-        $this->coupon_cancel = $couponCancel;
+        return $this->visible;
     }
 
     /**
@@ -391,14 +418,18 @@ class CouponOrder extends AbstractEntity
 
     /**
      * @param string $coupon_name
+     *
+     * @return $this
      */
     public function setCouponName($coupon_name)
     {
         $this->coupon_name = $coupon_name;
+
+        return $this;
     }
 
     /**
-     * @return int
+     * @return bool
      */
     public function getOrderChangeStatus()
     {
@@ -406,10 +437,34 @@ class CouponOrder extends AbstractEntity
     }
 
     /**
-     * @param int $orderChangeStatus
+     * @param bool $orderChangeStatus
+     *
+     * @return $this
      */
     public function setOrderChangeStatus($orderChangeStatus)
     {
         $this->order_change_status = $orderChangeStatus;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getOrderItemId()
+    {
+        return $this->order_item_id;
+    }
+
+    /**
+     * @param int $order_item_id
+     *
+     * @return $this
+     */
+    public function setOrderItemId(int $order_item_id)
+    {
+        $this->order_item_id = $order_item_id;
+
+        return $this;
     }
 }

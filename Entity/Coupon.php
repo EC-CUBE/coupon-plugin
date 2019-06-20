@@ -1,110 +1,169 @@
 <?php
+
 /*
- * This file is part of the Coupon plugin
+ * This file is part of EC-CUBE
  *
- * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+ *
+ * http://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon\Entity;
+namespace Plugin\Coupon4\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
 use Eccube\Entity\AbstractEntity;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
- * Coupon.
+ * Coupon
+ *
+ * @ORM\Table(name="plg_coupon")
+ * @ORM\InheritanceType("SINGLE_TABLE")
+ * @ORM\DiscriminatorColumn(name="discriminator_type", type="string", length=255)
+ * @ORM\HasLifecycleCallbacks()
+ * @ORM\Entity(repositoryClass="Plugin\Coupon4\Repository\CouponRepository")
+ * @UniqueEntity("coupon_cd")
  */
 class Coupon extends AbstractEntity
 {
+    const PRODUCT = 1;
+    const CATEGORY = 2;
+    const ALL = 3;
+
+    const DISCOUNT_PRICE = 1;
+    const DISCOUNT_RATE = 2;
+
     /**
      * @var int
+     *
+     * @ORM\Column(name="coupon_id", type="integer", options={"unsigned":true})
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
     /**
      * @var string
+     *
+     * @ORM\Column(name="coupon_cd", type="string", nullable=true, length=20, unique=true)
      */
     private $coupon_cd;
 
     /**
      * @var int
+     *
+     * @ORM\Column(name="coupon_type", type="smallint", nullable=true)
      */
     private $coupon_type;
 
     /**
      * @var string
+     *
+     * @ORM\Column(name="coupon_name", type="string", nullable=true, length=50)
      */
     private $coupon_name;
 
     /**
      * @var int
+     *
+     * @ORM\Column(name="discount_type", type="smallint", nullable=true)
      */
     private $discount_type;
 
     /**
      * @var int
+     *
+     * @ORM\Column(name="coupon_use_time", type="integer", nullable=true)
      */
     private $coupon_use_time;
 
     /**
-     * @var string
+     * @var float
+     *
+     * @ORM\Column(name="discount_price", type="decimal", nullable=true, precision=12, scale=2, options={"unsigned":true,"default":0})
      */
     private $discount_price;
 
     /**
-     * @var string
+     * @var float
+     *
+     * @ORM\Column(name="discount_rate", type="decimal", nullable=true, precision=10, scale=0, options={"unsigned":true,"default":0})
      */
     private $discount_rate;
 
     /**
-     * @var int
+     * @var bool
+     *
+     * @ORM\Column(name="enable_flag", type="boolean", nullable=false, options={"default":true})
      */
     private $enable_flag;
 
     /**
      * @var \DateTime
+     *
+     * @ORM\Column(name="available_from_date", type="datetimetz")
      */
     private $available_from_date;
 
     /**
      * @var \DateTime
+     *
+     * @ORM\Column(name="available_to_date", type="datetimetz")
      */
     private $available_to_date;
 
     /**
-     * @var int
+     * @var boolean
+     *
+     * @ORM\Column(name="visible", type="boolean", options={"default":true})
      */
-    private $del_flg;
+    private $visible;
 
     /**
-     * @var int
+     * @var boolean
+     *
+     * @ORM\Column(name="coupon_member", type="boolean", options={"default":false})
      */
     private $coupon_member;
 
     /**
-     * @var int
+     * @var float
+     *
+     * @ORM\Column(name="coupon_lower_limit", type="decimal", nullable=true, precision=12, scale=2, options={"unsigned":true,"default":0})
      */
     private $coupon_lower_limit;
 
     /**
+     * The number of coupon release
+     *
      * @var int
+     *
+     * @ORM\Column(name="coupon_release", type="integer", nullable=false)
      */
     private $coupon_release;
 
     /**
      * @var \DateTime
+     *
+     * @ORM\Column(name="create_date", type="datetimetz")
      */
     private $create_date;
 
     /**
      * @var \DateTime
+     *
+     * @ORM\Column(name="update_date", type="datetimetz")
      */
     private $update_date;
 
     /**
      * @var \Doctrine\Common\Collections\Collection
+     *
+     * @ORM\OneToMany(targetEntity="Plugin\Coupon4\Entity\CouponDetail", mappedBy="Coupon", cascade={"persist","remove"})
      */
     private $CouponDetails;
 
@@ -297,7 +356,7 @@ class Coupon extends AbstractEntity
     /**
      * Set enable_flag.
      *
-     * @param int $enableFlag
+     * @param bool $enableFlag
      *
      * @return Coupon
      */
@@ -311,7 +370,7 @@ class Coupon extends AbstractEntity
     /**
      * Get enable_flag.
      *
-     * @return int
+     * @return bool
      */
     public function getEnableFlag()
     {
@@ -369,13 +428,13 @@ class Coupon extends AbstractEntity
     /**
      * Set del_flg.
      *
-     * @param int $delFlg
+     * @param bool $visible
      *
      * @return Coupon
      */
-    public function setDelFlg($delFlg)
+    public function setVisible($visible)
     {
-        $this->del_flg = $delFlg;
+        $this->visible = $visible;
 
         return $this;
     }
@@ -383,11 +442,11 @@ class Coupon extends AbstractEntity
     /**
      * Get del_flg.
      *
-     * @return int
+     * @return bool
      */
-    public function getDelFlg()
+    public function isVisible()
     {
-        return $this->del_flg;
+        return $this->visible;
     }
 
     /**
@@ -473,7 +532,7 @@ class Coupon extends AbstractEntity
     }
 
     /**
-     * @return int
+     * @return bool
      */
     public function getCouponMember()
     {
@@ -481,7 +540,7 @@ class Coupon extends AbstractEntity
     }
 
     /**
-     * @param int $couponMember
+     * @param bool $couponMember
      */
     public function setCouponMember($couponMember)
     {

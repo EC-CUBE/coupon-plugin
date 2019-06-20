@@ -1,22 +1,28 @@
 <?php
+
 /*
- * This file is part of the Coupon plugin
+ * This file is part of EC-CUBE
  *
- * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+ *
+ * http://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon\Tests\Repository;
+namespace Plugin\Coupon4\Tests\Repository;
 
-use Eccube\Common\Constant;
-use Eccube\Entity\OrderDetail;
+use Eccube\Entity\Customer;
+use Eccube\Entity\OrderItem;
+use Eccube\Repository\TaxRuleRepository;
 use Eccube\Tests\EccubeTestCase;
-use Eccube\Util\Str;
-use Plugin\Coupon\Entity\Coupon;
-use Plugin\Coupon\Entity\CouponDetail;
-use Plugin\Coupon\Entity\CouponOrder;
+use Eccube\Util\StringUtil;
+use Plugin\Coupon4\Entity\Coupon;
+use Plugin\Coupon4\Entity\CouponDetail;
+use Plugin\Coupon4\Entity\CouponOrder;
+use Plugin\Coupon4\Repository\CouponOrderRepository;
+use Plugin\Coupon4\Repository\CouponRepository;
 
 /**
  * Class CouponCouponOrderRepositoryTest.
@@ -24,9 +30,34 @@ use Plugin\Coupon\Entity\CouponOrder;
 class CouponCouponOrderRepositoryTest extends EccubeTestCase
 {
     /**
-     * @var
+     * @var Customer
      */
     private $Customer;
+
+    /**
+     * @var CouponOrderRepository
+     */
+    private $couponOrderRepository;
+
+    /**
+     * @var CouponRepository
+     */
+    private $couponRepository;
+
+    /**
+     * @var TaxRuleRepository
+     */
+    private $taxRuleRepository;
+
+    public function setUp()
+    {
+        parent::setUp();
+        $this->Customer = $this->createCustomer('aaa@example.com');
+        $this->couponOrderRepository = $this->container->get(CouponOrderRepository::class);
+        $this->couponRepository = $this->container->get(CouponRepository::class);
+        $this->taxRuleRepository = $this->container->get(TaxRuleRepository::class);
+//        $this->deleteAllRows(array(''));
+    }
 
     /**
      * testSave.
@@ -34,47 +65,15 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
     public function testSave()
     {
         $Coupon = $this->getCoupon();
-
         $discount = 200;
-        $preOrderId = sha1(Str::random(32));
-
+        $preOrderId = sha1(StringUtil::random(32));
         $CouponOrder = $this->getCouponOrder($Coupon, $discount, $preOrderId);
+        $this->couponOrderRepository->save($CouponOrder);
 
-        $this->app['coupon.repository.coupon_order']->save($CouponOrder);
-
-        $CouponOrder1 = $this->app['coupon.repository.coupon_order']->findOneBy(array('pre_order_id' => $preOrderId));
+        $CouponOrder1 = $this->couponOrderRepository->findOneBy(['pre_order_id' => $preOrderId]);
 
         $this->actual = $CouponOrder1->getDiscount();
-
         $this->expected = $discount;
-
-        $this->verify();
-    }
-
-    /**
-     * testFindUseCouponByOrderId.
-     */
-    public function testFindUseCouponByOrderId()
-    {
-        $Coupon = $this->getCoupon();
-
-        $discount = 200;
-        $preOrderId = sha1(Str::random(32));
-
-        $CouponOrder = $this->getCouponOrder($Coupon, $discount, $preOrderId);
-
-        $CouponOrder->setOrderDate(new \DateTime());
-
-        $this->app['coupon.repository.coupon_order']->save($CouponOrder);
-
-        $Order = $this->app['eccube.repository.order']->find($CouponOrder->getOrderId());
-
-        $CouponOrder1 = $this->app['coupon.repository.coupon_order']->findUseCouponByOrderId($Order->getId());
-
-        $this->actual = $CouponOrder1->getDiscount();
-
-        $this->expected = $discount;
-
         $this->verify();
     }
 
@@ -86,16 +85,16 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
         $Coupon = $this->getCoupon();
 
         $discount = 200;
-        $preOrderId = sha1(Str::random(32));
+        $preOrderId = sha1(StringUtil::random(32));
 
         $CouponOrder = $this->getCouponOrder($Coupon, $discount, $preOrderId);
 
         $CouponOrder->setEmail($this->Customer->getEmail());
         $CouponOrder->setOrderDate(new \DateTime());
 
-        $this->app['coupon.repository.coupon_order']->save($CouponOrder);
+        $this->couponOrderRepository->save($CouponOrder);
 
-        $CouponOrder1 = $this->app['coupon.repository.coupon_order']->findUseCoupon($Coupon->getCouponCd(), $this->Customer->getEmail());
+        $CouponOrder1 = $this->couponOrderRepository->findUseCoupon($Coupon->getCouponCd(), $this->Customer->getEmail());
 
         $this->actual = $CouponOrder1[0]->getDiscount();
 
@@ -104,28 +103,20 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
         $this->verify();
     }
 
-    /**
-     * testCountCouponByCd.
-     */
-    public function testCountCouponByCd()
+    public function testGetCouponOrder()
     {
         $Coupon = $this->getCoupon();
 
         $discount = 200;
-        $preOrderId = sha1(Str::random(32));
+        $preOrderId = sha1(StringUtil::random(32));
 
         $CouponOrder = $this->getCouponOrder($Coupon, $discount, $preOrderId);
+        $this->couponOrderRepository->save($CouponOrder);
 
-        $CouponOrder->setOrderDate(new \DateTime());
+        $CouponOrder1 = $this->couponOrderRepository->getCouponOrder($preOrderId);
 
-        $this->app['coupon.repository.coupon_order']->save($CouponOrder);
-
-        $count = $this->app['coupon.repository.coupon_order']->countCouponByCd($Coupon->getCouponCd());
-
-        $this->actual = $count['1'];
-
-        $this->expected = 1;
-
+        $this->actual = $CouponOrder1->getDiscount();
+        $this->expected = $discount;
         $this->verify();
     }
 
@@ -140,50 +131,33 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
      */
     private function getCouponOrder(Coupon $Coupon, $discount, $preOrderId)
     {
-        $this->Customer = $this->createCustomer('aaa@example.com');
-
         $Order = $this->createOrder($this->Customer);
 
         $Order->setPreOrderId($preOrderId);
 
-        $details = $Coupon->getCouponDetails();
-
-        /** @var CouponDetail $CouponDetail */
-        $CouponDetail = $details[0];
-
-        $Product = $CouponDetail->getProduct();
-
-        $ProductClasses = $Product->getProductClasses();
-        $ProductClass = $ProductClasses[0];
-
-        $orderDetails = $Order->getOrderDetails();
-        foreach ($orderDetails as $OrderDetail) {
-            $Order->removeOrderDetail($OrderDetail);
-        }
-
-        $OrderDetail = new OrderDetail();
-        $TaxRule = $this->app['eccube.repository.tax_rule']->getByRule();
-        $OrderDetail->setProduct($Product)
-            ->setProductClass($ProductClass)
-            ->setProductName($Product->getName())
-            ->setProductCode($ProductClass->getCode())
-            ->setPrice($ProductClass->getPrice02())
+        $orderItem = new OrderItem();
+        $TaxRule = $this->taxRuleRepository->getByRule();
+        $orderItem
+            ->setProductName('discount')
+            ->setPrice((0 - $discount))
             ->setQuantity(1)
-            ->setTaxRule($TaxRule->getCalcRule()->getId())
+            ->setTaxRuleId($TaxRule->getId())
             ->setTaxRate($TaxRule->getTaxRate());
-        $this->app['orm.em']->persist($OrderDetail);
-        $OrderDetail->setOrder($Order);
-        $Order->addOrderDetail($OrderDetail);
+        $this->entityManager->persist($orderItem);
+        $this->entityManager->flush($orderItem);
+        $orderItem->setOrder($Order);
+        $Order->addItem($orderItem);
 
         $CouponOrder = new CouponOrder();
-        $CouponOrder->setDelFlg(Constant::DISABLED);
+        $CouponOrder->setVisible(false);
         $CouponOrder->setDiscount($discount);
         $CouponOrder->setUserId($this->Customer->getId());
         $CouponOrder->setCouponId($Coupon->getId());
-        $CouponOrder->setOrderChangeStatus(Constant::DISABLED);
+        $CouponOrder->setOrderChangeStatus(false);
         $CouponOrder->setOrderId($Order->getId());
         $CouponOrder->setPreOrderId($Order->getPreOrderId());
         $CouponOrder->setCouponCd($Coupon->getCouponCd());
+        $CouponOrder->setOrderItemId($orderItem->getId());
 
         return $CouponOrder;
     }
@@ -195,12 +169,12 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
      *
      * @return Coupon
      */
-    private function getCoupon($couponType = 1)
+    protected function getCoupon($couponType = 1)
     {
         $this->getTestData($couponType);
 
         /** @var Coupon $Coupon */
-        $Coupon = $this->app['coupon.repository.coupon']->findOneBy(array('coupon_cd' => 'aaaaaaaa'));
+        $Coupon = $this->couponRepository->findOneBy(['coupon_cd' => 'aaaaaaaa']);
 
         $Product = $this->createProduct();
         $CouponDetail = new CouponDetail();
@@ -209,7 +183,7 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
         $CouponDetail->setCouponType($Coupon->getCouponType());
         $CouponDetail->setUpdateDate($Coupon->getUpdateDate());
         $CouponDetail->setCreateDate($Coupon->getCreateDate());
-        $CouponDetail->setDelFlg(Constant::ENABLED);
+        $CouponDetail->setVisible(true);
 
         $Categories = $Product->getProductCategories();
 
@@ -232,7 +206,7 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
      *
      * @return Coupon
      */
-    private function getTestData($couponType = 1)
+    protected function getTestData($couponType = 1)
     {
         $Coupon = new Coupon();
 
@@ -250,16 +224,15 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
         $Coupon->setCouponLowerLimit(100);
         $Coupon->setCouponMember(0);
         $Coupon->setEnableFlag(1);
-        $Coupon->setDelFlg(0);
+        $Coupon->setVisible(false);
         $d1 = $date1->setDate(2016, 1, 1);
         $Coupon->setAvailableFromDate($d1);
         $d2 = $date2->setDate(2040, 12, 31);
         $Coupon->setAvailableToDate($d2);
 
-        $em = $this->app['orm.em'];
         // クーポン情報を登録する
-        $em->persist($Coupon);
-        $em->flush($Coupon);
+        $this->entityManager->persist($Coupon);
+        $this->entityManager->flush($Coupon);
 
         return $Coupon;
     }

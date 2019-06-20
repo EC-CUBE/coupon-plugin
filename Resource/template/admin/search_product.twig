@@ -1,8 +1,8 @@
 {#
  This file is part of the Coupon plugin
 
- Copyright(c) 2000-2016 LOCKON CO.,LTD. All Rights Reserved.
- http://www.lockon.co.jp/
+ Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+ http://www.ec-cube.co.jp/
 
  For the full copyright and license information, please view the LICENSE
  file that was distributed with this source code.
@@ -25,9 +25,9 @@
         // フォーム入力値をセットm
         $newWidget = $(newWidget);
 
-        $newWidget.find('#admin_plugin_coupon_CouponDetails_' + cnt + '_Product').val(product_id);
-        $newWidget.find('#admin_plugin_coupon_CouponDetails_' + cnt + '_product_name').text(product_name);
-        $newWidget.find('#admin_plugin_coupon_CouponDetails_' + cnt + '_coupon_type').val(1);
+        $newWidget.find('#coupon_CouponDetails_' + cnt + '_Product').val(product_id);
+        $newWidget.find('#coupon_CouponDetails_' + cnt + '_product_name').text(product_name);
+        $newWidget.find('#coupon_CouponDetails_' + cnt + '_coupon_type').val({{ constant('Plugin\\Coupon4\\Entity\\Coupon::PRODUCT') }});
 
         // 明細行に追加.
         list.append($newWidget);
@@ -44,7 +44,7 @@
     // 商品検索
     $('div.box-footer a').on('click', function(event) {
         var existProductId = "";
-        $(":input[id^=admin_plugin_coupon_CouponDetails_][id$=_Product]").each(
+        $(":input[id^=coupon_CouponDetails_][id$=_Product]").each(
                 function(index, elem) {
                     if(existProductId == "") {
                         existProductId = elem.value;
@@ -66,7 +66,7 @@
                 list.html(data);
             },
             error: function() {
-                alert('paginator failed.');
+                alert('{{ 'plugin_coupon.admin.pager.failed'|trans }}');
             }
         });
         event.preventDefault();
@@ -89,7 +89,7 @@
                     </td>
                     <td class="text-right">
                         <button onclick="fnAddProductDetail($(this).parent().parent(), {{ Product.id }},  '{{ Product.name|escape('js') }}')" type="button" class="btn btn-default btn-sm">
-                            決定
+                            {{ 'common.ok'|trans }}
                         </button>
                     </td>
                 </tr>
@@ -99,6 +99,10 @@
         </tbody>
     </table>
     {% if pagination.totalItemCount > 0 %}
-        {% include "pager.twig" with {'pages': pagination.paginationData, 'routes': 'plugin_coupon_search_product_page'} %}
+        <div class="col box-footer">
+            <div class="row justify-content-md-center mb-4">
+                {% include "@admin/pager.twig" with {'pages': pagination.paginationData, 'routes': 'plugin_coupon_search_product_page'} %}
+            </div>
+        </div>
     {% endif %}
 </div>

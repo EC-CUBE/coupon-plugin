@@ -1,85 +1,109 @@
 <?php
+
 /*
- * This file is part of the Coupon plugin
+ * This file is part of EC-CUBE
  *
- * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+ *
+ * http://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon;
+namespace Plugin\Coupon4;
 
-use Eccube\Application;
-use Eccube\Event\EventArgs;
+use Doctrine\ORM\EntityManagerInterface;
+use Eccube\Entity\Order;
 use Eccube\Event\TemplateEvent;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Plugin\Coupon\Util\Version;
+use Eccube\Repository\OrderRepository;
+use Plugin\Coupon4\Entity\Coupon;
+use Plugin\Coupon4\Repository\CouponOrderRepository;
+use Plugin\Coupon4\Repository\CouponRepository;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * Class Event.
  */
-class Event
+class Event implements EventSubscriberInterface
 {
-    /** @var \Eccube\Application */
-    private $app;
+    /**
+     * @var CouponOrderRepository
+     */
+    private $couponOrderRepository;
+
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
+     * @var CouponRepository
+     */
+    private $couponRepository;
+
+    /**
+     * @var OrderRepository
+     */
+    private $orderRepository;
+
+    /**
+     * @var \Twig_Environment
+     */
+    private $twig;
 
     /**
      * Event constructor.
      *
-     * @param Application $app
+     * @param CouponOrderRepository $couponOrderRepository
+     * @param EntityManagerInterface $entityManager
+     * @param CouponRepository $couponRepository
+     * @param OrderRepository $orderRepository
+     * @param \Twig_Environment $twig
      */
-    public function __construct($app)
+    public function __construct(CouponOrderRepository $couponOrderRepository, EntityManagerInterface $entityManager, CouponRepository $couponRepository, OrderRepository $orderRepository, \Twig_Environment $twig)
     {
-        $this->app = $app;
+        $this->couponOrderRepository = $couponOrderRepository;
+        $this->entityManager = $entityManager;
+        $this->couponRepository = $couponRepository;
+        $this->orderRepository = $orderRepository;
+        $this->twig = $twig;
     }
 
     /**
-     * クーポン関連項目を追加する.
+     * Todo: admin.order.delete.complete has been deleted.
      *
+     * @return array
+     */
+    public static function getSubscribedEvents()
+    {
+        return [
+            'Shopping/index.twig' => 'index',
+            'Shopping/confirm.twig' => 'index',
+            'Mypage/history.twig' => 'onRenderMypageHistory',
+            '@admin/Order/edit.twig' => 'onRenderAdminOrderEdit',
+        ];
+    }
+
+    /**
      * @param TemplateEvent $event
      */
-    public function onRenderShoppingIndex(TemplateEvent $event)
+    public function index(TemplateEvent $event)
     {
-        $this->app['eccube.plugin.coupon.event']->onRenderShoppingIndex($event);
-    }
+        $parameters = $event->getParameters();
+        // 登録がない、レンダリングをしない
+        /** @var Order $Order */
+        $Order = $parameters['Order'];
+        // クーポンが未入力でクーポン情報が存在すればクーポン情報を削除
+        $CouponOrder = $this->couponOrderRepository->getCouponOrder($Order->getPreOrderId());
+        $parameters['CouponOrder'] = $CouponOrder;
+        $event->setParameters($parameters);
 
-    /**
-     * クーポンが利用されていないかチェック.
-     */
-    public function onShoppingConfirmInit(EventArgs $event)
-    {
-        $this->app['eccube.plugin.coupon.event']->onShoppingConfirmInit($event);
-    }
-
-    /**
-     * 注文クーポン情報に受注日付を登録する.
-     */
-    public function onRenderShoppingComplete()
-    {
-        $this->app['eccube.plugin.coupon.event']->onRenderShoppingComplete();
-    }
-
-    /**
-     * [order/{id}/edit]表示の時のEvent Fock.
-     * クーポン関連項目を追加する.
-     *
-     * @param TemplateEvent $event
-     */
-    public function onRenderAdminOrderEdit(TemplateEvent $event)
-    {
-        $this->app['eccube.plugin.coupon.event']->onRenderAdminOrderEdit($event);
-    }
-
-    /**
-     * 配送先や支払い方法変更時の合計金額と値引きの差額チェック
-     * v3.0.9以降で使用.
-     *
-     * @param EventArgs $event
-     */
-    public function onRestoreDiscount(EventArgs $event)
-    {
-        $this->app['eccube.plugin.coupon.event']->onRestoreDiscount($event);
+        if (strpos($event->getView(), 'index.twig') !== false) {
+            $event->addSnippet('@Coupon4/default/coupon_shopping_item.twig');
+        } else {
+            $event->addSnippet('@Coupon4/default/coupon_shopping_item_confirm.twig');
+        }
     }
 
     /**
@@ -89,130 +113,56 @@ class Event
      */
     public function onRenderMypageHistory(TemplateEvent $event)
     {
-        $this->app['eccube.plugin.coupon.event']->onRenderMypageHistory($event);
+        log_info('Coupon trigger onRenderMypageHistory start');
+        $parameters = $event->getParameters();
+        if (is_null($parameters['Order'])) {
+            return;
+        }
+        $Order = $parameters['Order'];
+        // クーポン受注情報を取得する
+        $CouponOrder = $this->couponOrderRepository->findOneBy([
+            'order_id' => $Order->getId(),
+        ]);
+        if (is_null($CouponOrder)) {
+            return;
+        }
+
+        // set parameter for twig files
+        $parameters['coupon_cd'] = $CouponOrder->getCouponCd();
+        $parameters['coupon_name'] = $CouponOrder->getCouponName();
+        $event->setParameters($parameters);
+        $event->addSnippet('@Coupon4/default/mypage_history_coupon.twig');
+        log_info('Coupon trigger onRenderMypageHistory finish');
     }
 
     /**
-     * Hook point send mail.
-     *
-     * @param EventArgs $event
-     */
-    public function onSendOrderMail(EventArgs $event)
-    {
-        $this->app['eccube.plugin.coupon.event']->onSendOrderMail($event);
-    }
-
-    /**
-     * Hook point order edit completed.
-     *
-     * @param EventArgs $event
-     */
-    public function onOrderEditComplete(EventArgs $event)
-    {
-        $this->app['eccube.plugin.coupon.event']->onOrderEditComplete($event);
-    }
-
-    /**
+     * [order/{id}/edit]表示の時のEvent Fork.
      * クーポン関連項目を追加する.
      *
-     * @param FilterResponseEvent $event
+     * @param TemplateEvent $event
      */
-    public function onRenderShoppingBefore(FilterResponseEvent $event)
+    public function onRenderAdminOrderEdit(TemplateEvent $event)
     {
-        //current version >= 3.0.9
-        if (Version::isSupportNewHookPoint()) {
+        log_info('Coupon trigger onRenderAdminOrderEdit start');
+        $parameters = $event->getParameters();
+        if (is_null($parameters['Order'])) {
             return;
         }
-        $this->app['eccube.plugin.coupon.event.legacy']->onRenderShoppingBefore($event);
-    }
+        $Order = $parameters['Order'];
+        // クーポン受注情報を取得する
+        $CouponOrder = $this->couponOrderRepository->findOneBy(['order_id' => $Order->getId()]);
+        if (is_null($CouponOrder)) {
+            return;
+        }
+        // set parameter for twig files
+        $parameters['coupon_cd'] = $CouponOrder->getCouponCd();
+        $parameters['coupon_name'] = $CouponOrder->getCouponName();
+        $parameters['coupon_change_status'] = $CouponOrder->getOrderChangeStatus();
+        $event->setParameters($parameters);
 
-    /**
-     * Hook point add coupon information to mypage history.
-     *
-     * @param FilterResponseEvent $event
-     */
-    public function onRenderMypageHistoryBefore(FilterResponseEvent $event)
-    {
-        //current version >= 3.0.9
-        if (Version::isSupportNewHookPoint()) {
-            return;
-        }
-        $this->app['eccube.plugin.coupon.event.legacy']->onRenderMypageHistoryBefore($event);
-    }
+        // add twig
+        $event->addSnippet('@Coupon4/admin/order_edit_coupon.twig');
 
-    /**
-     * クーポンが利用されていないかチェック.
-     */
-    public function onControllerShoppingConfirmBefore()
-    {
-        //current version >= 3.0.9
-        if (Version::isSupportNewHookPoint()) {
-            return;
-        }
-        $this->app['eccube.plugin.coupon.event.legacy']->onControllerShoppingConfirmBefore();
-    }
-
-    /**
-     * 注文クーポン情報に受注日付を登録する.
-     */
-    public function onControllerShoppingCompleteBefore()
-    {
-        //current version >= 3.0.9
-        if (Version::isSupportNewHookPoint()) {
-            return;
-        }
-        $this->app['eccube.plugin.coupon.event.legacy']->onControllerShoppingCompleteBefore();
-    }
-
-    /**
-     * [order/{id}/edit]表示の時のEvent Fock.
-     * クーポン関連項目を追加する.
-     *
-     * @param FilterResponseEvent $event
-     */
-    public function onRenderAdminOrderEditBefore(FilterResponseEvent $event)
-    {
-        //current version >= 3.0.9
-        if (Version::isSupportNewHookPoint()) {
-            return;
-        }
-        $this->app['eccube.plugin.coupon.event.legacy']->onRenderAdminOrderEditBefore($event);
-    }
-
-    /**
-     * 配送先や支払い方法変更時の合計金額と値引きの差額チェック
-     * v3.0.8までで使用.
-     */
-    public function onControllerRestoreDiscountAfter()
-    {
-        //current version >= 3.0.9
-        if (Version::isSupportNewHookPoint()) {
-            return;
-        }
-        $this->app['eccube.plugin.coupon.event.legacy']->onControllerRestoreDiscountAfter();
-    }
-
-    /**
-     * for order change status.
-     */
-    public function onControllerOrderEditAfter()
-    {
-        //current version >= 3.0.9
-        if (Version::isSupportNewHookPoint()) {
-            return;
-        }
-        $this->app['eccube.plugin.coupon.event.legacy']->onControllerOrderEditAfter();
-    }
-
-    /**
-     * for order delete.
-     */
-    public function onControllerOrderDeleteAfter()
-    {
-        //current version >= 3.0.9
-        if (Version::isSupportNewHookPoint()) {
-            return;
-        }
-        $this->app['eccube.plugin.coupon.event.legacy']->onControllerOrderDeleteAfter();
+        log_info('Coupon trigger onRenderAdminOrderEdit finish');
     }
 }
