@@ -362,6 +362,108 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
     }
 
     /**
+     * 重複利用チェック(会員)
+     */
+    public function testDuplicateCouponWithCustomer()
+    {
+        $this->routingShopping();
+        $crawler = $this->client->request('GET', $this->generateUrl('plugin_coupon_shopping'));
+        $Coupon = $this->getCoupon();
+        $form = $this->getForm($crawler, $Coupon->getCouponCd());
+        $this->client->submit($form);
+        $this->assertTrue($this->client->getResponse()->isRedirection());
+
+        $crawler = $this->client->followRedirect();
+        $this->expected = '利用しています。';
+        $this->actual = $crawler->filter('strong.text-danger')->text();
+        $this->assertContains($this->expected, $this->actual);
+
+        $form = $crawler->selectButton('確認する')->form();
+        $crawler = $this->client->submit($form);
+
+        // 完了画面
+        $formConfirm = $crawler->selectButton('注文する')->form();
+        $this->client->submit($formConfirm);
+        $this->assertTrue($this->client->getResponse()->isRedirect($this->generateUrl('shopping_complete')));
+
+        $this->routingShopping();
+        $crawler = $this->client->request('GET', $this->generateUrl('plugin_coupon_shopping'));
+        $form = $this->getForm($crawler, $Coupon->getCouponCd());
+        $crawler = $this->client->submit($form);
+
+        $this->expected = 'このクーポンは既にご利用いただいています。';
+        $this->actual = $crawler->html();
+        $this->assertContains($this->expected, $this->actual);
+    }
+
+    /**
+     * 重複利用チェック(非会員)
+     */
+    public function testDuplicateCouponWithNonmember()
+    {
+        $this->scenarioCartIn();
+
+        $formData = $this->createNonmemberFormData();
+        $this->scenarioInput($formData);
+        $this->client->followRedirect();
+
+        $crawler = $this->scenarioConfirm();
+        $this->expected = 'ご注文手続き';
+        $this->actual = $crawler->filter('.ec-pageHeader h1')->text();
+        $this->verify();
+
+        $crawler = $this->scenarioComplete(null, $this->generateUrl('shopping_confirm'),
+                                           [
+                                               [
+                                                   'Delivery' => 1,
+                                                   'DeliveryTime' => '',
+                                               ],
+                                           ]);
+
+        $crawler = $this->client->request('GET', $this->generateUrl('plugin_coupon_shopping'));
+        $Coupon = $this->getCoupon();
+        $form = $this->getForm($crawler, $Coupon->getCouponCd());
+        $this->client->submit($form);
+        $this->assertTrue($this->client->getResponse()->isRedirection());
+
+        $crawler = $this->client->followRedirect();
+        $this->expected = '利用しています。';
+        $this->actual = $crawler->filter('strong.text-danger')->text();
+        $this->assertContains($this->expected, $this->actual);
+
+        $this->scenarioCheckout();
+        $this->assertTrue($this->client->getResponse()->isRedirect($this->generateUrl('shopping_complete')));
+
+        // 同じクーポンで再購入
+        $this->scenarioCartIn();
+
+        $this->scenarioInput($formData);
+        $this->client->followRedirect();
+
+        $crawler = $this->scenarioConfirm();
+        $this->expected = 'ご注文手続き';
+        $this->actual = $crawler->filter('.ec-pageHeader h1')->text();
+        $this->verify();
+
+        $crawler = $this->scenarioComplete(null, $this->generateUrl('shopping_confirm'),
+                                           [
+                                               [
+                                                   'Delivery' => 1,
+                                                   'DeliveryTime' => '',
+                                               ],
+                                           ]);
+
+        $crawler = $this->client->request('GET', $this->generateUrl('plugin_coupon_shopping'));
+
+        $form = $this->getForm($crawler, $Coupon->getCouponCd());
+        $crawler = $this->client->submit($form);
+
+        $this->expected = 'このクーポンは既にご利用いただいています。';
+        $this->actual = $crawler->html();
+        $this->assertContains($this->expected, $this->actual);
+    }
+
+    /**
      * routingShopping.
      */
     private function routingShopping()
