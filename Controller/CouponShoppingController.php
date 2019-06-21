@@ -150,6 +150,13 @@ class CouponShoppingController extends AbstractController
                         }
                     }
                 }
+
+                $couponUsedOrNot = $this->couponService->checkCouponUsedOrNot($formCouponCd, $Customer);
+                if ($Coupon && $couponUsedOrNot) {
+                    // 既に存在している
+                    $form->get('coupon_cd')->addError(new FormError(trans('plugin_coupon.front.shopping.sameuser')));
+                    $error = true;
+                }
                 if (!$error && $Coupon) {
                     $lowerLimit = $Coupon->getCouponLowerLimit();
 
