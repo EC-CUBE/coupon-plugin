@@ -311,7 +311,7 @@ class CouponServiceTest extends EccubeTestCase
         }
 
         $this->actual = $discount;
-        $this->expected = (int) round($total * $discountRate / 100);
+        $this->expected = (int) round(round($total) * $discountRate / 100);
         $this->verify();
     }
 
