@@ -62,8 +62,8 @@ before_script:
   - git clone https://github.com/EC-CUBE/ec-cube.git
   - cd ec-cube
   # checkout version
+  - sh -c "if [ '${ECCUBE_VERSION}' = '3.0' ]; then  git checkout -b ${ECCUBE_VERSION} origin/${ECCUBE_VERSION}; fi"
   - sh -c "if [ '${ECCUBE_VERSION}' = '3.1' ]; then  git checkout -b ${ECCUBE_VERSION} origin/${ECCUBE_VERSION}; fi"
-  - sh -c "if [ ! '${ECCUBE_VERSION}' = '3.1' ]; then  git checkout -b ${ECCUBE_VERSION} refs/tags/${ECCUBE_VERSION}; fi"
   - sh -c "if [ ! '${ECCUBE_VERSION}' = '3.1' -a ! '${ECCUBE_VERSION}' = '3.0' ]; then  git checkout -b ${ECCUBE_VERSION} refs/tags/${ECCUBE_VERSION}; fi"
   # update composer
   - composer selfupdate
