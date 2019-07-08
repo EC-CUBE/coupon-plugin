@@ -172,7 +172,7 @@ class CouponService
                 // 一致する商品IDがあればtrueを返す
                 /** @var OrderItem $detail */
                 foreach ($Order->getItems()->getProductClasses() as $detail) {
-                    $couponProducts = $this->getCouponProducts($detail);
+                    $couponProducts = $this->getCouponProducts($detail) + $couponProducts;
                 }
             }
         }
