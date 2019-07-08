@@ -175,6 +175,31 @@ class CouponServiceTest extends EccubeTestCase
     }
 
     /**
+     * testExistsCouponProductAll
+     */
+    public function testExistsCouponProductAll()
+    {
+        $orderItemVolume = 5;
+        /** @var Generator $Generator */
+        $Generator = $this->container->get(Generator::class);
+        /** @var Coupon $Coupon */
+        $Coupon = $this->getCoupon(Coupon::ALL);
+
+        $Customer = $this->createCustomer();
+
+        $details = $Coupon->getCouponDetails();
+        $Product = $Generator->createProduct(null, $orderItemVolume);
+        $Order = $Generator->createOrder($Customer, $Product->getProductClasses()->toArray());
+        $products = $this->couponService->existsCouponProduct($Coupon, $Order);
+
+        $this->actual = count($products);
+
+        $this->expected = $orderItemVolume;
+
+        $this->verify();
+    }
+
+    /**
      * testSaveCouponOrder.
      */
     public function testSaveCouponOrder()
