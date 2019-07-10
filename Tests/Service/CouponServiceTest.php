@@ -200,6 +200,44 @@ class CouponServiceTest extends EccubeTestCase
     }
 
     /**
+     * testExistsCouponProductWithMultiple
+     */
+    public function testExistsCouponProductWithMultiple()
+    {
+        $orderItemVolume = 2;
+        /** @var Generator $Generator */
+        $Generator = $this->container->get(Generator::class);
+        /** @var Coupon $Coupon */
+        $Coupon = $this->getCoupon(Coupon::ALL);
+
+        $Customer = $this->createCustomer();
+
+        $details = $Coupon->getCouponDetails();
+        $Product = $Generator->createProduct(null, $orderItemVolume);
+        // 複数配送など, ProductClass が重複した明細を生成
+        $Order = $Generator->createOrder(
+            $Customer,
+            array_merge(
+                $Product->getProductClasses()->toArray(),
+                $Product->getProductClasses()->toArray()
+            )
+        );
+        $products = $this->couponService->existsCouponProduct($Coupon, $Order);
+
+        $this->actual = count($products);
+        $this->expected = $orderItemVolume;
+        $this->verify();
+
+        $this->actual = array_reduce($products, function ($carry, $item) {
+            return $carry + $item['quantity'];
+        });
+        $this->expected = array_reduce($Order->getProductOrderItems(), function ($carry, OrderItem $item) {
+            return $carry + $item->getQuantity();
+        });
+        $this->verify('ProductClass が重複していても数量が一致するはず');
+    }
+
+    /**
      * testSaveCouponOrder.
      */
     public function testSaveCouponOrder()
