@@ -201,6 +201,7 @@ class CouponServiceTest extends EccubeTestCase
 
     /**
      * testExistsCouponProductWithMultiple
+     * https://github.com/EC-CUBE/coupon-plugin/issues/102 のテストケース
      */
     public function testExistsCouponProductWithMultiple()
     {
