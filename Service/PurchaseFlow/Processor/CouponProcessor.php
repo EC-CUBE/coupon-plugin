@@ -17,6 +17,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Eccube\Annotation\ShoppingFlow;
 use Eccube\Entity\Customer;
+use Eccube\Entity\ItemInterface;
 use Eccube\Entity\Order;
 use Eccube\Entity\OrderItem;
 use Eccube\Entity\ItemHolderInterface;
@@ -128,6 +129,7 @@ class CouponProcessor extends ItemHolderValidator implements ItemHolderPreproces
         if (!$this->supports($itemHolder)) {
             return;
         }
+        /** @var CouponOrder $CouponOrder */
         $CouponOrder = $this->couponOrderRepository->getCouponOrder($itemHolder->getPreOrderId());
         if (!$CouponOrder) {
             return;
@@ -151,6 +153,11 @@ class CouponProcessor extends ItemHolderValidator implements ItemHolderPreproces
             $this->clearCoupon($itemHolder);
             $this->throwInvalidItemException(trans('plugin_coupon.front.shopping.couponusetime'), null, true);
         }
+        $discount = $this->couponService->recalcOrder($Coupon, $couponProducts);
+        if ($discount != $CouponOrder->getDiscount()) {
+            $this->clearCoupon($itemHolder);
+            $this->throwInvalidItemException('注文内容が変更になりました。クーポンをご利用の場合は再度設定をお願いいたします。', null, true);
+        }
 
         $lowerLimit = $Coupon->getCouponLowerLimit();
         $checkLowerLimit = $this->couponService->isLowerLimitCoupon($couponProducts, $lowerLimit);
@@ -159,8 +166,6 @@ class CouponProcessor extends ItemHolderValidator implements ItemHolderPreproces
             $message = trans('plugin_coupon.front.shopping.lowerlimit', ['lowerLimit' => number_format($lowerLimit)]);
             $this->throwInvalidItemException($message, null, true);
         }
-
-        $discount = $this->couponService->recalcOrder($Coupon, $couponProducts);
 
         $checkCouponUseTime = $this->couponRepository->checkCouponUseTime($CouponOrder->getCouponCd());
         if (!$checkCouponUseTime) {

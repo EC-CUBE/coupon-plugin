@@ -344,6 +344,7 @@ class CouponService
         if ($CouponOrder) {
             $OrderItems = $this->orderItemRepository->findBy(['processor_name' => CouponProcessor::class]);
             foreach ($OrderItems as $OrderItem) {
+                $Order->removeOrderItem($OrderItem);
                 $this->entityManager->remove($OrderItem);
                 $this->entityManager->flush($OrderItem);
             }
