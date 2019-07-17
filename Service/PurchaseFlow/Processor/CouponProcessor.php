@@ -138,7 +138,7 @@ class CouponProcessor extends ItemHolderValidator implements ItemHolderPreproces
         $Coupon = $this->couponRepository->findActiveCoupon($CouponOrder->getCouponCd());
         if (!$Coupon) {
             $this->clearCoupon($itemHolder);
-            $this->throwInvalidItemException('クーポンが取得できませんでした', null, true);
+            $this->throwInvalidItemException(trans('plugin_coupon.front.shopping.notfound'), null, true);
         }
 
         /** @var Customer $Customer */
@@ -156,7 +156,7 @@ class CouponProcessor extends ItemHolderValidator implements ItemHolderPreproces
         $discount = $this->couponService->recalcOrder($Coupon, $couponProducts);
         if ($discount != $CouponOrder->getDiscount()) {
             $this->clearCoupon($itemHolder);
-            $this->throwInvalidItemException('注文内容が変更になりました。クーポンをご利用の場合は再度設定をお願いいたします。', null, true);
+            $this->throwInvalidItemException(trans('plugin_coupon.front.shopping.changeorder'), null, true);
         }
 
         $lowerLimit = $Coupon->getCouponLowerLimit();
