@@ -265,12 +265,11 @@ class CouponService
     /**
      * 合計、値引きを再計算する.
      *
+     * 税率が 0 以下の場合は、TaxRule から取得し直して再計算する
+     *
      * @param Coupon $Coupon
-     * @param array  $couponProducts
-     *
+     * @param array  $couponProducts ProductClass::id をキーにした単価, 数量, 税率の連想配列
      * @return float|int|string
-     *
-     * @throws \Doctrine\ORM\NoResultException
      */
     public function recalcOrder(Coupon $Coupon, $couponProducts)
     {
