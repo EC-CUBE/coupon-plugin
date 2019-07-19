@@ -157,28 +157,16 @@ class CouponShoppingController extends AbstractController
                     $form->get('coupon_cd')->addError(new FormError(trans('plugin_coupon.front.shopping.sameuser')));
                     $error = true;
                 }
-                if (!$error && $Coupon) {
-                    $lowerLimit = $Coupon->getCouponLowerLimit();
-
-                    // 既に登録済みのクーポンコードを一旦削除
-//                    $this->couponService->removeCouponOrder($Order);
-                    // 対象クーポンが存在しているかチェック
-                    $couponProducts = $service->existsCouponProduct($Coupon, $Order);
-                    $checkLowerLimit = $service->isLowerLimitCoupon($couponProducts, $lowerLimit);
-                    // 値引き額を取得
-                    $discount = $service->recalcOrder($Coupon, $couponProducts);
-                    $existCoupon = true;
-                    if (count($couponProducts) == 0) {
-                        $existCoupon = false;
-                    }
-                }
 
                 // ----------------------------------
                 // 値引き項目追加 / 合計金額上書き
                 // ----------------------------------
                 if (!$error && $Coupon) {
+                    $couponProducts = $service->existsCouponProduct($Coupon, $Order);
+                    $discount = $service->recalcOrder($Coupon, $couponProducts);
+
                     // クーポン情報を登録
-                    $this->setCouponOrder($Order, $Coupon, $formCouponCd, $Customer, $discount);
+                    $service->saveCouponOrder($Order, $Coupon, $formCouponCd, $Customer, $discount);
 
                     return $this->redirectToRoute('shopping');
                 } else {
@@ -191,7 +179,7 @@ class CouponShoppingController extends AbstractController
                             // 値引き額を取得
                             $discount = $service->recalcOrder($Coupon, $couponProducts);
                             // クーポン情報を登録
-                            $this->setCouponOrder($Order, $Coupon, $couponCd, $Customer, $discount);
+                            $service->saveCouponOrder($Order, $Coupon, $couponCd, $Customer, $discount);
                         }
                     }
                 }
@@ -202,20 +190,5 @@ class CouponShoppingController extends AbstractController
             'form' => $form->createView(),
             'Order' => $Order,
         ];
-    }
-
-    /**
-     * クーポン情報に登録.
-     *
-     * @param Order       $Order
-     * @param Coupon      $Coupon
-     * @param string      $couponCd
-     * @param Customer    $Customer
-     * @param int         $discount
-     */
-    private function setCouponOrder(Order $Order, Coupon $Coupon, $couponCd, Customer $Customer, $discount)
-    {
-        // クーポン受注情報を保存する
-        $this->couponService->saveCouponOrder($Order, $Coupon, $couponCd, $Customer, $discount);
     }
 }
