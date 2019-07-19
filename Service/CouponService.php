@@ -172,7 +172,7 @@ class CouponService
                 // 一致する商品IDがあればtrueを返す
                 /** @var OrderItem $detail */
                 foreach ($Order->getItems()->getProductClasses() as $detail) {
-                    $couponProducts = $this->getCouponProducts($detail) + $couponProducts;
+                    $couponProducts = $this->getCouponProducts($detail, $couponProducts);
                 }
             }
         }
@@ -407,7 +407,7 @@ class CouponService
         /* @var $detail OrderItem */
         foreach ($Order->getProductOrderItems() as $detail) {
             if (in_array($detail->getProduct()->getId(), $targetProductIds)) {
-                $couponProducts = $this->getCouponProducts($detail) + $couponProducts;
+                $couponProducts = $this->getCouponProducts($detail, $couponProducts);
             }
         }
 
@@ -436,7 +436,7 @@ class CouponService
         foreach ($Order->getProductOrderItems() as $orderDetail) {
             foreach ($orderDetail->getProduct()->getProductCategories() as $productCategory) {
                 if ($this->existsDepthCategory($targetCategoryIds, $productCategory->getCategory())) {
-                    $couponProducts = $this->getCouponProducts($orderDetail) + $couponProducts ;
+                    $couponProducts = $this->getCouponProducts($orderDetail, $couponProducts);
                 }
             }
         }
@@ -480,17 +480,22 @@ class CouponService
     }
 
     /**
-     * @param $orderItem
+     * @param OrderItem $orderItem
+     * @param array $couponProducts
      *
      * @return mixed
      */
-    private function getCouponProducts(OrderItem $orderItem)
+    private function getCouponProducts(OrderItem $orderItem, array $couponProducts = [])
     {
-        $couponProducts[$orderItem->getProductClass()->getId()]['price'] = $orderItem->getPrice();
-        $couponProducts[$orderItem->getProductClass()->getId()]['quantity'] = $orderItem->getQuantity();
-        $couponProducts[$orderItem->getProductClass()->getId()]['tax_rate'] = $orderItem->getTaxRate();
-        // $couponProducts[$orderItem->getProductClass()->getId()]['tax_rule'] = $orderItem->getTaxRule();
-
+        if (array_key_exists($orderItem->getProductClass()->getId(), $couponProducts)) {
+            $couponProducts[$orderItem->getProductClass()->getId()]['quantity'] += $orderItem->getQuantity();
+        } else {
+            $couponProducts[$orderItem->getProductClass()->getId()] = [
+                'price' => $orderItem->getPrice(),
+                'quantity' => $orderItem->getQuantity(),
+                'tax_rate' => $orderItem->getTaxRate()
+            ];
+        }
         return $couponProducts;
     }
 }
