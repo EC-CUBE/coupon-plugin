@@ -228,11 +228,7 @@ class CouponProcessor extends ItemHolderValidator implements ItemHolderPreproces
     /**
      * Processorが実行出来るかどうかを返す.
      *
-     * 以下を満たす場合に実行できる.
-     *
-     * - ポイント設定が有効であること.
-     * - $itemHolderがOrderエンティティであること.
-     * - 会員のOrderであること.
+     * $itemHolderがOrderエンティティのインスタンスかどうかをチェックする
      *
      * @param ItemHolderInterface $itemHolder
      *

@@ -208,7 +208,7 @@ class CouponService
      *
      * @param Order    $Order
      * @param Coupon   $Coupon
-     * @param int      $couponCd
+     * @param string   $couponCd
      * @param Customer $Customer
      * @param int      $discount
      */
