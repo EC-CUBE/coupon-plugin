@@ -379,6 +379,68 @@ class CouponServiceTest extends EccubeTestCase
         $this->verify();
     }
 
+    /**
+     * recalcOrder の第2引数から税率が取得できない場合は TaxRule から取得する
+     * @see https://github.com/EC-CUBE/coupon-plugin/pull/106/commits/d47f60745b283023cd7a990c609e6399701ddce1
+     */
+    public function testRecalcOrderWithTaxRateIsEmpty()
+    {
+        /** @var Coupon $Coupon */
+        $Coupon = $this->getCoupon(Coupon::PRODUCT, Coupon::DISCOUNT_RATE);
+
+        $discountRate = 10;
+        $Coupon->setDiscountRate($discountRate);
+
+        $Customer = $this->createCustomer();
+        $Order = $this->createOrder($Customer);
+
+        $details = $Coupon->getCouponDetails();
+        /** @var CouponDetail $CouponDetail */
+        $CouponDetail = $details[0];
+        $Product = $CouponDetail->getProduct();
+        $ProductClasses = $Product->getProductClasses();
+        $ProductClass = $ProductClasses[0];
+
+        // remove old item
+        foreach ($Order->getOrderItems() as $orderItem) {
+            $Order->removeOrderItem($orderItem);
+            $this->entityManager->remove($orderItem);
+        }
+
+        $orderItem = new OrderItem();
+        $OrderItemTypeProduct = $this->orderItemTypeRepository->find(OrderItemType::PRODUCT);
+        $orderItem->setProduct($Product)
+            ->setProductClass($ProductClass)
+            ->setProductName($Product->getName())
+            ->setProductCode($ProductClass->getCode())
+            ->setOrderItemType($OrderItemTypeProduct)
+            ->setPrice($ProductClass->getPrice02())
+            ->setQuantity(1)
+            // OrderItem に税率は設定しない
+            ->setTaxRuleId(null)
+            ->setTaxRate(0);
+        $this->entityManager->persist($orderItem);
+        $orderItem->setOrder($Order);
+        $Order->addOrderItem($orderItem);
+        $this->entityManager->flush();
+
+        $products = $this->couponService->existsCouponProduct($Coupon, $Order);
+        $discount = $this->couponService->recalcOrder($Coupon, $products);
+
+        // デフォルト課税規則が適用されているはず
+        $TaxRule = $this->taxRuleRepository->getByRule();
+        // expected price
+        $total = 0;
+        // include tax
+        foreach ($products as $key => $value) {
+            $total += ($value['price'] + $value['price'] * $TaxRule->getTaxRate() / 100) * $value['quantity'];
+        }
+
+        $this->actual = $discount;
+        $this->expected = (int) round(round($total) * $discountRate / 100);
+        $this->verify();
+    }
+
     public function testSetOrderCompleteMailMessage()
     {
         $Order = new Order();

@@ -20,12 +20,14 @@ use Eccube\Entity\ItemHolderInterface;
 use Eccube\Entity\Master\RoundingType;
 use Eccube\Entity\Order;
 use Eccube\Entity\OrderItem;
+use Eccube\Entity\ProductClass;
 use Eccube\Entity\TaxRule;
 use Eccube\Repository\CategoryRepository;
 use Eccube\Repository\Master\OrderItemTypeRepository;
 use Eccube\Repository\Master\TaxDisplayTypeRepository;
 use Eccube\Repository\Master\TaxTypeRepository;
 use Eccube\Repository\OrderItemRepository;
+use Eccube\Repository\ProductClassRepository;
 use Eccube\Repository\TaxRuleRepository;
 use Eccube\Service\TaxRuleService;
 use Plugin\Coupon4\Entity\Coupon;
@@ -103,6 +105,11 @@ class CouponService
     private $orderItemRepository;
 
     /**
+     * @var ProductClassRepository
+     */
+    private $productClassRepository;
+
+    /**
      * CouponService constructor.
      *
      * @param AuthorizationCheckerInterface $authorizationChecker
@@ -117,9 +124,24 @@ class CouponService
      * @param ContainerInterface $container
      * @param EntityManagerInterface $entityManager
      * @param OrderItemRepository $orderItemRepository
+     * @param ProductClassRepository $productClassRepository
+     *
      */
-    public function __construct(AuthorizationCheckerInterface $authorizationChecker, CouponRepository $couponRepository, CouponOrderRepository $couponOrderRepository, CategoryRepository $categoryRepository, TaxRuleService $taxRuleService, TaxRuleRepository $taxRuleRepository, TaxTypeRepository $taxTypeRepository, TaxDisplayTypeRepository $taxDisplayTypeRepository, OrderItemTypeRepository $orderItemTypeRepository, ContainerInterface $container, EntityManagerInterface $entityManager, OrderItemRepository $orderItemRepository)
-    {
+    public function __construct(
+        AuthorizationCheckerInterface $authorizationChecker,
+        CouponRepository $couponRepository,
+        CouponOrderRepository $couponOrderRepository,
+        CategoryRepository $categoryRepository,
+        TaxRuleService $taxRuleService,
+        TaxRuleRepository $taxRuleRepository,
+        TaxTypeRepository $taxTypeRepository,
+        TaxDisplayTypeRepository $taxDisplayTypeRepository,
+        OrderItemTypeRepository $orderItemTypeRepository,
+        ContainerInterface $container,
+        EntityManagerInterface $entityManager,
+        OrderItemRepository $orderItemRepository,
+        ProductClassRepository $productClassRepository
+    ) {
         $this->authorizationChecker = $authorizationChecker;
         $this->couponRepository = $couponRepository;
         $this->couponOrderRepository = $couponOrderRepository;
@@ -132,6 +154,7 @@ class CouponService
         $this->container = $container;
         $this->entityManager = $entityManager;
         $this->orderItemRepository = $orderItemRepository;
+        $this->productClassRepository = $productClassRepository;
     }
 
     /**
@@ -242,12 +265,11 @@ class CouponService
     /**
      * 合計、値引きを再計算する.
      *
+     * 税率が 0 以下の場合は、TaxRule から取得し直して再計算する
+     *
      * @param Coupon $Coupon
-     * @param array  $couponProducts
-     *
+     * @param array  $couponProducts ProductClass::id をキーにした単価, 数量, 税率の連想配列
      * @return float|int|string
-     *
-     * @throws \Doctrine\ORM\NoResultException
      */
     public function recalcOrder(Coupon $Coupon, $couponProducts)
     {
@@ -260,21 +282,27 @@ class CouponService
             if ($Coupon->getDiscountType() == Coupon::DISCOUNT_PRICE) {
                 $discount = $Coupon->getDiscountPrice();
             } else {
-                /** @var TaxRule $TaxRule */
-                $TaxRule = $this->taxRuleRepository->getByRule();
                 // 値引き前の金額で割引率を算出する
                 $total = 0;
                 // include tax
-                foreach ($couponProducts as $key => $value) {
+                foreach ($couponProducts as $productClassId => $value) {
+                    // 税率が取得できない場合は TaxRule から取得し直す
+                    if ($value['tax_rate'] < 1) {
+                        /** @var ProductClass $ProductClass */
+                        $ProductClass = $this->productClassRepository->find($productClassId);
+                        $TaxRule = $this->taxRuleRepository->getByRule($ProductClass->getProduct(), $ProductClass);
+                        $value['tax_rate'] = $TaxRule->getTaxRate();
+                    }
                     $total += ($value['price'] + $this->taxRuleService->calcTax($value['price'], $value['tax_rate'], RoundingType::ROUND)) * $value['quantity'];
                 }
-
-                // 小数点以下は四捨五入
+                /** @var TaxRule $DefaultTaxRule */
+                $DefaultTaxRule = $this->taxRuleRepository->getByRule();
+                // 丸め規則はデフォルトの課税規則に従う
                 $discount = $this->taxRuleService->calcTax(
                     $total,
                     $Coupon->getDiscountRate(),
-                    $TaxRule->getRoundingType()->getId(),
-                    $TaxRule->getTaxAdjust()
+                    $DefaultTaxRule->getRoundingType()->getId(),
+                    $DefaultTaxRule->getTaxAdjust()
                 );
             }
         }
@@ -344,6 +372,7 @@ class CouponService
         if ($CouponOrder) {
             $OrderItems = $this->orderItemRepository->findBy(['processor_name' => CouponProcessor::class]);
             foreach ($OrderItems as $OrderItem) {
+                $Order->removeOrderItem($OrderItem);
                 $this->entityManager->remove($OrderItem);
                 $this->entityManager->flush($OrderItem);
             }
@@ -496,6 +525,7 @@ class CouponService
                 'tax_rate' => $orderItem->getTaxRate()
             ];
         }
+
         return $couponProducts;
     }
 }

@@ -70,6 +70,7 @@ plugin_coupon.front.shopping.minus: 合計金額を超えるため、このク�
 plugin_coupon.front.shopping.use.minus: クーポン適用後の合計金額がマイナスになったため、クーポンの利用をキャンセルしました。
 plugin_coupon.front.shopping.member: このクーポンは会員のみ利用できるクーポンです。
 plugin_coupon.front.shopping.lowerlimit: このクーポンを利用するためには、対象商品をlowerLimit円以上購入してください。
+plugin_coupon.front.shopping.changeorder: 注文内容が変更になりました。クーポンをご利用の場合は再度設定をお願いいたします。
 plugin_coupon.front.shopping.notfound: このクーポンコードは利用できません。
 plugin_coupon.front.shopping.header: クーポン
 plugin_coupon.front.shopping.message.use_code: クーポンコード %code% を利用しています。
