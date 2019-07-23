@@ -506,7 +506,7 @@ class CouponServiceTest extends EccubeTestCase
                 return $OrderItem->getProcessorName() === CouponProcessor::class;
             }
         );
-        $this->assertEmpty($CouponOrderItems, 'クーポン明細が削除されている');
+        $this->assertTrue($CouponOrderItems->isEmpty(), 'クーポン明細が削除されている');
 
         // https://github.com/EC-CUBE/coupon-plugin/pull/110 のテストケース
         $CouponOrderItems = $OtherOrder->getItems()->filter(
@@ -514,7 +514,7 @@ class CouponServiceTest extends EccubeTestCase
                 return $OrderItem->getProcessorName() === CouponProcessor::class;
             }
         );
-        $this->assertNotEmpty($CouponOrderItems);
+        $this->assertFalse($CouponOrderItems->isEmpty());
     }
 
     /**
