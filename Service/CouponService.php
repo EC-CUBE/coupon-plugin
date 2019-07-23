@@ -370,7 +370,7 @@ class CouponService
         /** @var CouponOrder $CouponOrder */
         $CouponOrder = $this->couponOrderRepository->getCouponOrder($Order->getPreOrderId());
         if ($CouponOrder) {
-            $OrderItems = $this->orderItemRepository->findBy(['processor_name' => CouponProcessor::class]);
+            $OrderItems = $this->orderItemRepository->findBy(['processor_name' => CouponProcessor::class, 'Order' => $Order]);
             foreach ($OrderItems as $OrderItem) {
                 $Order->removeOrderItem($OrderItem);
                 $this->entityManager->remove($OrderItem);
