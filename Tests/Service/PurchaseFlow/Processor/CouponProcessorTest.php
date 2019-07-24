@@ -19,9 +19,11 @@ use Eccube\Entity\ItemHolderInterface;
 use Eccube\Entity\Order;
 use Eccube\Entity\OrderItem;
 use Eccube\Repository\TaxRuleRepository;
+use Eccube\Service\PurchaseFlow\InvalidItemException;
 use Eccube\Service\PurchaseFlow\PurchaseContext;
 use Eccube\Service\TaxRuleService;
 use Eccube\Tests\EccubeTestCase;
+use Plugin\Coupon4\Entity\Coupon;
 use Plugin\Coupon4\Entity\CouponOrder;
 use Plugin\Coupon4\Repository\CouponOrderRepository;
 use Plugin\Coupon4\Repository\CouponRepository;
@@ -146,6 +148,307 @@ class CouponProcessorTest extends EccubeTestCase
         $this->assertEquals($Coupon->getCouponName(), $OrderItem->getProductName());
     }
 
+    public function testRemoveCouponDiscountItem()
+    {
+        $Coupon = $this->getCoupon();
+        $this->container->get('security.token_storage')->setToken(
+            new UsernamePasswordToken(
+                $this->Customer, null, 'customer', $this->Customer->getRoles()
+            )
+        );
+        $this->couponService->saveCouponOrder($this->Order, $Coupon, $Coupon->getCouponCd(), $this->Customer, 1000);
+        /** @var CouponOrder $CouponOrder */
+        $CouponOrder = $this->couponOrderRepository->findOneBy(['order_id' => $this->Order->getId()]);
+
+        $this->wrapperOfAddCouponDiscountItem($this->processor, $this->Order, $CouponOrder);
+
+        // Remove to OrderItem of Coupon
+        $this->wrapperOfRemoveCouponDiscountItem($this->processor, $this->Order, $CouponOrder);
+
+        $OrderItems = $this->Order->getItems()->filter(function (OrderItem $OrderItem) {
+            return $OrderItem->getProcessorName() === CouponProcessor::class;
+        });
+
+        $this->assertTrue($OrderItems->isEmpty(), 'クーポンの明細が削除されている');
+    }
+
+    public function testProcess()
+    {
+        $Coupon = $this->getCoupon();
+        $this->container->get('security.token_storage')->setToken(
+            new UsernamePasswordToken(
+                $this->Customer, null, 'customer', $this->Customer->getRoles()
+            )
+        );
+        $this->couponService->saveCouponOrder($this->Order, $Coupon, $Coupon->getCouponCd(), $this->Customer, 1000);
+        /** @var CouponOrder $CouponOrder */
+        $CouponOrder = $this->couponOrderRepository->findOneBy(['order_id' => $this->Order->getId()]);
+
+        // Add to exists OrderItem
+        $this->wrapperOfAddCouponDiscountItem($this->processor, $this->Order, $CouponOrder);
+
+        $this->processor->process($this->Order, $this->context);
+
+        $OrderItems = $this->Order->getItems()->filter(function (OrderItem $OrderItem) {
+            return $OrderItem->getProcessorName() === CouponProcessor::class;
+        });
+
+        $this->assertFalse($OrderItems->isEmpty(), 'クーポン明細が追加されている');
+
+        /** @var OrderItem */
+        $OrderItem = $OrderItems->first();
+        $this->assertEquals(-1000, $OrderItem->getPrice());
+        $this->assertEquals($Coupon->getCouponName(), $OrderItem->getProductName());
+    }
+
+    public function testProcessWithNotExistsOrderItem()
+    {
+        $Coupon = $this->getCoupon();
+        $this->container->get('security.token_storage')->setToken(
+            new UsernamePasswordToken(
+                $this->Customer, null, 'customer', $this->Customer->getRoles()
+            )
+        );
+        $this->couponService->saveCouponOrder($this->Order, $Coupon, $Coupon->getCouponCd(), $this->Customer, 1000);
+
+        $this->processor->process($this->Order, $this->context);
+
+        $OrderItems = $this->Order->getItems()->filter(function (OrderItem $OrderItem) {
+            return $OrderItem->getProcessorName() === CouponProcessor::class;
+        });
+
+        $this->assertFalse($OrderItems->isEmpty(), 'クーポン明細が追加されている');
+
+        /** @var OrderItem */
+        $OrderItem = $OrderItems->first();
+        $this->assertEquals(-1000, $OrderItem->getPrice());
+        $this->assertEquals($Coupon->getCouponName(), $OrderItem->getProductName());
+    }
+
+    public function testProcessWithCouponOrderIsNotFound()
+    {
+        $this->processor->process($this->Order, $this->context);
+
+        $OrderItems = $this->Order->getItems()->filter(function (OrderItem $OrderItem) {
+            return $OrderItem->getProcessorName() === CouponProcessor::class;
+        });
+
+        $this->assertTrue($OrderItems->isEmpty(), 'クーポン明細は存在しない');
+    }
+
+    public function testProcessWithNotSupport()
+    {
+        $this->processor->process(new Cart(), $this->context);
+
+        $OrderItems = $this->Order->getItems()->filter(function (OrderItem $OrderItem) {
+            return $OrderItem->getProcessorName() === CouponProcessor::class;
+        });
+
+        $this->assertTrue($OrderItems->isEmpty(), 'クーポン明細は存在しない');
+    }
+
+    public function testValidate()
+    {
+        $Coupon = $this->getCoupon();
+        $this->container->get('security.token_storage')->setToken(
+            new UsernamePasswordToken(
+                $this->Customer, null, 'customer', $this->Customer->getRoles()
+            )
+        );
+        $products = $this->couponService->existsCouponProduct($Coupon, $this->Order);
+        $discount = $this->couponService->recalcOrder($Coupon, $products);
+        $this->couponService->saveCouponOrder($this->Order, $Coupon, $Coupon->getCouponCd(), $this->Customer, $discount);
+
+        try {
+            $this->wrapperOfValidate($this->processor, $this->Order, $this->context);
+            $this->assertTrue(true);
+        } catch (InvalidItemException $e) {
+            $this->fail($e->getMessage());
+        }
+    }
+
+    public function testValidateWithNotSupport()
+    {
+        try {
+            $this->wrapperOfValidate($this->processor, new Cart(), $this->context);
+            $this->assertTrue(true);
+        } catch (InvalidItemException $e) {
+            $this->fail($e->getMessage());
+        }
+    }
+
+    public function testValidateWithNotCouponOrder()
+    {
+        try {
+            $this->wrapperOfValidate($this->processor, $this->Order, $this->context);
+            $this->assertTrue(true);
+        } catch (InvalidItemException $e) {
+            $this->fail($e->getMessage());
+        }
+    }
+
+    public function testValidateWithNotActiveCoupon()
+    {
+        $Coupon = $this->getCoupon();
+        $this->container->get('security.token_storage')->setToken(
+            new UsernamePasswordToken(
+                $this->Customer, null, 'customer', $this->Customer->getRoles()
+            )
+        );
+        $products = $this->couponService->existsCouponProduct($Coupon, $this->Order);
+        $discount = $this->couponService->recalcOrder($Coupon, $products);
+        $this->couponService->saveCouponOrder($this->Order, $Coupon, $Coupon->getCouponCd(), $this->Customer, $discount);
+
+        $Coupon->setEnableFlag(false);
+        $this->entityManager->flush($Coupon);
+        try {
+            $this->wrapperOfValidate($this->processor, $this->Order, $this->context);
+            $this->fail();
+        } catch (InvalidItemException $e) {
+            $this->assertEquals(trans('plugin_coupon.front.shopping.notfound'), $e->getMessage());
+        }
+    }
+
+    public function testValidateMemberOnlyCouponWithNonCustomer()
+    {
+        $Coupon = $this->getCoupon();
+        $Coupon->setCouponMember(true);
+
+        // ゲスト購入の Order を生成する
+        $this->Order->setCustomer(null);
+        $this->entityManager->flush();
+        $this->container->get('security.token_storage')->setToken(
+            new UsernamePasswordToken(
+                new Customer(), null, 'customer', []
+            )
+        );
+
+        $products = $this->couponService->existsCouponProduct($Coupon, $this->Order);
+        $discount = $this->couponService->recalcOrder($Coupon, $products);
+        $this->couponService->saveCouponOrder($this->Order, $Coupon, $Coupon->getCouponCd(), new Customer(), $discount);
+
+        try {
+            $this->wrapperOfValidate($this->processor, $this->Order, $this->context);
+            $this->fail();
+        } catch (InvalidItemException $e) {
+            $this->assertEquals(trans('plugin_coupon.front.shopping.member'), $e->getMessage());
+        }
+    }
+
+    public function testValidateWithNonCustomer()
+    {
+        $Coupon = $this->getCoupon();
+        $Coupon->setCouponMember(false);
+
+        // ゲスト購入の Order を生成する
+        $this->Order->setCustomer(null);
+        $this->entityManager->flush();
+        $this->container->get('security.token_storage')->setToken(
+            new UsernamePasswordToken(
+                new Customer(), null, 'customer', []
+            )
+        );
+
+        $products = $this->couponService->existsCouponProduct($Coupon, $this->Order);
+        $discount = $this->couponService->recalcOrder($Coupon, $products);
+        $this->couponService->saveCouponOrder($this->Order, $Coupon, $Coupon->getCouponCd(), new Customer(), $discount);
+
+        try {
+            $this->wrapperOfValidate($this->processor, $this->Order, $this->context);
+            $this->assertTrue(true);
+        } catch (InvalidItemException $e) {
+            $this->fail('ゲストでも使用可能なクーポンであるはず');
+        }
+    }
+
+    public function testValidateWithProduct()
+    {
+        $Coupon = $this->getCoupon(Coupon::PRODUCT);
+        $this->container->get('security.token_storage')->setToken(
+            new UsernamePasswordToken(
+                $this->Customer, null, 'customer', $this->Customer->getRoles()
+            )
+        );
+        $products = $this->couponService->existsCouponProduct($Coupon, $this->Order);
+        $discount = $this->couponService->recalcOrder($Coupon, $products);
+        $this->couponService->saveCouponOrder($this->Order, $Coupon, $Coupon->getCouponCd(), $this->Customer, $discount);
+
+        try {
+            $this->wrapperOfValidate($this->processor, $this->Order, $this->context);
+            $this->fail();
+        } catch (InvalidItemException $e) {
+            $this->assertEquals(trans('plugin_coupon.front.shopping.couponusetime'), $e->getMessage());
+        }
+    }
+
+    public function testValidateWithChangeOrder()
+    {
+        $Coupon = $this->getCoupon();
+        $this->container->get('security.token_storage')->setToken(
+            new UsernamePasswordToken(
+                $this->Customer, null, 'customer', $this->Customer->getRoles()
+            )
+        );
+        $products = $this->couponService->existsCouponProduct($Coupon, $this->Order);
+        $discount = $this->couponService->recalcOrder($Coupon, $products);
+        $this->couponService->saveCouponOrder(
+            $this->Order, $Coupon, $Coupon->getCouponCd(), $this->Customer,
+            1); // CouponOrder の金額を変更する
+
+        try {
+            $this->wrapperOfValidate($this->processor, $this->Order, $this->context);
+            $this->fail();
+        } catch (InvalidItemException $e) {
+            $this->assertEquals(trans('plugin_coupon.front.shopping.changeorder'), $e->getMessage());
+        }
+    }
+
+    public function testValidateWithLowerLimit()
+    {
+        $Coupon = $this->getCoupon();
+        $Coupon->setCouponLowerLimit(9999999999);
+        $this->entityManager->flush();
+        $this->container->get('security.token_storage')->setToken(
+            new UsernamePasswordToken(
+                $this->Customer, null, 'customer', $this->Customer->getRoles()
+            )
+        );
+        $products = $this->couponService->existsCouponProduct($Coupon, $this->Order);
+        $discount = $this->couponService->recalcOrder($Coupon, $products);
+        $this->couponService->saveCouponOrder(
+            $this->Order, $Coupon, $Coupon->getCouponCd(), $this->Customer, $discount);
+
+        try {
+            $this->wrapperOfValidate($this->processor, $this->Order, $this->context);
+            $this->fail();
+        } catch (InvalidItemException $e) {
+            $this->assertEquals(trans('plugin_coupon.front.shopping.lowerlimit', ['lowerLimit' => number_format(9999999999)]), $e->getMessage());
+        }
+    }
+
+    public function testValidateWithUseTime()
+    {
+        $Coupon = $this->getCoupon();
+        $Coupon->setCouponUseTime(0);
+        $this->entityManager->flush();
+        $this->container->get('security.token_storage')->setToken(
+            new UsernamePasswordToken(
+                $this->Customer, null, 'customer', $this->Customer->getRoles()
+            )
+        );
+        $products = $this->couponService->existsCouponProduct($Coupon, $this->Order);
+        $discount = $this->couponService->recalcOrder($Coupon, $products);
+        $this->couponService->saveCouponOrder(
+            $this->Order, $Coupon, $Coupon->getCouponCd(), $this->Customer, $discount);
+
+        try {
+            $this->wrapperOfValidate($this->processor, $this->Order, $this->context);
+            $this->fail();
+        } catch (InvalidItemException $e) {
+            $this->assertEquals(trans('plugin_coupon.front.shopping.couponusetime'), $e->getMessage());
+        }
+    }
+
     private function wrapperOfSupports(CouponProcessor $instance, ItemHolderInterface $itemHolder)
     {
         $refMethod = new \ReflectionMethod(CouponProcessor::class, 'supports');
@@ -158,5 +461,19 @@ class CouponProcessorTest extends EccubeTestCase
         $refMethod = new \ReflectionMethod(CouponProcessor::class, 'addCouponDiscountItem');
         $refMethod->setAccessible(true);
         return $refMethod->invoke($instance, $itemHolder, $CouponOrder);
+    }
+
+    private function wrapperOfRemoveCouponDiscountItem(CouponProcessor $instance, ItemHolderInterface $itemHolder, CouponOrder $CouponOrder)
+    {
+        $refMethod = new \ReflectionMethod(CouponProcessor::class, 'removeCouponDiscountItem');
+        $refMethod->setAccessible(true);
+        return $refMethod->invoke($instance, $itemHolder, $CouponOrder);
+    }
+
+    private function wrapperOfValidate(CouponProcessor $instance, ItemHolderInterface $itemHolder, PurchaseContext $context)
+    {
+        $refMethod = new \ReflectionMethod(CouponProcessor::class, 'validate');
+        $refMethod->setAccessible(true);
+        return $refMethod->invoke($instance, $itemHolder, $context);
     }
 }
