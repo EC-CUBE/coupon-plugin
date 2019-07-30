@@ -449,6 +449,89 @@ class CouponProcessorTest extends EccubeTestCase
         }
     }
 
+    public function testPrepare()
+    {
+        $Coupon = $this->getCoupon();
+        $useTime = $Coupon->getCouponUseTime();
+        $this->container->get('security.token_storage')->setToken(
+            new UsernamePasswordToken(
+                $this->Customer, null, 'customer', $this->Customer->getRoles()
+            )
+        );
+        $products = $this->couponService->existsCouponProduct($Coupon, $this->Order);
+        $discount = $this->couponService->recalcOrder($Coupon, $products);
+        $this->couponService->saveCouponOrder($this->Order, $Coupon, $Coupon->getCouponCd(), $this->Customer, $discount);
+
+        $this->processor->prepare($this->Order, $this->context);
+
+        $this->expected = $useTime - 1;
+        $this->actual = $Coupon->getCouponUseTime();
+        $this->verify();
+    }
+
+    public function testPrepareWithNotSupport()
+    {
+        $Coupon = $this->getCoupon();
+        $useTime = $Coupon->getCouponUseTime();
+        $this->container->get('security.token_storage')->setToken(
+            new UsernamePasswordToken(
+                $this->Customer, null, 'customer', $this->Customer->getRoles()
+            )
+        );
+        $products = $this->couponService->existsCouponProduct($Coupon, $this->Order);
+        $discount = $this->couponService->recalcOrder($Coupon, $products);
+        $this->couponService->saveCouponOrder($this->Order, $Coupon, $Coupon->getCouponCd(), $this->Customer, $discount);
+
+        $this->processor->prepare(new Cart(), $this->context);
+
+        $this->expected = $useTime - 1;
+        $this->actual = $Coupon->getCouponUseTime();
+        $this->assertNotEquals($this->expected, $this->actual, 'サポートしない ItemHolder なので一致しないはず');
+    }
+
+    public function testPrepareWithCouponOrderNotFound()
+    {
+        $Coupon = $this->getCoupon();
+        $useTime = $Coupon->getCouponUseTime();
+        $this->container->get('security.token_storage')->setToken(
+            new UsernamePasswordToken(
+                $this->Customer, null, 'customer', $this->Customer->getRoles()
+            )
+        );
+        $products = $this->couponService->existsCouponProduct($Coupon, $this->Order);
+        $discount = $this->couponService->recalcOrder($Coupon, $products);
+        // CouponOrder を登録しない $this->couponService->saveCouponOrder($this->Order, $Coupon, $Coupon->getCouponCd(), $this->Customer, $discount);
+
+        $this->processor->prepare($this->Order, $this->context);
+
+        $this->expected = $useTime - 1;
+        $this->actual = $Coupon->getCouponUseTime();
+        $this->assertNotEquals($this->expected, $this->actual, 'CouponOrder が存在しないので一致しないはず');
+    }
+
+    public function testPrepareWithCouponNotActive()
+    {
+        $Coupon = $this->getCoupon();
+        $useTime = $Coupon->getCouponUseTime();
+        $this->container->get('security.token_storage')->setToken(
+            new UsernamePasswordToken(
+                $this->Customer, null, 'customer', $this->Customer->getRoles()
+            )
+        );
+        $products = $this->couponService->existsCouponProduct($Coupon, $this->Order);
+        $discount = $this->couponService->recalcOrder($Coupon, $products);
+        $this->couponService->saveCouponOrder($this->Order, $Coupon, $Coupon->getCouponCd(), $this->Customer, $discount);
+
+        $Coupon->setEnableFlag(false);
+        $this->entityManager->flush($Coupon);
+
+        $this->processor->prepare($this->Order, $this->context);
+
+        $this->expected = $useTime - 1;
+        $this->actual = $Coupon->getCouponUseTime();
+        $this->assertNotEquals($this->expected, $this->actual, 'Coupon が無効なので一致しないはず');
+    }
+
     private function wrapperOfSupports(CouponProcessor $instance, ItemHolderInterface $itemHolder)
     {
         $refMethod = new \ReflectionMethod(CouponProcessor::class, 'supports');
