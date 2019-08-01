@@ -532,6 +532,50 @@ class CouponProcessorTest extends EccubeTestCase
         $this->assertNotEquals($this->expected, $this->actual, 'Coupon が無効なので一致しないはず');
     }
 
+    public function testRollback()
+    {
+        $Coupon = $this->getCoupon();
+        $this->container->get('security.token_storage')->setToken(
+            new UsernamePasswordToken(
+                $this->Customer, null, 'customer', $this->Customer->getRoles()
+            )
+        );
+        $this->couponService->saveCouponOrder($this->Order, $Coupon, $Coupon->getCouponCd(), $this->Customer, 1000);
+        /** @var CouponOrder $CouponOrder */
+        $CouponOrder = $this->couponOrderRepository->findOneBy(['order_id' => $this->Order->getId()]);
+        $this->wrapperOfAddCouponDiscountItem($this->processor, $this->Order, $CouponOrder);
+        $this->entityManager->flush();
+
+        // rollback to Coupon
+        $this->processor->rollback($this->Order, $this->context);
+
+        $OrderItems = $this->Order->getItems()->filter(function (OrderItem $OrderItem) {
+            return $OrderItem->getProcessorName() === CouponProcessor::class;
+        });
+
+        $this->assertTrue($OrderItems->isEmpty(), 'クーポンの明細が削除されている');
+    }
+
+    public function testRollbackWithNotSupport()
+    {
+        $Coupon = $this->getCoupon();
+        $useTime = $Coupon->getCouponUseTime();
+        $this->container->get('security.token_storage')->setToken(
+            new UsernamePasswordToken(
+                $this->Customer, null, 'customer', $this->Customer->getRoles()
+            )
+        );
+        $products = $this->couponService->existsCouponProduct($Coupon, $this->Order);
+        $discount = $this->couponService->recalcOrder($Coupon, $products);
+        $this->couponService->saveCouponOrder($this->Order, $Coupon, $Coupon->getCouponCd(), $this->Customer, $discount);
+
+        $this->processor->rollback(new Cart(), $this->context);
+
+        $this->expected = $useTime - 1;
+        $this->actual = $Coupon->getCouponUseTime();
+        $this->assertNotEquals($this->expected, $this->actual, 'サポートしない ItemHolder なので一致しないはず');
+    }
+
     private function wrapperOfSupports(CouponProcessor $instance, ItemHolderInterface $itemHolder)
     {
         $refMethod = new \ReflectionMethod(CouponProcessor::class, 'supports');

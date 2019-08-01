@@ -217,7 +217,6 @@ class CouponProcessor extends ItemHolderValidator implements ItemHolderPreproces
      */
     public function rollback(ItemHolderInterface $itemHolder, PurchaseContext $context)
     {
-        // 利用したポイントをユーザに戻す.
         if (!$this->supports($itemHolder)) {
             return;
         }
