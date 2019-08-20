@@ -21,6 +21,7 @@ use Eccube\Common\Constant;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException;
 
 /**
  * Class Event.
@@ -139,11 +140,26 @@ class Event
                 return;
             }
 
-            if ($app->isGranted('ROLE_USER')) {
-                $Customer = $app->user();
-            } else {
-                $Customer = $app['eccube.service.shopping']->getNonMember($this->sessionKey);
+            try {
+                if ($app->isGranted('ROLE_USER')) {
+                    $Customer = $app->user();
+                } else {
+                    $Customer = $app['eccube.service.shopping']->getNonMember($this->sessionKey);
+                }
+            } catch (AuthenticationCredentialsNotFoundException $e) {
+                /*
+                 * YamatoPayment など kernel.request event で FRONT_SHOPPING_CONFIRM_INITIALIZE
+                 * が dispatch された場合は, TokenStorage が有効になっていないため, セッションから復元する
+                 */
+                if ($app['session']->has('_security_customer')) {
+                    $token = unserialize($app['session']->get('_security_customer'));
+                    $app['security']->setToken($token);
+                    $Customer = $app->user();
+                } else {
+                    $Customer = $app['eccube.service.shopping']->getNonMember($this->sessionKey);
+                }
             }
+
             //check if coupon valid or not
             $Coupon = $app['coupon.repository.coupon']->findActiveCoupon($CouponOrder->getCouponCd());
             if (is_null($Coupon)) {
