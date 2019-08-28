@@ -285,7 +285,7 @@ class CouponProcessor extends ItemHolderValidator implements ItemHolderPreproces
         $Coupon = $this->couponRepository->find($CouponOrder->getCouponId());
 
         $taxDisplayType = TaxDisplayType::INCLUDED; // 税込
-        $taxType = TaxType::TAXATION; // 課税
+        $taxType = TaxType::NON_TAXABLE; // 不課税
         $tax = 0;
         $taxRate = 0;
         $taxRuleId = null;
