@@ -19,6 +19,7 @@ use Eccube\Entity\OrderItem;
 use Eccube\Entity\ProductCategory;
 use Eccube\Repository\Master\OrderItemTypeRepository;
 use Eccube\Repository\TaxRuleRepository;
+use Eccube\Service\TaxRuleService;
 use Eccube\Tests\EccubeTestCase;
 use Eccube\Tests\Fixture\Generator;
 use Plugin\Coupon4\Entity\Coupon;
@@ -26,6 +27,7 @@ use Plugin\Coupon4\Entity\CouponDetail;
 use Plugin\Coupon4\Repository\CouponOrderRepository;
 use Plugin\Coupon4\Repository\CouponRepository;
 use Plugin\Coupon4\Service\CouponService;
+use Plugin\Coupon4\Service\PurchaseFlow\Processor\CouponProcessor;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 /**
@@ -49,6 +51,11 @@ class CouponServiceTest extends EccubeTestCase
     private $taxRuleRepository;
 
     /**
+     * @var TaxRuleService
+     */
+    private $taxRuleService;
+
+    /**
      * @var CouponService
      */
     private $couponService;
@@ -64,6 +71,7 @@ class CouponServiceTest extends EccubeTestCase
         $this->couponOrderRepository = $this->container->get(CouponOrderRepository::class);
         $this->couponRepository = $this->container->get(CouponRepository::class);
         $this->taxRuleRepository = $this->container->get(TaxRuleRepository::class);
+        $this->taxRuleService = $this->container->get(TaxRuleService::class);
         $this->couponService = $this->container->get(CouponService::class);
         $this->orderItemTypeRepository = $this->container->get(OrderItemTypeRepository::class);
     }
@@ -455,6 +463,58 @@ class CouponServiceTest extends EccubeTestCase
         $this->couponService->setOrderCompleteMailMessage($Order, null, null);
         $this->assertNotRegExp('/クーポン情報/u', $Order->getCompleteMailMessage());
         $this->assertNotRegExp('/クーポンコード: '.$couponCd.' '.$couponName.'/u', $Order->getCompleteMailMessage());
+    }
+
+    public function testRemoveCouponOrder()
+    {
+        /** @var Coupon $Coupon */
+        $Coupon = $this->getCoupon(Coupon::PRODUCT, Coupon::DISCOUNT_RATE);
+        $Customer = $this->createCustomer();
+        $Order = $this->createOrder($Customer);
+        $OtherOrder = $this->createOrder($Customer);
+        $discount = 100;
+
+        $this->container->get('security.token_storage')->setToken(
+            new UsernamePasswordToken(
+                $Customer, null, 'customer', $Customer->getRoles()
+            )
+        );
+
+        $this->couponService->saveCouponOrder($Order, $Coupon, $Coupon->getCouponCd(), $Customer, $discount);
+        $this->couponService->saveCouponOrder($OtherOrder, $Coupon, $Coupon->getCouponCd(), $Customer, $discount);
+
+        $CouponProcessor = new CouponProcessor(
+            $this->entityManager,
+            $this->couponService,
+            $this->couponRepository,
+            $this->couponOrderRepository,
+            $this->taxRuleService,
+            $this->taxRuleRepository
+        );
+        $refMethod = new \ReflectionMethod(CouponProcessor::class, 'addCouponDiscountItem');
+        $refMethod->setAccessible(true);
+        foreach ([$Order, $OtherOrder] as $O) {
+            $CouponOrder = $this->couponOrderRepository->findOneBy(['coupon_cd' => $Coupon->getCouponCd(), 'order_id' => $O->getId()]);
+            $refMethod->invoke($CouponProcessor, $O, $CouponOrder);
+        }
+        $this->entityManager->flush();
+
+        $this->couponService->removeCouponOrder($Order);
+
+        $CouponOrderItems = $Order->getItems()->filter(
+            function (OrderItem $OrderItem) {
+                return $OrderItem->getProcessorName() === CouponProcessor::class;
+            }
+        );
+        $this->assertTrue($CouponOrderItems->isEmpty(), 'クーポン明細が削除されている');
+
+        // https://github.com/EC-CUBE/coupon-plugin/pull/110 のテストケース
+        $CouponOrderItems = $OtherOrder->getItems()->filter(
+            function (OrderItem $OrderItem) {
+                return $OrderItem->getProcessorName() === CouponProcessor::class;
+            }
+        );
+        $this->assertFalse($CouponOrderItems->isEmpty());
     }
 
     /**
