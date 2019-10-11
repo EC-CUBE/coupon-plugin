@@ -466,6 +466,7 @@ class CouponService
             foreach ($orderDetail->getProduct()->getProductCategories() as $productCategory) {
                 if ($this->existsDepthCategory($targetCategoryIds, $productCategory->getCategory())) {
                     $couponProducts = $this->getCouponProducts($orderDetail, $couponProducts);
+                    break;
                 }
             }
         }
