@@ -537,6 +537,46 @@ class CouponServiceTest extends EccubeTestCase
         ];
     }
 
+    /**
+     * @see https://github.com/EC-CUBE/coupon-plugin/issues/121
+     */
+    public function testContainsCategory()
+    {
+        /** @var Coupon $Coupon */
+        $Coupon = $this->getTestData(Coupon::CATEGORY, Coupon::DISCOUNT_PRICE);
+        $Coupon->setVisible(true);
+
+        $Product = $this->createProduct(null, 0);
+        $ProductClass = $Product->getProductClasses()->first();
+
+        $ProductCategories = $Product->getProductCategories();
+        $Customer = $this->createCustomer();
+        $Order = $this->createOrderWithProductClasses($Customer, [$ProductClass]);
+
+        $quantity = $Order->getProductOrderItems()[0]->getQuantity();
+
+        foreach ($ProductCategories as $ProductCategory) {
+            $CouponDetail = new CouponDetail();
+            $CouponDetail->setCoupon($Coupon);
+            $CouponDetail->setCouponType($Coupon->getCouponType());
+            $CouponDetail->setUpdateDate($Coupon->getUpdateDate());
+            $CouponDetail->setCreateDate($Coupon->getCreateDate());
+            $CouponDetail->setVisible(true);
+            $CouponDetail->setCategory($ProductCategory->getCategory());
+            $Coupon->addCouponDetail($CouponDetail);
+            $this->entityManager->persist($CouponDetail);
+            $this->entityManager->flush($CouponDetail);
+        }
+
+        $this->entityManager->flush();
+
+        $method = new \ReflectionMethod(CouponService::class, 'containsCategory');
+        $method->setAccessible(true);
+        $result = $method->invoke($this->couponService, $Coupon, $Order);
+
+        self::assertEquals($quantity, $result[$ProductClass->getId()]['quantity']);
+    }
+
     public function testSetOrderCompleteMailMessage()
     {
         $Order = new Order();
