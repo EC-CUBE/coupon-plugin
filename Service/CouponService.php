@@ -287,7 +287,7 @@ class CouponService
                 // include tax
                 foreach ($couponProducts as $productClassId => $value) {
                     // 税率が取得できない場合は TaxRule から取得し直す
-                    if ($value['tax_rate'] < 1) {
+                    if ($value['tax_rate'] < 1 || $value['rounding_type_id'] === null) {
                         /** @var ProductClass $ProductClass */
                         $ProductClass = $this->productClassRepository->find($productClassId);
                         $TaxRule = $this->taxRuleRepository->getByRule($ProductClass->getProduct(), $ProductClass);
@@ -524,7 +524,7 @@ class CouponService
                 'price' => $orderItem->getPrice(),
                 'quantity' => $orderItem->getQuantity(),
                 'tax_rate' => $orderItem->getTaxRate(),
-                'rounding_type_id' => $orderItem->getRoundingType()->getId(),
+                'rounding_type_id' => $orderItem->getRoundingType() ? $orderItem->getRoundingType()->getId() : null,
             ];
         }
 

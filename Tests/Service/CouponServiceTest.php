@@ -465,6 +465,7 @@ class CouponServiceTest extends EccubeTestCase
     ) {
         $TaxRule = $this->taxRuleRepository->find(TaxRule::DEFAULT_TAX_RULE_ID);
         $TaxRule->setTaxRate($taxRate);
+        $TaxRule->setRoundingType($this->entityManager->find(RoundingType::class, $roundingTypeId));
         $this->entityManager->flush($TaxRule);
 
         /** @var Coupon $Coupon */
