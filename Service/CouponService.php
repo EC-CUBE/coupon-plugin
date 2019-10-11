@@ -523,6 +523,8 @@ class CouponService
             $couponProducts[$orderItem->getProductClass()->getId()] = [
                 'price' => $orderItem->getPrice(),
                 'quantity' => $orderItem->getQuantity(),
+                // tax_rate, rounding_type_idは複数配送の個数変更時に取得できない. recalcOrderで取得し直している
+                // https://github.com/EC-CUBE/coupon-plugin/pull/106/commits/d47f60745b283023cd7a990c609e6399701ddce1
                 'tax_rate' => $orderItem->getTaxRate(),
                 'rounding_type_id' => $orderItem->getRoundingType() ? $orderItem->getRoundingType()->getId() : null,
             ];
