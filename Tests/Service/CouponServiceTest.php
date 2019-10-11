@@ -14,9 +14,11 @@
 namespace Plugin\Coupon4\Tests\Service;
 
 use Eccube\Entity\Master\OrderItemType;
+use Eccube\Entity\Master\RoundingType;
 use Eccube\Entity\Order;
 use Eccube\Entity\OrderItem;
 use Eccube\Entity\ProductCategory;
+use Eccube\Entity\TaxRule;
 use Eccube\Repository\Master\OrderItemTypeRepository;
 use Eccube\Repository\TaxRuleRepository;
 use Eccube\Service\TaxRuleService;
@@ -447,6 +449,91 @@ class CouponServiceTest extends EccubeTestCase
         $this->actual = $discount;
         $this->expected = (int) round(round($total) * $discountRate / 100);
         $this->verify();
+    }
+
+    /**
+     * @dataProvider roundingTypeProvider
+     *
+     * https://github.com/EC-CUBE/coupon-plugin/issues/120
+     */
+    public function testReCalcOrderWithRoundingType(
+        $taxRate,
+        $discountRate,
+        $roundingTypeId,
+        $price,
+        $discount
+    ) {
+        $TaxRule = $this->taxRuleRepository->find(TaxRule::DEFAULT_TAX_RULE_ID);
+        $TaxRule->setTaxRate($taxRate);
+        $this->entityManager->flush($TaxRule);
+
+        /** @var Coupon $Coupon */
+        $Coupon = $this->getCoupon(null, Coupon::DISCOUNT_RATE);
+        $Coupon->setDiscountRate($discountRate);
+
+        $couponProducts[] = [
+            'price' => $price,
+            'quantity' => 1,
+            'tax_rate' => $taxRate,
+            'rounding_type_id' => $roundingTypeId,
+        ];
+
+        $result = $this->couponService->recalcOrder($Coupon, $couponProducts);
+        self::assertEquals($discount, $result);
+    }
+
+    public function roundingTypeProvider()
+    {
+        return [
+            [8, 10, RoundingType::ROUND, 4222, 456],
+            [8, 10, RoundingType::FLOOR, 4222, 455],
+            [8, 10, RoundingType::CEIL, 4222, 456],
+        ];
+    }
+
+    /**
+     * @dataProvider lowerLimitProvider
+     *
+     * https://github.com/EC-CUBE/coupon-plugin/issues/120
+     */
+    public function testIsLowerLimitCoupon($taxRate, $roundingTypeId, $price, $lowerLimit, $expected) {
+        $TaxRule = $this->taxRuleRepository->find(TaxRule::DEFAULT_TAX_RULE_ID);
+        $TaxRule->setTaxRate($taxRate);
+        $this->entityManager->flush($TaxRule);
+
+        /** @var Coupon $Coupon */
+        $Coupon = $this->getCoupon(null, Coupon::DISCOUNT_RATE);
+        $Coupon->setCouponLowerLimit($lowerLimit);
+        $couponProducts[] = [
+            'price' => $price,
+            'quantity' => 1,
+            'tax_rate' => $taxRate,
+            'rounding_type_id' => $roundingTypeId,
+        ];
+
+        $result = $this->couponService->isLowerLimitCoupon($couponProducts, $lowerLimit);
+        self::assertEquals($expected, $result);
+    }
+
+    public function lowerLimitProvider()
+    {
+        return [
+            // 税抜4222円, 税込4560円
+            [8, RoundingType::ROUND, 4222, 4559, true],
+            [8, RoundingType::ROUND, 4222, 4560, true],
+            [8, RoundingType::ROUND, 4222, 4561, false],
+
+            // 税抜4222円, 税込4559円
+            [8, RoundingType::FLOOR, 4222, 4558, true],
+            [8, RoundingType::FLOOR, 4222, 4559, true],
+            [8, RoundingType::FLOOR, 4222, 4560, false],
+            [8, RoundingType::FLOOR, 4222, 4561, false],
+
+            // 税抜4222円, 税込4560円
+            [8, RoundingType::CEIL, 4222, 4559, true],
+            [8, RoundingType::CEIL, 4222, 4560, true],
+            [8, RoundingType::CEIL, 4222, 4561, false],
+        ];
     }
 
     public function testSetOrderCompleteMailMessage()

@@ -292,8 +292,9 @@ class CouponService
                         $ProductClass = $this->productClassRepository->find($productClassId);
                         $TaxRule = $this->taxRuleRepository->getByRule($ProductClass->getProduct(), $ProductClass);
                         $value['tax_rate'] = $TaxRule->getTaxRate();
+                        $value['rounding_type_id'] = $TaxRule->getRoundingType()->getId();
                     }
-                    $total += ($value['price'] + $this->taxRuleService->calcTax($value['price'], $value['tax_rate'], RoundingType::ROUND)) * $value['quantity'];
+                    $total += ($value['price'] + $this->taxRuleService->calcTax($value['price'], $value['tax_rate'], $value['rounding_type_id'])) * $value['quantity'];
                 }
                 /** @var TaxRule $DefaultTaxRule */
                 $DefaultTaxRule = $this->taxRuleRepository->getByRule();
@@ -323,7 +324,7 @@ class CouponService
         $subTotal = 0;
         // price inc tax
         foreach ($productCoupon as $key => $value) {
-            $subTotal += ($value['price'] + $this->taxRuleService->calcTax($value['price'], $value['tax_rate'], RoundingType::ROUND)) * $value['quantity'];
+            $subTotal += ($value['price'] + $this->taxRuleService->calcTax($value['price'], $value['tax_rate'], $value['rounding_type_id'])) * $value['quantity'];
         }
 
         if ($subTotal < $lowerLimitMoney && $subTotal != 0) {
@@ -522,7 +523,8 @@ class CouponService
             $couponProducts[$orderItem->getProductClass()->getId()] = [
                 'price' => $orderItem->getPrice(),
                 'quantity' => $orderItem->getQuantity(),
-                'tax_rate' => $orderItem->getTaxRate()
+                'tax_rate' => $orderItem->getTaxRate(),
+                'rounding_type_id' => $orderItem->getRoundingType()->getId(),
             ];
         }
 
