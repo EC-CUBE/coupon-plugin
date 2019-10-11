@@ -287,13 +287,14 @@ class CouponService
                 // include tax
                 foreach ($couponProducts as $productClassId => $value) {
                     // 税率が取得できない場合は TaxRule から取得し直す
-                    if ($value['tax_rate'] < 1) {
+                    if ($value['tax_rate'] < 1 || $value['rounding_type_id'] === null) {
                         /** @var ProductClass $ProductClass */
                         $ProductClass = $this->productClassRepository->find($productClassId);
                         $TaxRule = $this->taxRuleRepository->getByRule($ProductClass->getProduct(), $ProductClass);
                         $value['tax_rate'] = $TaxRule->getTaxRate();
+                        $value['rounding_type_id'] = $TaxRule->getRoundingType()->getId();
                     }
-                    $total += ($value['price'] + $this->taxRuleService->calcTax($value['price'], $value['tax_rate'], RoundingType::ROUND)) * $value['quantity'];
+                    $total += ($value['price'] + $this->taxRuleService->calcTax($value['price'], $value['tax_rate'], $value['rounding_type_id'])) * $value['quantity'];
                 }
                 /** @var TaxRule $DefaultTaxRule */
                 $DefaultTaxRule = $this->taxRuleRepository->getByRule();
@@ -323,7 +324,7 @@ class CouponService
         $subTotal = 0;
         // price inc tax
         foreach ($productCoupon as $key => $value) {
-            $subTotal += ($value['price'] + $this->taxRuleService->calcTax($value['price'], $value['tax_rate'], RoundingType::ROUND)) * $value['quantity'];
+            $subTotal += ($value['price'] + $this->taxRuleService->calcTax($value['price'], $value['tax_rate'], $value['rounding_type_id'])) * $value['quantity'];
         }
 
         if ($subTotal < $lowerLimitMoney && $subTotal != 0) {
@@ -523,7 +524,10 @@ class CouponService
             $couponProducts[$orderItem->getProductClass()->getId()] = [
                 'price' => $orderItem->getPrice(),
                 'quantity' => $orderItem->getQuantity(),
-                'tax_rate' => $orderItem->getTaxRate()
+                // tax_rate, rounding_type_idは複数配送の個数変更時に取得できない. recalcOrderで取得し直している
+                // https://github.com/EC-CUBE/coupon-plugin/pull/106/commits/d47f60745b283023cd7a990c609e6399701ddce1
+                'tax_rate' => $orderItem->getTaxRate(),
+                'rounding_type_id' => $orderItem->getRoundingType() ? $orderItem->getRoundingType()->getId() : null,
             ];
         }
 
