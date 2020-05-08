@@ -1,6 +1,6 @@
 {
   "name": "ec-cube/Coupon4",
-  "version": "4.0.6",
+  "version": "4.0.7",
   "description": "Coupon Plugin for EC-CUBE4",
   "type": "eccube-plugin",
   "extra": {
