@@ -89,6 +89,8 @@ class CouponShoppingController extends AbstractController
      * @return array|RedirectResponse
      * @Route("/plugin/coupon/shopping/shopping_coupon", name="plugin_coupon_shopping")
      * @Template("Coupon4/Resource/template/default/shopping_coupon.twig")
+     *
+     * @see https://github.com/EC-CUBE/coupon-plugin/issues/128
      */
     public function shoppingCoupon(Request $request)
     {
