@@ -8,25 +8,48 @@
  file that was distributed with this source code.
 #}
 <script type="text/javascript">
-    $(function () {
-        $('#coupon_button').on("click", function () {
-            $(this).attr('disabled', 'disabled');
+    $(function() {
+        $('.coupon-submit').on('click', function() {
+            $(this).prop('disabled', true);
+
+            var code = $(this).data('coupon');
+            if (code == 'cancel') {
+                code = '';
+            } else if (!code) {
+                code = $('#shopping_order_coupon_cd').val();
+            }
+
             $.ajax({
+                url: "{{ url('plugin_coupon_shopping') }}",
+                cache: false,
                 type: 'POST',
-                data: $('#shopping-form').serialize(),
-                url: '{{ url("shopping_redirect_to") }}',
-                success: function(data) {
-                    window.location.href = '{{ url('plugin_coupon_shopping') }}';
-                },
-                error: function() {
-                    window.location.href = '{{ url('plugin_coupon_shopping') }}';
+                data: {'cd': code},
+                dataType: 'json'
+            }).done(function(data) {
+                if (data == 'ok') {
+                    $('#shopping-form').attr('action', '{{ url("shopping") }}').submit();
+                } else if (data == 'cancel') {
+                    alert("{{ 'plugin_coupon.front.shopping.cancel'|trans }}");
+                    $('#shopping-form').attr('action', '{{ url("shopping") }}').submit();
+                } else if (data == 'blank') {
+                    alert("{{ 'plugin_coupon.front.shopping.blank'|trans }}");
+                } else if (data == 'ng') {
+                    alert("{{ 'plugin_coupon.front.shopping.notfound'|trans }}");
+                } else if (data == 'useng') {
+                    alert("{{ 'plugin_coupon.front.shopping.couponusetime'|trans }}");
+                } else {
+                    alert("{{ 'plugin_coupon.front.shopping.couponusetime'|trans }}");
                 }
+                return false;
+            }).fail(function(data) {
+                alert("{{ 'plugin_coupon.front.shopping.couponusetime'|trans }}");
+            }).always(function(data) {
+                $('.coupon-submit').prop('disabled', false);
             });
-            return false;
         });
 
         // append to layout
-        $(".ec-orderConfirm").last().before($("#coupon").detach());
+        $('.ec-orderConfirm').last().before($('#coupon').detach());
     })
 </script>
 
@@ -37,9 +60,18 @@
     <div id="customer_detail_box" class="column">
         {% if CouponOrder %}
             <strong class="text-danger">{{ 'plugin_coupon.front.shopping.message.use_code'|trans({'%code%': CouponOrder.coupon_cd }) }}</strong>
+            <p>
+                <button type="button" class="ec-inlineBtn coupon-submit" data-coupon="cancel">{{ 'plugin_coupon.front.shopping.button.cancel_coupon'|trans }}</button>
+            </p>
         {% else %}
             {{ 'plugin_coupon.front.shopping.message.empty'|trans }}
+            <p>
+                {{ form_widget(form.coupon_cd, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.coupon_cd) }}
+            </p>
+            <p>
+                <button type="button" id="coupon_button" class="ec-inlineBtn coupon-submit">{{ 'plugin_coupon.front.shopping.button.use_coupon'|trans }}</button>
+            </p>
         {% endif %}
-        <p><a class="btn btn-default btn-sm" id="coupon_button" href="{{ url('plugin_coupon_shopping') }}">{{ 'plugin_coupon.front.shopping.button.add_coupon'|trans }}</a></p>
     </div>
 </div>
