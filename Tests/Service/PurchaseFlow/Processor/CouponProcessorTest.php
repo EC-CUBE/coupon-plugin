@@ -535,6 +535,7 @@ class CouponProcessorTest extends EccubeTestCase
     public function testRollback()
     {
         $Coupon = $this->getCoupon();
+        $useTime = $Coupon->getCouponUseTime();
         $this->container->get('security.token_storage')->setToken(
             new UsernamePasswordToken(
                 $this->Customer, null, 'customer', $this->Customer->getRoles()
@@ -554,6 +555,10 @@ class CouponProcessorTest extends EccubeTestCase
         });
 
         $this->assertTrue($OrderItems->isEmpty(), 'クーポンの明細が削除されている');
+
+        $this->expected = $useTime + 1;
+        $this->actual = $Coupon->getCouponUseTime();
+        $this->verify();
     }
 
     public function testRollbackWithNotSupport()

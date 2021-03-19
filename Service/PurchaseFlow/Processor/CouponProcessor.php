@@ -221,6 +221,18 @@ class CouponProcessor extends ItemHolderValidator implements ItemHolderPreproces
             return;
         }
 
+        $CouponOrder = $this->couponOrderRepository->getCouponOrder($itemHolder->getPreOrderId());
+        if (!$CouponOrder) {
+            return;
+        }
+
+        // クーポンの利用回数を戻す
+        $Coupon = $this->couponRepository->findActiveCoupon($CouponOrder->getCouponCd());
+        if ($Coupon) {
+            $Coupon->setCouponUseTime($Coupon->getCouponUseTime() + 1);
+            $this->entityManager->flush($Coupon);
+        }
+
         $this->couponService->removeCouponOrder($itemHolder);
     }
 
