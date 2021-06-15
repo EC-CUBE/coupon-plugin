@@ -214,23 +214,24 @@ class EventLegacy
                 'coupon_cd' => $CouponOrder->getCouponCd(),
                 'coupon_name' => $CouponOrder->getCouponName(),
             ));
-            $crawler = new Crawler($response->getContent());
-            $html = $this->getHtml($crawler);
+            $html = $response->getContent();
             if (strpos($html, self::COUPON_TAG)) {
                 log_info('Render coupont with ', array('COUPON_TAG' => self::COUPON_TAG));
                 $search = self::COUPON_TAG;
                 $replace = $search.$twig;
                 $html = str_replace($search, $replace, $html);
             } else {
-                // このタグを前後に分割し、間に項目を入れ込む
-                $beforeHtml = $crawler->filter('#confirm_main')->last()->html();
-                $pos = strrpos($beforeHtml, '<h2 class="heading02">');
-                if ($pos !== false) {
-                    $oldHtml = substr($beforeHtml, 0, $pos);
-                    $afterHtml = substr($beforeHtml, $pos);
-                    $newHtml = $oldHtml.$twig.$afterHtml;
-                    $beforeHtml = html_entity_decode($beforeHtml, ENT_NOQUOTES, 'UTF-8');
-                    $html = str_replace($beforeHtml, $newHtml, $html);
+                $document = \DOMDocument::loadHTML($html);
+                $xpath = new \DOMXPath($document);
+                $main = $xpath->query('//div[@id="confirm_main"]', $document)->item(0);
+                if ($main) {
+                    $dom = \DOMDocument::loadHtml('<?xml encoding="utf-8" ?>'.$twig);
+                    $h2 = $dom->getElementsByTagName('h2')->item(0);
+                    $div = $dom->getElementsByTagName('div')->item(0);
+                    $main->appendChild($document->importNode($h2, true));
+                    $main->appendChild($document->importNode($div, true));
+                    $crawler = new Crawler($document);
+                    $html = $crawler->html();
                 }
             }
             $response->setContent($html);
@@ -437,9 +438,7 @@ class EventLegacy
      */
     private function getHtmlShopping(Response $response, Order $Order)
     {
-        // HTMLを取得し、DOM化
-        $crawler = new Crawler($response->getContent());
-        $html = $this->getHtml($crawler);
+        $html = $response->getContent();
 
         try {
             // クーポンが未入力でクーポン情報が存在すればクーポン情報を削除
@@ -455,15 +454,19 @@ class EventLegacy
                 $replace = $search.$parts;
                 $html = str_replace($search, $replace, $html);
             } else {
-                // このタグを前後に分割し、間に項目を入れ込む
-                $beforeHtml = $crawler->filter('#confirm_main')->last()->html();
-                $pos = strrpos($beforeHtml, '<h2 class="heading02">');
-                if ($pos !== false) {
-                    $oldHtml = substr($beforeHtml, 0, $pos);
-                    $afterHtml = substr($beforeHtml, $pos);
-                    $newHtml = $oldHtml.$parts.$afterHtml;
-                    $beforeHtml = html_entity_decode($beforeHtml, ENT_NOQUOTES, 'UTF-8');
-                    $html = str_replace($beforeHtml, $newHtml, $html);
+                $document = \DOMDocument::loadHTML($html);
+                $xpath = new \DOMXPath($document);
+                $main = $xpath->query('//div[@id="confirm_main"]', $document)->item(0);
+                if ($main) {
+                    $dom = \DOMDocument::loadHtml('<?xml encoding="utf-8" ?>'.$parts);
+                    $script = $dom->getElementsByTagName('script')->item(0);
+                    $h2 = $dom->getElementsByTagName('h2')->item(0);
+                    $div = $dom->getElementsByTagName('div')->item(0);
+                    $main->appendChild($document->importNode($script, true));
+                    $main->appendChild($document->importNode($h2, true));
+                    $main->appendChild($document->importNode($div, true));
+                    $crawler = new Crawler($document);
+                    $html = $crawler->html();
                 }
             }
 
@@ -481,6 +484,7 @@ class EventLegacy
                     $parts = $this->app->renderView('Coupon/Resource/template/default/old_discount_shopping_item.twig', array(
                         'Order' => $Order,
                     ));
+                    $crawler = new Crawler($html);
                     $form = $crawler->filter('#confirm_side .total_box')->last()->html();
                     $pos = strrpos($form, '</dl>');
                     if ($pos !== false) {
@@ -542,24 +546,5 @@ class EventLegacy
                 $this->app->addError($this->app->trans('front.plugin.coupon.shopping.use.minus'), 'front.request');
             }
         }
-    }
-
-    /**
-     * 解析用HTMLを取得.
-     *
-     * @param Crawler $crawler
-     *
-     * @return string
-     */
-    private function getHtml(Crawler $crawler)
-    {
-        $html = '';
-        /** @var \DOMElement $domElement */
-        foreach ($crawler as $domElement) {
-            $domElement->ownerDocument->formatOutput = true;
-            $html .= $domElement->ownerDocument->saveHTML();
-        }
-
-        return html_entity_decode($html, ENT_NOQUOTES, 'UTF-8');
     }
 }
