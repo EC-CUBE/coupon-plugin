@@ -15,12 +15,13 @@ namespace Plugin\Coupon4\Tests\Service;
 
 use Eccube\Entity\Master\TaxType;
 use Eccube\Entity\Order;
+use Eccube\Entity\TaxRule;
 use Eccube\Repository\TaxRuleRepository;
 use Eccube\Request\Context;
 use Eccube\Service\PurchaseFlow\PurchaseContext;
 use Eccube\Service\TaxRuleService;
 use Eccube\Tests\EccubeTestCase;
-use phpDocumentor\Reflection\Types\Parent_;
+use Plugin\Coupon4\Entity\Coupon;
 use Plugin\Coupon4\Entity\CouponOrder;
 use Plugin\Coupon4\Repository\CouponOrderRepository;
 use Plugin\Coupon4\Repository\CouponRepository;
@@ -41,11 +42,11 @@ class CouponProcessorTest extends EccubeTestCase
     {
         parent::setUp();
 
-        $couponService = $this->container->get(CouponService::class);
-        $couponRepository = $this->container->get(CouponRepository::class);
-        $couponOrderRepository = $this->container->get(CouponOrderRepository::class);
-        $taxRuleService = $this->container->get(TaxRuleService::class);
-        $taxRuleRepository = $this->container->get(TaxRuleRepository::class);
+        $couponService = self::$container->get(CouponService::class);
+        $couponRepository = $this->entityManager->getRepository(Coupon::class);
+        $couponOrderRepository = $this->entityManager->getRepository(CouponOrder::class);
+        $taxRuleService = self::$container->get(TaxRuleService::class);
+        $taxRuleRepository = $this->entityManager->getRepository(TaxRule::class);
         $this->processor = new CouponProcessor($this->entityManager, $couponService, $couponRepository,
             $couponOrderRepository, $taxRuleService, $taxRuleRepository);
     }

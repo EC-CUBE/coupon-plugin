@@ -41,9 +41,9 @@ class OrderControllerTest extends AbstractEditControllerTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->couponService = $this->container->get(CouponService::class);
-        $this->stateMachine = $this->container->get(OrderStateMachine::class);
-        $this->orderRepository = $this->container->get(OrderRepository::class);
+        $this->couponService = self::$container->get(CouponService::class);
+        $this->stateMachine = self::$container->get(OrderStateMachine::class);
+        $this->orderRepository = $this->entityManager->getRepository(Order::class);
     }
 
     public function testOrderEdit()

@@ -13,14 +13,17 @@
 
 namespace Plugin\Coupon4\Tests\Web;
 
+use Eccube\Entity\BaseInfo;
 use Eccube\Entity\Customer;
 use Eccube\Entity\Order;
+use Eccube\Entity\Product;
 use Eccube\Repository\BaseInfoRepository;
 use Eccube\Repository\OrderRepository;
 use Eccube\Repository\ProductRepository;
 use Eccube\Service\CartService;
 use Eccube\Tests\Web\AbstractShoppingControllerTestCase;
 use Plugin\Coupon4\Entity\Coupon;
+use Plugin\Coupon4\Entity\CouponOrder;
 use Plugin\Coupon4\Tests\Fixtures\CreateCouponTrait;
 use Plugin\Coupon4\Repository\CouponOrderRepository;
 use Plugin\Coupon4\Repository\CouponRepository;
@@ -74,13 +77,13 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->couponRepository = $this->container->get(CouponRepository::class);
-        $this->productRepository = $this->container->get(ProductRepository::class);
-        $this->cartService = $this->container->get(CartService::class);
+        $this->couponRepository = $this->entityManager->getRepository(Coupon::class);
+        $this->productRepository = $this->entityManager->getRepository(Product::class);
+        $this->cartService = self::$container->get(CartService::class);
         $this->Customer = $this->createCustomer();
-        $this->baseInfoRepository = $this->container->get(BaseInfoRepository::class);
-        $this->couponOrderRepository = $this->container->get(CouponOrderRepository::class);
-        $this->orderRepository = $this->container->get(OrderRepository::class);
+        $this->baseInfoRepository = $this->entityManager->getRepository(BaseInfo::class);
+        $this->couponOrderRepository = $this->entityManager->getRepository(CouponOrder::class);
+        $this->orderRepository = $this->entityManager->getRepository(Order::class);
     }
 
     /**
@@ -155,7 +158,7 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
 
         // 生成された受注のチェック
         /** @var Order $Order */
-        $Order = $this->container->get(OrderRepository::class)->findOneBy(
+        $Order = $this->entityManager->getRepository(Order::class)->findOneBy(
             [
                 'Customer' => $this->Customer,
             ]
