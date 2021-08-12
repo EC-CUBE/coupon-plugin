@@ -26,6 +26,7 @@ use Eccube\Tests\EccubeTestCase;
 use Eccube\Tests\Fixture\Generator;
 use Plugin\Coupon4\Entity\Coupon;
 use Plugin\Coupon4\Entity\CouponDetail;
+use Plugin\Coupon4\Entity\CouponOrder;
 use Plugin\Coupon4\Repository\CouponOrderRepository;
 use Plugin\Coupon4\Repository\CouponRepository;
 use Plugin\Coupon4\Service\CouponService;
@@ -70,12 +71,12 @@ class CouponServiceTest extends EccubeTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->couponOrderRepository = $this->container->get(CouponOrderRepository::class);
-        $this->couponRepository = $this->container->get(CouponRepository::class);
-        $this->taxRuleRepository = $this->container->get(TaxRuleRepository::class);
-        $this->taxRuleService = $this->container->get(TaxRuleService::class);
-        $this->couponService = $this->container->get(CouponService::class);
-        $this->orderItemTypeRepository = $this->container->get(OrderItemTypeRepository::class);
+        $this->couponRepository = $this->entityManager->getRepository(Coupon::class);
+        $this->couponOrderRepository = $this->entityManager->getRepository(CouponOrder::class);
+        $this->taxRuleRepository = $this->entityManager->getRepository(TaxRule::class);
+        $this->taxRuleService = self::$container->get(TaxRuleService::class);
+        $this->couponService = self::$container->get(CouponService::class);
+        $this->orderItemTypeRepository = $this->entityManager->getRepository(OrderItemType::class);
     }
 
     /**
@@ -157,7 +158,7 @@ class CouponServiceTest extends EccubeTestCase
     public function testExistsCouponProductTypeCategory()
     {
         /** @var Generator $Generator */
-        $Generator = $this->container->get(Generator::class);
+        $Generator = self::$container->get(Generator::class);
         /** @var Coupon $Coupon */
         $Coupon = $this->getCoupon(Coupon::CATEGORY);
 
@@ -191,7 +192,7 @@ class CouponServiceTest extends EccubeTestCase
     {
         $orderItemVolume = 5;
         /** @var Generator $Generator */
-        $Generator = $this->container->get(Generator::class);
+        $Generator = self::$container->get(Generator::class);
         /** @var Coupon $Coupon */
         $Coupon = $this->getCoupon(Coupon::ALL);
 
@@ -217,7 +218,7 @@ class CouponServiceTest extends EccubeTestCase
     {
         $orderItemVolume = 2;
         /** @var Generator $Generator */
-        $Generator = $this->container->get(Generator::class);
+        $Generator = self::$container->get(Generator::class);
         /** @var Coupon $Coupon */
         $Coupon = $this->getCoupon(Coupon::ALL);
 
@@ -265,7 +266,7 @@ class CouponServiceTest extends EccubeTestCase
 
         $discount = 200;
 
-        $this->container->get('security.token_storage')->setToken(
+        self::$container->get('security.token_storage')->setToken(
             new UsernamePasswordToken(
                 $Customer, null, 'customer', $Customer->getRoles()
             )
@@ -602,7 +603,7 @@ class CouponServiceTest extends EccubeTestCase
         $OtherOrder = $this->createOrder($Customer);
         $discount = 100;
 
-        $this->container->get('security.token_storage')->setToken(
+        self::$container->get('security.token_storage')->setToken(
             new UsernamePasswordToken(
                 $Customer, null, 'customer', $Customer->getRoles()
             )

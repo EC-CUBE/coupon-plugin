@@ -13,10 +13,11 @@
 
 namespace Plugin\Coupon4;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Eccube\Entity\Layout;
 use Eccube\Entity\Page;
-use Eccube\Plugin\AbstractPluginManager;
 use Eccube\Entity\PageLayout;
+use Eccube\Plugin\AbstractPluginManager;
 use Eccube\Repository\LayoutRepository;
 use Eccube\Repository\PageLayoutRepository;
 use Eccube\Repository\PageRepository;
@@ -43,7 +44,9 @@ class PluginManager extends AbstractPluginManager
     public function enable(array $meta, ContainerInterface $container)
     {
         $this->copyBlock($container);
-        $PageLayout = $container->get(PageRepository::class)->findOneBy(['url' => 'plugin_coupon_shopping']);
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $container->get('doctrine')->getManager();
+        $PageLayout = $entityManager->getRepository(Page::class)->findOneBy(['url' => 'plugin_coupon_shopping']);
         if (is_null($PageLayout)) {
             // pagelayoutの作成
             $this->createPageLayout($container);
@@ -67,7 +70,9 @@ class PluginManager extends AbstractPluginManager
      */
     public function update(array $meta, ContainerInterface $container)
     {
-        $PageLayout = $container->get(PageRepository::class)->findOneBy(['url' => 'plugin_coupon_shopping']);
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $container->get('doctrine')->getManager();
+        $PageLayout = $entityManager->getRepository(Page::class)->findOneBy(['url' => 'plugin_coupon_shopping']);
         if (is_null($PageLayout)) {
             // pagelayoutの作成
             $this->createPageLayout($container);
@@ -80,8 +85,10 @@ class PluginManager extends AbstractPluginManager
     private function createPageLayout(ContainerInterface $container)
     {
         // ページレイアウトにプラグイン使用時の値を代入
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $container->get('doctrine')->getManager();
         /** @var \Eccube\Entity\Page $Page */
-        $Page = $container->get(PageRepository::class)->newPage();
+        $Page = $entityManager->getRepository(Page::class)->newPage();
         $Page->setEditType(Page::EDIT_TYPE_DEFAULT);
         $Page->setName('商品購入/クーポン利用');
         $Page->setUrl('plugin_coupon_shopping');
@@ -89,11 +96,10 @@ class PluginManager extends AbstractPluginManager
         $Page->setMetaRobots('noindex');
 
         // DB登録
-        $entityManager = $container->get('doctrine')->getManager();
         $entityManager->persist($Page);
         $entityManager->flush($Page);
 
-        $Layout = $container->get(LayoutRepository::class)->find(Layout::DEFAULT_LAYOUT_UNDERLAYER_PAGE);
+        $Layout = $entityManager->getRepository(Layout::class)->find(Layout::DEFAULT_LAYOUT_UNDERLAYER_PAGE);
         $PageLayout = new PageLayout();
         $PageLayout->setPage($Page)
             ->setPageId($Page->getId())
@@ -113,12 +119,13 @@ class PluginManager extends AbstractPluginManager
     private function removePageLayout(ContainerInterface $container)
     {
         // ページ情報の削除
-        $Page = $container->get(PageRepository::class)->findOneBy(['url' => 'plugin_coupon_shopping']);
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $container->get('doctrine')->getManager();
+        $Page =  $entityManager->getRepository(Page::class)->findOneBy(['url' => 'plugin_coupon_shopping']);
         if ($Page) {
-            $Layout = $container->get(LayoutRepository::class)->find(Layout::DEFAULT_LAYOUT_UNDERLAYER_PAGE);
-            $PageLayout = $container->get(PageLayoutRepository::class)->findOneBy(['Page' => $Page, 'Layout' => $Layout]);
+            $Layout = $entityManager->getRepository(Layout::class)->find(Layout::DEFAULT_LAYOUT_UNDERLAYER_PAGE);
+            $PageLayout = $entityManager->getRepository(PageLayout::class)->findOneBy(['Page' => $Page, 'Layout' => $Layout]);
             // Blockの削除
-            $entityManager = $container->get('doctrine')->getManager();
             $entityManager->remove($PageLayout);
             $entityManager->remove($Page);
             $entityManager->flush();

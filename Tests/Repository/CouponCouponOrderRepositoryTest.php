@@ -15,6 +15,7 @@ namespace Plugin\Coupon4\Tests\Repository;
 
 use Eccube\Entity\Customer;
 use Eccube\Entity\OrderItem;
+use Eccube\Entity\TaxRule;
 use Eccube\Repository\TaxRuleRepository;
 use Eccube\Tests\EccubeTestCase;
 use Eccube\Util\StringUtil;
@@ -53,9 +54,9 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
     {
         parent::setUp();
         $this->Customer = $this->createCustomer('aaa@example.com');
-        $this->couponOrderRepository = $this->container->get(CouponOrderRepository::class);
-        $this->couponRepository = $this->container->get(CouponRepository::class);
-        $this->taxRuleRepository = $this->container->get(TaxRuleRepository::class);
+        $this->couponOrderRepository = $this->entityManager->getRepository(CouponOrder::class);
+        $this->couponRepository = $this->entityManager->getRepository(Coupon::class);
+        $this->taxRuleRepository = $this->entityManager->getRepository(TaxRule::class);
 //        $this->deleteAllRows(array(''));
     }
 

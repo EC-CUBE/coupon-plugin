@@ -1,9 +1,6 @@
 # クーポンプラグイン
 
-[![Build Status](https://travis-ci.org/EC-CUBE/coupon-plugin.svg?branch=master)](https://travis-ci.org/EC-CUBE/coupon-plugin)
-[![Build status](https://ci.appveyor.com/api/projects/status/4xwbry5np5t0n856/branch/master?svg=true)](https://ci.appveyor.com/project/ECCUBE/coupon-plugin-yo1an/branch/master)
-[![SensioLabsInsight](https://insight.sensiolabs.com/projects/70da7277-1540-46a5-9990-e86ca0aaa85d/mini.png)](https://insight.sensiolabs.com/projects/70da7277-1540-46a5-9990-e86ca0aaa85d)
-[![Coverage Status](https://coveralls.io/repos/github/EC-CUBE/coupon-plugin/badge.svg)](https://coveralls.io/github/EC-CUBE/coupon-plugin)
+[![CI for Coupon4](https://github.com/EC-CUBE/coupon-plugin/actions/workflows/ci.yml/badge.svg)](https://github.com/EC-CUBE/coupon-plugin/actions/workflows/ci.yml)
 
 ## 概要
 

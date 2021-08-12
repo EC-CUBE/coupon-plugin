@@ -34,7 +34,7 @@ class CouponCouponRepositoryTest extends EccubeTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->couponRepository = $this->container->get(CouponRepository::class);
+        $this->couponRepository = $this->entityManager->getRepository(Coupon::class);
     }
 
     /**

@@ -1,0 +1,177 @@
+name: CI for Coupon4
+on:
+  push:
+    branches:
+      - '*'
+    tags:
+      - '*'
+    paths:
+      - '**'
+      - '!*.md'
+  pull_request:
+    branches:
+      - '*'
+    paths:
+      - '**'
+      - '!*.md'
+jobs:
+  run-on-linux:
+    name: Run on Linux
+    runs-on: ${{ matrix.operating-system }}
+    strategy:
+      fail-fast: false
+      matrix:
+        operating-system: [ ubuntu-18.04 ]
+        php: [ '7.1', '7.2', '7.3', '7.4' ]
+        db: [ mysql, pgsql ]
+        eccube_version: [ '4.0.6-p1', '4.1' ]
+        plugin_code: [ 'Coupon4' ]
+        include:
+          - eccube_version: '4.0.6-p1'
+            composer: 'v1'
+          - eccube_version: '4.1'
+            composer: 'v2'
+          - db: mysql
+            dbport: '3306'
+            dbuser: 'root'
+            dbpass: 'root'
+            dbname: 'myapp_test'
+            dbversion: 5.7
+          - db: pgsql
+            dbport: '5432'
+            dbuser: 'postgres'
+            dbpass: 'password'
+            dbname: 'myapp_test'
+            dbversion: 9.5
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: ${{ matrix.dbname }}
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+      postgres:
+        image: postgres:9.5
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: ${{ matrix.dbname }}
+        ports:
+          - 5432:5432
+        # needed because the postgres container does not provide a healthcheck
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+      mailcatcher:
+        image: schickling/mailcatcher
+        ports:
+          - 1080:1080
+          - 1025:1025
+    steps:
+    - run: sudo apt-get purge -y hhvm
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Setup PHP
+      uses: nanasess/setup-php@master
+      with:
+        php-version: ${{ matrix.php }}
+
+    - name: Archive Plugin
+      env:
+        PLUGIN_CODE: ${{ matrix.plugin_code }}
+      run: |
+        tar cvzf ${GITHUB_WORKSPACE}/${PLUGIN_CODE}.tar.gz ./*
+    - name: Checkout EC-CUBE
+      uses: actions/checkout@v2
+      with:
+        repository: 'EC-CUBE/ec-cube'
+        ref: ${{ matrix.eccube_version }}
+        path: 'ec-cube'
+
+    - name: Get Composer Cache Directory
+      id: composer-cache
+      run: |
+        echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+    - uses: actions/cache@v1
+      with:
+        path: ${{ steps.composer-cache.outputs.dir }}
+        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-composer-
+
+    - if: matrix.composer == 'v1'
+      run: sudo composer selfupdate --1
+
+    - name: Install to composer
+      working-directory: 'ec-cube'
+      run: composer install --no-interaction -o --apcu-autoloader
+
+    - if: matrix.composer == 'v1'
+      working-directory: 'ec-cube'
+      run: composer require kiy0taka/eccube4-test-fixer "dev-main@dev"
+
+    - name: Setup EC-CUBE
+      env:
+        DB: ${{ matrix.db }}
+        USER: ${{ matrix.dbuser }}
+        DBUSER: ${{ matrix.dbuser }}
+        DBPASS: ${{ matrix.dbpass }}
+        DBNAME: ${{ matrix.dbname }}
+        DBPORT: ${{ matrix.dbport }}
+        DBSERVER: 127.0.0.1
+        DBVERSION: ${{ matrix.dbversion }}
+        ROOT_URLPATH: /ec-cube/html
+      working-directory: 'ec-cube'
+      run: |
+        export PGPASSWORD=${DBPASS}
+        echo "APP_ENV=prod" > .env
+        echo "APP_DEBUG=0" >> .env
+        echo "DATABASE_URL=${DB}://${DBUSER}:${DBPASS}@${DBSERVER}/${DBNAME}" >> .env
+        echo "DATABASE_SERVER_VERSION=${DBVERSION}" >> .env
+        echo "MAILER_URL=null://localhost" >> .env
+        echo "HTTP_SITEURL=https://localhost" >> .env
+        echo "USE_SELFSIGNED_SSL_CERTIFICATE=1" >> .env
+        cat .env
+        bin/console doctrine:schema:create
+        bin/console eccube:fixtures:load
+
+    - name: Setup Plugin
+      env:
+        PLUGIN_CODE: ${{ matrix.plugin_code }}
+      working-directory: 'ec-cube'
+      run: |
+        bin/console eccube:plugin:install --code=${PLUGIN_CODE} --path=${GITHUB_WORKSPACE}/${PLUGIN_CODE}.tar.gz
+        bin/console eccube:plugin:enable --code=${PLUGIN_CODE}
+        rm codeception/_support/*Tester.php
+
+    - name: Run PHPUnit
+      if: matrix.composer == 'v2'
+      env:
+        PLUGIN_CODE: ${{ matrix.plugin_code }}
+      working-directory: 'ec-cube'
+      run: bin/phpunit -c app/Plugin/${PLUGIN_CODE}/phpunit.xml.dist app/Plugin/${PLUGIN_CODE}/Tests
+
+    - name: Run PHPUnit
+      if: matrix.composer == 'v1'
+      env:
+        PLUGIN_CODE: ${{ matrix.plugin_code }}
+      working-directory: 'ec-cube'
+      run: |
+        find app/Plugin/${PLUGIN_CODE}/Tests -name "*Test.php" | while read TESTCASE
+        do
+          ./vendor/bin/phpunit -c app/Plugin/${PLUGIN_CODE}/phpunit.xml.dist --include-path vendor/kiy0taka/eccube4-test-fixer/src --loader 'Eccube\PHPUnit\Loader\Eccube4CompatTestSuiteLoader' ${TESTCASE}
+        done
+
+    - name: Disable Plugin
+      working-directory: 'ec-cube'
+      env:
+        PLUGIN_CODE: ${{ matrix.plugin_code }}
+      run: bin/console eccube:plugin:disable --code=${PLUGIN_CODE}
+
+    - name: Uninstall Plugin
+      env:
+        PLUGIN_CODE: ${{ matrix.plugin_code }}
+      working-directory: 'ec-cube'
+      run: bin/console eccube:plugin:uninstall --code=${PLUGIN_CODE}

@@ -14,6 +14,7 @@
 namespace Plugin\Coupon4\Tests\Web\Admin;
 
 use Eccube\Entity\Customer;
+use Eccube\Entity\Product;
 use Eccube\Repository\ProductRepository;
 use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;
 use Plugin\Coupon4\Entity\Coupon;
@@ -50,8 +51,8 @@ class CouponControllerTest extends AbstractAdminWebTestCase
     {
         parent::setUp();
         $this->Customer = $this->createCustomer();
-        $this->couponRepository = $this->container->get(CouponRepository::class);
-        $this->productRepository = $this->container->get(ProductRepository::class);
+        $this->couponRepository = $this->entityManager->getRepository(Coupon::class);
+        $this->productRepository = $this->entityManager->getRepository(Product::class);
         $this->deleteAllRows(['plg_coupon_order', 'plg_coupon_detail', 'plg_coupon']);
     }
 
