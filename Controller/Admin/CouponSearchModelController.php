@@ -17,7 +17,7 @@ use Eccube\Controller\AbstractController;
 use Eccube\Entity\Category;
 use Eccube\Repository\CategoryRepository;
 use Eccube\Repository\ProductRepository;
-use Knp\Component\Pager\Paginator;
+use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -54,14 +54,14 @@ class CouponSearchModelController extends AbstractController
      *
      * @param Request   $request
      * @param int       $page_no
-     * @param Paginator $paginator
+     * @param PaginatorInterface $paginator
      *
      * @return array
      * @Route("/%eccube_admin_route%/plugin/coupon/search/product", name="plugin_coupon_search_product")
      * @Route("/%eccube_admin_route%/plugin/coupon/search/product/page/{page_no}", requirements={"page_no" = "\d+"}, name="plugin_coupon_search_product_page")
      * @Template("@Coupon4/admin/search_product.twig")
      */
-    public function searchProduct(Request $request, $page_no = null, Paginator $paginator)
+    public function searchProduct(Request $request, $page_no = null, PaginatorInterface $paginator)
     {
         if (!$request->isXmlHttpRequest()) {
             return null;
