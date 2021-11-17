@@ -15,9 +15,9 @@ namespace Plugin\Coupon4\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Eccube\Common\Constant;
+use Eccube\Entity\Category;
 use Eccube\Entity\Customer;
 use Eccube\Entity\ItemHolderInterface;
-use Eccube\Entity\Master\RoundingType;
 use Eccube\Entity\Order;
 use Eccube\Entity\OrderItem;
 use Eccube\Entity\ProductClass;
@@ -32,7 +32,6 @@ use Eccube\Repository\TaxRuleRepository;
 use Eccube\Service\TaxRuleService;
 use Plugin\Coupon4\Entity\Coupon;
 use Plugin\Coupon4\Entity\CouponOrder;
-use Eccube\Entity\Category;
 use Plugin\Coupon4\Repository\CouponOrderRepository;
 use Plugin\Coupon4\Repository\CouponRepository;
 use Plugin\Coupon4\Service\PurchaseFlow\Processor\CouponProcessor;
@@ -383,7 +382,11 @@ class CouponService
 
             $this->setOrderCompleteMailMessage($Order, null, null);
             $this->entityManager->flush($Order);
+
+            return 'cancel';
         }
+
+        return 'blank';
     }
 
     /**
