@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon4\Service\PurchaseFlow\Processor;
+namespace Plugin\Coupon42\Service\PurchaseFlow\Processor;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -23,10 +23,10 @@ use Eccube\Service\PurchaseFlow\ItemHolderPreprocessor;
 use Eccube\Service\PurchaseFlow\ItemHolderValidator;
 use Eccube\Service\PurchaseFlow\PurchaseContext;
 use Eccube\Service\PurchaseFlow\PurchaseProcessor;
-use Plugin\Coupon4\Entity\Coupon;
-use Plugin\Coupon4\Service\CouponService;
-use Plugin\Coupon4\Repository\CouponRepository;
-use Plugin\Coupon4\Repository\CouponOrderRepository;
+use Plugin\Coupon42\Entity\Coupon;
+use Plugin\Coupon42\Service\CouponService;
+use Plugin\Coupon42\Repository\CouponRepository;
+use Plugin\Coupon42\Repository\CouponOrderRepository;
 
 /**
  * クーポンの状態を制御する.

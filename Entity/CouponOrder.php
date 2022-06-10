@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon4\Entity;
+namespace Plugin\Coupon42\Entity;
 
 use Eccube\Entity\AbstractEntity;
 use Doctrine\ORM\Mapping as ORM;
@@ -23,7 +23,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="discriminator_type", type="string", length=255)
  * @ORM\HasLifecycleCallbacks()
- * @ORM\Entity(repositoryClass="Plugin\Coupon4\Repository\CouponOrderRepository")
+ * @ORM\Entity(repositoryClass="Plugin\Coupon42\Repository\CouponOrderRepository")
  */
 class CouponOrder extends AbstractEntity
 {

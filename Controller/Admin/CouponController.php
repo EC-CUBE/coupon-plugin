@@ -11,17 +11,17 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon4\Controller\Admin;
+namespace Plugin\Coupon42\Controller\Admin;
 
 use Eccube\Common\Constant;
 use Eccube\Form\Type\Admin\SearchProductType;
-use Plugin\Coupon4\Entity\Coupon;
-use Plugin\Coupon4\Entity\CouponDetail;
-use Plugin\Coupon4\Form\Type\CouponSearchCategoryType;
-use Plugin\Coupon4\Form\Type\CouponType;
-use Plugin\Coupon4\Repository\CouponDetailRepository;
-use Plugin\Coupon4\Repository\CouponRepository;
-use Plugin\Coupon4\Service\CouponService;
+use Plugin\Coupon42\Entity\Coupon;
+use Plugin\Coupon42\Entity\CouponDetail;
+use Plugin\Coupon42\Form\Type\CouponSearchCategoryType;
+use Plugin\Coupon42\Form\Type\CouponType;
+use Plugin\Coupon42\Repository\CouponDetailRepository;
+use Plugin\Coupon42\Repository\CouponRepository;
+use Plugin\Coupon42\Service\CouponService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -69,7 +69,7 @@ class CouponController extends AbstractController
      *
      * @return array
      * @Route("/%eccube_admin_route%/plugin/coupon", name="plugin_coupon_list")
-     * @Template("@Coupon4/admin/index.twig")
+     * @Template("@Coupon42/admin/index.twig")
      */
     public function index(Request $request)
     {
@@ -125,7 +125,7 @@ class CouponController extends AbstractController
         $form->get('CouponDetails')->setData($details);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var \Plugin\Coupon4\Entity\Coupon $Coupon */
+            /** @var \Plugin\Coupon42\Entity\Coupon $Coupon */
             $Coupon = $form->getData();
             $oldReleaseNumber = $request->get('coupon_release_old');
             if (is_null($Coupon->getCouponUseTime())) {
@@ -226,6 +226,6 @@ class CouponController extends AbstractController
         ];
         $viewParameters += $parameters;
 
-        return $this->render('@Coupon4/admin/regist.twig', $viewParameters);
+        return $this->render('@Coupon42/admin/regist.twig', $viewParameters);
     }
 }

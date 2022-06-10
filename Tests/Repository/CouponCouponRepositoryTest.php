@@ -11,12 +11,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon4\Tests\Repository;
+namespace Plugin\Coupon42\Tests\Repository;
 
 use Eccube\Tests\EccubeTestCase;
-use Plugin\Coupon4\Entity\Coupon;
-use Plugin\Coupon4\Entity\CouponDetail;
-use Plugin\Coupon4\Repository\CouponRepository;
+use Plugin\Coupon42\Entity\Coupon;
+use Plugin\Coupon42\Entity\CouponDetail;
+use Plugin\Coupon42\Repository\CouponRepository;
 
 /**
  * Class CouponCouponRepositoryTest.
@@ -31,7 +31,7 @@ class CouponCouponRepositoryTest extends EccubeTestCase
     /**
      * Set up
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->couponRepository = $this->entityManager->getRepository(Coupon::class);

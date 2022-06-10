@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon4\Tests\Service;
+namespace Plugin\Coupon42\Tests\Service;
 
 use Eccube\Entity\Master\OrderItemType;
 use Eccube\Entity\Master\RoundingType;
@@ -24,13 +24,13 @@ use Eccube\Repository\TaxRuleRepository;
 use Eccube\Service\TaxRuleService;
 use Eccube\Tests\EccubeTestCase;
 use Eccube\Tests\Fixture\Generator;
-use Plugin\Coupon4\Entity\Coupon;
-use Plugin\Coupon4\Entity\CouponDetail;
-use Plugin\Coupon4\Entity\CouponOrder;
-use Plugin\Coupon4\Repository\CouponOrderRepository;
-use Plugin\Coupon4\Repository\CouponRepository;
-use Plugin\Coupon4\Service\CouponService;
-use Plugin\Coupon4\Service\PurchaseFlow\Processor\CouponProcessor;
+use Plugin\Coupon42\Entity\Coupon;
+use Plugin\Coupon42\Entity\CouponDetail;
+use Plugin\Coupon42\Entity\CouponOrder;
+use Plugin\Coupon42\Repository\CouponOrderRepository;
+use Plugin\Coupon42\Repository\CouponRepository;
+use Plugin\Coupon42\Service\CouponService;
+use Plugin\Coupon42\Service\PurchaseFlow\Processor\CouponProcessor;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 /**
@@ -68,7 +68,7 @@ class CouponServiceTest extends EccubeTestCase
      */
     private $orderItemTypeRepository;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->couponRepository = $this->entityManager->getRepository(Coupon::class);
@@ -274,7 +274,7 @@ class CouponServiceTest extends EccubeTestCase
 
         $this->couponService->saveCouponOrder($Order, $Coupon, $Coupon->getCouponCd(), $Customer, $discount);
 
-        /** @var \Plugin\Coupon4\Entity\CouponOrder $CouponOrder */
+        /** @var \Plugin\Coupon42\Entity\CouponOrder $CouponOrder */
         $CouponOrder = $this->couponOrderRepository->findOneBy(['coupon_cd' => $Coupon->getCouponCd()]);
 
         $this->actual = $discount;
@@ -586,8 +586,8 @@ class CouponServiceTest extends EccubeTestCase
         $couponName = 'coupon aaa';
 
         $this->couponService->setOrderCompleteMailMessage($Order, $couponCd, $couponName);
-        $this->assertRegExp('/クーポン情報/u', $Order->getCompleteMailMessage());
-        $this->assertRegExp('/クーポンコード: '.$couponCd.' '.$couponName.'/u', $Order->getCompleteMailMessage());
+        $this->assertMatchesRegularExpression('/クーポン情報/u', $Order->getCompleteMailMessage());
+        $this->assertMatchesRegularExpression('/クーポンコード: '.$couponCd.' '.$couponName.'/u', $Order->getCompleteMailMessage());
 
         $this->couponService->setOrderCompleteMailMessage($Order, null, null);
         $this->assertNotRegExp('/クーポン情報/u', $Order->getCompleteMailMessage());

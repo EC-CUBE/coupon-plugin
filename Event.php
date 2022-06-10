@@ -11,15 +11,15 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon4;
+namespace Plugin\Coupon42;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Eccube\Entity\Order;
 use Eccube\Event\TemplateEvent;
 use Eccube\Repository\OrderRepository;
-use Plugin\Coupon4\Entity\Coupon;
-use Plugin\Coupon4\Repository\CouponOrderRepository;
-use Plugin\Coupon4\Repository\CouponRepository;
+use Plugin\Coupon42\Entity\Coupon;
+use Plugin\Coupon42\Repository\CouponOrderRepository;
+use Plugin\Coupon42\Repository\CouponRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -100,9 +100,9 @@ class Event implements EventSubscriberInterface
         $event->setParameters($parameters);
 
         if (strpos($event->getView(), 'index.twig') !== false) {
-            $event->addSnippet('@Coupon4/default/coupon_shopping_item.twig');
+            $event->addSnippet('@Coupon42/default/coupon_shopping_item.twig');
         } else {
-            $event->addSnippet('@Coupon4/default/coupon_shopping_item_confirm.twig');
+            $event->addSnippet('@Coupon42/default/coupon_shopping_item_confirm.twig');
         }
     }
 
@@ -131,7 +131,7 @@ class Event implements EventSubscriberInterface
         $parameters['coupon_cd'] = $CouponOrder->getCouponCd();
         $parameters['coupon_name'] = $CouponOrder->getCouponName();
         $event->setParameters($parameters);
-        $event->addSnippet('@Coupon4/default/mypage_history_coupon.twig');
+        $event->addSnippet('@Coupon42/default/mypage_history_coupon.twig');
         log_info('Coupon trigger onRenderMypageHistory finish');
     }
 
@@ -161,7 +161,7 @@ class Event implements EventSubscriberInterface
         $event->setParameters($parameters);
 
         // add twig
-        $event->addSnippet('@Coupon4/admin/order_edit_coupon.twig');
+        $event->addSnippet('@Coupon42/admin/order_edit_coupon.twig');
 
         log_info('Coupon trigger onRenderAdminOrderEdit finish');
     }

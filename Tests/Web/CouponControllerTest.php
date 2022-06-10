@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon4\Tests\Web;
+namespace Plugin\Coupon42\Tests\Web;
 
 use Eccube\Entity\BaseInfo;
 use Eccube\Entity\Customer;
@@ -22,11 +22,11 @@ use Eccube\Repository\OrderRepository;
 use Eccube\Repository\ProductRepository;
 use Eccube\Service\CartService;
 use Eccube\Tests\Web\AbstractShoppingControllerTestCase;
-use Plugin\Coupon4\Entity\Coupon;
-use Plugin\Coupon4\Entity\CouponOrder;
-use Plugin\Coupon4\Tests\Fixtures\CreateCouponTrait;
-use Plugin\Coupon4\Repository\CouponOrderRepository;
-use Plugin\Coupon4\Repository\CouponRepository;
+use Plugin\Coupon42\Entity\Coupon;
+use Plugin\Coupon42\Entity\CouponOrder;
+use Plugin\Coupon42\Tests\Fixtures\CreateCouponTrait;
+use Plugin\Coupon42\Repository\CouponOrderRepository;
+use Plugin\Coupon42\Repository\CouponRepository;
 use Symfony\Component\DomCrawler\Crawler;
 
 /**
@@ -74,7 +74,7 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
     /**
      * setUp.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->couponRepository = $this->entityManager->getRepository(Coupon::class);

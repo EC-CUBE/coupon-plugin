@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon4\Tests\Service;
+namespace Plugin\Coupon42\Tests\Service;
 
 use Eccube\Entity\Master\TaxType;
 use Eccube\Entity\Order;
@@ -21,12 +21,12 @@ use Eccube\Request\Context;
 use Eccube\Service\PurchaseFlow\PurchaseContext;
 use Eccube\Service\TaxRuleService;
 use Eccube\Tests\EccubeTestCase;
-use Plugin\Coupon4\Entity\Coupon;
-use Plugin\Coupon4\Entity\CouponOrder;
-use Plugin\Coupon4\Repository\CouponOrderRepository;
-use Plugin\Coupon4\Repository\CouponRepository;
-use Plugin\Coupon4\Service\CouponService;
-use Plugin\Coupon4\Service\PurchaseFlow\Processor\CouponProcessor;
+use Plugin\Coupon42\Entity\Coupon;
+use Plugin\Coupon42\Entity\CouponOrder;
+use Plugin\Coupon42\Repository\CouponOrderRepository;
+use Plugin\Coupon42\Repository\CouponRepository;
+use Plugin\Coupon42\Service\CouponService;
+use Plugin\Coupon42\Service\PurchaseFlow\Processor\CouponProcessor;
 
 /**
  * Class CouponServiceTest.
@@ -38,7 +38,7 @@ class CouponProcessorTest extends EccubeTestCase
      */
     protected $processor;
 
-    public function setup()
+    public function setUp(): void
     {
         parent::setUp();
 

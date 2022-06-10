@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon4\Controller\Admin;
+namespace Plugin\Coupon42\Controller\Admin;
 
 use Eccube\Controller\AbstractController;
 use Eccube\Entity\Category;
@@ -59,7 +59,7 @@ class CouponSearchModelController extends AbstractController
      * @return array
      * @Route("/%eccube_admin_route%/plugin/coupon/search/product", name="plugin_coupon_search_product")
      * @Route("/%eccube_admin_route%/plugin/coupon/search/product/page/{page_no}", requirements={"page_no" = "\d+"}, name="plugin_coupon_search_product_page")
-     * @Template("@Coupon4/admin/search_product.twig")
+     * @Template("@Coupon42/admin/search_product.twig")
      */
     public function searchProduct(Request $request, $page_no = null, PaginatorInterface $paginator)
     {
@@ -121,7 +121,7 @@ class CouponSearchModelController extends AbstractController
      *
      * @return array
      * @Route("/%eccube_admin_route%/plugin/coupon/search/category", name="plugin_coupon_search_category")
-     * @Template("@Coupon4/admin/search_category.twig")
+     * @Template("@Coupon42/admin/search_category.twig")
      */
     public function searchCategory(Request $request)
     {

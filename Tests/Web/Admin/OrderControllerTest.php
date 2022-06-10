@@ -11,16 +11,16 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon4\Tests\Web\Admin;
+namespace Plugin\Coupon42\Tests\Web\Admin;
 
 use Eccube\Entity\Master\OrderStatus;
 use Eccube\Entity\Order;
 use Eccube\Repository\OrderRepository;
 use Eccube\Service\OrderStateMachine;
 use Eccube\Tests\Web\Admin\Order\AbstractEditControllerTestCase;
-use Plugin\Coupon4\Entity\CouponOrder;
-use Plugin\Coupon4\Service\CouponService;
-use Plugin\Coupon4\Tests\Fixtures\CreateCouponTrait;
+use Plugin\Coupon42\Entity\CouponOrder;
+use Plugin\Coupon42\Service\CouponService;
+use Plugin\Coupon42\Tests\Fixtures\CreateCouponTrait;
 
 /**
  * Class CouponControllerTest.
@@ -38,7 +38,7 @@ class OrderControllerTest extends AbstractEditControllerTestCase
     /** @var OrderRepository */
     protected $orderRepository;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->couponService = self::$container->get(CouponService::class);
