@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon4\Controller;
+namespace Plugin\Coupon42\Controller;
 
 use Eccube\Controller\AbstractController;
 use Eccube\Entity\Customer;
@@ -19,11 +19,11 @@ use Eccube\Entity\Order;
 use Eccube\Repository\DeliveryTimeRepository;
 use Eccube\Service\CartService;
 use Eccube\Service\OrderHelper;
-use Plugin\Coupon4\Entity\Coupon;
-use Plugin\Coupon4\Form\Type\CouponUseType;
-use Plugin\Coupon4\Repository\CouponOrderRepository;
-use Plugin\Coupon4\Repository\CouponRepository;
-use Plugin\Coupon4\Service\CouponService;
+use Plugin\Coupon42\Entity\Coupon;
+use Plugin\Coupon42\Form\Type\CouponUseType;
+use Plugin\Coupon42\Repository\CouponOrderRepository;
+use Plugin\Coupon42\Repository\CouponRepository;
+use Plugin\Coupon42\Service\CouponService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -88,7 +88,7 @@ class CouponShoppingController extends AbstractController
      *
      * @return array|RedirectResponse
      * @Route("/plugin/coupon/shopping/shopping_coupon", name="plugin_coupon_shopping")
-     * @Template("Coupon4/Resource/template/default/shopping_coupon.twig")
+     * @Template("Coupon42/Resource/template/default/shopping_coupon.twig")
      *
      * @see https://github.com/EC-CUBE/coupon-plugin/issues/128
      */

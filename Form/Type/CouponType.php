@@ -11,12 +11,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon4\Form\Type;
+namespace Plugin\Coupon42\Form\Type;
 
 use Carbon\Carbon;
 use Eccube\Form\Type\PriceType;
-use Plugin\Coupon4\Entity\Coupon;
-use Plugin\Coupon4\Repository\CouponRepository;
+use Plugin\Coupon42\Entity\Coupon;
+use Plugin\Coupon42\Repository\CouponRepository;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -255,7 +255,7 @@ class CouponType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'Plugin\Coupon4\Entity\Coupon',
+            'data_class' => 'Plugin\Coupon42\Entity\Coupon',
         ]);
     }
 

@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon4\Tests\Web;
+namespace Plugin\Coupon42\Tests\Web;
 
 use Eccube\Entity\BaseInfo;
 use Eccube\Entity\Customer;
@@ -22,11 +22,11 @@ use Eccube\Repository\OrderRepository;
 use Eccube\Repository\ProductRepository;
 use Eccube\Service\CartService;
 use Eccube\Tests\Web\AbstractShoppingControllerTestCase;
-use Plugin\Coupon4\Entity\Coupon;
-use Plugin\Coupon4\Entity\CouponOrder;
-use Plugin\Coupon4\Tests\Fixtures\CreateCouponTrait;
-use Plugin\Coupon4\Repository\CouponOrderRepository;
-use Plugin\Coupon4\Repository\CouponRepository;
+use Plugin\Coupon42\Entity\Coupon;
+use Plugin\Coupon42\Entity\CouponOrder;
+use Plugin\Coupon42\Tests\Fixtures\CreateCouponTrait;
+use Plugin\Coupon42\Repository\CouponOrderRepository;
+use Plugin\Coupon42\Repository\CouponRepository;
 use Symfony\Component\DomCrawler\Crawler;
 
 /**
@@ -74,7 +74,7 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
     /**
      * setUp.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->couponRepository = $this->entityManager->getRepository(Coupon::class);
@@ -131,7 +131,7 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
         $crawler = $this->client->followRedirect();
         $this->expected = '利用しています。';
         $this->actual = $crawler->filter('strong.text-danger')->text();
-        $this->assertContains($this->expected, $this->actual);
+        $this->assertStringContainsString($this->expected, $this->actual);
 
         $form = $crawler->selectButton('確認する')->form();
         $crawler = $this->client->submit($form);
@@ -143,18 +143,16 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
         $this->assertTrue($this->client->getResponse()->isRedirect($this->generateUrl('shopping_complete')));
 
         $BaseInfo = $this->baseInfoRepository->get();
-        $mailCollector = $this->getMailCollector(false);
-        $Messages = $mailCollector->getMessages();
-
-        /** @var \Swift_Message $Message */
-        $Message = $Messages[0];
+        $this->assertEmailCount(1);
+        /** @var Email $Message */
+        $Message = $this->getMailerMessage(0);
 
         $this->expected = '['.$BaseInfo->getShopName().'] ご注文ありがとうございます';
         $this->actual = $Message->getSubject();
         $this->verify();
 
         // assert mail content
-        $this->assertContains($Coupon->getCouponCd(), $Message->getBody());
+        $this->assertEmailTextBodyContains($Message, $Coupon->getCouponCd());
 
         // 生成された受注のチェック
         /** @var Order $Order */
@@ -185,7 +183,7 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
         $crawler = $this->client->followRedirect();
         $this->expected = '利用しています。';
         $this->actual = $crawler->filter('strong.text-danger')->text();
-        $this->assertContains($this->expected, $this->actual);
+        $this->assertStringContainsString($this->expected, $this->actual);
 
         $form = $crawler->selectButton('確認する')->form();
         $crawler = $this->client->submit($form);
@@ -202,7 +200,7 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
 
         $Order = $this->orderRepository->find($CouponOrder->getOrderId());
         $crawler = $this->client->request('GET', $this->generateUrl('mypage_history', ['order_no' => $Order->getOrderNo()]));
-        $this->assertContains('ご利用クーポンコード', $crawler->html());
+        $this->assertStringContainsString('ご利用クーポンコード', $crawler->html());
     }
 
     /**
@@ -224,7 +222,7 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
 
         /* @var \Symfony\Component\DomCrawler\Crawler $crawler */
         $crawler = $this->client->followRedirect();
-        $this->assertContains('9,999,999,999円以上', $crawler->html());
+        $this->assertStringContainsString('9,999,999,999円以上', $crawler->html());
     }
 
     /**
@@ -243,7 +241,7 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
         $crawler = $this->client->followRedirect();
         $this->expected = '利用しています。';
         $this->actual = $crawler->filter('strong.text-danger')->text();
-        $this->assertContains($this->expected, $this->actual);
+        $this->assertStringContainsString($this->expected, $this->actual);
         $form = $crawler->selectButton('確認する')->form();
         $crawler = $this->client->submit($form);
 
@@ -282,7 +280,7 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
         $crawler = $this->client->followRedirect();
         $this->expected = '利用しています。';
         $this->actual = $crawler->filter('strong.text-danger')->text();
-        $this->assertContains($this->expected, $this->actual);
+        $this->assertStringContainsString($this->expected, $this->actual);
         $form = $crawler->selectButton('確認する')->form();
         $crawler = $this->client->submit($form);
 
@@ -341,20 +339,19 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
         $crawler = $this->client->followRedirect();
         $this->expected = '利用しています。';
         $this->actual = $crawler->filter('strong.text-danger')->text();
-        $this->assertContains($this->expected, $this->actual);
+        $this->assertStringContainsString($this->expected, $this->actual);
 
         $this->scenarioCheckout();
         $this->assertTrue($this->client->getResponse()->isRedirect($this->generateUrl('shopping_complete')));
 
-        $mailCollector = $this->getMailCollector(false);
-        $Messages = $mailCollector->getMessages();
-        $Message = $Messages[0];
-
+        $this->assertEmailCount(1);
+        /** @var Email $Message */
+        $Message = $this->getMailerMessage(0);
         $this->expected = 'ご注文ありがとうございます';
         $this->actual = $Message->getSubject();
-        $this->assertContains($this->expected, $this->actual);
 
-        preg_match('/ご注文番号：([0-9]+)/u', $Message->getBody(), $matched);
+        $this->assertStringContainsString($this->expected, $this->actual);
+        preg_match('/ご注文番号：([0-9]+)/u', $Message->getTextBody(), $matched);
         list(, $order_id) =  $matched;
         /** @var Order $Order */
         $Order = $this->orderRepository->find($order_id);
@@ -379,7 +376,7 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
         $crawler = $this->client->followRedirect();
         $this->expected = '利用しています。';
         $this->actual = $crawler->filter('strong.text-danger')->text();
-        $this->assertContains($this->expected, $this->actual);
+        $this->assertStringContainsString($this->expected, $this->actual);
 
         $form = $crawler->selectButton('確認する')->form();
         $crawler = $this->client->submit($form);
@@ -396,7 +393,7 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
 
         $this->expected = 'このクーポンは既にご利用いただいています。';
         $this->actual = $crawler->html();
-        $this->assertContains($this->expected, $this->actual);
+        $this->assertStringContainsString($this->expected, $this->actual);
     }
 
     /**
@@ -432,7 +429,7 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
         $crawler = $this->client->followRedirect();
         $this->expected = '利用しています。';
         $this->actual = $crawler->filter('strong.text-danger')->text();
-        $this->assertContains($this->expected, $this->actual);
+        $this->assertStringContainsString($this->expected, $this->actual);
 
         $this->scenarioCheckout();
         $this->assertTrue($this->client->getResponse()->isRedirect($this->generateUrl('shopping_complete')));
@@ -463,7 +460,7 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
 
         $this->expected = 'このクーポンは既にご利用いただいています。';
         $this->actual = $crawler->html();
-        $this->assertContains($this->expected, $this->actual);
+        $this->assertStringContainsString($this->expected, $this->actual);
     }
 
     /**
@@ -493,7 +490,7 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
         $form = $crawler->selectButton('登録する')->form();
         $form['coupon_use[_token]'] = 'dummy';
         $form['coupon_use[coupon_cd]'] = $couponCd;
-        $form['coupon_use[coupon_use]'] = 1;
+        $form['coupon_use[coupon_use]'] = '1';
 
         return $form;
     }

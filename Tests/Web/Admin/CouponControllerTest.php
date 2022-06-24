@@ -11,15 +11,15 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon4\Tests\Web\Admin;
+namespace Plugin\Coupon42\Tests\Web\Admin;
 
 use Eccube\Entity\Customer;
 use Eccube\Entity\Product;
 use Eccube\Repository\ProductRepository;
 use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;
-use Plugin\Coupon4\Entity\Coupon;
-use Plugin\Coupon4\Repository\CouponRepository;
-use Plugin\Coupon4\Tests\Fixtures\CreateCouponTrait;
+use Plugin\Coupon42\Entity\Coupon;
+use Plugin\Coupon42\Repository\CouponRepository;
+use Plugin\Coupon42\Tests\Fixtures\CreateCouponTrait;
 use Symfony\Component\DomCrawler\Crawler;
 
 /**
@@ -47,7 +47,7 @@ class CouponControllerTest extends AbstractAdminWebTestCase
     /**
      * setUp.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->Customer = $this->createCustomer();
@@ -110,7 +110,7 @@ class CouponControllerTest extends AbstractAdminWebTestCase
         $Coupon = $this->getCoupon();
         $crawler = $this->client->request('GET', $this->generateUrl('plugin_coupon_edit', ['id' => 999999]));
         $crawler = $this->client->followRedirect();
-        $this->assertContains('クーポンが存在しません。', $crawler->html());
+        $this->assertStringContainsString('クーポンが存在しません。', $crawler->html());
     }
 
     /**

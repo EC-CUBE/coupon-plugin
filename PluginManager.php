@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon4;
+namespace Plugin\Coupon42;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Eccube\Entity\Layout;
@@ -92,7 +92,7 @@ class PluginManager extends AbstractPluginManager
         $Page->setEditType(Page::EDIT_TYPE_DEFAULT);
         $Page->setName('商品購入/クーポン利用');
         $Page->setUrl('plugin_coupon_shopping');
-        $Page->setFileName('Coupon4/Resource/template/default/shopping_coupon');
+        $Page->setFileName('Coupon42/Resource/template/default/shopping_coupon');
         $Page->setMetaRobots('noindex');
 
         // DB登録
@@ -143,9 +143,9 @@ class PluginManager extends AbstractPluginManager
         // ファイルコピー
         $file = new Filesystem();
         // ブロックファイルをコピー
-        $file->copy($this->originalDir.$this->template1, $templateDir.'/Coupon4/'.$this->template1);
-        $file->copy($this->originalDir.$this->template2, $templateDir.'/Coupon4/'.$this->template2);
-        $file->copy($this->originalDir.$this->template3, $templateDir.'/Coupon4/'.$this->template3);
+        $file->copy($this->originalDir.$this->template1, $templateDir.'/Coupon42/'.$this->template1);
+        $file->copy($this->originalDir.$this->template2, $templateDir.'/Coupon42/'.$this->template2);
+        $file->copy($this->originalDir.$this->template3, $templateDir.'/Coupon42/'.$this->template3);
     }
 
     /**
@@ -157,8 +157,8 @@ class PluginManager extends AbstractPluginManager
     {
         $templateDir = $container->getParameter('eccube_theme_front_dir');
         $file = new Filesystem();
-        $file->remove($templateDir.'/Coupon4/'.$this->template1);
-        $file->remove($templateDir.'/Coupon4/'.$this->template2);
-        $file->remove($templateDir.'/Coupon4/'.$this->template3);
+        $file->remove($templateDir.'/Coupon42/'.$this->template1);
+        $file->remove($templateDir.'/Coupon42/'.$this->template2);
+        $file->remove($templateDir.'/Coupon42/'.$this->template3);
     }
 }

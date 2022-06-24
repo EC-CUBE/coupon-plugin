@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon4\Tests\Repository;
+namespace Plugin\Coupon42\Tests\Repository;
 
 use Eccube\Entity\Customer;
 use Eccube\Entity\OrderItem;
@@ -19,11 +19,11 @@ use Eccube\Entity\TaxRule;
 use Eccube\Repository\TaxRuleRepository;
 use Eccube\Tests\EccubeTestCase;
 use Eccube\Util\StringUtil;
-use Plugin\Coupon4\Entity\Coupon;
-use Plugin\Coupon4\Entity\CouponDetail;
-use Plugin\Coupon4\Entity\CouponOrder;
-use Plugin\Coupon4\Repository\CouponOrderRepository;
-use Plugin\Coupon4\Repository\CouponRepository;
+use Plugin\Coupon42\Entity\Coupon;
+use Plugin\Coupon42\Entity\CouponDetail;
+use Plugin\Coupon42\Entity\CouponOrder;
+use Plugin\Coupon42\Repository\CouponOrderRepository;
+use Plugin\Coupon42\Repository\CouponRepository;
 
 /**
  * Class CouponCouponOrderRepositoryTest.
@@ -50,7 +50,7 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
      */
     private $taxRuleRepository;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->Customer = $this->createCustomer('aaa@example.com');

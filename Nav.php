@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon4;
+namespace Plugin\Coupon42;
 
 use Eccube\Common\EccubeNav;
 

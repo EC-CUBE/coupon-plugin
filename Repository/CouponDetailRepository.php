@@ -11,11 +11,11 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon4\Repository;
+namespace Plugin\Coupon42\Repository;
 
 use Eccube\Repository\AbstractRepository;
-use Plugin\Coupon4\Entity\CouponDetail;
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Plugin\Coupon42\Entity\CouponDetail;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * CouponDetailRepository.
@@ -28,9 +28,9 @@ class CouponDetailRepository extends AbstractRepository
     /**
      * CouponDetailRepository constructor.
      *
-     * @param RegistryInterface $registry
+     * @param ManagerRegistry $registry
      */
-    public function __construct(RegistryInterface $registry)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, CouponDetail::class);
     }

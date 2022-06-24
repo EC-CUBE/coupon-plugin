@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon4\Service;
+namespace Plugin\Coupon42\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Eccube\Common\Constant;
@@ -30,12 +30,12 @@ use Eccube\Repository\OrderItemRepository;
 use Eccube\Repository\ProductClassRepository;
 use Eccube\Repository\TaxRuleRepository;
 use Eccube\Service\TaxRuleService;
-use Plugin\Coupon4\Entity\Coupon;
-use Plugin\Coupon4\Entity\CouponOrder;
+use Plugin\Coupon42\Entity\Coupon;
+use Plugin\Coupon42\Entity\CouponOrder;
 use Eccube\Entity\Category;
-use Plugin\Coupon4\Repository\CouponOrderRepository;
-use Plugin\Coupon4\Repository\CouponRepository;
-use Plugin\Coupon4\Service\PurchaseFlow\Processor\CouponProcessor;
+use Plugin\Coupon42\Repository\CouponOrderRepository;
+use Plugin\Coupon42\Repository\CouponRepository;
+use Plugin\Coupon42\Service\PurchaseFlow\Processor\CouponProcessor;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 

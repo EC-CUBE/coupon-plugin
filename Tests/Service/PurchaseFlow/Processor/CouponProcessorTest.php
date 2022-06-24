@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon4\Tests\Service\PurchaseFlow\Processor;
+namespace Plugin\Coupon42\Tests\Service\PurchaseFlow\Processor;
 
 use Eccube\Entity\Cart;
 use Eccube\Entity\Customer;
@@ -24,13 +24,13 @@ use Eccube\Service\PurchaseFlow\InvalidItemException;
 use Eccube\Service\PurchaseFlow\PurchaseContext;
 use Eccube\Service\TaxRuleService;
 use Eccube\Tests\EccubeTestCase;
-use Plugin\Coupon4\Entity\Coupon;
-use Plugin\Coupon4\Entity\CouponOrder;
-use Plugin\Coupon4\Repository\CouponOrderRepository;
-use Plugin\Coupon4\Repository\CouponRepository;
-use Plugin\Coupon4\Service\CouponService;
-use Plugin\Coupon4\Service\PurchaseFlow\Processor\CouponProcessor;
-use Plugin\Coupon4\Tests\Fixtures\CreateCouponTrait;
+use Plugin\Coupon42\Entity\Coupon;
+use Plugin\Coupon42\Entity\CouponOrder;
+use Plugin\Coupon42\Repository\CouponOrderRepository;
+use Plugin\Coupon42\Repository\CouponRepository;
+use Plugin\Coupon42\Service\CouponService;
+use Plugin\Coupon42\Service\PurchaseFlow\Processor\CouponProcessor;
+use Plugin\Coupon42\Tests\Fixtures\CreateCouponTrait;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 /**
@@ -85,7 +85,7 @@ class CouponProcessorTest extends EccubeTestCase
      */
     protected $context;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->couponService = self::$container->get(CouponService::class);
@@ -320,7 +320,7 @@ class CouponProcessorTest extends EccubeTestCase
         $this->entityManager->flush();
         self::$container->get('security.token_storage')->setToken(
             new UsernamePasswordToken(
-                new Customer(), null, 'customer', []
+                new Customer() , null, 'customer', ['IS_AUTHENTICATED_ANONYMOUSLY']
             )
         );
 
@@ -346,7 +346,7 @@ class CouponProcessorTest extends EccubeTestCase
         $this->entityManager->flush();
         self::$container->get('security.token_storage')->setToken(
             new UsernamePasswordToken(
-                new Customer(), null, 'customer', []
+                new Customer(), null, 'customer', ['IS_AUTHENTICATED_ANONYMOUSLY']
             )
         );
 

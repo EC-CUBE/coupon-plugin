@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon4\Form\Type;
+namespace Plugin\Coupon42\Form\Type;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Eccube\Form\DataTransformer;
@@ -74,7 +74,7 @@ class CouponDetailType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'Plugin\Coupon4\Entity\CouponDetail',
+            'data_class' => 'Plugin\Coupon42\Entity\CouponDetail',
         ]);
     }
 

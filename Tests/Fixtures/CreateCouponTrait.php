@@ -11,10 +11,10 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon4\Tests\Fixtures;
+namespace Plugin\Coupon42\Tests\Fixtures;
 
-use Plugin\Coupon4\Entity\Coupon;
-use Plugin\Coupon4\Entity\CouponDetail;
+use Plugin\Coupon42\Entity\Coupon;
+use Plugin\Coupon42\Entity\CouponDetail;
 
 trait CreateCouponTrait
 {
