@@ -72,7 +72,7 @@ class OrderControllerTest extends AbstractEditControllerTestCase
         $crawler = $this->client->request('GET', $this->generateUrl('admin_order_edit', ['id' => $Order->getId()]));
 
         $this->assertTrue($this->client->getResponse()->isSuccessful());
-        $this->assertContains($Coupon->getCouponCd(), $crawler->html());
+        $this->assertStringContainsString($Coupon->getCouponCd(), $crawler->html());
     }
 
     public function testOrderEditWithNotCoupon()
@@ -84,7 +84,7 @@ class OrderControllerTest extends AbstractEditControllerTestCase
         $crawler = $this->client->request('GET', $this->generateUrl('admin_order_edit', ['id' => $Order->getId()]));
 
         $this->assertTrue($this->client->getResponse()->isSuccessful());
-        $this->assertNotContains($Coupon->getCouponCd(), $crawler->html());
+        $this->assertStringNotContainsString($Coupon->getCouponCd(), $crawler->html());
     }
 
     public function testOrderEditWithDisableCoupon()
@@ -116,7 +116,7 @@ class OrderControllerTest extends AbstractEditControllerTestCase
         $crawler = $this->client->request('GET', $this->generateUrl('admin_order_edit', ['id' => $Order->getId()]));
 
         $this->assertTrue($this->client->getResponse()->isSuccessful());
-        $this->assertContains($Coupon->getCouponCd(), $crawler->html(), 'クーポンが無効でも表示は変わらない');
+        $this->assertStringContainsString($Coupon->getCouponCd(), $crawler->html(), 'クーポンが無効でも表示は変わらない');
     }
 
     public function testOrderEditWithDisableOrderCoupon()
@@ -146,7 +146,7 @@ class OrderControllerTest extends AbstractEditControllerTestCase
         $crawler = $this->client->request('GET', $this->generateUrl('admin_order_edit', ['id' => $Order->getId()]));
 
         $this->assertTrue($this->client->getResponse()->isSuccessful());
-        $this->assertContains($Coupon->getCouponCd(), $crawler->html(), '受注クーポンが無効でも表示は変わらない');
+        $this->assertStringContainsString($Coupon->getCouponCd(), $crawler->html(), '受注クーポンが無効でも表示は変わらない');
     }
 
     public function testOrderEditWithDeleteCoupon()
@@ -179,7 +179,7 @@ class OrderControllerTest extends AbstractEditControllerTestCase
         $crawler = $this->client->request('GET', $this->generateUrl('admin_order_edit', ['id' => $Order->getId()]));
 
         $this->assertTrue($this->client->getResponse()->isSuccessful());
-        $this->assertContains($Coupon->getCouponCd(), $crawler->html(), 'クーポンが削除されても表示は変わらない');
+        $this->assertStringContainsString($Coupon->getCouponCd(), $crawler->html(), 'クーポンが削除されても表示は変わらない');
     }
 
     /**
@@ -246,7 +246,7 @@ class OrderControllerTest extends AbstractEditControllerTestCase
         $this->verify();
 
         $crawler = $this->client->followRedirect();
-        $this->assertContains('クーポンが適用されていません', $crawler->html(), 'クーポンが適用されていないメッセージ表示');
+        $this->assertStringContainsString('クーポンが適用されていません', $crawler->html(), 'クーポンが適用されていないメッセージ表示');
     }
 
     /**
@@ -314,6 +314,6 @@ class OrderControllerTest extends AbstractEditControllerTestCase
         $this->verify();
 
         $crawler = $this->client->followRedirect();
-        $this->assertContains('クーポンが適用されていません', $crawler->html(), 'クーポンが適用されていないメッセージ表示');
+        $this->assertStringContainsString('クーポンが適用されていません', $crawler->html(), 'クーポンが適用されていないメッセージ表示');
     }
 }

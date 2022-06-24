@@ -590,8 +590,8 @@ class CouponServiceTest extends EccubeTestCase
         $this->assertMatchesRegularExpression('/クーポンコード: '.$couponCd.' '.$couponName.'/u', $Order->getCompleteMailMessage());
 
         $this->couponService->setOrderCompleteMailMessage($Order, null, null);
-        $this->assertNotRegExp('/クーポン情報/u', $Order->getCompleteMailMessage());
-        $this->assertNotRegExp('/クーポンコード: '.$couponCd.' '.$couponName.'/u', $Order->getCompleteMailMessage());
+        $this->assertDoesNotMatchRegularExpression('/クーポン情報/u', $Order->getCompleteMailMessage());
+        $this->assertDoesNotMatchRegularExpression('/クーポンコード: '.$couponCd.' '.$couponName.'/u', $Order->getCompleteMailMessage());
     }
 
     public function testRemoveCouponOrder()

@@ -110,7 +110,7 @@ class CouponControllerTest extends AbstractAdminWebTestCase
         $Coupon = $this->getCoupon();
         $crawler = $this->client->request('GET', $this->generateUrl('plugin_coupon_edit', ['id' => 999999]));
         $crawler = $this->client->followRedirect();
-        $this->assertContains('クーポンが存在しません。', $crawler->html());
+        $this->assertStringContainsString('クーポンが存在しません。', $crawler->html());
     }
 
     /**

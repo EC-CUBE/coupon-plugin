@@ -320,7 +320,7 @@ class CouponProcessorTest extends EccubeTestCase
         $this->entityManager->flush();
         self::$container->get('security.token_storage')->setToken(
             new UsernamePasswordToken(
-                new Customer(), null, 'customer', []
+                new Customer() , null, 'customer', ['IS_AUTHENTICATED_ANONYMOUSLY']
             )
         );
 
@@ -346,7 +346,7 @@ class CouponProcessorTest extends EccubeTestCase
         $this->entityManager->flush();
         self::$container->get('security.token_storage')->setToken(
             new UsernamePasswordToken(
-                new Customer(), null, 'customer', []
+                new Customer(), null, 'customer', ['IS_AUTHENTICATED_ANONYMOUSLY']
             )
         );
 
