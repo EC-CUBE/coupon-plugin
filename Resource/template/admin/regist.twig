@@ -377,8 +377,8 @@
                                         <span class="card-title">{{ 'plugin_coupon.admin.regist.header.product'|trans }}</span>
                                     </div>
                                 </div>
-                                <div class="col-4 text-right">
-                                    <a data-toggle="collapse" href="#productArea" aria-expanded="false" aria-controls="productArea">
+                                <div class="col-4 text-end">
+                                    <a data-bs-toggle="collapse" href="#productArea" aria-expanded="false" aria-controls="productArea">
                                         <i class="fa fa-angle-up fa-lg"></i>
                                     </a>
                                 </div>
@@ -388,7 +388,7 @@
                         <div class="collapse show ec-cardCollapse" id="productArea">
                             <div class="card-body">
                                 <div class="text-center">
-                                    <a id="showSearchProductModal" class="btn btn-ec-regular mr-2 add" data-toggle="modal" data-target="#searchProductModal">商品の追加</a>
+                                    <a id="showSearchProductModal" class="btn btn-ec-regular mr-2 add" data-bs-toggle="modal" data-bs-target="#searchProductModal">商品の追加</a>
                                 </div>
                                 <div class="tableish" id="coupon_detail_list" data-prototype="{{ include('Coupon42/Resource/template/admin/regist_product_list_prototype.twig') }}">
                                     {% set i = 0 %}
@@ -434,8 +434,8 @@
                                         <span class="card-title">{{ 'plugin_coupon.admin.regist.header.category'|trans }}</span>
                                     </div>
                                 </div>
-                                <div class="col-4 text-right">
-                                    <a data-toggle="collapse" href="#categoryArea" aria-expanded="false" aria-controls="category_area">
+                                <div class="col-4 text-end">
+                                    <a data-bs-toggle="collapse" href="#categoryArea" aria-expanded="false" aria-controls="category_area">
                                         <i class="fa fa-angle-up fa-lg"></i>
                                     </a>
                                 </div>
@@ -445,7 +445,7 @@
                         <div class="collapse show ec-cardCollapse" style="display: block;" id="categoryArea">
                             <div class="card-body">
                                 <div class="text-center">
-                                    <a id="showSearchCategoryModal" class="btn btn-ec-regular mr-2 add" data-toggle="modal" data-target="#searchCategoryModal">カテゴリの追加</a>
+                                    <a id="showSearchCategoryModal" class="btn btn-ec-regular mr-2 add" data-bs-toggle="modal" data-bs-target="#searchCategoryModal">カテゴリの追加</a>
                                 </div>
                                 <div class="tableish"
                                      id="coupon_detail_list2"
@@ -501,7 +501,7 @@
                         <div class="col-6">
                             <div class="row align-items-center justify-content-end">
                                 <div class="col-auto">
-                                    <button type="submit" class="btn btn-primary btn-block btn-lg">{{ 'common.registration'|trans }}</button>
+                                    <button type="submit" class="btn btn-ec-conversion">{{ 'common.registration'|trans }}</button>
                                 </div>
                             </div>
                         </div>
@@ -522,9 +522,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title" id="searchProductModalLabel">{{ 'plugin_coupon.admin.regist.modal.product'|trans }}</h4>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
+                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
@@ -552,9 +550,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title" id="searchCategoryModalLabel">{{ 'plugin_coupon.admin.regist.modal.category'|trans }}</h4>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
+                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">

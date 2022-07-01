@@ -85,7 +85,7 @@
                                         </a>
                                     </td>
                                     <td>
-                                        <a class="" data-toggle="modal" data-target="#confirmModal-{{ Coupon.id }}" data-tooltip="tooltip" data-placement="top" title="{{ 'common.label.delete'|trans }}">
+                                        <a class="" data-bs-toggle="modal" data-bs-target="#confirmModal-{{ Coupon.id }}" data-bs-tooltip="tooltip" data-bs-placement="top" title="{{ 'common.delete'|trans }}">
                                             <i class="fa fa-close fa-lg text-secondary"></i>
                                         </a>
 
@@ -97,8 +97,7 @@
                                                     <div class="modal-header">
                                                         <h5 class="modal-title font-weight-bold">
                                                             {{ 'plugin_coupon.admin.index.delete.confirm'|trans }}</h5>
-                                                        <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
-                                                        </button>
+                                                        <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
                                                     </div>
                                                     <div class="modal-body text-left">
                                                         <p class="text-left">
@@ -106,7 +105,7 @@
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button class="btn btn-ec-sub" type="button"
-                                                                data-dismiss="modal">{{ 'common.cancel'|trans }}
+                                                                data-bs-dismiss="modal">{{ 'common.cancel'|trans }}
                                                         </button>
                                                         <a href="{{ url('plugin_coupon_delete', {'id' : Coupon.id}) }}" class="btn btn-ec-delete" data-confirm="false" {{ csrf_token_for_anchor() }} data-method="delete">
                                                             {{ 'common.delete'|trans }}
