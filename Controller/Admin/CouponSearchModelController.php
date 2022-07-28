@@ -61,7 +61,7 @@ class CouponSearchModelController extends AbstractController
      * @Route("/%eccube_admin_route%/plugin/coupon/search/product/page/{page_no}", requirements={"page_no" = "\d+"}, name="plugin_coupon_search_product_page")
      * @Template("@Coupon42/admin/search_product.twig")
      */
-    public function searchProduct(Request $request, $page_no = null, PaginatorInterface $paginator)
+    public function searchProduct(Request $request, PaginatorInterface $paginator, $page_no = null)
     {
         if (!$request->isXmlHttpRequest()) {
             return null;
