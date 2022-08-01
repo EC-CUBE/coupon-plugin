@@ -13,6 +13,7 @@ jobs:
         working-directory: ../
         run: |
           rm -rf $GITHUB_WORKSPACE/.github
+          rm -rf $GITHUB_WORKSPACE/Tests
           find $GITHUB_WORKSPACE -name "dummy" -delete
           find $GITHUB_WORKSPACE -name ".git*" -and ! -name ".gitkeep" -print0 | xargs -0 rm -rf
           chmod -R o+w $GITHUB_WORKSPACE
