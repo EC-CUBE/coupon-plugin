@@ -226,10 +226,6 @@ class CouponType extends AbstractType
                     /** @var ConstraintViolationList $errors */
                     $errors = $this->validator->validate($data['discount_rate'], [
                         new Assert\NotBlank(),
-                        new Assert\Range([
-                            'min' => 0,
-                            'max' => 100,
-                        ]),
                     ]);
                     if ($errors->count() > 0) {
                         foreach ($errors as $error) {
