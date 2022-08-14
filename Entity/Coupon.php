@@ -541,10 +541,14 @@ class Coupon extends AbstractEntity
 
     /**
      * @param bool $couponMember
+     *
+     * @return Coupon
      */
     public function setCouponMember($couponMember)
     {
         $this->coupon_member = $couponMember;
+
+        return $this;
     }
 
     /**
@@ -557,10 +561,14 @@ class Coupon extends AbstractEntity
 
     /**
      * @param int $couponLowerLimit
+     *
+     * @return Coupon
      */
     public function setCouponLowerLimit($couponLowerLimit)
     {
         $this->coupon_lower_limit = $couponLowerLimit;
+
+        return $this;
     }
 
     /**
@@ -573,9 +581,13 @@ class Coupon extends AbstractEntity
 
     /**
      * @param int $coupon_release
+     *
+     * @return Coupon
      */
     public function setCouponRelease($coupon_release)
     {
         $this->coupon_release = $coupon_release;
+
+        return $this;
     }
 }
