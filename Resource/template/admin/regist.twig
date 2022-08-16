@@ -525,13 +525,13 @@
                     <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="form-group">
+                    <div class="form-group mb-3">
                         {{ form_widget(searchProductModalForm.id, { attr : { placeholder : 'admin.product.name'|trans } } ) }}
                     </div>
-                    <div class="form-group">
+                    <div class="form-group mb-3">
                         {{ form_widget(searchProductModalForm.category_id) }}
                     </div>
-                    <div class="form-group text-center">
+                    <div class="form-group text-center mb-3">
                         <button type="button" id="searchProductModalButton" class="btn btn-primary" >{{ 'plugin_coupon.admin.regist.modal.search'|trans }}</button>
                     </div>
                     <div class="form-group" id="searchProductModalList">
@@ -553,10 +553,10 @@
                     <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="form-group">
+                    <div class="form-group mb-3">
                         {{ form_widget(searchCategoryModalForm.category_id, {'attr': {'class': 'form-control'}}) }}
                     </div>
-                    <div class="form-group text-center">
+                    <div class="form-group text-center mb-3">
                         <button type="button" id="searchCategoryModalButton" class="btn btn-primary" >{{ 'plugin_coupon.admin.regist.modal.search'|trans }}</button>
                     </div>
                     <div class="form-group" id="searchCategoryModalList">
