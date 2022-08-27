@@ -276,26 +276,28 @@ class CouponService
         $discount = 0;
         // クーポンコードが存在する場合カートに入っている商品の値引き額を設定する
         if ($Coupon) {
+            // 値引き前の金額で割引率を算出する
+            $total = 0;
+            // include tax
+            foreach ($couponProducts as $productClassId => $value) {
+                // 税率が取得できない場合は TaxRule から取得し直す
+                if ($value['tax_rate'] < 1 || $value['rounding_type_id'] === null) {
+                    /** @var ProductClass $ProductClass */
+                    $ProductClass = $this->productClassRepository->find($productClassId);
+                    $TaxRule = $this->taxRuleRepository->getByRule($ProductClass->getProduct(), $ProductClass);
+                    $value['tax_rate'] = $TaxRule->getTaxRate();
+                    $value['rounding_type_id'] = $TaxRule->getRoundingType()->getId();
+                }
+                $total += ($value['price'] + $this->taxRuleService->calcTax($value['price'], $value['tax_rate'], $value['rounding_type_id'])) * $value['quantity'];
+            }
+
             // 対象商品の存在確認.
             // 割引対象商品が存在する場合は値引き額を取得する
             // 割引対象商品がある場合は値引き額を計算する
             if ($Coupon->getDiscountType() == Coupon::DISCOUNT_PRICE) {
-                $discount = $Coupon->getDiscountPrice();
+                //$discount = $Coupon->getDiscountPrice();
+                $discount = min($Coupon->getDiscountPrice(), $total);
             } else {
-                // 値引き前の金額で割引率を算出する
-                $total = 0;
-                // include tax
-                foreach ($couponProducts as $productClassId => $value) {
-                    // 税率が取得できない場合は TaxRule から取得し直す
-                    if ($value['tax_rate'] < 1 || $value['rounding_type_id'] === null) {
-                        /** @var ProductClass $ProductClass */
-                        $ProductClass = $this->productClassRepository->find($productClassId);
-                        $TaxRule = $this->taxRuleRepository->getByRule($ProductClass->getProduct(), $ProductClass);
-                        $value['tax_rate'] = $TaxRule->getTaxRate();
-                        $value['rounding_type_id'] = $TaxRule->getRoundingType()->getId();
-                    }
-                    $total += ($value['price'] + $this->taxRuleService->calcTax($value['price'], $value['tax_rate'], $value['rounding_type_id'])) * $value['quantity'];
-                }
                 /** @var TaxRule $DefaultTaxRule */
                 $DefaultTaxRule = $this->taxRuleRepository->getByRule();
                 // 丸め規則はデフォルトの課税規則に従う
