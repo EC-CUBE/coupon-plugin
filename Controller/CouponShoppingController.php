@@ -99,7 +99,7 @@ class CouponShoppingController extends AbstractController
         $Order = $this->orderHelper->getPurchaseProcessingOrder($preOrderId);
 
         if (!$Order) {
-            $this->addError('front.shopping.order.error');
+            $this->addError('front.shopping.order_error');
 
             return $this->redirectToRoute('shopping_error');
         }
