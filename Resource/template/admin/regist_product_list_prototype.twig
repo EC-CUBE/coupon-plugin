@@ -14,7 +14,9 @@
             </div>
         </div>
         <div class="col-1 icon_edit">
-            <button class="btn btn-secondary btn-sm delete-item">削除</button>
+            <a class="btn btn-ec-actionIcon mr-3 delete-item" data-bs-toggle="modal" data-bs-toggle="tooltip" data-bs-target="#confirmModal" data-bs-placement="top" title="{{ 'admin.common.delete'|trans }}">
+                <i class="fa fa-close fa-lg text-secondary"></i>
+            </a>
         </div>
     </div><!-- /.item_box -->
 {% endfilter %}
