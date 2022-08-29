@@ -130,7 +130,7 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
 
         $crawler = $this->client->followRedirect();
         $this->expected = '利用しています。';
-        $this->actual = $crawler->filter('strong.text-danger')->text();
+        $this->actual = $crawler->filter('strong.ec-color-red')->text();
         $this->assertStringContainsString($this->expected, $this->actual);
 
         $form = $crawler->selectButton('確認する')->form();
@@ -182,7 +182,7 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
 
         $crawler = $this->client->followRedirect();
         $this->expected = '利用しています。';
-        $this->actual = $crawler->filter('strong.text-danger')->text();
+        $this->actual = $crawler->filter('strong.ec-color-red')->text();
         $this->assertStringContainsString($this->expected, $this->actual);
 
         $form = $crawler->selectButton('確認する')->form();
@@ -240,7 +240,7 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
         // shopping index
         $crawler = $this->client->followRedirect();
         $this->expected = '利用しています。';
-        $this->actual = $crawler->filter('strong.text-danger')->text();
+        $this->actual = $crawler->filter('strong.ec-color-red')->text();
         $this->assertStringContainsString($this->expected, $this->actual);
         $form = $crawler->selectButton('確認する')->form();
         $crawler = $this->client->submit($form);
@@ -279,7 +279,7 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
         // shopping index
         $crawler = $this->client->followRedirect();
         $this->expected = '利用しています。';
-        $this->actual = $crawler->filter('strong.text-danger')->text();
+        $this->actual = $crawler->filter('strong.ec-color-red')->text();
         $this->assertStringContainsString($this->expected, $this->actual);
         $form = $crawler->selectButton('確認する')->form();
         $crawler = $this->client->submit($form);
@@ -338,7 +338,7 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
 
         $crawler = $this->client->followRedirect();
         $this->expected = '利用しています。';
-        $this->actual = $crawler->filter('strong.text-danger')->text();
+        $this->actual = $crawler->filter('strong.ec-color-red')->text();
         $this->assertStringContainsString($this->expected, $this->actual);
 
         $this->scenarioCheckout();
@@ -375,7 +375,7 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
 
         $crawler = $this->client->followRedirect();
         $this->expected = '利用しています。';
-        $this->actual = $crawler->filter('strong.text-danger')->text();
+        $this->actual = $crawler->filter('strong.ec-color-red')->text();
         $this->assertStringContainsString($this->expected, $this->actual);
 
         $form = $crawler->selectButton('確認する')->form();
@@ -428,7 +428,7 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
 
         $crawler = $this->client->followRedirect();
         $this->expected = '利用しています。';
-        $this->actual = $crawler->filter('strong.text-danger')->text();
+        $this->actual = $crawler->filter('strong.ec-color-red')->text();
         $this->assertStringContainsString($this->expected, $this->actual);
 
         $this->scenarioCheckout();
