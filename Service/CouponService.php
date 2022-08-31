@@ -367,7 +367,6 @@ class CouponService
      */
     public function removeCouponOrder(ItemHolderInterface $Order)
     {
-        // クーポンが未入力でクーポン情報が存在すればクーポン情報を削除
         /** @var CouponOrder $CouponOrder */
         $CouponOrder = $this->couponOrderRepository->getCouponOrder($Order->getPreOrderId());
         if ($CouponOrder) {
