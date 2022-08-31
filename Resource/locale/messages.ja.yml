@@ -14,7 +14,8 @@ plugin_coupon.admin.index.col09: 有効期間
 plugin_coupon.admin.index.col10: 編集
 plugin_coupon.admin.index.col11: 状態
 plugin_coupon.admin.index.col12: 削除
-plugin_coupon.admin.index.delete.confirm: このクーポンを削除しても宜しいですか？
+plugin_coupon.admin.index.delete__confirm_title: クーポンを削除します
+plugin_coupon.admin.index.delete__confirm_message: クーポンを削除してよろしいですか？
 plugin_coupon.admin.coupon_member.yes: 会員のみ
 plugin_coupon.admin.coupon_member.no: なし
 plugin_coupon.admin.coupon_type.product: 商品
