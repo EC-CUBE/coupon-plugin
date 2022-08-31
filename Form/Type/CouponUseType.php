@@ -17,6 +17,9 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 
 /**
  * Class CouponUseType.
@@ -44,7 +47,14 @@ class CouponUseType extends AbstractType
                 'expanded' => true,
                 'multiple' => false,
                 'data' => 1, // default choice
-            ]);
+            ])
+            ->addEventListener(FormEvents::POST_SUBMIT, function(FormEvent $event) {
+                $form = $event->getForm();
+                $data = $form->getData();
+                if ($data['coupon_use'] == 1 && empty($form['coupon_cd']->getData())) {
+                    $form['coupon_cd']->addError(new FormError(trans('plugin_coupon.front.shopping_coupon.body')));
+                }
+            });
     }
 
     /**
