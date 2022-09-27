@@ -76,6 +76,7 @@ class CouponType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $max = 9999999999;
         $currency = $this->container->getParameter('currency');
         $builder
             ->add('coupon_cd', TextType::class, [
@@ -85,6 +86,9 @@ class CouponType extends AbstractType
                 'constraints' => [
                     new Assert\NotBlank(),
                     new Assert\Regex(['pattern' => '/^[a-zA-Z0-9]+$/i']),
+                    new Assert\Length([
+                        'max' => 20,
+                    ]),
                 ],
             ])
             ->add('coupon_name', TextType::class, [
@@ -93,6 +97,9 @@ class CouponType extends AbstractType
                 'trim' => true,
                 'constraints' => [
                     new Assert\NotBlank(),
+                    new Assert\Length([
+                        'max' => 50,
+                    ]),
                 ],
             ])
             ->add('coupon_type', ChoiceType::class, [
@@ -142,6 +149,7 @@ class CouponType extends AbstractType
                 'constraints' => [
                     new Assert\Range([
                         'min' => 0,
+                        'max'=> $max,
                     ]),
                 ],
             ])
@@ -152,6 +160,7 @@ class CouponType extends AbstractType
                 'constraints' => [
                     new Assert\Range([
                         'min' => 0,
+                        'max' => $max,
                     ]),
                 ],
             ])
@@ -173,6 +182,10 @@ class CouponType extends AbstractType
                 'widget' => 'single_text',
                 'constraints' => [
                     new Assert\NotBlank(),
+                    new Assert\Range([
+                        'min'=> '0003-01-01',
+                        'minMessage' => 'form_error.out_of_range',
+                    ]),
                 ],
             ])
             // 有効期間(TO)
@@ -183,6 +196,10 @@ class CouponType extends AbstractType
                 'widget' => 'single_text',
                 'constraints' => [
                     new Assert\NotBlank(),
+                    new Assert\Range([
+                        'min'=> '0003-01-01',
+                        'minMessage' => 'form_error.out_of_range',
+                    ]),
                 ],
             ])
             ->add('coupon_release', IntegerType::class, [
