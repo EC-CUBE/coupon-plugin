@@ -268,7 +268,7 @@ class CouponServiceTest extends EccubeTestCase
 
         self::getContainer()->get('security.token_storage')->setToken(
             new UsernamePasswordToken(
-                $Customer, null, 'customer', $Customer->getRoles()
+                $Customer, 'customer', $Customer->getRoles()
             )
         );
 
@@ -605,7 +605,7 @@ class CouponServiceTest extends EccubeTestCase
 
         self::getContainer()->get('security.token_storage')->setToken(
             new UsernamePasswordToken(
-                $Customer, null, 'customer', $Customer->getRoles()
+                $Customer, 'customer', $Customer->getRoles()
             )
         );
 
