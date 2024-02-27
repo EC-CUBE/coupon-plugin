@@ -36,7 +36,7 @@ use Eccube\Entity\Category;
 use Plugin\Coupon42\Repository\CouponOrderRepository;
 use Plugin\Coupon42\Repository\CouponRepository;
 use Plugin\Coupon42\Service\PurchaseFlow\Processor\CouponProcessor;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
@@ -90,7 +90,7 @@ class CouponService
     private $orderItemTypeRepository;
 
     /**
-     * @var ContainerInterface
+     * @var ContainerBagInterface
      */
     private $container;
 
@@ -121,7 +121,7 @@ class CouponService
      * @param TaxTypeRepository $taxTypeRepository
      * @param TaxDisplayTypeRepository $taxDisplayTypeRepository
      * @param OrderItemTypeRepository $orderItemTypeRepository
-     * @param ContainerInterface $container
+     * @param ContainerBagInterface $container
      * @param EntityManagerInterface $entityManager
      * @param OrderItemRepository $orderItemRepository
      * @param ProductClassRepository $productClassRepository
@@ -137,7 +137,7 @@ class CouponService
         TaxTypeRepository $taxTypeRepository,
         TaxDisplayTypeRepository $taxDisplayTypeRepository,
         OrderItemTypeRepository $orderItemTypeRepository,
-        ContainerInterface $container,
+        ContainerBagInterface $container,
         EntityManagerInterface $entityManager,
         OrderItemRepository $orderItemRepository,
         ProductClassRepository $productClassRepository
