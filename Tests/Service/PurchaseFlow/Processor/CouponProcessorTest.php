@@ -88,10 +88,10 @@ class CouponProcessorTest extends EccubeTestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->couponService = self::$container->get(CouponService::class);
+        $this->couponService = self::getContainer()->get(CouponService::class);
         $this->couponRepository = $this->entityManager->getRepository(Coupon::class);
         $this->couponOrderRepository = $this->entityManager->getRepository(CouponOrder::class);
-        $this->taxRuleService = self::$container->get(TaxRuleService::class);
+        $this->taxRuleService = self::getContainer()->get(TaxRuleService::class);
         $this->taxRuleRepository = $this->entityManager->getRepository(TaxRule::class);
 
         $this->processor = new CouponProcessor(
@@ -126,7 +126,7 @@ class CouponProcessorTest extends EccubeTestCase
     public function testAddCouponDiscountItem()
     {
         $Coupon = $this->getCoupon();
-        self::$container->get('security.token_storage')->setToken(
+        self::getContainer()->get('security.token_storage')->setToken(
             new UsernamePasswordToken(
                 $this->Customer, null, 'customer', $this->Customer->getRoles()
             )
@@ -152,7 +152,7 @@ class CouponProcessorTest extends EccubeTestCase
     public function testRemoveCouponDiscountItem()
     {
         $Coupon = $this->getCoupon();
-        self::$container->get('security.token_storage')->setToken(
+        self::getContainer()->get('security.token_storage')->setToken(
             new UsernamePasswordToken(
                 $this->Customer, null, 'customer', $this->Customer->getRoles()
             )
@@ -176,7 +176,7 @@ class CouponProcessorTest extends EccubeTestCase
     public function testProcess()
     {
         $Coupon = $this->getCoupon();
-        self::$container->get('security.token_storage')->setToken(
+        self::getContainer()->get('security.token_storage')->setToken(
             new UsernamePasswordToken(
                 $this->Customer, null, 'customer', $this->Customer->getRoles()
             )
@@ -205,7 +205,7 @@ class CouponProcessorTest extends EccubeTestCase
     public function testProcessWithNotExistsOrderItem()
     {
         $Coupon = $this->getCoupon();
-        self::$container->get('security.token_storage')->setToken(
+        self::getContainer()->get('security.token_storage')->setToken(
             new UsernamePasswordToken(
                 $this->Customer, null, 'customer', $this->Customer->getRoles()
             )
@@ -251,7 +251,7 @@ class CouponProcessorTest extends EccubeTestCase
     public function testValidate()
     {
         $Coupon = $this->getCoupon();
-        self::$container->get('security.token_storage')->setToken(
+        self::getContainer()->get('security.token_storage')->setToken(
             new UsernamePasswordToken(
                 $this->Customer, null, 'customer', $this->Customer->getRoles()
             )
@@ -291,7 +291,7 @@ class CouponProcessorTest extends EccubeTestCase
     public function testValidateWithNotActiveCoupon()
     {
         $Coupon = $this->getCoupon();
-        self::$container->get('security.token_storage')->setToken(
+        self::getContainer()->get('security.token_storage')->setToken(
             new UsernamePasswordToken(
                 $this->Customer, null, 'customer', $this->Customer->getRoles()
             )
@@ -318,7 +318,7 @@ class CouponProcessorTest extends EccubeTestCase
         // ゲスト購入の Order を生成する
         $this->Order->setCustomer(null);
         $this->entityManager->flush();
-        self::$container->get('security.token_storage')->setToken(
+        self::getContainer()->get('security.token_storage')->setToken(
             new UsernamePasswordToken(
                 new Customer() , null, 'customer', ['IS_AUTHENTICATED_ANONYMOUSLY']
             )
@@ -344,7 +344,7 @@ class CouponProcessorTest extends EccubeTestCase
         // ゲスト購入の Order を生成する
         $this->Order->setCustomer(null);
         $this->entityManager->flush();
-        self::$container->get('security.token_storage')->setToken(
+        self::getContainer()->get('security.token_storage')->setToken(
             new UsernamePasswordToken(
                 new Customer(), null, 'customer', ['IS_AUTHENTICATED_ANONYMOUSLY']
             )
@@ -365,7 +365,7 @@ class CouponProcessorTest extends EccubeTestCase
     public function testValidateWithProduct()
     {
         $Coupon = $this->getCoupon(Coupon::PRODUCT);
-        self::$container->get('security.token_storage')->setToken(
+        self::getContainer()->get('security.token_storage')->setToken(
             new UsernamePasswordToken(
                 $this->Customer, null, 'customer', $this->Customer->getRoles()
             )
@@ -385,7 +385,7 @@ class CouponProcessorTest extends EccubeTestCase
     public function testValidateWithChangeOrder()
     {
         $Coupon = $this->getCoupon();
-        self::$container->get('security.token_storage')->setToken(
+        self::getContainer()->get('security.token_storage')->setToken(
             new UsernamePasswordToken(
                 $this->Customer, null, 'customer', $this->Customer->getRoles()
             )
@@ -409,7 +409,7 @@ class CouponProcessorTest extends EccubeTestCase
         $Coupon = $this->getCoupon();
         $Coupon->setCouponLowerLimit(9999999999);
         $this->entityManager->flush();
-        self::$container->get('security.token_storage')->setToken(
+        self::getContainer()->get('security.token_storage')->setToken(
             new UsernamePasswordToken(
                 $this->Customer, null, 'customer', $this->Customer->getRoles()
             )
@@ -432,7 +432,7 @@ class CouponProcessorTest extends EccubeTestCase
         $Coupon = $this->getCoupon();
         $Coupon->setCouponUseTime(0);
         $this->entityManager->flush();
-        self::$container->get('security.token_storage')->setToken(
+        self::getContainer()->get('security.token_storage')->setToken(
             new UsernamePasswordToken(
                 $this->Customer, null, 'customer', $this->Customer->getRoles()
             )
@@ -454,7 +454,7 @@ class CouponProcessorTest extends EccubeTestCase
     {
         $Coupon = $this->getCoupon();
         $useTime = $Coupon->getCouponUseTime();
-        self::$container->get('security.token_storage')->setToken(
+        self::getContainer()->get('security.token_storage')->setToken(
             new UsernamePasswordToken(
                 $this->Customer, null, 'customer', $this->Customer->getRoles()
             )
@@ -474,7 +474,7 @@ class CouponProcessorTest extends EccubeTestCase
     {
         $Coupon = $this->getCoupon();
         $useTime = $Coupon->getCouponUseTime();
-        self::$container->get('security.token_storage')->setToken(
+        self::getContainer()->get('security.token_storage')->setToken(
             new UsernamePasswordToken(
                 $this->Customer, null, 'customer', $this->Customer->getRoles()
             )
@@ -494,7 +494,7 @@ class CouponProcessorTest extends EccubeTestCase
     {
         $Coupon = $this->getCoupon();
         $useTime = $Coupon->getCouponUseTime();
-        self::$container->get('security.token_storage')->setToken(
+        self::getContainer()->get('security.token_storage')->setToken(
             new UsernamePasswordToken(
                 $this->Customer, null, 'customer', $this->Customer->getRoles()
             )
@@ -514,7 +514,7 @@ class CouponProcessorTest extends EccubeTestCase
     {
         $Coupon = $this->getCoupon();
         $useTime = $Coupon->getCouponUseTime();
-        self::$container->get('security.token_storage')->setToken(
+        self::getContainer()->get('security.token_storage')->setToken(
             new UsernamePasswordToken(
                 $this->Customer, null, 'customer', $this->Customer->getRoles()
             )
@@ -536,7 +536,7 @@ class CouponProcessorTest extends EccubeTestCase
     public function testRollback()
     {
         $Coupon = $this->getCoupon();
-        self::$container->get('security.token_storage')->setToken(
+        self::getContainer()->get('security.token_storage')->setToken(
             new UsernamePasswordToken(
                 $this->Customer, null, 'customer', $this->Customer->getRoles()
             )
@@ -561,7 +561,7 @@ class CouponProcessorTest extends EccubeTestCase
     {
         $Coupon = $this->getCoupon();
         $useTime = $Coupon->getCouponUseTime();
-        self::$container->get('security.token_storage')->setToken(
+        self::getContainer()->get('security.token_storage')->setToken(
             new UsernamePasswordToken(
                 $this->Customer, null, 'customer', $this->Customer->getRoles()
             )
