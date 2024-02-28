@@ -21,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        eccube_version: [ '4.2', '4.3-symfony6' ]
+        eccube_version: [ '4.2', '4.3' ]
         php: [ '7.4', '8.0', '8.1', '8.2', '8.3']
         db: [ 'mysql', 'mysql8', 'pgsql' ]
         plugin_code: [ 'Coupon42' ]
@@ -43,9 +43,9 @@ jobs:
               php: 8.2
           -   eccube_version: 4.2
               php: 8.3
-          -   eccube_version: 4.3-symfony6
+          -   eccube_version: 4.3
               php: 7.4
-          -   eccube_version: 4.3-symfony6
+          -   eccube_version: 4.3
               php: 8.0
     services:
       mysql:
