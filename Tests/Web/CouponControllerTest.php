@@ -79,7 +79,7 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
         parent::setUp();
         $this->couponRepository = $this->entityManager->getRepository(Coupon::class);
         $this->productRepository = $this->entityManager->getRepository(Product::class);
-        $this->cartService = self::$container->get(CartService::class);
+        $this->cartService = self::getContainer()->get(CartService::class);
         $this->Customer = $this->createCustomer();
         $this->baseInfoRepository = $this->entityManager->getRepository(BaseInfo::class);
         $this->couponOrderRepository = $this->entityManager->getRepository(CouponOrder::class);

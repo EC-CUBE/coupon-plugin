@@ -14,6 +14,7 @@
 namespace Plugin\Coupon42;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Eccube\Common\EccubeConfig;
 use Eccube\Entity\Layout;
 use Eccube\Entity\Page;
 use Eccube\Entity\PageLayout;
@@ -21,7 +22,7 @@ use Eccube\Plugin\AbstractPluginManager;
 use Eccube\Repository\LayoutRepository;
 use Eccube\Repository\PageLayoutRepository;
 use Eccube\Repository\PageRepository;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
@@ -139,7 +140,7 @@ class PluginManager extends AbstractPluginManager
      */
     private function copyBlock(ContainerInterface $container)
     {
-        $templateDir = $container->getParameter('eccube_theme_front_dir');
+        $templateDir = $container->get(EccubeConfig::class)->get('eccube_theme_front_dir');
         // ファイルコピー
         $file = new Filesystem();
         // ブロックファイルをコピー
@@ -155,7 +156,7 @@ class PluginManager extends AbstractPluginManager
      */
     private function removeBlock(ContainerInterface $container)
     {
-        $templateDir = $container->getParameter('eccube_theme_front_dir');
+        $templateDir = $container->get(EccubeConfig::class)->get('eccube_theme_front_dir');
         $file = new Filesystem();
         $file->remove($templateDir.'/Coupon42/'.$this->template1);
         $file->remove($templateDir.'/Coupon42/'.$this->template2);

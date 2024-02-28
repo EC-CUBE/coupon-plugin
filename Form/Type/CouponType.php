@@ -17,7 +17,7 @@ use Carbon\Carbon;
 use Eccube\Form\Type\PriceType;
 use Plugin\Coupon42\Entity\Coupon;
 use Plugin\Coupon42\Repository\CouponRepository;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -50,7 +50,7 @@ class CouponType extends AbstractType
     private $validator;
 
     /**
-     * @var ContainerInterface
+     * @var ContainerBagInterface
      */
     private $container;
 
@@ -59,9 +59,9 @@ class CouponType extends AbstractType
      *
      * @param CouponRepository $couponRepository
      * @param ValidatorInterface $validator
-     * @param ContainerInterface $container
+     * @param ContainerBagInterface $container
      */
-    public function __construct(CouponRepository $couponRepository, ValidatorInterface $validator, ContainerInterface $container)
+    public function __construct(CouponRepository $couponRepository, ValidatorInterface $validator, ContainerBagInterface $container)
     {
         $this->couponRepository = $couponRepository;
         $this->validator = $validator;
@@ -76,7 +76,7 @@ class CouponType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $currency = $this->container->getParameter('currency');
+        $currency = $this->container->get('currency');
         $builder
             ->add('coupon_cd', TextType::class, [
                 'label' => 'plugin_coupon.admin.label.coupon_cd',
