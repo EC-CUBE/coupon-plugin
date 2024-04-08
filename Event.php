@@ -48,7 +48,7 @@ class Event implements EventSubscriberInterface
     private $orderRepository;
 
     /**
-     * @var \Twig_Environment
+     * @var \Twig\Environment
      */
     private $twig;
 
@@ -59,9 +59,9 @@ class Event implements EventSubscriberInterface
      * @param EntityManagerInterface $entityManager
      * @param CouponRepository $couponRepository
      * @param OrderRepository $orderRepository
-     * @param \Twig_Environment $twig
+     * @param \Twig\Environment $twig
      */
-    public function __construct(CouponOrderRepository $couponOrderRepository, EntityManagerInterface $entityManager, CouponRepository $couponRepository, OrderRepository $orderRepository, \Twig_Environment $twig)
+    public function __construct(CouponOrderRepository $couponOrderRepository, EntityManagerInterface $entityManager, CouponRepository $couponRepository, OrderRepository $orderRepository, \Twig\Environment $twig)
     {
         $this->couponOrderRepository = $couponOrderRepository;
         $this->entityManager = $entityManager;

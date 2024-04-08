@@ -42,10 +42,10 @@ class CouponProcessorTest extends EccubeTestCase
     {
         parent::setUp();
 
-        $couponService = self::$container->get(CouponService::class);
+        $couponService = self::getContainer()->get(CouponService::class);
         $couponRepository = $this->entityManager->getRepository(Coupon::class);
         $couponOrderRepository = $this->entityManager->getRepository(CouponOrder::class);
-        $taxRuleService = self::$container->get(TaxRuleService::class);
+        $taxRuleService = self::getContainer()->get(TaxRuleService::class);
         $taxRuleRepository = $this->entityManager->getRepository(TaxRule::class);
         $this->processor = new CouponProcessor($this->entityManager, $couponService, $couponRepository,
             $couponOrderRepository, $taxRuleService, $taxRuleRepository);
