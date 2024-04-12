@@ -26,56 +26,80 @@
                             <table class="table tabel-sm">
                                 <thead>
                                 <tr>
-                                    <th>{{ 'plugin_coupon.admin.index.col01'|trans }}</th>
-                                    <th>{{ 'plugin_coupon.admin.index.col02'|trans }}</th>
-                                    <th>{{ 'plugin_coupon.admin.index.col03'|trans }}</th>
-                                    <th>{{ 'plugin_coupon.admin.index.col04'|trans }}</th>
-                                    <th>{{ 'plugin_coupon.admin.index.col05'|trans }}</th>
-                                    <th>{{ 'plugin_coupon.admin.index.col06'|trans }}</th>
-                                    <th>{{ 'plugin_coupon.admin.index.col07'|trans }}</th>
-                                    <th>{{ 'plugin_coupon.admin.index.col08'|trans }}</th>
-                                    <th>{{ 'plugin_coupon.admin.index.col09'|trans }}</th>
-                                    <th>{{ 'plugin_coupon.admin.index.col10'|trans }}</th>
-                                    <th>{{ 'plugin_coupon.admin.index.col11'|trans }}</th>
-                                    <th>{{ 'plugin_coupon.admin.index.col12'|trans }}</th>
+                                    <th class="border-top-0 ps-3 pt-2 pb-2">
+                                        {{ 'plugin_coupon.admin.index.col01'|trans }}
+                                    </th>
+                                    <th class="border-top-0 pt-2 pb-2">
+                                        {{ 'plugin_coupon.admin.index.col02'|trans }}
+                                    </th>
+                                    <th class="border-top-0 pt-2 pb-2">
+                                        {{ 'plugin_coupon.admin.index.col03'|trans }}
+                                    </th>
+                                    <th class="border-top-0 pt-2 pb-2">
+                                        {{ 'plugin_coupon.admin.index.col04'|trans }}
+                                    </th>
+                                    <th class="border-top-0 pt-2 pb-2">
+                                        {{ 'plugin_coupon.admin.index.col05'|trans }}
+                                    </th>
+                                    <th class="border-top-0 pt-2 pb-2">
+                                        {{ 'plugin_coupon.admin.index.col06'|trans }}
+                                    </th>
+                                    <th class="border-top-0 pt-2 pb-2">
+                                        {{ 'plugin_coupon.admin.index.col07'|trans }}
+                                    </th>
+                                    <th class="border-top-0 pt-2 pb-2">
+                                        {{ 'plugin_coupon.admin.index.col08'|trans }}
+                                    </th>
+                                    <th class="border-top-0 pt-2 pb-2">
+                                        {{ 'plugin_coupon.admin.index.col09'|trans }}
+                                    </th>
+                                    <th class="border-top-0 pt-2 pb-2">
+                                        {{ 'plugin_coupon.admin.index.col10'|trans }}
+                                    </th>
+                                    <th class="border-top-0 pt-2 pb-2">
+                                        {{ 'plugin_coupon.admin.index.col11'|trans }}
+                                    </th>
+                                    <th class="border-top-0 pt-2 pb-2 pe-3">
+                                        {{ 'plugin_coupon.admin.index.col12'|trans }}
+                                    </th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 {% for Coupon in Coupons %}
                                 <tr class="{% if Coupon.enable_flag == 0 %}active{% endif %}">
-                                    <td class="coupon_id">{{ Coupon.id }}</td>
-                                    <td class="coupon_cd">{{ Coupon.coupon_cd }}</td>
-                                    <td class="coupon_name">{{ Coupon.coupon_name }}</td>
+                                    <td class="coupon_id align-middle ps-3">{{ Coupon.id }}</td>
+                                    <td class="coupon_cd align-middle">{{ Coupon.coupon_cd }}</td>
+                                    <td class="coupon_name align-middle">{{ Coupon.coupon_name }}</td>
                                     {% if Coupon.coupon_type == 1 %}
-                                        <td class="coupon_type">{{ 'plugin_coupon.admin.coupon_type.product'|trans }}</td>
+                                        <td class="coupon_type align-middle">{{ 'plugin_coupon.admin.coupon_type.product'|trans }}</td>
                                     {% elseif Coupon.coupon_type == 2 %}
-                                        <td class="coupon_type">{{ 'plugin_coupon.admin.coupon_type.category'|trans }}</td>
+                                        <td class="coupon_type align-middle">{{ 'plugin_coupon.admin.coupon_type.category'|trans }}</td>
                                     {% elseif Coupon.coupon_type == 3 %}
-                                        <td class="coupon_type">{{ 'plugin_coupon.admin.coupon_type.all'|trans }}</td>
+                                        <td class="coupon_type align-middle">{{ 'plugin_coupon.admin.coupon_type.all'|trans }}</td>
                                     {% else %}
-                                        <td class="coupon_type"></td>
+                                        <td class="coupon_type align-middle"></td>
                                     {% endif %}
 
                                     {% if Coupon.coupon_member == 1 %}
-                                        <td class="coupon_member">{{ 'plugin_coupon.admin.coupon_member.yes'|trans }}</td>
+                                        <td class="coupon_member align-middle">{{ 'plugin_coupon.admin.coupon_member.yes'|trans }}</td>
                                     {% else %}
-                                        <td class="coupon_member">{{ 'plugin_coupon.admin.coupon_member.no'|trans }}</td>
+                                        <td class="coupon_member align-middle">{{ 'plugin_coupon.admin.coupon_member.no'|trans }}</td>
                                     {% endif %}
 
                                     {% if Coupon.discount_type == 1 %}
-                                        <td class="coupon_discount">{{ Coupon.discount_price|price }}</td>
+                                        <td class="coupon_discount align-middle">{{ Coupon.discount_price|price }}</td>
                                     {% elseif Coupon.discount_type == 2 %}
-                                        <td class="coupon_discount">{{ Coupon.discount_rate }} %</td>
+                                        <td class="coupon_discount align-middle">{{ Coupon.discount_rate }} %</td>
                                     {% else %}
-                                        <td class="coupon_discount"></td>
+                                        <td class="coupon_discount align-middle"></td>
                                     {% endif %}
 
-                                    <td>{{ Coupon.coupon_use_time|number_format }} / {{ Coupon.coupon_release|number_format }}</td>
-                                    <td>{{ Coupon.coupon_lower_limit|price }}</td>
-                                    <td>{{ Coupon.available_from_date|date_format }} ～ {{ Coupon.available_to_date|date_format }}</td>
+                                    <td class="align-middle">{{ Coupon.coupon_use_time|number_format }} / {{ Coupon.coupon_release|number_format }}</td>
+                                    <td class="align-middle">{{ Coupon.coupon_lower_limit|price }}</td>
+                                    <td class="align-middle">{{ Coupon.available_from_date|date_format }} ～ {{ Coupon.available_to_date|date_format }}</td>
 
-                                    <td><a href="{{ url('plugin_coupon_edit', { id: Coupon.id }) }}">{{ 'admin.common.edit'|trans }}</a></td>
-                                    <td>
+                                    <td class="align-middle"><a href="{{ url('plugin_coupon_edit', { id: Coupon.id }) }}">{{ 'admin.common.edit'|trans }}</a></td>
+                                    <td class="align-middle">
                                         <a href="{{ url('plugin_coupon_enable', { id: Coupon.id }) }}" {{ csrf_token_for_anchor() }} data-confirm="false" data-method="put">
                                         {% if Coupon.enable_flag == 1 %}
                                             {{ 'common.enabled'|trans }}
@@ -84,7 +108,7 @@
                                         {% endif %}
                                         </a>
                                     </td>
-                                    <td>
+                                    <td class="align-middle pe-3">
                                         <a class="" data-bs-toggle="modal" data-bs-target="#confirmModal-{{ Coupon.id }}" data-bs-tooltip="tooltip" data-bs-placement="top" title="{{ 'common.delete'|trans }}">
                                             <i class="fa fa-close fa-lg text-secondary"></i>
                                         </a>
