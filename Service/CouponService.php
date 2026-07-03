@@ -103,9 +103,9 @@ class CouponService
      * @param Coupon   $Coupon
      * @param string   $couponCd
      * @param Customer $Customer
-     * @param int      $discount
+     * @param string|int|float $discount recalcOrder() の戻り値。小数通貨(scale>0)では小数を含むため int で受けない
      */
-    public function saveCouponOrder(Order $Order, Coupon $Coupon, string $couponCd, Customer $Customer, int $discount): void
+    public function saveCouponOrder(Order $Order, Coupon $Coupon, string $couponCd, Customer $Customer, string|int|float $discount): void
     {
         $repository = $this->couponOrderRepository;
         // クーポン受注情報を取得する

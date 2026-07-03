@@ -58,7 +58,7 @@ class CouponShoppingController extends AbstractController
      * @see https://github.com/EC-CUBE/coupon-plugin/issues/128
      */
     #[Route(path: '/plugin/coupon/shopping/shopping_coupon', name: 'plugin_coupon_shopping')]
-    #[Template('Coupon44/Resource/template/default/shopping_coupon.twig')]
+    #[Template('@Coupon44/default/shopping_coupon.twig')]
     public function shoppingCoupon(Request $request)
     {
         $preOrderId = $this->cartService->getPreOrderId();
