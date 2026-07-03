@@ -22,7 +22,6 @@ use Eccube\Entity\Order;
 use Eccube\Entity\OrderItem;
 use Eccube\Entity\ProductClass;
 use Eccube\Entity\TaxRule;
-use Eccube\Repository\CategoryRepository;
 use Eccube\Repository\OrderItemRepository;
 use Eccube\Repository\ProductClassRepository;
 use Eccube\Repository\TaxRuleRepository;
@@ -43,14 +42,13 @@ class CouponService
      *
      * @param AuthorizationCheckerInterface $authorizationChecker
      * @param CouponOrderRepository $couponOrderRepository
-     * @param CategoryRepository $categoryRepository
      * @param TaxRuleService $taxRuleService
      * @param TaxRuleRepository $taxRuleRepository
      * @param EntityManagerInterface $entityManager
      * @param OrderItemRepository $orderItemRepository
      * @param ProductClassRepository $productClassRepository
      */
-    public function __construct(private readonly AuthorizationCheckerInterface $authorizationChecker, private readonly CouponOrderRepository $couponOrderRepository, private readonly CategoryRepository $categoryRepository, private readonly TaxRuleService $taxRuleService, private readonly TaxRuleRepository $taxRuleRepository, private readonly EntityManagerInterface $entityManager, private readonly OrderItemRepository $orderItemRepository, private readonly ProductClassRepository $productClassRepository)
+    public function __construct(private readonly AuthorizationCheckerInterface $authorizationChecker, private readonly CouponOrderRepository $couponOrderRepository, private readonly TaxRuleService $taxRuleService, private readonly TaxRuleRepository $taxRuleRepository, private readonly EntityManagerInterface $entityManager, private readonly OrderItemRepository $orderItemRepository, private readonly ProductClassRepository $productClassRepository)
     {
     }
 
@@ -263,12 +261,9 @@ class CouponService
             foreach ($OrderItems as $OrderItem) {
                 $Order->removeOrderItem($OrderItem);
                 $this->entityManager->remove($OrderItem);
-                $this->entityManager->flush();
             }
 
             $this->entityManager->remove($CouponOrder);
-            $this->entityManager->flush();
-
             $this->setOrderCompleteMailMessage($Order, null, null);
             $this->entityManager->flush();
         }
@@ -383,19 +378,8 @@ class CouponService
             return true;
         }
 
-        // Categoryをテーブルから取得
-        if (is_null($Category->getParent())) {
-            return false;
-        }
-
-        // 親カテゴリをテーブルから取得
-        /** @var Category|null $ParentCategory */
-        $ParentCategory = $this->categoryRepository->find($Category->getParent());
-        if ($ParentCategory) {
-            return false;
-        }
-
-        return $this->existsDepthCategory($targetCategoryIds, $ParentCategory);
+        // 上位カテゴリを辿って対象か判定する（getParent() は親カテゴリを返す。ルートなら null）
+        return $this->existsDepthCategory($targetCategoryIds, $Category->getParent());
     }
 
     /**

@@ -127,8 +127,8 @@ class CouponController extends AbstractController
             foreach ($CouponDetails as $CouponDetail) {
                 $Coupon->removeCouponDetail($CouponDetail);
                 $this->entityManager->remove($CouponDetail);
-                $this->entityManager->flush();
             }
+            $this->entityManager->flush();
             $CouponDetails = $form->get('CouponDetails')->getData();
             /** @var CouponDetail $CouponDetail */
             foreach ($CouponDetails as $CouponDetail) {

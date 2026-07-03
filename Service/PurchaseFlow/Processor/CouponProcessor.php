@@ -197,7 +197,7 @@ class CouponProcessor extends ItemHolderValidator implements ItemHolderPreproces
         if (!$Coupon) {
             return;
         }
-        $Coupon->setCouponUseTime($Coupon->getCouponUseTime() - 1);
+        $Coupon->setCouponUseTime(($Coupon->getCouponUseTime() ?? 0) - 1);
         $this->entityManager->flush();
     }
 

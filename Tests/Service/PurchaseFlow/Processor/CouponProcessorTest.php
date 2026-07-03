@@ -17,6 +17,7 @@ use Eccube\Entity\Cart;
 use Eccube\Entity\Customer;
 use Eccube\Entity\ItemHolderInterface;
 use Eccube\Entity\ItemInterface;
+use Eccube\Entity\Master\TaxType;
 use Eccube\Entity\Order;
 use Eccube\Entity\OrderItem;
 use Eccube\Entity\TaxRule;
@@ -148,6 +149,8 @@ class CouponProcessorTest extends EccubeTestCase
         $OrderItem = $OrderItems->first();
         $this->assertEquals(-1000, $OrderItem->getPrice());
         $this->assertEquals($Coupon->getCouponName(), $OrderItem->getProductName());
+        // クーポン値引き明細は不課税で追加される
+        $this->assertSame(TaxType::NON_TAXABLE, $OrderItem->getTaxType()->getId());
     }
 
     public function testRemoveCouponDiscountItem(): void
@@ -201,6 +204,8 @@ class CouponProcessorTest extends EccubeTestCase
         $OrderItem = $OrderItems->first();
         $this->assertEquals(-1000, $OrderItem->getPrice());
         $this->assertEquals($Coupon->getCouponName(), $OrderItem->getProductName());
+        // クーポン値引き明細は不課税で追加される
+        $this->assertSame(TaxType::NON_TAXABLE, $OrderItem->getTaxType()->getId());
     }
 
     public function testProcessWithNotExistsOrderItem(): void
@@ -225,6 +230,8 @@ class CouponProcessorTest extends EccubeTestCase
         $OrderItem = $OrderItems->first();
         $this->assertEquals(-1000, $OrderItem->getPrice());
         $this->assertEquals($Coupon->getCouponName(), $OrderItem->getProductName());
+        // クーポン値引き明細は不課税で追加される
+        $this->assertSame(TaxType::NON_TAXABLE, $OrderItem->getTaxType()->getId());
     }
 
     public function testProcessWithCouponOrderIsNotFound(): void

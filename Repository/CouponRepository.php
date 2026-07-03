@@ -153,8 +153,8 @@ class CouponRepository extends AbstractRepository
             // クーポン詳細情報を書き換える
             $detail->setVisible(false);
             $em->persist($detail);
-            $em->flush();
         }
+        $em->flush();
 
         return true;
     }
@@ -168,10 +168,12 @@ class CouponRepository extends AbstractRepository
      */
     public function checkCouponUseTime(string $couponCd): bool
     {
-        /** @var Coupon $Coupon */
         $Coupon = $this->findOneBy(['coupon_cd' => $couponCd]);
+        if (!$Coupon) {
+            return false;
+        }
 
         // クーポンの発行枚数は購入完了時に減算される、一枚以上残っていれば利用できる
-        return $Coupon->getCouponUseTime() >= 1;
+        return ($Coupon->getCouponUseTime() ?? 0) >= 1;
     }
 }

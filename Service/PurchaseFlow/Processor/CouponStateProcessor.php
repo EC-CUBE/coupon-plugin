@@ -101,8 +101,8 @@ class CouponStateProcessor extends ItemHolderValidator implements ItemHolderPrep
                     $CouponOrder->setOrderDate(null);
                     $CouponOrder->setOrderChangeStatus(true);
                     $this->couponOrderRepository->save($CouponOrder);
-                    $couponUseTime = $Coupon->getCouponUseTime() + 1;
-                    $couponRelease = $Coupon->getCouponRelease();
+                    $couponUseTime = ($Coupon->getCouponUseTime() ?? 0) + 1;
+                    $couponRelease = $Coupon->getCouponRelease() ?? 0;
                     if ($couponUseTime <= $couponRelease) {
                         $Coupon->setCouponUseTime($couponUseTime);
                     } else {
@@ -122,7 +122,7 @@ class CouponStateProcessor extends ItemHolderValidator implements ItemHolderPrep
                     $CouponOrder->setOrderDate(new \DateTime());
                     $CouponOrder->setOrderChangeStatus(false);
                     $this->couponOrderRepository->save($CouponOrder);
-                    $Coupon->setCouponUseTime($Coupon->getCouponUseTime() - 1);
+                    $Coupon->setCouponUseTime(($Coupon->getCouponUseTime() ?? 0) - 1);
                     $this->entityManager->persist($Coupon);
                     $this->entityManager->flush();
                 }
