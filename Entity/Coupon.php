@@ -5,166 +5,100 @@
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon42\Entity;
+namespace Plugin\Coupon44\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Eccube\Entity\AbstractEntity;
-use Doctrine\Common\Collections\ArrayCollection;
+use Plugin\Coupon44\Repository\CouponRepository;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Coupon
- *
- * @ORM\Table(name="plg_coupon")
- * @ORM\InheritanceType("SINGLE_TABLE")
- * @ORM\DiscriminatorColumn(name="discriminator_type", type="string", length=255)
- * @ORM\HasLifecycleCallbacks()
- * @ORM\Entity(repositoryClass="Plugin\Coupon42\Repository\CouponRepository")
- * @UniqueEntity("coupon_cd")
  */
+#[ORM\Table(name: 'plg_coupon')]
+#[ORM\InheritanceType('SINGLE_TABLE')]
+#[ORM\DiscriminatorColumn(name: 'discriminator_type', type: 'string', length: 255)]
+#[ORM\HasLifecycleCallbacks]
+#[ORM\Entity(repositoryClass: CouponRepository::class)]
+#[UniqueEntity('coupon_cd')]
 class Coupon extends AbstractEntity
 {
-    const PRODUCT = 1;
-    const CATEGORY = 2;
-    const ALL = 3;
+    public const PRODUCT = 1;
+    public const CATEGORY = 2;
+    public const ALL = 3;
 
-    const DISCOUNT_PRICE = 1;
-    const DISCOUNT_RATE = 2;
+    public const DISCOUNT_PRICE = 1;
+    public const DISCOUNT_RATE = 2;
 
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="coupon_id", type="integer", options={"unsigned":true})
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
-    private $id;
+    #[ORM\Column(name: 'coupon_id', type: Types::INTEGER, options: ['unsigned' => true])]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
+    private ?int $id = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="coupon_cd", type="string", nullable=true, length=20, unique=true)
-     */
-    private $coupon_cd;
+    #[ORM\Column(name: 'coupon_cd', type: Types::STRING, nullable: true, length: 20, unique: true)]
+    private ?string $coupon_cd = null;
 
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="coupon_type", type="smallint", nullable=true)
-     */
-    private $coupon_type;
+    #[ORM\Column(name: 'coupon_type', type: Types::SMALLINT, nullable: true)]
+    private ?int $coupon_type = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="coupon_name", type="string", nullable=true, length=50)
-     */
-    private $coupon_name;
+    #[ORM\Column(name: 'coupon_name', type: Types::STRING, nullable: true, length: 50)]
+    private ?string $coupon_name = null;
 
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="discount_type", type="smallint", nullable=true)
-     */
-    private $discount_type;
+    #[ORM\Column(name: 'discount_type', type: Types::SMALLINT, nullable: true)]
+    private ?int $discount_type = null;
 
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="coupon_use_time", type="integer", nullable=true)
-     */
-    private $coupon_use_time;
+    #[ORM\Column(name: 'coupon_use_time', type: Types::INTEGER, nullable: true)]
+    private ?int $coupon_use_time = null;
 
-    /**
-     * @var float
-     *
-     * @ORM\Column(name="discount_price", type="decimal", nullable=true, precision=12, scale=2, options={"unsigned":true,"default":0})
-     */
-    private $discount_price;
+    #[ORM\Column(name: 'discount_price', type: Types::DECIMAL, nullable: true, precision: 12, scale: 2, options: ['unsigned' => true, 'default' => 0])]
+    private ?string $discount_price = null;
 
-    /**
-     * @var float
-     *
-     * @ORM\Column(name="discount_rate", type="decimal", nullable=true, precision=10, scale=0, options={"unsigned":true,"default":0})
-     */
-    private $discount_rate;
+    #[ORM\Column(name: 'discount_rate', type: Types::DECIMAL, nullable: true, precision: 10, scale: 0, options: ['unsigned' => true, 'default' => 0])]
+    private ?string $discount_rate = null;
 
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="enable_flag", type="boolean", nullable=false, options={"default":true})
-     */
-    private $enable_flag;
+    #[ORM\Column(name: 'enable_flag', type: Types::BOOLEAN, nullable: false, options: ['default' => true])]
+    private ?bool $enable_flag = null;
 
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="available_from_date", type="datetimetz")
-     */
-    private $available_from_date;
+    #[ORM\Column(name: 'available_from_date', type: Types::DATETIMETZ_MUTABLE)]
+    private ?\DateTime $available_from_date = null;
 
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="available_to_date", type="datetimetz")
-     */
-    private $available_to_date;
+    #[ORM\Column(name: 'available_to_date', type: Types::DATETIMETZ_MUTABLE)]
+    private ?\DateTime $available_to_date = null;
 
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(name="visible", type="boolean", options={"default":true})
-     */
-    private $visible;
+    #[ORM\Column(name: 'visible', type: Types::BOOLEAN, options: ['default' => true])]
+    private ?bool $visible = null;
 
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(name="coupon_member", type="boolean", options={"default":false})
-     */
-    private $coupon_member;
+    #[ORM\Column(name: 'coupon_member', type: Types::BOOLEAN, options: ['default' => false])]
+    private ?bool $coupon_member = null;
 
-    /**
-     * @var float
-     *
-     * @ORM\Column(name="coupon_lower_limit", type="decimal", nullable=true, precision=12, scale=2, options={"unsigned":true,"default":0})
-     */
-    private $coupon_lower_limit;
+    #[ORM\Column(name: 'coupon_lower_limit', type: Types::DECIMAL, nullable: true, precision: 12, scale: 2, options: ['unsigned' => true, 'default' => 0])]
+    private ?string $coupon_lower_limit = null;
 
     /**
      * The number of coupon release
-     *
-     * @var int
-     *
-     * @ORM\Column(name="coupon_release", type="integer", nullable=false)
      */
-    private $coupon_release;
+    #[ORM\Column(name: 'coupon_release', type: Types::INTEGER, nullable: false)]
+    private ?int $coupon_release = null;
+
+    #[ORM\Column(name: 'create_date', type: Types::DATETIMETZ_MUTABLE)]
+    private ?\DateTime $create_date = null;
+
+    #[ORM\Column(name: 'update_date', type: Types::DATETIMETZ_MUTABLE)]
+    private ?\DateTime $update_date = null;
 
     /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="create_date", type="datetimetz")
+     * @var Collection<int, CouponDetail>
      */
-    private $create_date;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="update_date", type="datetimetz")
-     */
-    private $update_date;
-
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     *
-     * @ORM\OneToMany(targetEntity="Plugin\Coupon42\Entity\CouponDetail", mappedBy="Coupon", cascade={"persist","remove"})
-     */
+    #[ORM\OneToMany(targetEntity: CouponDetail::class, mappedBy: 'Coupon', cascade: ['persist', 'remove'])]
     private $CouponDetails;
 
     /**
@@ -177,10 +111,8 @@ class Coupon extends AbstractEntity
 
     /**
      * Get id.
-     *
-     * @return int
      */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -188,11 +120,9 @@ class Coupon extends AbstractEntity
     /**
      * Set coupon_cd.
      *
-     * @param string $couponCd
-     *
      * @return Coupon
      */
-    public function setCouponCd($couponCd)
+    public function setCouponCd(?string $couponCd): self
     {
         $this->coupon_cd = $couponCd;
 
@@ -201,10 +131,8 @@ class Coupon extends AbstractEntity
 
     /**
      * Get coupon_cd.
-     *
-     * @return string
      */
-    public function getCouponCd()
+    public function getCouponCd(): ?string
     {
         return $this->coupon_cd;
     }
@@ -212,11 +140,9 @@ class Coupon extends AbstractEntity
     /**
      * Set coupon_type.
      *
-     * @param int $couponType
-     *
      * @return Coupon
      */
-    public function setCouponType($couponType)
+    public function setCouponType(?int $couponType): self
     {
         $this->coupon_type = $couponType;
 
@@ -225,10 +151,8 @@ class Coupon extends AbstractEntity
 
     /**
      * Get coupon_type.
-     *
-     * @return int
      */
-    public function getCouponType()
+    public function getCouponType(): ?int
     {
         return $this->coupon_type;
     }
@@ -236,11 +160,9 @@ class Coupon extends AbstractEntity
     /**
      * Set coupon_name.
      *
-     * @param string $couponName
-     *
      * @return Coupon
      */
-    public function setCouponName($couponName)
+    public function setCouponName(?string $couponName): self
     {
         $this->coupon_name = $couponName;
 
@@ -249,10 +171,8 @@ class Coupon extends AbstractEntity
 
     /**
      * Get coupon_name.
-     *
-     * @return string
      */
-    public function getCouponName()
+    public function getCouponName(): ?string
     {
         return $this->coupon_name;
     }
@@ -260,11 +180,9 @@ class Coupon extends AbstractEntity
     /**
      * Set discount_type.
      *
-     * @param int $discountType
-     *
      * @return Coupon
      */
-    public function setDiscountType($discountType)
+    public function setDiscountType(?int $discountType): self
     {
         $this->discount_type = $discountType;
 
@@ -273,10 +191,8 @@ class Coupon extends AbstractEntity
 
     /**
      * Get discount_type.
-     *
-     * @return int
      */
-    public function getDiscountType()
+    public function getDiscountType(): ?int
     {
         return $this->discount_type;
     }
@@ -284,11 +200,9 @@ class Coupon extends AbstractEntity
     /**
      * Set coupon_use_time.
      *
-     * @param int $couponUseTime
-     *
      * @return Coupon
      */
-    public function setCouponUseTime($couponUseTime)
+    public function setCouponUseTime(?int $couponUseTime): self
     {
         $this->coupon_use_time = $couponUseTime;
 
@@ -297,10 +211,8 @@ class Coupon extends AbstractEntity
 
     /**
      * Get coupon_use_time.
-     *
-     * @return int
      */
-    public function getCouponUseTime()
+    public function getCouponUseTime(): ?int
     {
         return $this->coupon_use_time;
     }
@@ -308,11 +220,9 @@ class Coupon extends AbstractEntity
     /**
      * Set discount_price.
      *
-     * @param string $discountPrice
-     *
      * @return Coupon
      */
-    public function setDiscountPrice($discountPrice)
+    public function setDiscountPrice(string|int|float|null $discountPrice): self
     {
         $this->discount_price = $discountPrice;
 
@@ -321,10 +231,8 @@ class Coupon extends AbstractEntity
 
     /**
      * Get discount_price.
-     *
-     * @return string
      */
-    public function getDiscountPrice()
+    public function getDiscountPrice(): ?string
     {
         return $this->discount_price;
     }
@@ -332,11 +240,9 @@ class Coupon extends AbstractEntity
     /**
      * Set discount_rate.
      *
-     * @param string $discountRate
-     *
      * @return Coupon
      */
-    public function setDiscountRate($discountRate)
+    public function setDiscountRate(string|int|float|null $discountRate): self
     {
         $this->discount_rate = $discountRate;
 
@@ -345,10 +251,8 @@ class Coupon extends AbstractEntity
 
     /**
      * Get discount_rate.
-     *
-     * @return string
      */
-    public function getDiscountRate()
+    public function getDiscountRate(): ?string
     {
         return $this->discount_rate;
     }
@@ -356,11 +260,9 @@ class Coupon extends AbstractEntity
     /**
      * Set enable_flag.
      *
-     * @param bool $enableFlag
-     *
      * @return Coupon
      */
-    public function setEnableFlag($enableFlag)
+    public function setEnableFlag(bool|int|null $enableFlag): self
     {
         $this->enable_flag = $enableFlag;
 
@@ -369,10 +271,8 @@ class Coupon extends AbstractEntity
 
     /**
      * Get enable_flag.
-     *
-     * @return bool
      */
-    public function getEnableFlag()
+    public function getEnableFlag(): ?bool
     {
         return $this->enable_flag;
     }
@@ -380,11 +280,9 @@ class Coupon extends AbstractEntity
     /**
      * Set available_from_date.
      *
-     * @param \DateTime $availableFromDate
-     *
      * @return Coupon
      */
-    public function setAvailableFromDate($availableFromDate)
+    public function setAvailableFromDate(?\DateTime $availableFromDate): self
     {
         $this->available_from_date = $availableFromDate;
 
@@ -393,10 +291,8 @@ class Coupon extends AbstractEntity
 
     /**
      * Get available_from_date.
-     *
-     * @return \DateTime
      */
-    public function getAvailableFromDate()
+    public function getAvailableFromDate(): ?\DateTime
     {
         return $this->available_from_date;
     }
@@ -404,11 +300,9 @@ class Coupon extends AbstractEntity
     /**
      * Set available_to_date.
      *
-     * @param \DateTime $availableToDate
-     *
      * @return Coupon
      */
-    public function setAvailableToDate($availableToDate)
+    public function setAvailableToDate(?\DateTime $availableToDate): self
     {
         $this->available_to_date = $availableToDate;
 
@@ -417,10 +311,8 @@ class Coupon extends AbstractEntity
 
     /**
      * Get available_to_date.
-     *
-     * @return \DateTime
      */
-    public function getAvailableToDate()
+    public function getAvailableToDate(): ?\DateTime
     {
         return $this->available_to_date;
     }
@@ -428,11 +320,9 @@ class Coupon extends AbstractEntity
     /**
      * Set del_flg.
      *
-     * @param bool $visible
-     *
      * @return Coupon
      */
-    public function setVisible($visible)
+    public function setVisible(?bool $visible): self
     {
         $this->visible = $visible;
 
@@ -441,10 +331,8 @@ class Coupon extends AbstractEntity
 
     /**
      * Get del_flg.
-     *
-     * @return bool
      */
-    public function isVisible()
+    public function isVisible(): ?bool
     {
         return $this->visible;
     }
@@ -452,11 +340,9 @@ class Coupon extends AbstractEntity
     /**
      * Set create_date.
      *
-     * @param \DateTime $createDate
-     *
      * @return Coupon
      */
-    public function setCreateDate($createDate)
+    public function setCreateDate(?\DateTime $createDate): self
     {
         $this->create_date = $createDate;
 
@@ -465,10 +351,8 @@ class Coupon extends AbstractEntity
 
     /**
      * Get create_date.
-     *
-     * @return \DateTime
      */
-    public function getCreateDate()
+    public function getCreateDate(): ?\DateTime
     {
         return $this->create_date;
     }
@@ -476,11 +360,9 @@ class Coupon extends AbstractEntity
     /**
      * Set update_date.
      *
-     * @param \DateTime $updateDate
-     *
      * @return Coupon
      */
-    public function setUpdateDate($updateDate)
+    public function setUpdateDate(?\DateTime $updateDate): self
     {
         $this->update_date = $updateDate;
 
@@ -489,10 +371,8 @@ class Coupon extends AbstractEntity
 
     /**
      * Get update_date.
-     *
-     * @return \DateTime
      */
-    public function getUpdateDate()
+    public function getUpdateDate(): ?\DateTime
     {
         return $this->update_date;
     }
@@ -500,11 +380,9 @@ class Coupon extends AbstractEntity
     /**
      * Add CouponDetails.
      *
-     * @param CouponDetail $couponDetails
-     *
      * @return Coupon
      */
-    public function addCouponDetail(CouponDetail $couponDetails)
+    public function addCouponDetail(CouponDetail $couponDetails): self
     {
         $this->CouponDetails[] = $couponDetails;
 
@@ -513,10 +391,8 @@ class Coupon extends AbstractEntity
 
     /**
      * Remove CouponDetails.
-     *
-     * @param CouponDetail $couponDetails
      */
-    public function removeCouponDetail(CouponDetail $couponDetails)
+    public function removeCouponDetail(CouponDetail $couponDetails): void
     {
         $this->CouponDetails->removeElement($couponDetails);
     }
@@ -524,67 +400,52 @@ class Coupon extends AbstractEntity
     /**
      * Get CouponDetails.
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection<int, CouponDetail>
      */
-    public function getCouponDetails()
+    public function getCouponDetails(): Collection
     {
         return $this->CouponDetails;
     }
 
-    /**
-     * @return bool
-     */
-    public function getCouponMember()
+    public function getCouponMember(): ?bool
     {
         return $this->coupon_member;
     }
 
     /**
-     * @param bool $couponMember
-     *
      * @return Coupon
      */
-    public function setCouponMember($couponMember)
+    public function setCouponMember(bool|int|null $couponMember): self
     {
         $this->coupon_member = $couponMember;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getCouponLowerLimit()
+    public function getCouponLowerLimit(): ?string
     {
         return $this->coupon_lower_limit;
     }
 
     /**
-     * @param int $couponLowerLimit
-     *
      * @return Coupon
      */
-    public function setCouponLowerLimit($couponLowerLimit)
+    public function setCouponLowerLimit(string|int|float|null $couponLowerLimit): self
     {
         $this->coupon_lower_limit = $couponLowerLimit;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getCouponRelease()
+    public function getCouponRelease(): ?int
     {
         return $this->coupon_release;
     }
 
     /**
-     * @param int $coupon_release
-     *
      * @return Coupon
      */
-    public function setCouponRelease($coupon_release)
+    public function setCouponRelease(?int $coupon_release): self
     {
         $this->coupon_release = $coupon_release;
 

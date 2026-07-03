@@ -5,13 +5,13 @@
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon42\Form\Type;
+namespace Plugin\Coupon44\Form\Type;
 
 use Eccube\Form\Type\Master\CategoryType;
 use Symfony\Component\Form\AbstractType;
@@ -26,9 +26,9 @@ class CouponSearchCategoryType extends AbstractType
      * buildForm.
      *
      * @param FormBuilderInterface $builder
-     * @param array                $options
+     * @param array<string, mixed> $options
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('category_id', CategoryType::class, [
@@ -39,12 +39,10 @@ class CouponSearchCategoryType extends AbstractType
     }
 
     /**
-     * getName.
-     *
-     * @return string
+     * getBlockPrefix.
      */
-    public function getName()
+    public function getBlockPrefix(): string
     {
-        return 'admin_plugin_coupon_search_category';
+        return 'coupon_search_category';
     }
 }

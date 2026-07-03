@@ -5,13 +5,13 @@
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon42\Tests\Repository;
+namespace Plugin\Coupon44\Tests\Repository;
 
 use Eccube\Entity\Customer;
 use Eccube\Entity\OrderItem;
@@ -19,11 +19,11 @@ use Eccube\Entity\TaxRule;
 use Eccube\Repository\TaxRuleRepository;
 use Eccube\Tests\EccubeTestCase;
 use Eccube\Util\StringUtil;
-use Plugin\Coupon42\Entity\Coupon;
-use Plugin\Coupon42\Entity\CouponDetail;
-use Plugin\Coupon42\Entity\CouponOrder;
-use Plugin\Coupon42\Repository\CouponOrderRepository;
-use Plugin\Coupon42\Repository\CouponRepository;
+use Plugin\Coupon44\Entity\Coupon;
+use Plugin\Coupon44\Entity\CouponDetail;
+use Plugin\Coupon44\Entity\CouponOrder;
+use Plugin\Coupon44\Repository\CouponOrderRepository;
+use Plugin\Coupon44\Repository\CouponRepository;
 
 /**
  * Class CouponCouponOrderRepositoryTest.
@@ -57,13 +57,13 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
         $this->couponOrderRepository = $this->entityManager->getRepository(CouponOrder::class);
         $this->couponRepository = $this->entityManager->getRepository(Coupon::class);
         $this->taxRuleRepository = $this->entityManager->getRepository(TaxRule::class);
-//        $this->deleteAllRows(array(''));
+        //        $this->deleteAllRows(array(''));
     }
 
     /**
      * testSave.
      */
-    public function testSave()
+    public function testSave(): void
     {
         $Coupon = $this->getCoupon();
         $discount = 200;
@@ -75,13 +75,14 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
 
         $this->actual = $CouponOrder1->getDiscount();
         $this->expected = $discount;
-        $this->verify();
+        // decimal カラムは Doctrine が文字列で返すため数値等価で比較する
+        self::assertEquals($this->expected, $this->actual);
     }
 
     /**
      * testFindUseCouponNonMember.
      */
-    public function testFindUseCouponNonMember()
+    public function testFindUseCouponNonMember(): void
     {
         $Coupon = $this->getCoupon();
 
@@ -101,10 +102,11 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
 
         $this->expected = $discount;
 
-        $this->verify();
+        // decimal カラムは Doctrine が文字列で返すため数値等価で比較する
+        self::assertEquals($this->expected, $this->actual);
     }
 
-    public function testGetCouponOrder()
+    public function testGetCouponOrder(): void
     {
         $Coupon = $this->getCoupon();
 
@@ -118,19 +120,20 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
 
         $this->actual = $CouponOrder1->getDiscount();
         $this->expected = $discount;
-        $this->verify();
+        // decimal カラムは Doctrine が文字列で返すため数値等価で比較する
+        self::assertEquals($this->expected, $this->actual);
     }
 
     /**
      * getCouponOrder.
      *
      * @param Coupon $Coupon
-     * @param $discount
-     * @param $preOrderId
+     * @param int|string $discount
+     * @param string $preOrderId
      *
      * @return CouponOrder
      */
-    private function getCouponOrder(Coupon $Coupon, $discount, $preOrderId)
+    private function getCouponOrder(Coupon $Coupon, int|string $discount, string $preOrderId): CouponOrder
     {
         $Order = $this->createOrder($this->Customer);
 
@@ -140,12 +143,12 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
         $TaxRule = $this->taxRuleRepository->getByRule();
         $orderItem
             ->setProductName('discount')
-            ->setPrice((0 - $discount))
-            ->setQuantity(1)
+            ->setPrice((string) (0 - $discount))
+            ->setQuantity('1')
             ->setTaxRuleId($TaxRule->getId())
             ->setTaxRate($TaxRule->getTaxRate());
         $this->entityManager->persist($orderItem);
-        $this->entityManager->flush($orderItem);
+        $this->entityManager->flush();
         $orderItem->setOrder($Order);
         $Order->addItem($orderItem);
 
@@ -170,7 +173,7 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
      *
      * @return Coupon
      */
-    protected function getCoupon($couponType = 1)
+    protected function getCoupon(int $couponType = 1): Coupon
     {
         $this->getTestData($couponType);
 
@@ -188,7 +191,7 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
 
         $Categories = $Product->getProductCategories();
 
-        /** @var \Eccube\Entity\ProductCategory $Category */
+        /** @var \Eccube\Entity\ProductCategory $ProductCategory */
         $ProductCategory = $Categories[0];
 
         $CouponDetail->setCategory($ProductCategory->getCategory());
@@ -207,7 +210,7 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
      *
      * @return Coupon
      */
-    protected function getTestData($couponType = 1)
+    protected function getTestData(int $couponType = 1): Coupon
     {
         $Coupon = new Coupon();
 
@@ -233,7 +236,7 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
 
         // クーポン情報を登録する
         $this->entityManager->persist($Coupon);
-        $this->entityManager->flush($Coupon);
+        $this->entityManager->flush();
 
         return $Coupon;
     }

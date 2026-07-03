@@ -5,30 +5,30 @@
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon42\Controller\Admin;
+namespace Plugin\Coupon44\Controller\Admin;
 
 use Eccube\Common\Constant;
+use Eccube\Controller\AbstractController;
 use Eccube\Form\Type\Admin\SearchProductType;
-use Plugin\Coupon42\Entity\Coupon;
-use Plugin\Coupon42\Entity\CouponDetail;
-use Plugin\Coupon42\Form\Type\CouponSearchCategoryType;
-use Plugin\Coupon42\Form\Type\CouponType;
-use Plugin\Coupon42\Repository\CouponDetailRepository;
-use Plugin\Coupon42\Repository\CouponRepository;
-use Plugin\Coupon42\Service\CouponService;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Plugin\Coupon44\Entity\Coupon;
+use Plugin\Coupon44\Entity\CouponDetail;
+use Plugin\Coupon44\Form\Type\CouponSearchCategoryType;
+use Plugin\Coupon44\Form\Type\CouponType;
+use Plugin\Coupon44\Repository\CouponDetailRepository;
+use Plugin\Coupon44\Repository\CouponRepository;
+use Plugin\Coupon44\Service\CouponService;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-use Eccube\Controller\AbstractController;
+use Symfony\Component\Routing\Attribute\Route;
 
 /**
  * Class CouponController
@@ -36,41 +36,26 @@ use Eccube\Controller\AbstractController;
 class CouponController extends AbstractController
 {
     /**
-     * @var CouponRepository
-     */
-    private $couponRepository;
-
-    /**
-     * @var CouponService
-     */
-    private $couponService;
-
-    /**
-     * @var CouponDetailRepository
-     */
-    private $couponDetailRepository;
-
-    /**
      * CouponController constructor.
      *
      * @param CouponRepository $couponRepository
      * @param CouponService $couponService
      * @param CouponDetailRepository $couponDetailRepository
      */
-    public function __construct(CouponRepository $couponRepository, CouponService $couponService, CouponDetailRepository $couponDetailRepository)
-    {
-        $this->couponRepository = $couponRepository;
-        $this->couponService = $couponService;
-        $this->couponDetailRepository = $couponDetailRepository;
+    public function __construct(
+        private readonly CouponRepository $couponRepository,
+        private readonly CouponService $couponService,
+        private readonly CouponDetailRepository $couponDetailRepository,
+    ) {
     }
 
     /**
      * @param Request $request
      *
-     * @return array
-     * @Route("/%eccube_admin_route%/plugin/coupon", name="plugin_coupon_list")
-     * @Template("@Coupon42/admin/index.twig")
+     * @return array<string, mixed>
      */
+    #[Route(path: '/%eccube_admin_route%/plugin/coupon', name: 'plugin_coupon_list')]
+    #[Template('@Coupon44/admin/index.twig')]
     public function index(Request $request)
     {
         $coupons = $this->couponRepository->findBy(
@@ -90,10 +75,10 @@ class CouponController extends AbstractController
      * @param int     $id
      *
      * @return RedirectResponse|Response
-     * @Route("/%eccube_admin_route%/plugin/coupon/new", name="plugin_coupon_new", requirements={"id" = "\d+"})
-     * @Route("/%eccube_admin_route%/plugin/coupon/{id}/edit", name="plugin_coupon_edit", requirements={"id" = "\d+"})
      */
-    public function edit(Request $request, $id = null)
+    #[Route(path: '/%eccube_admin_route%/plugin/coupon/new', name: 'plugin_coupon_new', requirements: ['id' => '\d+'])]
+    #[Route(path: '/%eccube_admin_route%/plugin/coupon/{id}/edit', name: 'plugin_coupon_edit', requirements: ['id' => '\d+'])]
+    public function edit(Request $request, $id = null): Response
     {
         $Coupon = null;
         if (!$id) {
@@ -125,7 +110,7 @@ class CouponController extends AbstractController
         $form->get('CouponDetails')->setData($details);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var \Plugin\Coupon42\Entity\Coupon $Coupon */
+            /** @var Coupon $Coupon */
             $Coupon = $form->getData();
             $oldReleaseNumber = $request->get('coupon_release_old');
             if (is_null($Coupon->getCouponUseTime())) {
@@ -142,7 +127,7 @@ class CouponController extends AbstractController
             foreach ($CouponDetails as $CouponDetail) {
                 $Coupon->removeCouponDetail($CouponDetail);
                 $this->entityManager->remove($CouponDetail);
-                $this->entityManager->flush($CouponDetail);
+                $this->entityManager->flush();
             }
             $CouponDetails = $form->get('CouponDetails')->getData();
             /** @var CouponDetail $CouponDetail */
@@ -154,7 +139,7 @@ class CouponController extends AbstractController
                 $this->entityManager->persist($CouponDetail);
             }
             $this->entityManager->persist($Coupon);
-            $this->entityManager->flush($Coupon);
+            $this->entityManager->flush();
             // 成功時のメッセージを登録する
             $this->addSuccess('plugin_coupon.admin.regist.success', 'admin');
 
@@ -174,10 +159,9 @@ class CouponController extends AbstractController
      * @param Coupon  $Coupon
      *
      * @return RedirectResponse
-     * @Route("/%eccube_admin_route%/plugin/coupon/{id}/enable", name="plugin_coupon_enable", requirements={"id" = "\d+"}, methods={"put"})
-     * @ParamConverter("Coupon")
      */
-    public function enable(Request $request, Coupon $Coupon)
+    #[Route(path: '/%eccube_admin_route%/plugin/coupon/{id}/enable', name: 'plugin_coupon_enable', requirements: ['id' => '\d+'], methods: ['put'])]
+    public function enable(Request $request, #[MapEntity(id: 'id')] Coupon $Coupon): RedirectResponse
     {
         $this->isTokenValid();
         $this->couponRepository->enableCoupon($Coupon);
@@ -194,10 +178,9 @@ class CouponController extends AbstractController
      * @param Coupon  $Coupon
      *
      * @return RedirectResponse
-     * @Route("/%eccube_admin_route%/plugin/coupon/{id}/delete", name="plugin_coupon_delete", requirements={"id" = "\d+"}, methods={"delete"})
-     * @ParamConverter("Coupon")
      */
-    public function delete(Request $request, Coupon $Coupon)
+    #[Route(path: '/%eccube_admin_route%/plugin/coupon/{id}/delete', name: 'plugin_coupon_delete', requirements: ['id' => '\d+'], methods: ['delete'])]
+    public function delete(Request $request, #[MapEntity(id: 'id')] Coupon $Coupon): RedirectResponse
     {
         $this->isTokenValid();
         $this->couponRepository->deleteCoupon($Coupon);
@@ -210,11 +193,11 @@ class CouponController extends AbstractController
     /**
      * 編集画面用のrender.
      *
-     * @param array       $parameters
+     * @param array<string, mixed> $parameters
      *
      * @return Response
      */
-    protected function renderRegistView($parameters = [])
+    protected function renderRegistView(array $parameters = []): Response
     {
         // 商品検索フォーム
         $searchProductModalForm = $this->formFactory->createBuilder(SearchProductType::class)->getForm();
@@ -226,6 +209,6 @@ class CouponController extends AbstractController
         ];
         $viewParameters += $parameters;
 
-        return $this->render('@Coupon42/admin/regist.twig', $viewParameters);
+        return $this->render('@Coupon44/admin/regist.twig', $viewParameters);
     }
 }

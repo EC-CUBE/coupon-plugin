@@ -5,16 +5,16 @@
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon42\Tests\Fixtures;
+namespace Plugin\Coupon44\Tests\Fixtures;
 
-use Plugin\Coupon42\Entity\Coupon;
-use Plugin\Coupon42\Entity\CouponDetail;
+use Plugin\Coupon44\Entity\Coupon;
+use Plugin\Coupon44\Entity\CouponDetail;
 
 trait CreateCouponTrait
 {
@@ -22,10 +22,11 @@ trait CreateCouponTrait
      * getCoupon.
      *
      * @param int $couponType
+     * @param mixed $discountType
      *
      * @return Coupon
      */
-    public function getCoupon($couponType = Coupon::ALL, $discountType = Coupon::DISCOUNT_PRICE)
+    public function getCoupon(int $couponType = Coupon::ALL, mixed $discountType = Coupon::DISCOUNT_PRICE): Coupon
     {
         /** @var Coupon $Coupon */
         $Coupon = $this->getTestData($couponType, $discountType);
@@ -45,7 +46,7 @@ trait CreateCouponTrait
                 break;
             case Coupon::CATEGORY:
                 $Categories = $Product->getProductCategories();
-                /** @var \Eccube\Entity\ProductCategory $Category */
+                /** @var \Eccube\Entity\ProductCategory $ProductCategory */
                 $ProductCategory = $Categories[0];
                 $CouponDetail->setCategory($ProductCategory->getCategory());
                 break;
@@ -54,7 +55,7 @@ trait CreateCouponTrait
         }
         $Coupon->addCouponDetail($CouponDetail);
         $this->entityManager->persist($CouponDetail);
-        $this->entityManager->flush($CouponDetail);
+        $this->entityManager->flush();
 
         return $Coupon;
     }
@@ -63,10 +64,11 @@ trait CreateCouponTrait
      * getTestData.
      *
      * @param int $couponType
+     * @param mixed $discountType
      *
      * @return Coupon
      */
-    public function getTestData($couponType = Coupon::ALL, $discountType = Coupon::DISCOUNT_PRICE)
+    public function getTestData(int $couponType = Coupon::ALL, mixed $discountType = Coupon::DISCOUNT_PRICE): Coupon
     {
         $Coupon = new Coupon();
 
@@ -92,7 +94,7 @@ trait CreateCouponTrait
 
         // クーポン情報を登録する
         $this->entityManager->persist($Coupon);
-        $this->entityManager->flush($Coupon);
+        $this->entityManager->flush();
 
         return $Coupon;
     }

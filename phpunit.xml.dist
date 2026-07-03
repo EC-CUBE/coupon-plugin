@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<!-- https://phpunit.readthedocs.io/en/latest/configuration.html -->
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/6.5/phpunit.xsd"
+         xsi:noNamespaceSchemaLocation="../../../vendor/phpunit/phpunit/phpunit.xsd"
          backupGlobals="false"
          colors="true"
          bootstrap="Tests/bootstrap.php"
 >
     <php>
+        <ini name="memory_limit" value="-1" />
+        <ini name="display_errors" value="1" />
         <ini name="error_reporting" value="-1" />
-        <env name="KERNEL_CLASS" value="Eccube\Kernel" />
-        <env name="APP_ENV" value="test" />
-        <env name="APP_DEBUG" value="1" />
-        <env name="SHELL_VERBOSITY" value="-1" />
-        <env name="SYMFONY_DEPRECATIONS_HELPER" value="weak" />
-        <env name="SYMFONY_PHPUNIT_VERSION" value="9.5" />
-        <!-- define your env variables for the test env here -->
+        <server name="KERNEL_CLASS" value="Eccube\Kernel" />
+        <server name="SYMFONY_DEPRECATIONS_HELPER" value="weak" />
+        <server name="APP_ENV" value="test" force="true" />
+        <server name="SHELL_VERBOSITY" value="-1" />
     </php>
 
     <!-- テストの場所 -->
@@ -24,26 +24,19 @@
         </testsuite>
     </testsuites>
 
-    <!-- 出力するログファイル
-    <logging>
-        <log type="coverage-clover" target="./reports/coverage.clover"/>
-    </logging>
-    -->
-
-    <!-- カバーレージのターゲット -->
-    <filter>
-        <whitelist processUncoveredFilesFromWhitelist="true">
+    <!-- カバレッジのターゲット -->
+    <source>
+        <include>
             <directory suffix=".php">./</directory>
-            <exclude>
-                <directory suffix=".php">./Tests</directory>
-                <directory suffix=".php">./Resource</directory>
-                <file>./PluginManager.php</file>
-            </exclude>
-        </whitelist>
-    </filter>
+        </include>
+        <exclude>
+            <directory suffix=".php">./Tests</directory>
+            <directory suffix=".php">./Resource</directory>
+            <file>./PluginManager.php</file>
+        </exclude>
+    </source>
 
-    <listeners>
-        <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener" />
-        <listener class="\DAMA\DoctrineTestBundle\PHPUnit\PHPUnitListener" />
-    </listeners>
+    <extensions>
+        <bootstrap class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension"/>
+    </extensions>
 </phpunit>

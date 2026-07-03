@@ -5,104 +5,65 @@
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon42\Entity;
+namespace Plugin\Coupon44\Entity;
 
-use Eccube\Entity\AbstractEntity;
-use Eccube\Entity\Product;
-use Eccube\Entity\Category;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\Mapping as ORM;
+use Eccube\Entity\AbstractEntity;
+use Eccube\Entity\Category;
+use Eccube\Entity\Product;
+use Plugin\Coupon44\Repository\CouponDetailRepository;
 
 /**
  * Coupon Detail
- *
- * @ORM\Table(name="plg_coupon_detail")
- * @ORM\InheritanceType("SINGLE_TABLE")
- * @ORM\DiscriminatorColumn(name="discriminator_type", type="string", length=255)
- * @ORM\HasLifecycleCallbacks()
- * @ORM\Entity(repositoryClass="Plugin\Coupon42\Repository\CouponDetailRepository")
  */
+#[ORM\Table(name: 'plg_coupon_detail')]
+#[ORM\InheritanceType('SINGLE_TABLE')]
+#[ORM\DiscriminatorColumn(name: 'discriminator_type', type: 'string', length: 255)]
+#[ORM\HasLifecycleCallbacks]
+#[ORM\Entity(repositoryClass: CouponDetailRepository::class)]
 class CouponDetail extends AbstractEntity
 {
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="coupon_detail_id", type="integer", options={"unsigned":true})
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
-    private $id;
+    #[ORM\Column(name: 'coupon_detail_id', type: Types::INTEGER, options: ['unsigned' => true])]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
+    private ?int $id = null;
 
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="coupon_type", type="smallint", nullable=true)
-     */
-    private $coupon_type;
+    #[ORM\Column(name: 'coupon_type', type: Types::SMALLINT, nullable: true)]
+    private ?int $coupon_type = null;
 
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(name="visible", type="boolean", options={"default":true})
-     */
-    private $visible;
+    #[ORM\Column(name: 'visible', type: Types::BOOLEAN, options: ['default' => true])]
+    private ?bool $visible = null;
 
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="create_date", type="datetimetz")
-     */
-    private $create_date;
+    #[ORM\Column(name: 'create_date', type: Types::DATETIMETZ_MUTABLE)]
+    private ?\DateTime $create_date = null;
 
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="update_date", type="datetimetz")
-     */
-    private $update_date;
+    #[ORM\Column(name: 'update_date', type: Types::DATETIMETZ_MUTABLE)]
+    private ?\DateTime $update_date = null;
 
-    /**
-     * @var Coupon
-     *
-     * @ORM\ManyToOne(targetEntity="Plugin\Coupon42\Entity\Coupon", inversedBy="CouponDetails")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="coupon_id", referencedColumnName="coupon_id")
-     * })
-     */
-    private $Coupon;
+    #[ORM\ManyToOne(targetEntity: Coupon::class, inversedBy: 'CouponDetails')]
+    #[ORM\JoinColumn(name: 'coupon_id', referencedColumnName: 'coupon_id')]
+    private ?Coupon $Coupon = null;
 
-    /**
-     * @var \Eccube\Entity\Product
-     *
-     * @ORM\ManyToOne(targetEntity="Eccube\Entity\Product")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="product_id", referencedColumnName="id")
-     * })
-     */
-    private $Product;
+    #[ORM\ManyToOne(targetEntity: Product::class)]
+    #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id')]
+    private ?Product $Product = null;
 
-    /**
-     * @var \Eccube\Entity\Category
-     *
-     * @ORM\ManyToOne(targetEntity="Eccube\Entity\Category")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="category_id", referencedColumnName="id")
-     * })
-     */
-    private $Category;
+    #[ORM\ManyToOne(targetEntity: Category::class)]
+    #[ORM\JoinColumn(name: 'category_id', referencedColumnName: 'id')]
+    private ?Category $Category = null;
 
     /**
      * Get id.
-     *
-     * @return int
      */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -110,11 +71,9 @@ class CouponDetail extends AbstractEntity
     /**
      * Set id.
      *
-     * @param int $id
-     *
      * @return CouponDetail
      */
-    public function setId($id)
+    public function setId(?int $id): self
     {
         $this->id = $id;
 
@@ -124,11 +83,9 @@ class CouponDetail extends AbstractEntity
     /**
      * Set coupon_type.
      *
-     * @param int $couponType
-     *
      * @return CouponDetail
      */
-    public function setCouponType($couponType)
+    public function setCouponType(?int $couponType): self
     {
         $this->coupon_type = $couponType;
 
@@ -137,10 +94,8 @@ class CouponDetail extends AbstractEntity
 
     /**
      * Get coupon_type.
-     *
-     * @return int
      */
-    public function getCouponType()
+    public function getCouponType(): ?int
     {
         return $this->coupon_type;
     }
@@ -148,11 +103,9 @@ class CouponDetail extends AbstractEntity
     /**
      * Set del_flg.
      *
-     * @param bool $visible
-     *
      * @return CouponDetail
      */
-    public function setVisible($visible)
+    public function setVisible(?bool $visible): self
     {
         $this->visible = $visible;
 
@@ -161,10 +114,8 @@ class CouponDetail extends AbstractEntity
 
     /**
      * Get del_flg.
-     *
-     * @return bool
      */
-    public function isVisible()
+    public function isVisible(): ?bool
     {
         return $this->visible;
     }
@@ -172,11 +123,9 @@ class CouponDetail extends AbstractEntity
     /**
      * Set create_date.
      *
-     * @param \DateTime $createDate
-     *
      * @return CouponDetail
      */
-    public function setCreateDate($createDate)
+    public function setCreateDate(?\DateTime $createDate): self
     {
         $this->create_date = $createDate;
 
@@ -185,10 +134,8 @@ class CouponDetail extends AbstractEntity
 
     /**
      * Get create_date.
-     *
-     * @return \DateTime
      */
-    public function getCreateDate()
+    public function getCreateDate(): ?\DateTime
     {
         return $this->create_date;
     }
@@ -196,11 +143,9 @@ class CouponDetail extends AbstractEntity
     /**
      * Set update_date.
      *
-     * @param \DateTime $updateDate
-     *
      * @return CouponDetail
      */
-    public function setUpdateDate($updateDate)
+    public function setUpdateDate(?\DateTime $updateDate): self
     {
         $this->update_date = $updateDate;
 
@@ -209,10 +154,8 @@ class CouponDetail extends AbstractEntity
 
     /**
      * Get update_date.
-     *
-     * @return \DateTime
      */
-    public function getUpdateDate()
+    public function getUpdateDate(): ?\DateTime
     {
         return $this->update_date;
     }
@@ -220,11 +163,9 @@ class CouponDetail extends AbstractEntity
     /**
      * Set Coupon.
      *
-     * @param Coupon $coupon
-     *
      * @return CouponDetail
      */
-    public function setCoupon(Coupon $coupon)
+    public function setCoupon(Coupon $coupon): self
     {
         $this->Coupon = $coupon;
 
@@ -233,10 +174,8 @@ class CouponDetail extends AbstractEntity
 
     /**
      * Get Coupon.
-     *
-     * @return Coupon
      */
-    public function getCoupon()
+    public function getCoupon(): ?Coupon
     {
         return $this->Coupon;
     }
@@ -244,11 +183,9 @@ class CouponDetail extends AbstractEntity
     /**
      * Set Product.
      *
-     * @param Product $product
-     *
      * @return CouponDetail
      */
-    public function setProduct(Product $product = null)
+    public function setProduct(?Product $product = null): self
     {
         $this->Product = $product;
 
@@ -257,10 +194,8 @@ class CouponDetail extends AbstractEntity
 
     /**
      * Get Product.
-     *
-     * @return Product
      */
-    public function getProduct()
+    public function getProduct(): ?Product
     {
         return $this->Product;
     }
@@ -268,11 +203,9 @@ class CouponDetail extends AbstractEntity
     /**
      * Set Category.
      *
-     * @param Category $category
-     *
      * @return CouponDetail
      */
-    public function setCategory(Category $category = null)
+    public function setCategory(?Category $category = null): self
     {
         $this->Category = $category;
 
@@ -281,20 +214,16 @@ class CouponDetail extends AbstractEntity
 
     /**
      * Get Category.
-     *
-     * @return Category
      */
-    public function getCategory()
+    public function getCategory(): ?Category
     {
         return $this->Category;
     }
 
     /**
      * 親カテゴリ名を含むカテゴリ名を取得する.
-     *
-     * @return string
      */
-    public function getCategoryFullName()
+    public function getCategoryFullName(): ?string
     {
         try {
             if (is_null($this->Category)) {
@@ -313,17 +242,15 @@ class CouponDetail extends AbstractEntity
             }
 
             return $fulName;
-        } catch (EntityNotFoundException $e) {
+        } catch (EntityNotFoundException) {
             return null;
         }
     }
 
     /**
      * get product name.
-     *
-     * @return string
      */
-    public function getProductName()
+    public function getProductName(): ?string
     {
         try {
             if (is_null($this->Product)) {
@@ -332,7 +259,7 @@ class CouponDetail extends AbstractEntity
             $fulName = $this->Product->getName();
 
             return $fulName;
-        } catch (EntityNotFoundException $e) {
+        } catch (EntityNotFoundException) {
             return null;
         }
     }

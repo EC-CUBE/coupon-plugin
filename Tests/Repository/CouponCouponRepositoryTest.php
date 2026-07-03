@@ -5,18 +5,18 @@
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon42\Tests\Repository;
+namespace Plugin\Coupon44\Tests\Repository;
 
 use Eccube\Tests\EccubeTestCase;
-use Plugin\Coupon42\Entity\Coupon;
-use Plugin\Coupon42\Entity\CouponDetail;
-use Plugin\Coupon42\Repository\CouponRepository;
+use Plugin\Coupon44\Entity\Coupon;
+use Plugin\Coupon44\Entity\CouponDetail;
+use Plugin\Coupon44\Repository\CouponRepository;
 
 /**
  * Class CouponCouponRepositoryTest.
@@ -40,7 +40,7 @@ class CouponCouponRepositoryTest extends EccubeTestCase
     /**
      * testFindActiveCoupon.
      */
-    public function testFindActiveCoupon()
+    public function testFindActiveCoupon(): void
     {
         $Coupon = $this->getCoupon();
         $couponCd = 'aaaaaaaa';
@@ -53,7 +53,7 @@ class CouponCouponRepositoryTest extends EccubeTestCase
     /**
      * testFindActiveCouponAll.
      */
-    public function testFindActiveCouponAll()
+    public function testFindActiveCouponAll(): void
     {
         $this->getCoupon();
         $coupons = $this->couponRepository->findActiveCouponAll();
@@ -64,7 +64,7 @@ class CouponCouponRepositoryTest extends EccubeTestCase
     /**
      * testEnableCoupon.
      */
-    public function testEnableCoupon()
+    public function testEnableCoupon(): void
     {
         /** @var Coupon $Coupon */
         $Coupon = $this->getCoupon();
@@ -77,7 +77,7 @@ class CouponCouponRepositoryTest extends EccubeTestCase
     /**
      * testDeleteCoupon.
      */
-    public function testDeleteCoupon()
+    public function testDeleteCoupon(): void
     {
         /** @var Coupon $Coupon */
         $Coupon = $this->getCoupon();
@@ -87,7 +87,7 @@ class CouponCouponRepositoryTest extends EccubeTestCase
         $this->verify();
     }
 
-    public function testCheckCouponUseTime()
+    public function testCheckCouponUseTime(): void
     {
         $Coupon = $this->getCoupon();
         $Coupon->setCouponUseTime(0);
@@ -102,7 +102,7 @@ class CouponCouponRepositoryTest extends EccubeTestCase
      *
      * @return Coupon
      */
-    private function getCoupon($couponType = 1)
+    private function getCoupon(int $couponType = 1): Coupon
     {
         $this->getTestData($couponType);
 
@@ -117,7 +117,7 @@ class CouponCouponRepositoryTest extends EccubeTestCase
         $CouponDetail->setCreateDate($Coupon->getCreateDate());
         $CouponDetail->setVisible(true);
         $Categories = $Product->getProductCategories();
-        /** @var \Eccube\Entity\ProductCategory $Category */
+        /** @var \Eccube\Entity\ProductCategory $ProductCategory */
         $ProductCategory = $Categories[0];
         $CouponDetail->setCategory($ProductCategory->getCategory());
         $CouponDetail->setProduct($Product);
@@ -133,7 +133,7 @@ class CouponCouponRepositoryTest extends EccubeTestCase
      *
      * @return Coupon
      */
-    private function getTestData($couponType = 1)
+    private function getTestData(int $couponType = 1): Coupon
     {
         $Coupon = new Coupon();
 
@@ -159,7 +159,7 @@ class CouponCouponRepositoryTest extends EccubeTestCase
 
         // クーポン情報を登録する
         $this->entityManager->persist($Coupon);
-        $this->entityManager->flush($Coupon);
+        $this->entityManager->flush();
 
         return $Coupon;
     }

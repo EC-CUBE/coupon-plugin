@@ -1,6 +1,6 @@
 # クーポンプラグイン
 
-[![CI for Coupon42](https://github.com/EC-CUBE/coupon-plugin/actions/workflows/ci.yml/badge.svg)](https://github.com/EC-CUBE/coupon-plugin/actions/workflows/ci.yml)
+[![CI for Coupon44](https://github.com/EC-CUBE/coupon-plugin/actions/workflows/ci.yml/badge.svg)](https://github.com/EC-CUBE/coupon-plugin/actions/workflows/ci.yml)
 
 ## 概要
 

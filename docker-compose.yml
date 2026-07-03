@@ -1,0 +1,54 @@
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  mailcatcher-data:
+    driver: local
+
+  ### ignore folder volume #####
+  var:
+    driver: local
+  vendor:
+    driver: local
+  node_modules:
+    driver: local
+
+services:
+  ### EC-CUBE 4.4 ##################################
+  ec-cube:
+    ### PHP バージョンを変える場合は環境変数 TAG を指定します
+    ## TAG=8.3-apache-4.4 docker compose up -d --wait
+    ## 利用可能: 8.2-apache-4.4 / 8.3-apache-4.4 / 8.4-apache-4.4 / 8.5-apache-4.4
+    image: ${REGISTRY:-ghcr.io}/${IMAGE_NAME:-ec-cube/ec-cube-php}:${TAG:-8.2-apache-4.4}
+    pull_policy: missing
+    ports:
+      - 8080:80
+      - 4430:443
+    volumes:
+      ### 同期対象からコストの重いフォルダを除外 #####################
+      - "var:/var/www/html/var"
+      - "vendor:/var/www/html/vendor"
+      - "node_modules:/var/www/html/node_modules"
+    environment:
+      # EC-CUBE environments
+      # ブラウザでの動作確認用に dev で起動します（実セッションが必要なため）。
+      # PHPUnit は phpunit.xml.dist が APP_ENV=test を強制するので両立します。
+      APP_ENV: "dev"
+      APP_DEBUG: 1
+      DATABASE_URL: "sqlite:///var/eccube.db"
+      DATABASE_SERVER_VERSION: 3
+      DATABASE_CHARSET: 'utf8'
+      MAILER_DSN: "smtp://mailcatcher:1025"
+      ECCUBE_AUTH_MAGIC: "<change.me>"
+    networks:
+      - backend
+
+  ### Mailcatcher ##################################
+  mailcatcher:
+    image: schickling/mailcatcher
+    ports:
+      - "1080:1080"
+      - "1025:1025"
+    networks:
+      - backend

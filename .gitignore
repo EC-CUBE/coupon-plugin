@@ -1,0 +1,12 @@
+composer.phar
+/vendor/
+
+# 本プラグインはライブラリ (type: eccube-plugin) のため composer.lock はコミットしない
+# https://getcomposer.org/doc/02-libraries.md#lock-file
+composer.lock
+
+# 静的解析・整形ツールのキャッシュ
+.php-cs-fixer.cache
+
+# Playwright MCP の一時生成物
+/.playwright-mcp/

@@ -5,46 +5,42 @@
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon42\Service\PurchaseFlow\Processor;
+namespace Plugin\Coupon44\Service\PurchaseFlow\Processor;
 
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Eccube\Annotation\ShoppingFlow;
-use Eccube\Entity\Customer;
-use Eccube\Entity\ItemInterface;
-use Eccube\Entity\Order;
-use Eccube\Entity\OrderItem;
+use Eccube\Attribute\ShoppingFlow;
 use Eccube\Entity\ItemHolderInterface;
 use Eccube\Entity\Master\OrderItemType;
 use Eccube\Entity\Master\TaxDisplayType;
 use Eccube\Entity\Master\TaxType;
+use Eccube\Entity\Order;
+use Eccube\Entity\OrderItem;
 use Eccube\Repository\TaxRuleRepository;
 use Eccube\Service\PurchaseFlow\ItemHolderPreprocessor;
 use Eccube\Service\PurchaseFlow\ItemHolderValidator;
 use Eccube\Service\PurchaseFlow\PurchaseContext;
 use Eccube\Service\PurchaseFlow\PurchaseProcessor;
 use Eccube\Service\TaxRuleService;
-use Plugin\Coupon42\Entity\Coupon;
-use Plugin\Coupon42\Entity\CouponOrder;
-use Plugin\Coupon42\Service\CouponService;
-use Plugin\Coupon42\Repository\CouponRepository;
-use Plugin\Coupon42\Repository\CouponOrderRepository;
+use Plugin\Coupon44\Entity\Coupon;
+use Plugin\Coupon44\Entity\CouponOrder;
+use Plugin\Coupon44\Repository\CouponOrderRepository;
+use Plugin\Coupon44\Repository\CouponRepository;
+use Plugin\Coupon44\Service\CouponService;
 
 /**
  * クーポンを追加する.
- *
- * @ShoppingFlow
  */
+#[ShoppingFlow]
 class CouponProcessor extends ItemHolderValidator implements ItemHolderPreprocessor, PurchaseProcessor
 {
     /**
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     protected $entityManager;
 
@@ -84,7 +80,7 @@ class CouponProcessor extends ItemHolderValidator implements ItemHolderPreproces
         CouponRepository $couponRepository,
         CouponOrderRepository $couponOrderRepository,
         TaxRuleService $taxRuleService,
-        TaxRuleRepository $taxRuleRepository
+        TaxRuleRepository $taxRuleRepository,
     ) {
         $this->entityManager = $entityManager;
         $this->couponService = $couponService;
@@ -102,11 +98,12 @@ class CouponProcessor extends ItemHolderValidator implements ItemHolderPreproces
      * クーポン利用の場合は明細を追加する.
      * {@inheritdoc}
      */
-    public function process(ItemHolderInterface $itemHolder, PurchaseContext $context)
+    public function process(ItemHolderInterface $itemHolder, PurchaseContext $context): void
     {
         if (!$this->supports($itemHolder)) {
             return;
         }
+        assert($itemHolder instanceof Order);
         $CouponOrder = $this->couponOrderRepository->getCouponOrder($itemHolder->getPreOrderId());
 
         // 既存のクーポンを削除し明細追加
@@ -124,24 +121,24 @@ class CouponProcessor extends ItemHolderValidator implements ItemHolderPreproces
      * クーポン利用可否判定.
      * {@inheritdoc}
      */
-    protected function validate(ItemHolderInterface $itemHolder, PurchaseContext $context)
+    protected function validate(ItemHolderInterface $itemHolder, PurchaseContext $context): void
     {
         if (!$this->supports($itemHolder)) {
             return;
         }
-        /** @var CouponOrder $CouponOrder */
+        assert($itemHolder instanceof Order);
         $CouponOrder = $this->couponOrderRepository->getCouponOrder($itemHolder->getPreOrderId());
         if (!$CouponOrder) {
             return;
         }
-        /** @var Coupon $Coupon */
         $Coupon = $this->couponRepository->findActiveCoupon($CouponOrder->getCouponCd());
         if (!$Coupon) {
             $this->clearCoupon($itemHolder);
             $this->throwInvalidItemException(trans('plugin_coupon.front.shopping.notfound'), null, true);
         }
+        // findActiveCoupon が null の場合は上で throwInvalidItemException により例外送出されるため、以降は非 null
+        assert($Coupon !== null);
 
-        /** @var Customer $Customer */
         $Customer = $itemHolder->getCustomer();
         if (!$Customer && $Coupon->getCouponMember()) {
             $this->clearCoupon($itemHolder);
@@ -159,7 +156,7 @@ class CouponProcessor extends ItemHolderValidator implements ItemHolderPreproces
             $this->throwInvalidItemException(trans('plugin_coupon.front.shopping.changeorder'), null, true);
         }
 
-        $lowerLimit = $Coupon->getCouponLowerLimit();
+        $lowerLimit = (int) $Coupon->getCouponLowerLimit();
         $checkLowerLimit = $this->couponService->isLowerLimitCoupon($couponProducts, $lowerLimit);
         if (!$checkLowerLimit) {
             $this->clearCoupon($itemHolder);
@@ -182,31 +179,32 @@ class CouponProcessor extends ItemHolderValidator implements ItemHolderPreproces
      * クーポンを使用状態にする.
      * {@inheritdoc}
      */
-    public function prepare(ItemHolderInterface $itemHolder, PurchaseContext $context)
+    public function prepare(ItemHolderInterface $itemHolder, PurchaseContext $context): void
     {
         if (!$this->supports($itemHolder)) {
             return;
         }
 
+        assert($itemHolder instanceof Order);
         $CouponOrder = $this->couponOrderRepository->getCouponOrder($itemHolder->getPreOrderId());
         if (!$CouponOrder) {
             return;
         }
         $CouponOrder->setOrderDate(new \DateTime());
-        $this->entityManager->flush($CouponOrder);
+        $this->entityManager->flush();
 
         $Coupon = $this->couponRepository->findActiveCoupon($CouponOrder->getCouponCd());
         if (!$Coupon) {
             return;
         }
         $Coupon->setCouponUseTime($Coupon->getCouponUseTime() - 1);
-        $this->entityManager->flush($Coupon);
+        $this->entityManager->flush();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function commit(ItemHolderInterface $target, PurchaseContext $context)
+    public function commit(ItemHolderInterface $target, PurchaseContext $context): void
     {
         // quiet.
     }
@@ -215,7 +213,7 @@ class CouponProcessor extends ItemHolderValidator implements ItemHolderPreproces
      * クーポンを取り消す.
      * {@inheritdoc}
      */
-    public function rollback(ItemHolderInterface $itemHolder, PurchaseContext $context)
+    public function rollback(ItemHolderInterface $itemHolder, PurchaseContext $context): void
     {
         if (!$this->supports($itemHolder)) {
             return;
@@ -233,7 +231,7 @@ class CouponProcessor extends ItemHolderValidator implements ItemHolderPreproces
      *
      * @return bool
      */
-    private function supports(ItemHolderInterface $itemHolder)
+    private function supports(ItemHolderInterface $itemHolder): bool
     {
         if (!$itemHolder instanceof Order) {
             return false;
@@ -248,8 +246,10 @@ class CouponProcessor extends ItemHolderValidator implements ItemHolderPreproces
      * @param ItemHolderInterface $itemHolder
      * @param CouponOrder $CouponOrder
      */
-    private function removeCouponDiscountItem(ItemHolderInterface $itemHolder, CouponOrder $CouponOrder)
+    private function removeCouponDiscountItem(ItemHolderInterface $itemHolder, CouponOrder $CouponOrder): void
     {
+        assert($itemHolder instanceof Order);
+        /** @var OrderItem $item */
         foreach ($itemHolder->getItems() as $item) {
             if (CouponProcessor::class === $item->getProcessorName()) {
                 $itemHolder->removeOrderItem($item);
@@ -273,10 +273,10 @@ class CouponProcessor extends ItemHolderValidator implements ItemHolderPreproces
      *
      * @param ItemHolderInterface $itemHolder
      * @param CouponOrder $CouponOrder
-     * @param integer $discount
      */
-    private function addCouponDiscountItem(ItemHolderInterface $itemHolder, CouponOrder $CouponOrder)
+    private function addCouponDiscountItem(ItemHolderInterface $itemHolder, CouponOrder $CouponOrder): void
     {
+        assert($itemHolder instanceof Order);
         $Coupon = $this->couponRepository->find($CouponOrder->getCouponId());
 
         $taxDisplayType = TaxDisplayType::INCLUDED; // 税込
@@ -291,10 +291,10 @@ class CouponProcessor extends ItemHolderValidator implements ItemHolderPreproces
 
         $OrderItem = new OrderItem();
         $OrderItem->setProductName($CouponOrder->getCouponName())
-            ->setPrice($CouponOrder->getDiscount() * -1)
-            ->setQuantity(1)
-            ->setTax($tax)
-            ->setTaxRate($taxRate)
+            ->setPrice((string) ($CouponOrder->getDiscount() * -1))
+            ->setQuantity('1')
+            ->setTax((string) $tax)
+            ->setTaxRate((string) $taxRate)
             ->setTaxRuleId($taxRuleId)
             ->setRoundingType($roundingType)
             ->setOrderItemType($DiscountType)
@@ -305,7 +305,7 @@ class CouponProcessor extends ItemHolderValidator implements ItemHolderPreproces
         $itemHolder->addItem($OrderItem);
     }
 
-    protected function clearCoupon(ItemHolderInterface $Order)
+    protected function clearCoupon(ItemHolderInterface $Order): void
     {
         // TODO エラーが発生した場合、前回設定されているクーポンがあればその金額を再設定する
         $this->couponService->removeCouponOrder($Order);

@@ -5,21 +5,18 @@
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon42\Tests\Web\Admin;
+namespace Plugin\Coupon44\Tests\Web\Admin;
 
 use Eccube\Entity\Customer;
-use Eccube\Entity\Product;
-use Eccube\Repository\ProductRepository;
 use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;
-use Plugin\Coupon42\Entity\Coupon;
-use Plugin\Coupon42\Repository\CouponRepository;
-use Plugin\Coupon42\Tests\Fixtures\CreateCouponTrait;
+use Plugin\Coupon44\Entity\Coupon;
+use Plugin\Coupon44\Tests\Fixtures\CreateCouponTrait;
 use Symfony\Component\DomCrawler\Crawler;
 
 /**
@@ -35,31 +32,19 @@ class CouponControllerTest extends AbstractAdminWebTestCase
     protected $Customer;
 
     /**
-     * @var CouponRepository
-     */
-    private $couponRepository;
-
-    /**
-     * @var ProductRepository
-     */
-    private $productRepository;
-
-    /**
      * setUp.
      */
     public function setUp(): void
     {
         parent::setUp();
         $this->Customer = $this->createCustomer();
-        $this->couponRepository = $this->entityManager->getRepository(Coupon::class);
-        $this->productRepository = $this->entityManager->getRepository(Product::class);
         $this->deleteAllRows(['plg_coupon_order', 'plg_coupon_detail', 'plg_coupon']);
     }
 
     /**
      * testIndex.
      */
-    public function testIndex()
+    public function testIndex(): void
     {
         $this->client->request('GET', $this->generateUrl('plugin_coupon_list'));
         $this->assertTrue($this->client->getResponse()->isSuccessful());
@@ -68,7 +53,7 @@ class CouponControllerTest extends AbstractAdminWebTestCase
     /**
      * testIndexList.
      */
-    public function testIndexList()
+    public function testIndexList(): void
     {
         $Coupon = $this->getCoupon();
         $crawler = $this->client->request('GET', $this->generateUrl('plugin_coupon_list'));
@@ -81,7 +66,7 @@ class CouponControllerTest extends AbstractAdminWebTestCase
     /**
      * testEditNew.
      */
-    public function testEditNew()
+    public function testEditNew(): void
     {
         $crawler = $this->client->request('GET', $this->generateUrl('plugin_coupon_new'));
         $this->assertTrue($this->client->getResponse()->isSuccessful());
@@ -95,7 +80,7 @@ class CouponControllerTest extends AbstractAdminWebTestCase
     /**
      * testEdit.
      */
-    public function testEdit()
+    public function testEdit(): void
     {
         $Coupon = $this->getCoupon();
         $crawler = $this->client->request('GET', $this->generateUrl('plugin_coupon_edit', ['id' => $Coupon->getId()]));
@@ -105,7 +90,7 @@ class CouponControllerTest extends AbstractAdminWebTestCase
         $this->assertTrue($this->client->getResponse()->isRedirect($this->generateUrl('plugin_coupon_list')));
     }
 
-    public function testEditWithNotFound()
+    public function testEditWithNotFound(): void
     {
         $Coupon = $this->getCoupon();
         $crawler = $this->client->request('GET', $this->generateUrl('plugin_coupon_edit', ['id' => 999999]));
@@ -116,14 +101,14 @@ class CouponControllerTest extends AbstractAdminWebTestCase
     /**
      * testEnable.
      */
-    public function testEnable()
+    public function testEnable(): void
     {
         $Coupon = $this->getTestData();
         $this->client->request('PUT', $this->generateUrl('plugin_coupon_enable', ['id' => $Coupon->getId()]));
         $this->assertTrue($this->client->getResponse()->isRedirect($this->generateUrl('plugin_coupon_list')));
     }
 
-    public function testEnableWithNotFound()
+    public function testEnableWithNotFound(): void
     {
         $Coupon = $this->getTestData();
         $this->client->request('PUT', $this->generateUrl('plugin_coupon_enable', ['id' => 999999]));
@@ -133,14 +118,14 @@ class CouponControllerTest extends AbstractAdminWebTestCase
     /**
      * testEnable.
      */
-    public function testDelete()
+    public function testDelete(): void
     {
         $Coupon = $this->getTestData();
         $this->client->request('DELETE', $this->generateUrl('plugin_coupon_delete', ['id' => $Coupon->getId()]));
         $this->assertTrue($this->client->getResponse()->isRedirect($this->generateUrl('plugin_coupon_list')));
     }
 
-    public function testDeleteWithNotFound()
+    public function testDeleteWithNotFound(): void
     {
         $Coupon = $this->getTestData();
         $this->client->request('DELETE', $this->generateUrl('plugin_coupon_delete', ['id' => 999999]));
@@ -154,21 +139,21 @@ class CouponControllerTest extends AbstractAdminWebTestCase
      *
      * @return \Symfony\Component\DomCrawler\Form
      */
-    private function getForm(Crawler $crawler)
+    private function getForm(Crawler $crawler): \Symfony\Component\DomCrawler\Form
     {
         $current = new \DateTime();
         $form = $crawler->selectButton('登録する')->form();
         $form['coupon[_token]'] = 'dummy';
         $form['coupon[coupon_cd]'] = 'aaaaaaa';
         $form['coupon[coupon_name]'] = 'aaaaaa';
-        $form['coupon[coupon_type]'] = 3;
-        $form['coupon[coupon_member]'] = 1;
-        $form['coupon[discount_type]'] = 1;
-        $form['coupon[discount_price]'] = 100;
-        $form['coupon[coupon_lower_limit]'] = 100;
+        $form['coupon[coupon_type]'] = '3';
+        $form['coupon[coupon_member]'] = '1';
+        $form['coupon[discount_type]'] = '1';
+        $form['coupon[discount_price]'] = '100';
+        $form['coupon[coupon_lower_limit]'] = '100';
         $form['coupon[available_from_date]'] = $current->modify('-15 days')->format('Y-m-d');
         $form['coupon[available_to_date]'] = $current->modify('+15 days')->format('Y-m-d');
-        $form['coupon[coupon_release]'] = 100;
+        $form['coupon[coupon_release]'] = '100';
 
         return $form;
     }

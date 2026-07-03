@@ -5,19 +5,16 @@
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
+namespace Plugin\Coupon44\Tests\Web\Admin;
 
-namespace Plugin\Coupon42\Tests\Web\Admin;
-
-use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;
 use Eccube\Tests\Web\Admin\Order\AbstractEditControllerTestCase;
-use PHPUnit\Framework\TestCase;
-use Plugin\Coupon42\Tests\Fixtures\CreateCouponTrait;
+use Plugin\Coupon44\Tests\Fixtures\CreateCouponTrait;
 
 /**
  * Class CouponSearchModelControllerTest.
@@ -34,14 +31,14 @@ class CouponSearchModelControllerTest extends AbstractEditControllerTestCase
         parent::setUp();
     }
 
-    public function testSearchProduct()
+    public function testSearchProduct(): void
     {
         $Product = $this->createProduct();
         $crawler = $this->client->request('POST', $this->generateUrl('plugin_coupon_search_product'),
             [
                 'id' => $Product->getName(),
                 'category_id' => '',
-                'exist_product_id' => ''
+                'exist_product_id' => '',
             ],
             [],
             [

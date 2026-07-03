@@ -1,0 +1,16 @@
+parameters:
+    level: 6
+    paths:
+        - .
+    excludePaths:
+        - Resource/*
+        - Tests/bootstrap.php
+    doctrine:
+        objectManagerLoader: ../../../tests/object-manager.php
+    ignoreErrors:
+        # Entity は「未初期化アクセス」防止のため型付きプロパティを ?type = null にしているが、
+        # 該当カラムは DB 上 not-null（既定値あり）。実行時は Doctrine が必ず値を入れるため実害はない。
+        # 本体コアの Entity も同様の nullable プロパティ + not-null カラムで columnType を許容している。
+        -
+            message: '#type mapping mismatch: property can contain .+ but database expects .+#'
+            identifier: doctrine.columnType
