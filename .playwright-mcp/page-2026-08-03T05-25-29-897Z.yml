@@ -1,0 +1,17 @@
+- generic [ref=f1e1]:
+  - generic [ref=f1e5]:
+    - generic [ref=f1e8]:
+      - paragraph [ref=f1e9]
+      - textbox "ログインID" [active] [ref=f1e12]
+      - textbox "パスワード" [ref=f1e14]
+      - button "ログイン" [ref=f1e16] [cursor=pointer]
+    - paragraph [ref=f1e18]: Copyright © 2000-2026 EC-CUBE CO.,LTD. All Rights Reserved.
+  - region "Symfony Web Debug Toolbar" [ref=f1e19]:
+    - generic [ref=f1e22]:
+      - link "Symfony Loading…" [ref=f1e24] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/e27abd?panel=request
+        - generic [ref=f1e25]:
+          - img "Symfony" [ref=f1e26]
+          - generic [ref=f1e28]: Loading…
+      - button "Toggle Symfony Toolbar" [expanded] [ref=f1e29] [cursor=pointer]:
+        - generic "Close Toolbar" [ref=f1e30]

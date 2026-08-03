@@ -1,0 +1,118 @@
+- generic [active] [ref=f23e1]:
+  - generic [ref=f23e2]: デバッグモードが有効になっています。
+  - generic [ref=f23e6]:
+    - banner [ref=f23e7]:
+      - generic [ref=f23e8]:
+        - generic [ref=f23e9]:
+          - generic [ref=f23e11]:
+            - generic:
+              - combobox [ref=f23e14] [cursor=pointer]:
+                - option "全ての商品" [selected]
+                - option "新入荷"
+                - option "ジェラート"
+                - option "彩のデザート"
+                - option "CUBE"
+                - option "アイスサンド"
+                - option "フルーツ"
+              - generic [ref=f23e16]:
+                - searchbox "キーワードを入力" [ref=f23e17]
+                - button [ref=f23e18] [cursor=pointer]
+          - generic: 
+        - generic [ref=f23e20]:
+          - generic [ref=f23e22]:
+            - link " 新規会員登録" [ref=f23e24] [cursor=pointer]:
+              - /url: http://localhost:8080/entry
+              - generic [ref=f23e25]: 
+              - generic [ref=f23e26]: 新規会員登録
+            - link " お気に入り" [ref=f23e28] [cursor=pointer]:
+              - /url: http://localhost:8080/mypage/favorite
+              - generic [ref=f23e29]: 
+              - generic [ref=f23e30]: お気に入り
+            - link " ログイン" [ref=f23e32] [cursor=pointer]:
+              - /url: http://localhost:8080/mypage/login
+              - generic [ref=f23e33]: 
+              - generic [ref=f23e34]: ログイン
+          - generic [ref=f23e37] [cursor=pointer]:
+            - generic [ref=f23e38]:
+              - text: 
+              - generic [ref=f23e39]: "2"
+            - generic [ref=f23e40]: ￥6,160
+      - heading [level=1] [ref=f23e46]:
+        - link "EC-CUBE SHOP" [ref=f23e47] [cursor=pointer]:
+          - /url: http://localhost:8080/
+      - list [ref=f23e50]:
+        - listitem [ref=f23e51]:
+          - link "新入荷" [ref=f23e52] [cursor=pointer]:
+            - /url: http://localhost:8080/products/list?category_id=2
+        - listitem [ref=f23e53]:
+          - link "ジェラート" [ref=f23e54] [cursor=pointer]:
+            - /url: http://localhost:8080/products/list?category_id=1
+          - list:
+            - listitem:
+              - link "彩のデザート" [ref=f23e55] [cursor=pointer]:
+                - /url: http://localhost:8080/products/list?category_id=3
+              - list:
+                - text: 
+                - listitem:
+                  - link "CUBE" [ref=f23e56] [cursor=pointer]:
+                    - /url: http://localhost:8080/products/list?category_id=4
+        - listitem [ref=f23e57]:
+          - link "アイスサンド" [ref=f23e58] [cursor=pointer]:
+            - /url: http://localhost:8080/products/list?category_id=5
+          - list:
+            - listitem:
+              - link "フルーツ" [ref=f23e59] [cursor=pointer]:
+                - /url: http://localhost:8080/products/list?category_id=6
+    - main [ref=f23e61]:
+      - heading "お届け先の複数指定" [level=1] [ref=f23e64]
+      - generic [ref=f23e66]:
+        - paragraph [ref=f23e68]: 各商品のお届け先を選択してください。
+        - link "新規お届け先を追加する" [ref=f23e70] [cursor=pointer]:
+          - /url: http://localhost:8080/shopping/shipping_multiple_edit
+        - generic [ref=f23e71]:
+          - generic [ref=f23e75]:
+            - generic [ref=f23e76]: チェリーアイスサンド
+            - generic [ref=f23e77]: 小計：￥6,160
+            - generic [ref=f23e78]: 数量：2
+          - generic [ref=f23e80]:
+            - generic [ref=f23e82]:
+              - generic [ref=f23e83]: お届け先
+              - combobox [ref=f23e84]:
+                - option "検証 大阪府 大阪市北区梅田 1-1-1" [selected]
+            - generic [ref=f23e86]:
+              - generic [ref=f23e87]: 数量
+              - spinbutton [ref=f23e88]: "2"
+          - button "お届け先追加" [ref=f23e90] [cursor=pointer]
+        - generic [ref=f23e91]:
+          - button "選択したお届け先に送る" [ref=f23e92] [cursor=pointer]
+          - link "戻る" [ref=f23e93] [cursor=pointer]:
+            - /url: http://localhost:8080/shopping
+    - contentinfo [ref=f23e94]:
+      - generic [ref=f23e96]:
+        - list [ref=f23e97]:
+          - listitem [ref=f23e98]:
+            - link "当サイトについて" [ref=f23e99] [cursor=pointer]:
+              - /url: http://localhost:8080/help/about
+          - listitem [ref=f23e100]:
+            - link "プライバシーポリシー" [ref=f23e101] [cursor=pointer]:
+              - /url: http://localhost:8080/help/privacy
+          - listitem [ref=f23e102]:
+            - link "特定商取引法に基づく表記" [ref=f23e103] [cursor=pointer]:
+              - /url: http://localhost:8080/help/tradelaw
+          - listitem [ref=f23e104]:
+            - link "お問い合わせ" [ref=f23e105] [cursor=pointer]:
+              - /url: http://localhost:8080/contact
+        - generic [ref=f23e106]:
+          - link "EC-CUBE SHOP" [ref=f23e108] [cursor=pointer]:
+            - /url: http://localhost:8080/
+          - generic [ref=f23e109]: copyright (c) EC-CUBE SHOP all rights reserved.
+  - text:       
+  - region "Symfony Web Debug Toolbar" [ref=f23e110]:
+    - generic [ref=f23e113]:
+      - link "Symfony Loading…" [ref=f23e115] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/fc2108?panel=request
+        - generic [ref=f23e116]:
+          - img "Symfony" [ref=f23e117]
+          - generic [ref=f23e119]: Loading…
+      - button "Toggle Symfony Toolbar" [expanded] [ref=f23e120] [cursor=pointer]:
+        - generic "Close Toolbar" [ref=f23e121]

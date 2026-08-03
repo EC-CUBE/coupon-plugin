@@ -1,0 +1,174 @@
+- generic [active] [ref=f18e1]:
+  - generic [ref=f18e2]: デバッグモードが有効になっています。
+  - generic [ref=f18e6]:
+    - banner [ref=f18e7]:
+      - generic [ref=f18e8]:
+        - generic [ref=f18e9]:
+          - generic [ref=f18e11]:
+            - generic:
+              - combobox [ref=f18e14] [cursor=pointer]:
+                - option "全ての商品" [selected]
+                - option "新入荷"
+                - option "ジェラート"
+                - option "彩のデザート"
+                - option "CUBE"
+                - option "アイスサンド"
+                - option "フルーツ"
+              - generic [ref=f18e16]:
+                - searchbox "キーワードを入力" [ref=f18e17]
+                - button [ref=f18e18] [cursor=pointer]
+          - generic: 
+        - generic [ref=f18e20]:
+          - generic [ref=f18e22]:
+            - link " 新規会員登録" [ref=f18e24] [cursor=pointer]:
+              - /url: http://localhost:8080/entry
+              - generic [ref=f18e25]: 
+              - generic [ref=f18e26]: 新規会員登録
+            - link " お気に入り" [ref=f18e28] [cursor=pointer]:
+              - /url: http://localhost:8080/mypage/favorite
+              - generic [ref=f18e29]: 
+              - generic [ref=f18e30]: お気に入り
+            - link " ログイン" [ref=f18e32] [cursor=pointer]:
+              - /url: http://localhost:8080/mypage/login
+              - generic [ref=f18e33]: 
+              - generic [ref=f18e34]: ログイン
+          - generic [ref=f18e37] [cursor=pointer]:
+            - generic [ref=f18e38]:
+              - text: 
+              - generic [ref=f18e39]: "2"
+            - generic [ref=f18e40]: ￥6,160
+      - heading [level=1] [ref=f18e46]:
+        - link "EC-CUBE SHOP" [ref=f18e47] [cursor=pointer]:
+          - /url: http://localhost:8080/
+      - list [ref=f18e50]:
+        - listitem [ref=f18e51]:
+          - link "新入荷" [ref=f18e52] [cursor=pointer]:
+            - /url: http://localhost:8080/products/list?category_id=2
+        - listitem [ref=f18e53]:
+          - link "ジェラート" [ref=f18e54] [cursor=pointer]:
+            - /url: http://localhost:8080/products/list?category_id=1
+          - list:
+            - listitem:
+              - link "彩のデザート" [ref=f18e55] [cursor=pointer]:
+                - /url: http://localhost:8080/products/list?category_id=3
+              - list:
+                - text: 
+                - listitem:
+                  - link "CUBE" [ref=f18e56] [cursor=pointer]:
+                    - /url: http://localhost:8080/products/list?category_id=4
+        - listitem [ref=f18e57]:
+          - link "アイスサンド" [ref=f18e58] [cursor=pointer]:
+            - /url: http://localhost:8080/products/list?category_id=5
+          - list:
+            - listitem:
+              - link "フルーツ" [ref=f18e59] [cursor=pointer]:
+                - /url: http://localhost:8080/products/list?category_id=6
+    - main [ref=f18e61]:
+      - heading "お届け先の複数指定" [level=1] [ref=f18e64]
+      - generic [ref=f18e66]:
+        - paragraph [ref=f18e68]: 各商品のお届け先を選択してください。
+        - link "新規お届け先を追加する" [ref=f18e70] [cursor=pointer]:
+          - /url: http://localhost:8080/shopping/shipping_multiple_edit
+        - generic [ref=f18e71]:
+          - generic [ref=f18e75]:
+            - generic [ref=f18e76]: チェリーアイスサンド
+            - generic [ref=f18e77]: 小計：￥6,160
+            - generic [ref=f18e78]: 数量：2
+          - generic [ref=f18e80]:
+            - generic [ref=f18e82]:
+              - generic [ref=f18e83]: お届け先
+              - combobox [ref=f18e84]:
+                - option "検証 大阪府 大阪市北区梅田 1-1-1" [selected]
+            - generic [ref=f18e86]:
+              - generic [ref=f18e87]: 数量
+              - spinbutton [ref=f18e88]: "2"
+          - button "お届け先追加" [ref=f18e90] [cursor=pointer]
+        - generic [ref=f18e91]:
+          - button "選択したお届け先に送る" [ref=f18e92] [cursor=pointer]
+          - link "戻る" [ref=f18e93] [cursor=pointer]:
+            - /url: http://localhost:8080/shopping
+    - contentinfo [ref=f18e94]:
+      - generic [ref=f18e96]:
+        - list [ref=f18e97]:
+          - listitem [ref=f18e98]:
+            - link "当サイトについて" [ref=f18e99] [cursor=pointer]:
+              - /url: http://localhost:8080/help/about
+          - listitem [ref=f18e100]:
+            - link "プライバシーポリシー" [ref=f18e101] [cursor=pointer]:
+              - /url: http://localhost:8080/help/privacy
+          - listitem [ref=f18e102]:
+            - link "特定商取引法に基づく表記" [ref=f18e103] [cursor=pointer]:
+              - /url: http://localhost:8080/help/tradelaw
+          - listitem [ref=f18e104]:
+            - link "お問い合わせ" [ref=f18e105] [cursor=pointer]:
+              - /url: http://localhost:8080/contact
+        - generic [ref=f18e106]:
+          - link "EC-CUBE SHOP" [ref=f18e108] [cursor=pointer]:
+            - /url: http://localhost:8080/
+          - generic [ref=f18e109]: copyright (c) EC-CUBE SHOP all rights reserved.
+  - text:       
+  - region "Symfony Web Debug Toolbar" [ref=f18e110]:
+    - generic [ref=f18e113]:
+      - link "200 Redirect @ shopping_shipping_multiple" [ref=f18e115] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/5652c2?panel=request
+        - generic [ref=f18e116]:
+          - generic [ref=f18e117]: "200"
+          - img "Redirect" [ref=f18e119]
+          - generic [ref=f18e122]: "@"
+          - generic [ref=f18e123]: shopping_shipping_multiple
+      - link "136 ms" [ref=f18e125] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/5652c2?panel=time
+        - generic [ref=f18e126]:
+          - generic [ref=f18e127]: "136"
+          - generic [ref=f18e128]: ms
+      - link "12.0 MiB" [ref=f18e130] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/5652c2?panel=time
+        - generic [ref=f18e131]:
+          - generic [ref=f18e132]: "12.0"
+          - generic [ref=f18e133]: MiB
+      - link "Cache 2" [ref=f18e135] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/5652c2?panel=form
+        - generic [ref=f18e136]:
+          - img "Cache" [ref=f18e137]
+          - generic [ref=f18e143]: "2"
+      - link "Logger 488" [ref=f18e145] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/5652c2?panel=logger
+        - generic [ref=f18e146]:
+          - img "Logger" [ref=f18e147]
+          - generic [ref=f18e151]: "488"
+      - link "Cache 22 in 0.38 ms" [ref=f18e153] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/5652c2?panel=cache
+        - generic [ref=f18e154]:
+          - img "Cache" [ref=f18e155]
+          - generic [ref=f18e160]: "22"
+          - generic [ref=f18e161]: in 0.38 ms
+      - link "1" [ref=f18e163] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/5652c2?panel=translation
+      - link "Security n/a" [ref=f18e172] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/5652c2?panel=security
+        - generic [ref=f18e173]:
+          - img "Security" [ref=f18e174]
+          - generic [ref=f18e178]: n/a
+      - link "Twig 37 ms" [ref=f18e180] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/5652c2?panel=twig
+        - generic [ref=f18e181]:
+          - img "Twig" [ref=f18e182]
+          - generic [ref=f18e186]: "37"
+          - generic [ref=f18e187]: ms
+      - link "24 in 4.38 ms" [ref=f18e189] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/5652c2?panel=db
+        - generic [ref=f18e190]:
+          - generic [ref=f18e196]: "24"
+          - generic [ref=f18e197]: in 4.38 ms
+      - link "22" [ref=f18e199] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/5652c2?panel=doctrine_migrations
+      - link "Symfony 7.4.13" [ref=f18e206] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/5652c2?panel=config
+        - generic [ref=f18e207]:
+          - img "Symfony" [ref=f18e209]
+          - generic [ref=f18e211]: 7.4.13
+      - generic [ref=f18e213]:
+        - img "eccube_logo_basic" [ref=f18e214]
+        - generic [ref=f18e219]: 4.3.1-p1
+      - button "Toggle Symfony Toolbar" [expanded] [ref=f18e220] [cursor=pointer]:
+        - generic "Close Toolbar" [ref=f18e221]

@@ -1,0 +1,245 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - img [ref=e5]
+    - text: デバッグモードが有効になっています。
+  - generic [ref=e6]:
+    - banner [ref=e7]:
+      - generic [ref=e8]:
+        - generic [ref=e9]:
+          - generic [ref=e11]:
+            - generic:
+              - combobox [ref=e14] [cursor=pointer]:
+                - option "全ての商品" [selected]
+                - option "新入荷"
+                - option "ジェラート"
+                - option "彩のデザート"
+                - option "CUBE"
+                - option "アイスサンド"
+                - option "フルーツ"
+              - generic [ref=e16]:
+                - searchbox "キーワードを入力" [ref=e17]
+                - button [ref=e18] [cursor=pointer]
+          - generic: 
+        - generic [ref=e20]:
+          - generic [ref=e22]:
+            - link " 新規会員登録" [ref=e24] [cursor=pointer]:
+              - /url: http://localhost:8080/entry
+              - generic [ref=e25]: 
+              - generic [ref=e26]: 新規会員登録
+            - link " お気に入り" [ref=e28] [cursor=pointer]:
+              - /url: http://localhost:8080/mypage/favorite
+              - generic [ref=e29]: 
+              - generic [ref=e30]: お気に入り
+            - link " ログイン" [ref=e32] [cursor=pointer]:
+              - /url: http://localhost:8080/mypage/login
+              - generic [ref=e33]: 
+              - generic [ref=e34]: ログイン
+          - generic [ref=e37] [cursor=pointer]:
+            - generic [ref=e38]:
+              - text: 
+              - generic [ref=e39]: "0"
+            - generic [ref=e41]: ￥0
+      - heading "EC-CUBE SHOP" [level=1] [ref=e46]:
+        - link "EC-CUBE SHOP" [ref=e47] [cursor=pointer]:
+          - /url: http://localhost:8080/
+      - list [ref=e50]:
+        - listitem [ref=e51]:
+          - link "新入荷" [ref=e52] [cursor=pointer]:
+            - /url: http://localhost:8080/products/list?category_id=2
+        - listitem [ref=e53]:
+          - link "ジェラート" [ref=e54] [cursor=pointer]:
+            - /url: http://localhost:8080/products/list?category_id=1
+          - list:
+            - listitem:
+              - link "彩のデザート" [ref=e55] [cursor=pointer]:
+                - /url: http://localhost:8080/products/list?category_id=3
+              - list:
+                - text: 
+                - listitem:
+                  - link "CUBE" [ref=e56] [cursor=pointer]:
+                    - /url: http://localhost:8080/products/list?category_id=4
+        - listitem [ref=e57]:
+          - link "アイスサンド" [ref=e58] [cursor=pointer]:
+            - /url: http://localhost:8080/products/list?category_id=5
+          - list:
+            - listitem:
+              - link "フルーツ" [ref=e59] [cursor=pointer]:
+                - /url: http://localhost:8080/products/list?category_id=6
+    - main [ref=e61]:
+      - generic [ref=e63]:
+        - generic [ref=e65]:
+          - img [ref=e68]
+          - tabpanel [ref=e69]:
+            - img [ref=e71]
+          - tabpanel [ref=e72]:
+            - img [ref=e74]
+          - tabpanel [ref=e75]:
+            - img [ref=e77]
+          - img [ref=e80]
+          - img [ref=e83]
+          - img [ref=e86]
+        - tablist [ref=e87]:
+          - tab "1 of 3" [selected] [ref=e88] [cursor=pointer]: "1"
+          - tab "2 of 3" [ref=e89] [cursor=pointer]: "2"
+          - tab "3 of 3" [ref=e90] [cursor=pointer]: "3"
+      - generic [ref=e91]:
+        - generic [ref=e95]:
+          - paragraph [ref=e96]: CUBE GELATO ICE
+          - paragraph [ref=e97]: 彩のジェラート"CUBE"をご堪能ください。
+          - paragraph [ref=e98]:
+            - text: ジェラートとはイタリアン・アイスクリームのことで、一般的なアイスクリームに比べて、乳脂肪分が低くいのが特徴です。
+            - text: 当店では厳選した旬の果物のおいしさをそのままジェラートに仕上げました。風味が濃厚でありながら、甘さ控えめでヘルシーなキューブジェラートをご堪能ください。
+            - text: さらにジェラートの製法を活かした、アイスキャンディ・アイスサンドも販売しております。
+          - link "一覧を見る" [ref=e99] [cursor=pointer]:
+            - /url: http://localhost:8080/products/list?category_id=4
+        - generic [ref=e101]:
+          - generic [ref=e102]:
+            - text: TOPICS
+            - text: 特集
+          - generic [ref=e104]:
+            - generic [ref=e105]:
+              - link [ref=e106] [cursor=pointer]:
+                - /url: http://localhost:8080/products/list?category_id=1
+                - img [ref=e107]
+              - paragraph [ref=e108]: 濃厚なのにアイスよりヘルシー!! ジェラート特集
+            - generic [ref=e109]:
+              - link [ref=e110] [cursor=pointer]:
+                - /url: http://localhost:8080/products/list?category_id=5
+                - img [ref=e111]
+              - paragraph [ref=e112]: サクサク食感が魅力!! コーンアイス特集
+        - generic [ref=e115]:
+          - generic [ref=e117]:
+            - generic [ref=e118]: NEW ITEM
+            - generic [ref=e120]: 新着商品
+            - link "more" [ref=e121] [cursor=pointer]:
+              - /url: http://localhost:8080/products/list
+          - link "彩のジェラート\"CUBE\" ￥1,200(税込)" [ref=e123] [cursor=pointer]:
+            - /url: http://localhost:8080/products/detail/1
+            - img [ref=e124]
+            - paragraph [ref=e125]: 彩のジェラート"CUBE"
+            - paragraph [ref=e126]: ￥1,200(税込)
+          - link "チェリーアイスサンド ￥800(税込)" [ref=e128] [cursor=pointer]:
+            - /url: http://localhost:8080/products/detail/2
+            - img [ref=e129]
+            - paragraph [ref=e130]: チェリーアイスサンド
+            - paragraph [ref=e131]: ￥800(税込)
+          - link "彩のジェラート\"CUBE\" NEO ￥600(税込)" [ref=e133] [cursor=pointer]:
+            - /url: http://localhost:8080/products/detail/1
+            - img [ref=e134]
+            - paragraph [ref=e135]: 彩のジェラート"CUBE" NEO
+            - paragraph [ref=e136]: ￥600(税込)
+        - generic [ref=e138]:
+          - generic [ref=e139]:
+            - text: CATEGORY
+            - text: カテゴリ
+          - generic [ref=e141]:
+            - link [ref=e143] [cursor=pointer]:
+              - /url: http://localhost:8080/products/list?category_id=2
+              - img [ref=e144]
+            - link [ref=e146] [cursor=pointer]:
+              - /url: http://localhost:8080/products/list?category_id=1
+              - img [ref=e147]
+            - link [ref=e149] [cursor=pointer]:
+              - /url: http://localhost:8080/products/list?category_id=5
+              - img [ref=e150]
+        - generic [ref=e152]:
+          - generic [ref=e153]:
+            - text: NEWS
+            - text: 新着情報
+          - generic [ref=e157] [cursor=pointer]:
+            - generic [ref=e158]: 2018/09/01
+            - generic [ref=e159]:
+              - generic [ref=e160]: サイトオープンいたしました!
+              - generic [ref=e163]: 
+    - contentinfo [ref=e164]:
+      - generic [ref=e166]:
+        - list [ref=e167]:
+          - listitem [ref=e168]:
+            - link "当サイトについて" [ref=e169] [cursor=pointer]:
+              - /url: http://localhost:8080/help/about
+          - listitem [ref=e170]:
+            - link "プライバシーポリシー" [ref=e171] [cursor=pointer]:
+              - /url: http://localhost:8080/help/privacy
+          - listitem [ref=e172]:
+            - link "特定商取引法に基づく表記" [ref=e173] [cursor=pointer]:
+              - /url: http://localhost:8080/help/tradelaw
+          - listitem [ref=e174]:
+            - link "お問い合わせ" [ref=e175] [cursor=pointer]:
+              - /url: http://localhost:8080/contact
+        - generic [ref=e176]:
+          - link "EC-CUBE SHOP" [ref=e178] [cursor=pointer]:
+            - /url: http://localhost:8080/
+          - generic [ref=e179]: copyright (c) EC-CUBE SHOP all rights reserved.
+  - text:       
+  - region "Symfony Web Debug Toolbar" [ref=e180]:
+    - generic [ref=e183]:
+      - link "200 @ homepage" [ref=e185] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/e3142c?panel=request
+        - generic [ref=e186]:
+          - generic [ref=e187]: "200"
+          - generic [ref=e188]: "@"
+          - generic [ref=e189]: homepage
+      - link "250 ms" [ref=e191] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/e3142c?panel=time
+        - generic [ref=e192]:
+          - generic [ref=e193]: "250"
+          - generic [ref=e194]: ms
+      - link "10.0 MiB" [ref=e196] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/e3142c?panel=time
+        - generic [ref=e197]:
+          - generic [ref=e198]: "10.0"
+          - generic [ref=e199]: MiB
+      - link "Cache 1" [ref=e201] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/e3142c?panel=form
+        - generic [ref=e202]:
+          - img "Cache" [ref=e203]
+          - generic [ref=e209]: "1"
+      - link "Logger 484" [ref=e211] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/e3142c?panel=logger
+        - generic [ref=e212]:
+          - img "Logger" [ref=e213]
+          - generic [ref=e217]: "484"
+      - link "Cache 18 in 0.36 ms" [ref=e219] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/e3142c?panel=cache
+        - generic [ref=e220]:
+          - img "Cache" [ref=e221]
+          - generic [ref=e226]: "18"
+          - generic [ref=e227]: in 0.36 ms
+      - link "39" [ref=e229] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/e3142c?panel=translation
+        - generic [ref=e230]:
+          - img [ref=e231]
+          - generic [ref=e236]: "39"
+      - link "Security n/a" [ref=e238] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/e3142c?panel=security
+        - generic [ref=e239]:
+          - img "Security" [ref=e240]
+          - generic [ref=e244]: n/a
+      - link "Twig 58 ms" [ref=e246] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/e3142c?panel=twig
+        - generic [ref=e247]:
+          - img "Twig" [ref=e248]
+          - generic [ref=e252]: "58"
+          - generic [ref=e253]: ms
+      - link "12 in 3.16 ms" [ref=e255] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/e3142c?panel=db
+        - generic [ref=e256]:
+          - img [ref=e257]
+          - generic [ref=e262]: "12"
+          - generic [ref=e263]: in 3.16 ms
+      - link "22" [ref=e265] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/e3142c?panel=doctrine_migrations
+        - generic [ref=e266]:
+          - img [ref=e267]
+          - generic [ref=e270]: "22"
+      - link "Symfony 7.4.13" [ref=e272] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/e3142c?panel=config
+        - generic [ref=e273]:
+          - img "Symfony" [ref=e275]
+          - generic [ref=e277]: 7.4.13
+      - generic [ref=e279]:
+        - img "eccube_logo_basic" [ref=e280]
+        - generic [ref=e285]: 4.3.1-p1
+      - button "Toggle Symfony Toolbar" [expanded] [ref=e286] [cursor=pointer]:
+        - generic "Close Toolbar" [ref=e287]:
+          - img [ref=e288]

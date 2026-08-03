@@ -1,0 +1,175 @@
+- generic [active] [ref=f16e1]:
+  - generic [ref=f16e2]: デバッグモードが有効になっています。
+  - generic [ref=f16e6]:
+    - banner [ref=f16e7]:
+      - generic [ref=f16e8]:
+        - generic [ref=f16e9]:
+          - generic [ref=f16e11]:
+            - generic:
+              - combobox [ref=f16e14] [cursor=pointer]:
+                - option "全ての商品" [selected]
+                - option "新入荷"
+                - option "ジェラート"
+                - option "彩のデザート"
+                - option "CUBE"
+                - option "アイスサンド"
+                - option "フルーツ"
+              - generic [ref=f16e16]:
+                - searchbox "キーワードを入力" [ref=f16e17]
+                - button [ref=f16e18] [cursor=pointer]
+          - generic: 
+        - generic [ref=f16e20]:
+          - generic [ref=f16e22]:
+            - link " 新規会員登録" [ref=f16e24] [cursor=pointer]:
+              - /url: http://localhost:8080/entry
+              - generic [ref=f16e25]: 
+              - generic [ref=f16e26]: 新規会員登録
+            - link " お気に入り" [ref=f16e28] [cursor=pointer]:
+              - /url: http://localhost:8080/mypage/favorite
+              - generic [ref=f16e29]: 
+              - generic [ref=f16e30]: お気に入り
+            - link " ログイン" [ref=f16e32] [cursor=pointer]:
+              - /url: http://localhost:8080/mypage/login
+              - generic [ref=f16e33]: 
+              - generic [ref=f16e34]: ログイン
+          - generic [ref=f16e37] [cursor=pointer]:
+            - generic [ref=f16e38]:
+              - text: 
+              - generic [ref=f16e39]: "2"
+            - generic [ref=f16e40]: ￥6,160
+      - heading [level=1] [ref=f16e46]:
+        - link "EC-CUBE SHOP" [ref=f16e47] [cursor=pointer]:
+          - /url: http://localhost:8080/
+      - list [ref=f16e50]:
+        - listitem [ref=f16e51]:
+          - link "新入荷" [ref=f16e52] [cursor=pointer]:
+            - /url: http://localhost:8080/products/list?category_id=2
+        - listitem [ref=f16e53]:
+          - link "ジェラート" [ref=f16e54] [cursor=pointer]:
+            - /url: http://localhost:8080/products/list?category_id=1
+          - list:
+            - listitem:
+              - link "彩のデザート" [ref=f16e55] [cursor=pointer]:
+                - /url: http://localhost:8080/products/list?category_id=3
+              - list:
+                - text: 
+                - listitem:
+                  - link "CUBE" [ref=f16e56] [cursor=pointer]:
+                    - /url: http://localhost:8080/products/list?category_id=4
+        - listitem [ref=f16e57]:
+          - link "アイスサンド" [ref=f16e58] [cursor=pointer]:
+            - /url: http://localhost:8080/products/list?category_id=5
+          - list:
+            - listitem:
+              - link "フルーツ" [ref=f16e59] [cursor=pointer]:
+                - /url: http://localhost:8080/products/list?category_id=6
+    - main [ref=f16e61]:
+      - paragraph [ref=f16e62]: COUPON-PAGE-EDIT-MARKER-197
+      - heading "クーポンコードの入力" [level=1] [ref=f16e65]
+      - generic [ref=f16e68]:
+        - generic [ref=f16e69]: 利用するクーポンコードを入力してください。
+        - generic [ref=f16e71]:
+          - generic [ref=f16e72]:
+            - generic [ref=f16e73]:
+              - term [ref=f16e74]
+              - definition [ref=f16e75]:
+                - generic [ref=f16e76]:
+                  - generic [ref=f16e77]:
+                    - radio "クーポンを利用しない" [ref=f16e78]
+                    - generic [ref=f16e79]: クーポンを利用しない
+                  - generic [ref=f16e80]:
+                    - radio "クーポンを利用する" [checked] [ref=f16e81]
+                    - generic [ref=f16e82]: クーポンを利用する
+            - generic [ref=f16e83]:
+              - term [ref=f16e84]:
+                - generic [ref=f16e85]: クーポンコード
+              - definition [ref=f16e86]:
+                - textbox "クーポンコード" [ref=f16e87]
+          - generic [ref=f16e90]:
+            - button "登録する" [ref=f16e91] [cursor=pointer]
+            - link "戻る" [ref=f16e92] [cursor=pointer]:
+              - /url: http://localhost:8080/shopping
+    - contentinfo [ref=f16e93]:
+      - generic [ref=f16e95]:
+        - list [ref=f16e96]:
+          - listitem [ref=f16e97]:
+            - link "当サイトについて" [ref=f16e98] [cursor=pointer]:
+              - /url: http://localhost:8080/help/about
+          - listitem [ref=f16e99]:
+            - link "プライバシーポリシー" [ref=f16e100] [cursor=pointer]:
+              - /url: http://localhost:8080/help/privacy
+          - listitem [ref=f16e101]:
+            - link "特定商取引法に基づく表記" [ref=f16e102] [cursor=pointer]:
+              - /url: http://localhost:8080/help/tradelaw
+          - listitem [ref=f16e103]:
+            - link "お問い合わせ" [ref=f16e104] [cursor=pointer]:
+              - /url: http://localhost:8080/contact
+        - generic [ref=f16e105]:
+          - link "EC-CUBE SHOP" [ref=f16e107] [cursor=pointer]:
+            - /url: http://localhost:8080/
+          - generic [ref=f16e108]: copyright (c) EC-CUBE SHOP all rights reserved.
+  - text:       
+  - region "Symfony Web Debug Toolbar" [ref=f16e109]:
+    - generic [ref=f16e112]:
+      - link "200 @ plugin_coupon_shopping" [ref=f16e114] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/b455d1?panel=request
+        - generic [ref=f16e115]:
+          - generic [ref=f16e116]: "200"
+          - generic [ref=f16e117]: "@"
+          - generic [ref=f16e118]: plugin_coupon_shopping
+      - link "116 ms" [ref=f16e120] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/b455d1?panel=time
+        - generic [ref=f16e121]:
+          - generic [ref=f16e122]: "116"
+          - generic [ref=f16e123]: ms
+      - link "12.0 MiB" [ref=f16e125] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/b455d1?panel=time
+        - generic [ref=f16e126]:
+          - generic [ref=f16e127]: "12.0"
+          - generic [ref=f16e128]: MiB
+      - link "Cache 2" [ref=f16e130] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/b455d1?panel=form
+        - generic [ref=f16e131]:
+          - img "Cache" [ref=f16e132]
+          - generic [ref=f16e138]: "2"
+      - link "Logger 479" [ref=f16e140] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/b455d1?panel=logger
+        - generic [ref=f16e141]:
+          - img "Logger" [ref=f16e142]
+          - generic [ref=f16e146]: "479"
+      - link "Cache 20 in 0.24 ms" [ref=f16e148] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/b455d1?panel=cache
+        - generic [ref=f16e149]:
+          - img "Cache" [ref=f16e150]
+          - generic [ref=f16e155]: "20"
+          - generic [ref=f16e156]: in 0.24 ms
+      - link "27" [ref=f16e158] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/b455d1?panel=translation
+      - link "Security n/a" [ref=f16e167] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/b455d1?panel=security
+        - generic [ref=f16e168]:
+          - img "Security" [ref=f16e169]
+          - generic [ref=f16e173]: n/a
+      - link "Twig 37 ms" [ref=f16e175] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/b455d1?panel=twig
+        - generic [ref=f16e176]:
+          - img "Twig" [ref=f16e177]
+          - generic [ref=f16e181]: "37"
+          - generic [ref=f16e182]: ms
+      - link "21 in 3.60 ms" [ref=f16e184] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/b455d1?panel=db
+        - generic [ref=f16e185]:
+          - generic [ref=f16e191]: "21"
+          - generic [ref=f16e192]: in 3.60 ms
+      - link "22" [ref=f16e194] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/b455d1?panel=doctrine_migrations
+      - link "Symfony 7.4.13" [ref=f16e201] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/b455d1?panel=config
+        - generic [ref=f16e202]:
+          - img "Symfony" [ref=f16e204]
+          - generic [ref=f16e206]: 7.4.13
+      - generic [ref=f16e208]:
+        - img "eccube_logo_basic" [ref=f16e209]
+        - generic [ref=f16e214]: 4.3.1-p1
+      - button "Toggle Symfony Toolbar" [expanded] [ref=f16e215] [cursor=pointer]:
+        - generic "Close Toolbar" [ref=f16e216]

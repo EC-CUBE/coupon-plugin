@@ -1,0 +1,4 @@
+[     128ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8080/html/template/admin/assets/css/bootstrap-datetimepicker.min.css:0
+[     129ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8080/html/template/admin/assets/js/vendor/moment-ja.js:0
+[     146ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8080/html/template/admin/assets/js/vendor/bootstrap-datetimepicker.min.js:0
+[   18342ms] [WARNING] The specified value "2026/01/01" does not conform to the required format, "yyyy-MM-dd". @ :7346

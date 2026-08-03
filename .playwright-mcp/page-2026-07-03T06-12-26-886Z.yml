@@ -1,0 +1,122 @@
+- generic [active] [ref=f6e1]:
+  - generic [ref=f6e3]:
+    - img [ref=f6e5]
+    - text: デバッグモードが有効になっています。
+  - generic [ref=f6e6]:
+    - banner [ref=f6e7]:
+      - generic [ref=f6e8]:
+        - generic [ref=f6e9]:
+          - generic [ref=f6e11]:
+            - generic:
+              - combobox [ref=f6e14] [cursor=pointer]:
+                - option "全ての商品" [selected]
+                - option "新入荷"
+                - option "ジェラート"
+                - option "彩のデザート"
+                - option "CUBE"
+                - option "アイスサンド"
+                - option "フルーツ"
+              - generic [ref=f6e16]:
+                - searchbox "キーワードを入力" [ref=f6e17]
+                - button [ref=f6e18] [cursor=pointer]
+          - generic: 
+        - generic [ref=f6e20]:
+          - generic [ref=f6e22]:
+            - link " 新規会員登録" [ref=f6e24] [cursor=pointer]:
+              - /url: http://localhost:8080/entry
+              - generic [ref=f6e25]: 
+              - generic [ref=f6e26]: 新規会員登録
+            - link " お気に入り" [ref=f6e28] [cursor=pointer]:
+              - /url: http://localhost:8080/mypage/favorite
+              - generic [ref=f6e29]: 
+              - generic [ref=f6e30]: お気に入り
+            - link " ログイン" [ref=f6e32] [cursor=pointer]:
+              - /url: http://localhost:8080/mypage/login
+              - generic [ref=f6e33]: 
+              - generic [ref=f6e34]: ログイン
+          - generic [ref=f6e37] [cursor=pointer]:
+            - generic [ref=f6e38]:
+              - text: 
+              - generic [ref=f6e39]: "1"
+            - generic [ref=f6e41]: ￥3,080
+      - heading "EC-CUBE SHOP" [level=1] [ref=f6e46]:
+        - link "EC-CUBE SHOP" [ref=f6e47] [cursor=pointer]:
+          - /url: http://localhost:8080/
+      - list [ref=f6e50]:
+        - listitem [ref=f6e51]:
+          - link "新入荷" [ref=f6e52] [cursor=pointer]:
+            - /url: http://localhost:8080/products/list?category_id=2
+        - listitem [ref=f6e53]:
+          - link "ジェラート" [ref=f6e54] [cursor=pointer]:
+            - /url: http://localhost:8080/products/list?category_id=1
+          - list:
+            - listitem:
+              - link "彩のデザート" [ref=f6e55] [cursor=pointer]:
+                - /url: http://localhost:8080/products/list?category_id=3
+              - list:
+                - text: 
+                - listitem:
+                  - link "CUBE" [ref=f6e56] [cursor=pointer]:
+                    - /url: http://localhost:8080/products/list?category_id=4
+        - listitem [ref=f6e57]:
+          - link "アイスサンド" [ref=f6e58] [cursor=pointer]:
+            - /url: http://localhost:8080/products/list?category_id=5
+          - list:
+            - listitem:
+              - link "フルーツ" [ref=f6e59] [cursor=pointer]:
+                - /url: http://localhost:8080/products/list?category_id=6
+    - main [ref=f6e61]:
+      - heading "クーポンコードの入力" [level=1] [ref=f6e64]
+      - generic [ref=f6e67]:
+        - generic [ref=f6e69]: 利用するクーポンコードを入力してください。
+        - generic [ref=f6e70]:
+          - generic [ref=f6e71]:
+            - generic [ref=f6e72]:
+              - term [ref=f6e73]
+              - definition [ref=f6e74]:
+                - generic [ref=f6e75]:
+                  - generic [ref=f6e76]:
+                    - radio "クーポンを利用しない" [ref=f6e77]
+                    - generic [ref=f6e78]: クーポンを利用しない
+                  - generic [ref=f6e79]:
+                    - radio "クーポンを利用する" [checked] [ref=f6e80]
+                    - generic [ref=f6e81]: クーポンを利用する
+            - generic [ref=f6e82]:
+              - term [ref=f6e83]:
+                - generic [ref=f6e84]: クーポンコード
+              - definition [ref=f6e85]:
+                - textbox "クーポンコード" [ref=f6e86]
+          - generic [ref=f6e89]:
+            - button "登録する" [ref=f6e90] [cursor=pointer]
+            - link "戻る" [ref=f6e91] [cursor=pointer]:
+              - /url: http://localhost:8080/shopping
+    - contentinfo [ref=f6e92]:
+      - generic [ref=f6e94]:
+        - list [ref=f6e95]:
+          - listitem [ref=f6e96]:
+            - link "当サイトについて" [ref=f6e97] [cursor=pointer]:
+              - /url: http://localhost:8080/help/about
+          - listitem [ref=f6e98]:
+            - link "プライバシーポリシー" [ref=f6e99] [cursor=pointer]:
+              - /url: http://localhost:8080/help/privacy
+          - listitem [ref=f6e100]:
+            - link "特定商取引法に基づく表記" [ref=f6e101] [cursor=pointer]:
+              - /url: http://localhost:8080/help/tradelaw
+          - listitem [ref=f6e102]:
+            - link "お問い合わせ" [ref=f6e103] [cursor=pointer]:
+              - /url: http://localhost:8080/contact
+        - generic [ref=f6e104]:
+          - link "EC-CUBE SHOP" [ref=f6e106] [cursor=pointer]:
+            - /url: http://localhost:8080/
+          - generic [ref=f6e107]: copyright (c) EC-CUBE SHOP all rights reserved.
+  - text:       
+  - region "Symfony Web Debug Toolbar" [ref=f6e108]:
+    - generic [ref=f6e111]:
+      - link "Symfony Loading…" [ref=f6e113] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/d4a6de?panel=request
+        - generic [ref=f6e114]:
+          - img "Symfony" [ref=f6e115]
+          - generic [ref=f6e117]: Loading…
+      - button "Toggle Symfony Toolbar" [expanded] [ref=f6e118] [cursor=pointer]:
+        - generic "Close Toolbar" [ref=f6e119]:
+          - img [ref=f6e120]

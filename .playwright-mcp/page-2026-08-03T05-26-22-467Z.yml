@@ -1,0 +1,185 @@
+- generic [active] [ref=f5e1]:
+  - banner [ref=f5e2]:
+    - generic [ref=f5e3]:
+      - heading [level=1] [ref=f5e5]
+      - text: 
+      - link "EC-CUBE SHOP" [ref=f5e7] [cursor=pointer]:
+        - /url: http://localhost:8080/
+        - text: EC-CUBE SHOP
+        - generic [ref=f5e8]: 
+      - generic [ref=f5e9] [cursor=pointer]:
+        - generic [ref=f5e10]: 
+        - text: 管理者 様
+        - generic [ref=f5e11]: 
+  - generic [ref=f5e12]:
+    - navigation [ref=f5e14]:
+      - list [ref=f5e15]:
+        - listitem [ref=f5e16]:
+          - link "ホーム" [ref=f5e17] [cursor=pointer]:
+            - /url: http://localhost:8080/admin/
+            - generic [ref=f5e18]: 
+            - text: ホーム
+        - listitem [ref=f5e19]:
+          - link "商品管理 " [ref=f5e20] [cursor=pointer]:
+            - /url: "#nav-product"
+            - generic [ref=f5e21]: 
+            - text: 商品管理 
+        - listitem [ref=f5e22]:
+          - link "受注管理 " [expanded] [ref=f5e23] [cursor=pointer]:
+            - /url: "#nav-order"
+            - generic [ref=f5e24]: 
+            - text: 受注管理 
+          - list [ref=f5e25]:
+            - listitem [ref=f5e26]:
+              - link "受注一覧" [ref=f5e27] [cursor=pointer]:
+                - /url: http://localhost:8080/admin/order
+            - listitem [ref=f5e28]:
+              - link "受注登録" [ref=f5e29] [cursor=pointer]:
+                - /url: http://localhost:8080/admin/order/new
+            - listitem [ref=f5e30]:
+              - link "出荷CSV登録" [ref=f5e31] [cursor=pointer]:
+                - /url: http://localhost:8080/admin/order/shipping_csv_upload
+            - listitem [ref=f5e32]:
+              - link "クーポン" [ref=f5e33] [cursor=pointer]:
+                - /url: http://localhost:8080/admin/plugin/coupon
+        - listitem [ref=f5e34]:
+          - link "会員管理 " [ref=f5e35] [cursor=pointer]:
+            - /url: "#nav-customer"
+            - generic [ref=f5e36]: 
+            - text: 会員管理 
+        - listitem [ref=f5e37]:
+          - link "コンテンツ管理 " [ref=f5e38] [cursor=pointer]:
+            - /url: "#nav-content"
+            - generic [ref=f5e39]: 
+            - text: コンテンツ管理 
+        - listitem [ref=f5e40]:
+          - link "設定 " [ref=f5e41] [cursor=pointer]:
+            - /url: "#nav-setting"
+            - generic [ref=f5e42]: 
+            - text: 設定 
+          - text:  
+        - listitem [ref=f5e43]:
+          - link "オーナーズストア " [ref=f5e44] [cursor=pointer]:
+            - /url: "#nav-store"
+            - generic [ref=f5e45]: 
+            - text: オーナーズストア 
+          - text:  
+        - listitem [ref=f5e46]:
+          - link "情報 " [ref=f5e47] [cursor=pointer]:
+            - /url: "#others"
+            - generic [ref=f5e48]: 
+            - text: 情報 
+    - generic [ref=f5e49]:
+      - generic [ref=f5e51]:
+        - heading "クーポン管理" [level=2] [ref=f5e52]
+        - generic [ref=f5e53]: クーポン内容設定
+      - alert [ref=f5e54]:
+        - generic [ref=f5e55]: 
+        - text: デバッグモードが有効になっています。
+        - button "Close" [ref=f5e56] [cursor=pointer]
+      - form [ref=f5e57]:
+        - generic [ref=f5e58]:
+          - generic [ref=f5e60]:
+            - generic [ref=f5e61]:
+              - generic [ref=f5e62]: クーポン情報
+              - generic [ref=f5e63]:
+                - generic [ref=f5e64]:
+                  - generic [ref=f5e65]:
+                    - generic [ref=f5e66]: クーポンコード
+                    - generic [ref=f5e67]: 必須
+                  - textbox "クーポンコード" [ref=f5e69]: cgl6hokng944
+                - generic [ref=f5e70]:
+                  - generic [ref=f5e71]:
+                    - generic [ref=f5e72]: クーポン名
+                    - generic [ref=f5e73]: 必須
+                  - textbox "クーポン名" [ref=f5e75]
+                - generic [ref=f5e76]:
+                  - generic [ref=f5e77]:
+                    - generic [ref=f5e78]: 対象商品
+                    - generic [ref=f5e79]: 必須
+                  - generic [ref=f5e81]:
+                    - generic [ref=f5e82]:
+                      - radio "商品" [checked] [ref=f5e83]
+                      - generic [ref=f5e84]: 商品
+                    - generic [ref=f5e85]:
+                      - radio "カテゴリ" [ref=f5e86]
+                      - generic [ref=f5e87]: カテゴリ
+                    - generic [ref=f5e88]:
+                      - radio "全商品" [ref=f5e89]
+                      - generic [ref=f5e90]: 全商品
+                - generic [ref=f5e91]:
+                  - generic [ref=f5e92]:
+                    - generic [ref=f5e93]: 利用制限
+                    - generic [ref=f5e94]: 必須
+                  - generic [ref=f5e96]:
+                    - generic [ref=f5e97]:
+                      - radio "会員のみ" [ref=f5e98]
+                      - generic [ref=f5e99]: 会員のみ
+                    - generic [ref=f5e100]:
+                      - radio "なし" [checked] [ref=f5e101]
+                      - generic [ref=f5e102]: なし
+                - generic [ref=f5e103]:
+                  - generic [ref=f5e104]:
+                    - generic [ref=f5e105]: 値引き種別
+                    - generic [ref=f5e106]: 必須
+                  - generic [ref=f5e108]:
+                    - generic [ref=f5e109]:
+                      - radio "値引き額" [checked] [ref=f5e110]
+                      - generic [ref=f5e111]: 値引き額
+                    - generic [ref=f5e112]:
+                      - radio "値引率" [ref=f5e113]
+                      - generic [ref=f5e114]: 値引率
+                - generic [ref=f5e115]:
+                  - generic [ref=f5e116]: 値引き額(円)
+                  - generic [ref=f5e118]:
+                    - generic [ref=f5e119]:
+                      - generic [ref=f5e120]: ￥
+                      - textbox "値引き額(円)" [ref=f5e121]
+                    - text: 合計金額から設定金額を値引きします。
+                - generic [ref=f5e122]:
+                  - generic [ref=f5e123]: 値引率(％)
+                  - generic [ref=f5e125]:
+                    - spinbutton "値引率(％)" [disabled] [ref=f5e126]
+                    - text: 対象商品の合計金額から設定した率を値引きします。
+                - generic [ref=f5e127]:
+                  - generic [ref=f5e128]:
+                    - generic [ref=f5e129]: 発行枚数
+                    - generic [ref=f5e130]: 必須
+                  - spinbutton "発行枚数" [ref=f5e132]
+                - generic [ref=f5e133]:
+                  - generic [ref=f5e134]: 下限金額(円)
+                  - generic [ref=f5e136]:
+                    - generic [ref=f5e137]:
+                      - generic [ref=f5e138]: ￥
+                      - textbox "下限金額(円)" [ref=f5e139]
+                    - text: 対象商品の合計金額が、下限金額以上の場合にクーポンを利用できます。
+                - generic [ref=f5e140]:
+                  - generic [ref=f5e141]:
+                    - generic [ref=f5e142]: 有効期間
+                    - generic [ref=f5e143]: 必須
+                  - generic [ref=f5e145]:
+                    - textbox "有効期間" [ref=f5e147]
+                    - generic [ref=f5e148]: ～
+                    - textbox [ref=f5e150]
+            - generic [ref=f5e151]:
+              - generic [ref=f5e153]:
+                - generic [ref=f5e154]: 商品情報
+                - link "" [ref=f5e157] [cursor=pointer]:
+                  - /url: "#productArea"
+              - generic [ref=f5e159]: 商品の追加
+            - text: 
+          - generic [ref=f5e165]:
+            - link "戻る" [ref=f5e168] [cursor=pointer]:
+              - /url: http://localhost:8080/admin/plugin/coupon
+              - generic [ref=f5e169]: 
+              - text: 戻る
+            - button "登録する" [ref=f5e173] [cursor=pointer]
+  - region "Symfony Web Debug Toolbar" [ref=f5e174]:
+    - generic [ref=f5e177]:
+      - link "Symfony Loading…" [ref=f5e179] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/bf467d?panel=request
+        - generic [ref=f5e180]:
+          - img "Symfony" [ref=f5e181]
+          - generic [ref=f5e183]: Loading…
+      - button "Toggle Symfony Toolbar" [expanded] [ref=f5e184] [cursor=pointer]:
+        - generic "Close Toolbar" [ref=f5e185]

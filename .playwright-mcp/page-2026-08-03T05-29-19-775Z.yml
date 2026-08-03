@@ -1,0 +1,179 @@
+- generic [active] [ref=f13e1]:
+  - banner [ref=f13e2]:
+    - generic [ref=f13e3]:
+      - heading "Symfony Exception" [level=1] [ref=f13e4]
+      - link "Symfony Docs" [ref=f13e8] [cursor=pointer]:
+        - /url: https://symfony.com/doc/7.4.13/index.html
+  - generic [ref=f13e12]:
+    - generic [ref=f13e14]:
+      - heading [level=2] [ref=f13e15]:
+        - link "SyntaxError" [ref=f13e16] [cursor=pointer]:
+          - /url: "#trace-box-1"
+      - heading "HTTP 500 Internal Server Error" [level=2] [ref=f13e17]
+    - 'heading "A template that extends another one cannot include content outside Twig blocks. Did you forget to put the content inside a {% block %} tag in Coupon44/Resource/template/default/shopping_coupon.twig at line 76?" [level=1] [ref=f13e20]'
+  - generic [ref=f13e25]:
+    - tablist [ref=f13e26]:
+      - tab "Exception" [selected] [ref=f13e27] [cursor=pointer]
+      - tab "Logs 2" [ref=f13e28] [cursor=pointer]:
+        - text: Logs
+        - generic [ref=f13e29]: "2"
+      - tab "Stack Trace" [ref=f13e30] [cursor=pointer]
+    - tabpanel [ref=f13e31]:
+      - generic [ref=f13e34]:
+        - generic [ref=f13e35]:
+          - heading "Twig\\Error\\ SyntaxError" [level=3] [ref=f13e40] [cursor=pointer]:
+            - generic [ref=f13e41]: Twig\Error\
+            - text: SyntaxError
+          - group [ref=f13e42]:
+            - generic "Show exception properties" [ref=f13e43] [cursor=pointer]
+        - generic [ref=f13e44]:
+          - generic [ref=f13e45]:
+            - generic [ref=f13e50] [cursor=pointer]:
+              - text: in
+              - link [ref=f13e51]:
+                - /url: file:///var/www/html/app/template/default/Coupon44/Resource/template/default/shopping_coupon.twig#L76
+                - text: app/template/default/Coupon44/Resource/template/default/
+                - strong [ref=f13e52]: shopping_coupon.twig
+              - text: (line 76)
+            - list [ref=f13e54]:
+              - listitem [ref=f13e55]:
+                - code [ref=f13e56]: </form>
+              - listitem [ref=f13e57]:
+                - code [ref=f13e58]: </div>
+              - listitem [ref=f13e59]:
+                - code [ref=f13e60]: </div>
+              - listitem [ref=f13e61]:
+                - code [ref=f13e62]: </div>
+              - listitem [ref=f13e63]:
+                - code [ref=f13e64]: "{% endblock %}"
+              - listitem [ref=f13e65]:
+                - code
+              - listitem [ref=f13e66]:
+                - code [ref=f13e67]: <p>COUPON-PAGE-EDIT-MARKER-197</p>
+              - listitem [ref=f13e68]:
+                - code
+          - generic [ref=f13e74] [cursor=pointer]:
+            - text: in
+            - link [ref=f13e75]:
+              - /url: file:///var/www/html/vendor/twig/twig/src/Parser.php#L593
+              - text: vendor/twig/twig/src/
+              - strong [ref=f13e76]: Parser.php
+            - text: "-> filterBodyNodes (line 593)"
+          - generic [ref=f13e82] [cursor=pointer]:
+            - text: in
+            - link [ref=f13e83]:
+              - /url: file:///var/www/html/vendor/twig/twig/src/Parser.php#L112
+              - text: vendor/twig/twig/src/
+              - strong [ref=f13e84]: Parser.php
+            - text: "-> filterBodyNodes (line 112)"
+          - generic [ref=f13e90] [cursor=pointer]:
+            - text: in
+            - link [ref=f13e91]:
+              - /url: file:///var/www/html/vendor/twig/twig/src/Environment.php#L558
+              - text: vendor/twig/twig/src/
+              - strong [ref=f13e92]: Environment.php
+            - text: "-> parse (line 558)"
+          - generic [ref=f13e98] [cursor=pointer]:
+            - text: in
+            - link [ref=f13e99]:
+              - /url: file:///var/www/html/vendor/twig/twig/src/Environment.php#L589
+              - text: vendor/twig/twig/src/
+              - strong [ref=f13e100]: Environment.php
+            - text: "-> parse (line 589)"
+          - generic [ref=f13e106] [cursor=pointer]:
+            - text: in
+            - link [ref=f13e107]:
+              - /url: file:///var/www/html/vendor/twig/twig/src/Environment.php#L408
+              - text: vendor/twig/twig/src/
+              - strong [ref=f13e108]: Environment.php
+            - text: "-> compileSource (line 408)"
+          - generic [ref=f13e118] [cursor=pointer]:
+            - text: in
+            - link [ref=f13e119]:
+              - /url: file:///var/www/html/vendor/twig/twig/src/Environment.php#L370
+              - text: vendor/twig/twig/src/
+              - strong [ref=f13e120]: Environment.php
+            - text: "-> loadTemplate (line 370)"
+          - generic [ref=f13e126] [cursor=pointer]:
+            - text: in
+            - link [ref=f13e127]:
+              - /url: file:///var/www/html/vendor/twig/twig/src/Environment.php#L333
+              - text: vendor/twig/twig/src/
+              - strong [ref=f13e128]: Environment.php
+            - text: "-> load (line 333)"
+          - generic [ref=f13e134] [cursor=pointer]:
+            - text: in
+            - link [ref=f13e135]:
+              - /url: file:///var/www/html/vendor/symfony/twig-bridge/EventListener/TemplateAttributeListener.php#L66
+              - text: vendor/symfony/twig-bridge/EventListener/
+              - strong [ref=f13e136]: TemplateAttributeListener.php
+            - text: "-> render (line 66)"
+          - generic [ref=f13e142] [cursor=pointer]:
+            - text: in
+            - link [ref=f13e143]:
+              - /url: file:///var/www/html/vendor/symfony/event-dispatcher/Debug/WrappedListener.php#L115
+              - text: vendor/symfony/event-dispatcher/Debug/
+              - strong [ref=f13e144]: WrappedListener.php
+            - text: "-> onKernelView (line 115)"
+          - generic [ref=f13e150] [cursor=pointer]:
+            - text: in
+            - link [ref=f13e151]:
+              - /url: file:///var/www/html/vendor/symfony/event-dispatcher/EventDispatcher.php#L206
+              - text: vendor/symfony/event-dispatcher/
+              - strong [ref=f13e152]: EventDispatcher.php
+            - text: "-> __invoke (line 206)"
+          - generic [ref=f13e158] [cursor=pointer]:
+            - text: in
+            - link [ref=f13e159]:
+              - /url: file:///var/www/html/vendor/symfony/event-dispatcher/EventDispatcher.php#L56
+              - text: vendor/symfony/event-dispatcher/
+              - strong [ref=f13e160]: EventDispatcher.php
+            - text: "-> callListeners (line 56)"
+          - generic [ref=f13e166] [cursor=pointer]:
+            - text: in
+            - link [ref=f13e167]:
+              - /url: file:///var/www/html/vendor/symfony/event-dispatcher/Debug/TraceableEventDispatcher.php#L129
+              - text: vendor/symfony/event-dispatcher/Debug/
+              - strong [ref=f13e168]: TraceableEventDispatcher.php
+            - text: "-> dispatch (line 129)"
+          - generic [ref=f13e174] [cursor=pointer]:
+            - text: in
+            - link [ref=f13e175]:
+              - /url: file:///var/www/html/vendor/symfony/http-kernel/HttpKernel.php#L188
+              - text: vendor/symfony/http-kernel/
+              - strong [ref=f13e176]: HttpKernel.php
+            - text: "-> dispatch (line 188)"
+          - generic [ref=f13e182] [cursor=pointer]:
+            - text: in
+            - link [ref=f13e183]:
+              - /url: file:///var/www/html/vendor/symfony/http-kernel/HttpKernel.php#L76
+              - text: vendor/symfony/http-kernel/
+              - strong [ref=f13e184]: HttpKernel.php
+            - text: "-> handleRaw (line 76)"
+          - generic [ref=f13e190] [cursor=pointer]:
+            - text: in
+            - link [ref=f13e191]:
+              - /url: file:///var/www/html/vendor/symfony/http-kernel/Kernel.php#L193
+              - text: vendor/symfony/http-kernel/
+              - strong [ref=f13e192]: Kernel.php
+            - text: "-> handle (line 193)"
+          - generic [ref=f13e194] [cursor=pointer]:
+            - generic [ref=f13e198]: Kernel
+            - text: "->handle()"
+            - generic [ref=f13e199]:
+              - text: in
+              - link "index.php/" [ref=f13e200]:
+                - /url: file:///var/www/html/index.php#L100
+                - text: index.php/
+                - strong
+              - text: (line 100)
+    - text: ✔ ▾ ✔ ✔ ✔ ✔ ✔ ✔ ✔ ▾
+  - region "Symfony Web Debug Toolbar" [ref=f13e201]:
+    - generic [ref=f13e204]:
+      - link "Symfony Loading…" [ref=f13e206] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/59171a?panel=request
+        - generic [ref=f13e207]:
+          - img "Symfony" [ref=f13e208]
+          - generic [ref=f13e210]: Loading…
+      - button "Toggle Symfony Toolbar" [expanded] [ref=f13e211] [cursor=pointer]:
+        - generic "Close Toolbar" [ref=f13e212]

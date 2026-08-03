@@ -1,0 +1,142 @@
+- generic [active] [ref=f7e1]:
+  - generic [ref=f7e2]: デバッグモードが有効になっています。
+  - generic [ref=f7e6]:
+    - banner [ref=f7e7]:
+      - generic [ref=f7e8]:
+        - generic [ref=f7e9]:
+          - generic [ref=f7e11]:
+            - generic:
+              - combobox [ref=f7e14] [cursor=pointer]:
+                - option "全ての商品" [selected]
+                - option "新入荷"
+                - option "ジェラート"
+                - option "彩のデザート"
+                - option "CUBE"
+                - option "アイスサンド"
+                - option "フルーツ"
+              - generic [ref=f7e16]:
+                - searchbox "キーワードを入力" [ref=f7e17]
+                - button [ref=f7e18] [cursor=pointer]
+          - generic: 
+        - generic [ref=f7e20]:
+          - generic [ref=f7e22]:
+            - link " 新規会員登録" [ref=f7e24] [cursor=pointer]:
+              - /url: http://localhost:8080/entry
+              - generic [ref=f7e25]: 
+              - generic [ref=f7e26]: 新規会員登録
+            - link " お気に入り" [ref=f7e28] [cursor=pointer]:
+              - /url: http://localhost:8080/mypage/favorite
+              - generic [ref=f7e29]: 
+              - generic [ref=f7e30]: お気に入り
+            - link " ログイン" [ref=f7e32] [cursor=pointer]:
+              - /url: http://localhost:8080/mypage/login
+              - generic [ref=f7e33]: 
+              - generic [ref=f7e34]: ログイン
+          - generic [ref=f7e37] [cursor=pointer]:
+            - generic [ref=f7e38]:
+              - text: 
+              - generic [ref=f7e39]: "0"
+            - generic [ref=f7e40]: ￥0
+      - heading [level=1] [ref=f7e46]:
+        - link "EC-CUBE SHOP" [ref=f7e47] [cursor=pointer]:
+          - /url: http://localhost:8080/
+      - list [ref=f7e50]:
+        - listitem [ref=f7e51]:
+          - link "新入荷" [ref=f7e52] [cursor=pointer]:
+            - /url: http://localhost:8080/products/list?category_id=2
+        - listitem [ref=f7e53]:
+          - link "ジェラート" [ref=f7e54] [cursor=pointer]:
+            - /url: http://localhost:8080/products/list?category_id=1
+          - list:
+            - listitem:
+              - link "彩のデザート" [ref=f7e55] [cursor=pointer]:
+                - /url: http://localhost:8080/products/list?category_id=3
+              - list:
+                - text: 
+                - listitem:
+                  - link "CUBE" [ref=f7e56] [cursor=pointer]:
+                    - /url: http://localhost:8080/products/list?category_id=4
+        - listitem [ref=f7e57]:
+          - link "アイスサンド" [ref=f7e58] [cursor=pointer]:
+            - /url: http://localhost:8080/products/list?category_id=5
+          - list:
+            - listitem:
+              - link "フルーツ" [ref=f7e59] [cursor=pointer]:
+                - /url: http://localhost:8080/products/list?category_id=6
+    - main [ref=f7e61]:
+      - generic [ref=f7e62]:
+        - list [ref=f7e64]:
+          - listitem [ref=f7e65]:
+            - link "全て" [ref=f7e66] [cursor=pointer]:
+              - /url: http://localhost:8080/products/list
+        - generic [ref=f7e67]:
+          - generic [ref=f7e68]: 2件の商品が見つかりました
+          - generic [ref=f7e70]:
+            - combobox [ref=f7e71]:
+              - option "20件" [selected]
+              - option "40件"
+              - option "60件"
+            - combobox [ref=f7e72]:
+              - option "価格が低い順" [selected]
+              - option "価格が高い順"
+              - option "新着順"
+      - list [ref=f7e74]:
+        - listitem [ref=f7e75]:
+          - link [ref=f7e76] [cursor=pointer]:
+            - /url: http://localhost:8080/products/detail/2
+            - paragraph [ref=f7e77]:
+              - img "チェリーアイスサンド" [ref=f7e78]
+            - paragraph [ref=f7e79]: チェリーアイスサンド
+            - paragraph [ref=f7e80]: ￥3,080
+          - generic [ref=f7e83]:
+            - text: 数量
+            - spinbutton [ref=f7e84]: "1"
+          - button "カートに入れる" [ref=f7e86] [cursor=pointer]
+        - listitem [ref=f7e87]:
+          - link [ref=f7e88] [cursor=pointer]:
+            - /url: http://localhost:8080/products/detail/1
+            - paragraph [ref=f7e89]:
+              - img "彩のジェラートCUBE" [ref=f7e90]
+            - paragraph [ref=f7e91]: 彩のジェラートCUBE
+            - paragraph [ref=f7e92]: ￥5,500 ～ ￥121,000
+          - generic [ref=f7e94]:
+            - combobox [ref=f7e96]:
+              - option "選択してください" [selected]
+              - option "チョコ"
+              - option "抹茶"
+              - option "バニラ"
+            - combobox [ref=f7e98]:
+              - option "選択してください" [selected]
+            - generic [ref=f7e99]:
+              - text: 数量
+              - spinbutton [ref=f7e100]: "1"
+          - button "カートに入れる" [ref=f7e102] [cursor=pointer]
+    - contentinfo [ref=f7e103]:
+      - generic [ref=f7e105]:
+        - list [ref=f7e106]:
+          - listitem [ref=f7e107]:
+            - link "当サイトについて" [ref=f7e108] [cursor=pointer]:
+              - /url: http://localhost:8080/help/about
+          - listitem [ref=f7e109]:
+            - link "プライバシーポリシー" [ref=f7e110] [cursor=pointer]:
+              - /url: http://localhost:8080/help/privacy
+          - listitem [ref=f7e111]:
+            - link "特定商取引法に基づく表記" [ref=f7e112] [cursor=pointer]:
+              - /url: http://localhost:8080/help/tradelaw
+          - listitem [ref=f7e113]:
+            - link "お問い合わせ" [ref=f7e114] [cursor=pointer]:
+              - /url: http://localhost:8080/contact
+        - generic [ref=f7e115]:
+          - link "EC-CUBE SHOP" [ref=f7e117] [cursor=pointer]:
+            - /url: http://localhost:8080/
+          - generic [ref=f7e118]: copyright (c) EC-CUBE SHOP all rights reserved.
+  - text:       
+  - region "Symfony Web Debug Toolbar" [ref=f7e119]:
+    - generic [ref=f7e122]:
+      - link "Symfony Loading…" [ref=f7e124] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/54194d?panel=request
+        - generic [ref=f7e125]:
+          - img "Symfony" [ref=f7e126]
+          - generic [ref=f7e128]: Loading…
+      - button "Toggle Symfony Toolbar" [expanded] [ref=f7e129] [cursor=pointer]:
+        - generic "Close Toolbar" [ref=f7e130]

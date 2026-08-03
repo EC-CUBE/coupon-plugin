@@ -1,0 +1,215 @@
+- generic [active] [ref=f11e1]:
+  - generic [ref=f11e2]: デバッグモードが有効になっています。
+  - generic [ref=f11e6]:
+    - banner [ref=f11e7]:
+      - generic [ref=f11e8]:
+        - generic [ref=f11e9]:
+          - generic [ref=f11e11]:
+            - generic:
+              - combobox [ref=f11e14] [cursor=pointer]:
+                - option "全ての商品" [selected]
+                - option "新入荷"
+                - option "ジェラート"
+                - option "彩のデザート"
+                - option "CUBE"
+                - option "アイスサンド"
+                - option "フルーツ"
+              - generic [ref=f11e16]:
+                - searchbox "キーワードを入力" [ref=f11e17]
+                - button [ref=f11e18] [cursor=pointer]
+          - generic: 
+        - generic [ref=f11e20]:
+          - generic [ref=f11e22]:
+            - link " 新規会員登録" [ref=f11e24] [cursor=pointer]:
+              - /url: http://localhost:8080/entry
+              - generic [ref=f11e25]: 
+              - generic [ref=f11e26]: 新規会員登録
+            - link " お気に入り" [ref=f11e28] [cursor=pointer]:
+              - /url: http://localhost:8080/mypage/favorite
+              - generic [ref=f11e29]: 
+              - generic [ref=f11e30]: お気に入り
+            - link " ログイン" [ref=f11e32] [cursor=pointer]:
+              - /url: http://localhost:8080/mypage/login
+              - generic [ref=f11e33]: 
+              - generic [ref=f11e34]: ログイン
+          - generic [ref=f11e37] [cursor=pointer]:
+            - generic [ref=f11e38]:
+              - text: 
+              - generic [ref=f11e39]: "2"
+            - generic [ref=f11e40]: ￥6,160
+      - heading [level=1] [ref=f11e46]:
+        - link "EC-CUBE SHOP" [ref=f11e47] [cursor=pointer]:
+          - /url: http://localhost:8080/
+      - list [ref=f11e50]:
+        - listitem [ref=f11e51]:
+          - link "新入荷" [ref=f11e52] [cursor=pointer]:
+            - /url: http://localhost:8080/products/list?category_id=2
+        - listitem [ref=f11e53]:
+          - link "ジェラート" [ref=f11e54] [cursor=pointer]:
+            - /url: http://localhost:8080/products/list?category_id=1
+          - list:
+            - listitem:
+              - link "彩のデザート" [ref=f11e55] [cursor=pointer]:
+                - /url: http://localhost:8080/products/list?category_id=3
+              - list:
+                - text: 
+                - listitem:
+                  - link "CUBE" [ref=f11e56] [cursor=pointer]:
+                    - /url: http://localhost:8080/products/list?category_id=4
+        - listitem [ref=f11e57]:
+          - link "アイスサンド" [ref=f11e58] [cursor=pointer]:
+            - /url: http://localhost:8080/products/list?category_id=5
+          - list:
+            - listitem:
+              - link "フルーツ" [ref=f11e59] [cursor=pointer]:
+                - /url: http://localhost:8080/products/list?category_id=6
+    - main [ref=f11e61]:
+      - generic [ref=f11e62]:
+        - heading "お客様情報の入力" [level=1] [ref=f11e64]
+        - list [ref=f11e67]:
+          - listitem [ref=f11e68]:
+            - generic [ref=f11e69]: "1"
+            - generic [ref=f11e70]: カートの商品
+          - listitem [ref=f11e71]:
+            - generic [ref=f11e72]: "2"
+            - generic [ref=f11e73]: お客様情報
+          - listitem [ref=f11e74]:
+            - generic [ref=f11e75]: "3"
+            - generic [ref=f11e76]: ご注文手続き
+          - listitem [ref=f11e77]:
+            - generic [ref=f11e78]: "4"
+            - generic [ref=f11e79]: ご注文内容確認
+          - listitem [ref=f11e80]:
+            - generic [ref=f11e81]: "5"
+            - generic [ref=f11e82]: 完了
+        - generic [ref=f11e85]:
+          - generic [ref=f11e86]:
+            - generic [ref=f11e87]:
+              - term [ref=f11e88]:
+                - generic [ref=f11e89]: お名前
+                - generic [ref=f11e90]: 必須
+              - definition [ref=f11e91]:
+                - generic [ref=f11e92]:
+                  - textbox "姓" [ref=f11e93]
+                  - textbox "名" [ref=f11e94]
+            - generic [ref=f11e95]:
+              - term [ref=f11e96]:
+                - generic [ref=f11e97]: お名前(カナ)
+                - generic [ref=f11e98]: 必須
+              - definition [ref=f11e99]:
+                - generic [ref=f11e100]:
+                  - textbox "セイ" [ref=f11e101]
+                  - textbox "メイ" [ref=f11e102]
+            - generic [ref=f11e103]:
+              - term [ref=f11e104]:
+                - generic [ref=f11e105]: 会社名
+              - definition [ref=f11e106]:
+                - textbox "会社名" [ref=f11e108]
+            - generic [ref=f11e109]:
+              - term [ref=f11e110]:
+                - generic [ref=f11e111]: 住所
+                - generic [ref=f11e112]: 必須
+              - definition [ref=f11e113]:
+                - generic [ref=f11e114]:
+                  - generic [ref=f11e115]: 〒
+                  - textbox "例：5300001" [ref=f11e116]
+                  - link "郵便番号検索" [ref=f11e120] [cursor=pointer]:
+                    - /url: https://www.post.japanpost.jp/zipcode/
+                - combobox [ref=f11e122]:
+                  - option "都道府県を選択" [selected]
+                  - option "北海道"
+                  - option "青森県"
+                  - option "岩手県"
+                  - option "宮城県"
+                  - option "秋田県"
+                  - option "山形県"
+                  - option "福島県"
+                  - option "茨城県"
+                  - option "栃木県"
+                  - option "群馬県"
+                  - option "埼玉県"
+                  - option "千葉県"
+                  - option "東京都"
+                  - option "神奈川県"
+                  - option "新潟県"
+                  - option "富山県"
+                  - option "石川県"
+                  - option "福井県"
+                  - option "山梨県"
+                  - option "長野県"
+                  - option "岐阜県"
+                  - option "静岡県"
+                  - option "愛知県"
+                  - option "三重県"
+                  - option "滋賀県"
+                  - option "京都府"
+                  - option "大阪府"
+                  - option "兵庫県"
+                  - option "奈良県"
+                  - option "和歌山県"
+                  - option "鳥取県"
+                  - option "島根県"
+                  - option "岡山県"
+                  - option "広島県"
+                  - option "山口県"
+                  - option "徳島県"
+                  - option "香川県"
+                  - option "愛媛県"
+                  - option "高知県"
+                  - option "福岡県"
+                  - option "佐賀県"
+                  - option "長崎県"
+                  - option "熊本県"
+                  - option "大分県"
+                  - option "宮崎県"
+                  - option "鹿児島県"
+                  - option "沖縄県"
+                - textbox "市区町村名(例：大阪市北区)" [ref=f11e124]
+                - textbox "番地・ビル名(例：西梅田1丁目6-8)" [ref=f11e126]
+            - generic [ref=f11e127]:
+              - term [ref=f11e128]:
+                - generic [ref=f11e129]: 電話番号
+                - generic [ref=f11e130]: 必須
+              - definition [ref=f11e131]:
+                - textbox "電話番号" [ref=f11e133]:
+                  - /placeholder: 例：11122223333
+            - generic [ref=f11e134]:
+              - term [ref=f11e135]:
+                - generic [ref=f11e136]: メールアドレス
+                - generic [ref=f11e137]: 必須
+              - definition [ref=f11e138]:
+                - textbox "例：ec-cube@example.com" [ref=f11e140]
+                - textbox "確認のためもう一度入力してください" [ref=f11e142]
+          - generic [ref=f11e145]:
+            - button "次へ" [ref=f11e146] [cursor=pointer]
+            - link "戻る" [ref=f11e147] [cursor=pointer]:
+              - /url: http://localhost:8080/cart
+    - contentinfo [ref=f11e148]:
+      - generic [ref=f11e150]:
+        - list [ref=f11e151]:
+          - listitem [ref=f11e152]:
+            - link "当サイトについて" [ref=f11e153] [cursor=pointer]:
+              - /url: http://localhost:8080/help/about
+          - listitem [ref=f11e154]:
+            - link "プライバシーポリシー" [ref=f11e155] [cursor=pointer]:
+              - /url: http://localhost:8080/help/privacy
+          - listitem [ref=f11e156]:
+            - link "特定商取引法に基づく表記" [ref=f11e157] [cursor=pointer]:
+              - /url: http://localhost:8080/help/tradelaw
+          - listitem [ref=f11e158]:
+            - link "お問い合わせ" [ref=f11e159] [cursor=pointer]:
+              - /url: http://localhost:8080/contact
+        - generic [ref=f11e160]:
+          - link "EC-CUBE SHOP" [ref=f11e162] [cursor=pointer]:
+            - /url: http://localhost:8080/
+          - generic [ref=f11e163]: copyright (c) EC-CUBE SHOP all rights reserved.
+  - text:       
+  - region "Symfony Web Debug Toolbar" [ref=f11e164]:
+    - generic [ref=f11e167]:
+      - link "Symfony Loading…" [ref=f11e169] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/bbaae0?panel=request
+        - generic [ref=f11e170]:
+          - img "Symfony" [ref=f11e171]
+          - generic [ref=f11e173]: Loading…
+      - button "Toggle Symfony Toolbar" [expanded] [ref=f11e174] [cursor=pointer]:
+        - generic "Close Toolbar" [ref=f11e175]

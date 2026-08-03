@@ -1,0 +1,310 @@
+- generic [active] [ref=f4e1]:
+  - banner [ref=f4e2]:
+    - generic [ref=f4e3]:
+      - heading [level=1] [ref=f4e5]
+      - text: 
+      - link "EC-CUBE SHOP" [ref=f4e7] [cursor=pointer]:
+        - /url: http://localhost:8080/
+        - text: EC-CUBE SHOP
+        - generic [ref=f4e8]: 
+      - generic [ref=f4e9] [cursor=pointer]:
+        - generic [ref=f4e10]: 
+        - text: 管理者 様
+        - generic [ref=f4e11]: 
+  - generic [ref=f4e12]:
+    - navigation [ref=f4e14]:
+      - list [ref=f4e15]:
+        - listitem [ref=f4e16]:
+          - link "ホーム" [ref=f4e17] [cursor=pointer]:
+            - /url: http://localhost:8080/admin/
+            - generic [ref=f4e18]: 
+            - text: ホーム
+        - listitem [ref=f4e19]:
+          - link "商品管理 " [ref=f4e20] [cursor=pointer]:
+            - /url: "#nav-product"
+            - generic [ref=f4e21]: 
+            - text: 商品管理 
+        - listitem [ref=f4e22]:
+          - link "受注管理 " [ref=f4e23] [cursor=pointer]:
+            - /url: "#nav-order"
+            - generic [ref=f4e24]: 
+            - text: 受注管理 
+        - listitem [ref=f4e25]:
+          - link "会員管理 " [ref=f4e26] [cursor=pointer]:
+            - /url: "#nav-customer"
+            - generic [ref=f4e27]: 
+            - text: 会員管理 
+        - listitem [ref=f4e28]:
+          - link "コンテンツ管理 " [expanded] [ref=f4e29] [cursor=pointer]:
+            - /url: "#nav-content"
+            - generic [ref=f4e30]: 
+            - text: コンテンツ管理 
+          - list [ref=f4e31]:
+            - listitem [ref=f4e32]:
+              - link "新着情報管理" [ref=f4e33] [cursor=pointer]:
+                - /url: http://localhost:8080/admin/content/news
+            - listitem [ref=f4e34]:
+              - link "ファイル管理" [ref=f4e35] [cursor=pointer]:
+                - /url: http://localhost:8080/admin/content/file_manager
+            - listitem [ref=f4e36]:
+              - link "レイアウト管理" [ref=f4e37] [cursor=pointer]:
+                - /url: http://localhost:8080/admin/content/layout
+            - listitem [ref=f4e38]:
+              - link "ページ管理" [ref=f4e39] [cursor=pointer]:
+                - /url: http://localhost:8080/admin/content/page
+            - listitem [ref=f4e40]:
+              - link "CSS管理" [ref=f4e41] [cursor=pointer]:
+                - /url: http://localhost:8080/admin/content/css
+            - listitem [ref=f4e42]:
+              - link "JavaScript管理" [ref=f4e43] [cursor=pointer]:
+                - /url: http://localhost:8080/admin/content/js
+            - listitem [ref=f4e44]:
+              - link "ブロック管理" [ref=f4e45] [cursor=pointer]:
+                - /url: http://localhost:8080/admin/content/block
+            - listitem [ref=f4e46]:
+              - link "キャッシュ管理" [ref=f4e47] [cursor=pointer]:
+                - /url: http://localhost:8080/admin/content/cache
+            - listitem [ref=f4e48]:
+              - link "メンテナンス管理" [ref=f4e49] [cursor=pointer]:
+                - /url: http://localhost:8080/admin/content/maintenance
+            - listitem [ref=f4e50]:
+              - link "エージェントコマース" [ref=f4e51] [cursor=pointer]:
+                - /url: http://localhost:8080/admin/content/agent_commerce
+        - listitem [ref=f4e52]:
+          - link "設定 " [ref=f4e53] [cursor=pointer]:
+            - /url: "#nav-setting"
+            - generic [ref=f4e54]: 
+            - text: 設定 
+          - text:  
+        - listitem [ref=f4e55]:
+          - link "オーナーズストア " [ref=f4e56] [cursor=pointer]:
+            - /url: "#nav-store"
+            - generic [ref=f4e57]: 
+            - text: オーナーズストア 
+          - text:  
+        - listitem [ref=f4e58]:
+          - link "情報 " [ref=f4e59] [cursor=pointer]:
+            - /url: "#others"
+            - generic [ref=f4e60]: 
+            - text: 情報 
+    - generic [ref=f4e61]:
+      - generic [ref=f4e63]:
+        - heading "ページ管理" [level=2] [ref=f4e64]
+        - generic [ref=f4e65]: コンテンツ管理
+      - alert [ref=f4e66]:
+        - generic [ref=f4e67]: 
+        - text: この機能の利用頻度が低い場合、使用しない間は無効化することでセキュリティを更に向上させることができます。環境変数 ECCUBE_RESTRICT_FILE_UPLOAD を 1 に設定することで機能を無効化することが可能です。
+        - button "Close" [ref=f4e68] [cursor=pointer]
+      - alert [ref=f4e69]:
+        - generic [ref=f4e70]: 
+        - text: デバッグモードが有効になっています。
+        - button "Close" [ref=f4e71] [cursor=pointer]
+      - generic [ref=f4e72]:
+        - generic [ref=f4e75]:
+          - generic [ref=f4e76]:
+            - generic [ref=f4e78]:
+              - generic [ref=f4e79]: ページ設定
+              - link "" [ref=f4e81] [cursor=pointer]:
+                - /url: "#pageDetail"
+            - generic [ref=f4e84]:
+              - generic [ref=f4e85]:
+                - generic [ref=f4e86]:
+                  - text: ページ名
+                  - generic [ref=f4e87]: 必須
+                - textbox [ref=f4e89]: 商品購入/クーポン利用
+              - generic [ref=f4e90]:
+                - generic [ref=f4e91]:
+                  - text: URL
+                  - generic [ref=f4e92]: 必須
+                - generic [ref=f4e93]: http://localhost:8080/plugin/coupon/shopping/shopping_coupon
+              - generic [ref=f4e96]:
+                - generic [ref=f4e97]:
+                  - generic [ref=f4e98]:
+                    - text: ファイル名
+                    - generic [ref=f4e99]: 
+                  - generic [ref=f4e100]: 必須
+                - generic [ref=f4e101]: app/template/default/Coupon44/Resource/template/default/shopping_coupon.twig
+              - generic [ref=f4e104]:
+                - generic [ref=f4e105]:
+                  - generic [ref=f4e106]:
+                    - text: コード
+                    - generic [ref=f4e107]: 
+                  - generic [ref=f4e108]: 必須
+                - generic [ref=f4e110]:
+                  - textbox [ref=f4e111]
+                  - generic [ref=f4e113]:
+                    - generic [ref=f4e114]: "1"
+                    - generic [ref=f4e115]: "2"
+                    - generic [ref=f4e116]: "3"
+                    - generic [ref=f4e117]: "4"
+                    - generic [ref=f4e118]: "5"
+                    - generic [ref=f4e119]: "6"
+                    - generic [ref=f4e120]: "7"
+                    - generic [ref=f4e121]: "8"
+                    - generic [ref=f4e122]: "9"
+                    - generic [ref=f4e123]: "10"
+                    - generic [ref=f4e124]: "11"
+                    - generic [ref=f4e125]: "12"
+                    - generic [ref=f4e126]: "13"
+                    - generic [ref=f4e127]:
+                      - text: "14"
+                      - button [expanded] [ref=f4e128] [cursor=pointer]
+                    - generic [ref=f4e129]:
+                      - text: "15"
+                      - button [expanded] [ref=f4e130] [cursor=pointer]
+                    - generic [ref=f4e131]:
+                      - text: "16"
+                      - button [expanded] [ref=f4e132] [cursor=pointer]
+                    - generic [ref=f4e133]:
+                      - text: "17"
+                      - button [expanded] [ref=f4e134] [cursor=pointer]
+                    - generic [ref=f4e135]: "18"
+                    - generic [ref=f4e136]: "19"
+                    - generic [ref=f4e137]:
+                      - text: "20"
+                      - button [expanded] [ref=f4e138] [cursor=pointer]
+                    - generic [ref=f4e139]: "21"
+                    - generic [ref=f4e140]: "22"
+                    - generic [ref=f4e141]: "23"
+                    - generic [ref=f4e142]: "24"
+                  - generic [ref=f4e144]:
+                    - generic:
+                      - generic: "{#¬"
+                      - generic: ·This·file·is·part·of·the·Coupon·plugin¬
+                      - generic: ¬
+                      - generic: ·Copyright(c)·EC-CUBE·CO.,LTD.·All·Rights·Reserved.¬
+                      - generic: ·http://www.ec-cube.co.jp/¬
+                      - generic: ¬
+                      - generic: ·For·the·full·copyright·and·license·information,·please·view·the·LICENSE¬
+                      - generic: ·file·that·was·distributed·with·this·source·code.¬
+                      - generic: "#}¬"
+                      - generic: "{%·extends·'default_frame.twig'·%}¬"
+                      - generic: ¬
+                      - generic: "{%·set·body_class·=·'cart_page'·%}¬"
+                      - generic: "{%·block·javascript·%}¬"
+                      - generic:
+                        - generic: ····
+                        - text: <script>¬
+                      - generic: "········$(function()·{¬"
+                      - generic: "············$('input[name~=\"coupon_use[coupon_use]\"]').change(function·()·{¬"
+                      - generic: "················if($(this).val()·==·0)·{¬"
+                      - generic: ····················$('#coupon_use_coupon_cd').attr('readonly',·'');¬
+                      - generic: ····················$('#coupon_use_coupon_cd').css('background-color',·'#eee');¬
+                      - generic: "················}·else·{¬"
+                      - generic: ····················$('#coupon_use_coupon_cd').removeAttr('readonly');¬
+                      - generic: ····················$('#coupon_use_coupon_cd').css('background-color',·'white');¬
+                      - generic: "················}¬"
+                      - generic: "············});¬"
+          - generic [ref=f4e150]:
+            - generic [ref=f4e152]:
+              - generic [ref=f4e155]:
+                - text: レイアウト設定
+                - generic [ref=f4e156]: 
+              - link "" [ref=f4e158] [cursor=pointer]:
+                - /url: "#pageLayout"
+            - generic [ref=f4e161]:
+              - generic [ref=f4e162]:
+                - generic [ref=f4e163]: PC
+                - combobox [ref=f4e165]:
+                  - option "---"
+                  - option "下層ページ用レイアウト" [selected]
+                  - option "トップページ用レイアウト"
+              - generic [ref=f4e166]:
+                - generic [ref=f4e167]: モバイル
+                - combobox [ref=f4e169]:
+                  - option "---" [selected]
+          - generic [ref=f4e170]:
+            - generic [ref=f4e172]:
+              - generic [ref=f4e174]:
+                - text: メタ設定
+                - generic [ref=f4e175]: 
+              - link "" [ref=f4e177] [cursor=pointer]:
+                - /url: "#pageMeta"
+            - generic [ref=f4e180]:
+              - generic [ref=f4e181]:
+                - generic [ref=f4e182]: author
+                - textbox [ref=f4e184]
+              - generic [ref=f4e185]:
+                - generic [ref=f4e186]: description
+                - textbox [ref=f4e188]
+              - generic [ref=f4e189]:
+                - generic [ref=f4e190]: keyword
+                - textbox [ref=f4e192]
+              - generic [ref=f4e193]:
+                - generic [ref=f4e194]: robot
+                - textbox [ref=f4e196]: noindex
+              - generic [ref=f4e197]:
+                - generic [ref=f4e199]:
+                  - text: metatag
+                  - generic [ref=f4e200]: 
+                - textbox [ref=f4e202]
+        - generic [ref=f4e205]:
+          - link "ページ管理" [ref=f4e208] [cursor=pointer]:
+            - /url: http://localhost:8080/admin/content/page
+            - generic [ref=f4e209]: 
+            - text: ページ管理
+          - button "登録" [ref=f4e213] [cursor=pointer]
+  - region "Symfony Web Debug Toolbar" [ref=f4e214]:
+    - generic [ref=f4e217]:
+      - link "200 @ admin_content_page_edit" [ref=f4e219] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/1ff6a6?panel=request
+        - generic [ref=f4e220]:
+          - generic [ref=f4e221]: "200"
+          - generic [ref=f4e222]: "@"
+          - generic [ref=f4e223]: admin_content_page_edit
+      - link "113 ms" [ref=f4e225] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/1ff6a6?panel=time
+        - generic [ref=f4e226]:
+          - generic [ref=f4e227]: "113"
+          - generic [ref=f4e228]: ms
+      - link "10.0 MiB" [ref=f4e230] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/1ff6a6?panel=time
+        - generic [ref=f4e231]:
+          - generic [ref=f4e232]: "10.0"
+          - generic [ref=f4e233]: MiB
+      - link "Cache 1" [ref=f4e235] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/1ff6a6?panel=form
+        - generic [ref=f4e236]:
+          - img "Cache" [ref=f4e237]
+          - generic [ref=f4e243]: "1"
+      - link "Logger 499" [ref=f4e245] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/1ff6a6?panel=logger
+        - generic [ref=f4e246]:
+          - img "Logger" [ref=f4e247]
+          - generic [ref=f4e251]: "499"
+      - link "Cache 5 in 0.14 ms" [ref=f4e253] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/1ff6a6?panel=cache
+        - generic [ref=f4e254]:
+          - img "Cache" [ref=f4e255]
+          - generic [ref=f4e260]: "5"
+          - generic [ref=f4e261]: in 0.14 ms
+      - link "2" [ref=f4e263] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/1ff6a6?panel=translation
+      - link "Security admin" [ref=f4e272] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/1ff6a6?panel=security
+        - generic [ref=f4e273]:
+          - img "Security" [ref=f4e274]
+          - generic [ref=f4e278]: admin
+      - link "Twig 7 ms" [ref=f4e280] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/1ff6a6?panel=twig
+        - generic [ref=f4e281]:
+          - img "Twig" [ref=f4e282]
+          - generic [ref=f4e286]: "7"
+          - generic [ref=f4e287]: ms
+      - link "13 in 3.08 ms" [ref=f4e289] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/1ff6a6?panel=db
+        - generic [ref=f4e290]:
+          - generic [ref=f4e296]: "13"
+          - generic [ref=f4e297]: in 3.08 ms
+      - link "22" [ref=f4e299] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/1ff6a6?panel=doctrine_migrations
+      - link "Symfony 7.4.13" [ref=f4e306] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/1ff6a6?panel=config
+        - generic [ref=f4e307]:
+          - img "Symfony" [ref=f4e309]
+          - generic [ref=f4e311]: 7.4.13
+      - generic [ref=f4e313]:
+        - img "eccube_logo_basic" [ref=f4e314]
+        - generic [ref=f4e319]: 4.3.1-p1
+      - button "Toggle Symfony Toolbar" [expanded] [ref=f4e320] [cursor=pointer]:
+        - generic "Close Toolbar" [ref=f4e321]

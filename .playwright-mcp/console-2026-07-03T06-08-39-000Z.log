@@ -1,0 +1,9 @@
+[     701ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8080/html/upload/save_image/cube-1.png:0
+[    1097ms] [WARNING] Failed to decode downloaded font: http://localhost:8080/html/bundle/f7f1e7911cd4fe275e29.woff @ http://localhost:8080/:0
+[    1098ms] [WARNING] OTS parsing error: invalid sfntVersion: 1702391919 @ http://localhost:8080/:0
+[    1117ms] [WARNING] Failed to decode downloaded font: http://localhost:8080/html/bundle/ad0c1b9dc2d8ec4e2fa0.ttf @ http://localhost:8080/:0
+[    1117ms] [WARNING] OTS parsing error: invalid sfntVersion: 1702391919 @ http://localhost:8080/:0
+[    1136ms] [WARNING] Failed to decode downloaded font: http://localhost:8080/html/bundle/f7f1e7911cd4fe275e29.woff @ http://localhost:8080/:0
+[    1136ms] [WARNING] OTS parsing error: invalid sfntVersion: 1702391919 @ http://localhost:8080/:0
+[    1136ms] [WARNING] Failed to decode downloaded font: http://localhost:8080/html/bundle/ad0c1b9dc2d8ec4e2fa0.ttf @ http://localhost:8080/:0
+[    1136ms] [WARNING] OTS parsing error: invalid sfntVersion: 1702391919 @ http://localhost:8080/:0

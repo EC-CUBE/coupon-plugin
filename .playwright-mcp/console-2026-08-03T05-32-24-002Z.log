@@ -1,0 +1,2 @@
+[     309ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8080/_wdt/b0bee8?XDEBUG_IGNORE=1:0
+[   15068ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8080/shopping/shipping_multiple:0

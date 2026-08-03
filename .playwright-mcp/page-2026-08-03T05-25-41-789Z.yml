@@ -1,0 +1,281 @@
+- generic [active] [ref=f2e1]:
+  - banner [ref=f2e2]:
+    - generic [ref=f2e3]:
+      - heading [level=1] [ref=f2e5]
+      - text: 
+      - link "EC-CUBE SHOP" [ref=f2e7] [cursor=pointer]:
+        - /url: http://localhost:8080/
+        - text: EC-CUBE SHOP
+        - generic [ref=f2e8]: 
+      - generic [ref=f2e9] [cursor=pointer]:
+        - generic [ref=f2e10]: 
+        - text: 管理者 様
+        - generic [ref=f2e11]: 
+  - generic [ref=f2e12]:
+    - navigation [ref=f2e14]:
+      - list [ref=f2e15]:
+        - listitem [ref=f2e16]:
+          - link "ホーム" [ref=f2e17] [cursor=pointer]:
+            - /url: http://localhost:8080/admin/
+            - generic [ref=f2e18]: 
+            - text: ホーム
+        - listitem [ref=f2e19]:
+          - link "商品管理 " [ref=f2e20] [cursor=pointer]:
+            - /url: "#nav-product"
+            - generic [ref=f2e21]: 
+            - text: 商品管理 
+        - listitem [ref=f2e22]:
+          - link "受注管理 " [ref=f2e23] [cursor=pointer]:
+            - /url: "#nav-order"
+            - generic [ref=f2e24]: 
+            - text: 受注管理 
+        - listitem [ref=f2e25]:
+          - link "会員管理 " [ref=f2e26] [cursor=pointer]:
+            - /url: "#nav-customer"
+            - generic [ref=f2e27]: 
+            - text: 会員管理 
+        - listitem [ref=f2e28]:
+          - link "コンテンツ管理 " [ref=f2e29] [cursor=pointer]:
+            - /url: "#nav-content"
+            - generic [ref=f2e30]: 
+            - text: コンテンツ管理 
+        - listitem [ref=f2e31]:
+          - link "設定 " [ref=f2e32] [cursor=pointer]:
+            - /url: "#nav-setting"
+            - generic [ref=f2e33]: 
+            - text: 設定 
+          - text:  
+        - listitem [ref=f2e34]:
+          - link "オーナーズストア " [ref=f2e35] [cursor=pointer]:
+            - /url: "#nav-store"
+            - generic [ref=f2e36]: 
+            - text: オーナーズストア 
+          - text:  
+        - listitem [ref=f2e37]:
+          - link "情報 " [ref=f2e38] [cursor=pointer]:
+            - /url: "#others"
+            - generic [ref=f2e39]: 
+            - text: 情報 
+    - generic [ref=f2e40]:
+      - heading "ホーム" [level=2] [ref=f2e43]
+      - alert [ref=f2e44]:
+        - generic [ref=f2e45]: 
+        - text: デバッグモードが有効になっています。
+        - button "Close" [ref=f2e46] [cursor=pointer]
+      - alert [ref=f2e47]:
+        - generic [ref=f2e48]: 
+        - generic [ref=f2e49]:
+          - text: 管理画面URLは、セキュリティのため推測されにくいものを設定してください。「
+          - link "セキュリティ管理" [ref=f2e50] [cursor=pointer]:
+            - /url: http://localhost:8080/admin/setting/system/security
+          - text: 」から設定できます。
+        - button "Close" [ref=f2e51] [cursor=pointer]
+      - generic [ref=f2e54]:
+        - generic [ref=f2e55]:
+          - generic [ref=f2e57]:
+            - link "注文状況" [ref=f2e59] [cursor=pointer]:
+              - /url: http://localhost:8080/admin/order
+            - generic [ref=f2e60]:
+              - link "新規受付 0" [ref=f2e62] [cursor=pointer]:
+                - /url: http://localhost:8080/admin/order?order_status_id=1
+                - generic [ref=f2e63]:
+                  - generic [ref=f2e64]: 新規受付
+                  - generic [ref=f2e65]: "0"
+              - link "入金済み 0" [ref=f2e67] [cursor=pointer]:
+                - /url: http://localhost:8080/admin/order?order_status_id=6
+                - generic [ref=f2e68]:
+                  - generic [ref=f2e69]: 入金済み
+                  - generic [ref=f2e70]: "0"
+              - link "対応中 0" [ref=f2e72] [cursor=pointer]:
+                - /url: http://localhost:8080/admin/order?order_status_id=4
+                - generic [ref=f2e73]:
+                  - generic [ref=f2e74]: 対応中
+                  - generic [ref=f2e75]: "0"
+          - generic [ref=f2e77]:
+            - generic [ref=f2e78]: 売上状況
+            - generic [ref=f2e80]:
+              - generic [ref=f2e81]:
+                - generic [ref=f2e82]:
+                  - generic [ref=f2e83]: ￥0 / 0 件
+                  - text: 今月の売上金額 / 売上件数
+                - generic [ref=f2e84]:
+                  - generic [ref=f2e85]: ￥0 / 0 件
+                  - text: 今日の売上金額 / 売上件数
+                - generic [ref=f2e86]:
+                  - generic [ref=f2e87]: ￥0 / 0 件
+                  - text: 昨日の売上金額 / 売上件数
+              - tablist [ref=f2e90]:
+                - tab "週間" [selected] [ref=f2e91] [cursor=pointer]
+                - tab "月間" [ref=f2e92] [cursor=pointer]
+                - tab "年間" [ref=f2e93] [cursor=pointer]
+              - tabpanel "週間" [ref=f2e97]
+        - generic [ref=f2e99]:
+          - generic [ref=f2e101]:
+            - generic [ref=f2e102]: ショップ状況
+            - generic [ref=f2e104]:
+              - link "在庫切れ商品数 0" [ref=f2e106] [cursor=pointer]:
+                - /url: http://localhost:8080/admin/search_nonstock
+                - generic [ref=f2e107]:
+                  - generic [ref=f2e108]: 
+                  - generic [ref=f2e110]: 在庫切れ商品数
+                  - generic [ref=f2e111]: "0"
+              - link "取扱商品数 2" [ref=f2e113] [cursor=pointer]:
+                - /url: http://localhost:8080/admin/product
+                - generic [ref=f2e114]:
+                  - generic [ref=f2e115]: 
+                  - generic [ref=f2e117]: 取扱商品数
+                  - generic [ref=f2e118]: "2"
+              - link "会員数 0" [ref=f2e120] [cursor=pointer]:
+                - /url: http://localhost:8080/admin/search_customer
+                - generic [ref=f2e121]:
+                  - generic [ref=f2e122]: 
+                  - generic [ref=f2e124]: 会員数
+                  - generic [ref=f2e125]: "0"
+          - generic [ref=f2e127]:
+            - generic [ref=f2e128]: おすすめのプラグイン
+            - generic [ref=f2e130]:
+              - generic [ref=f2e131]:
+                - link [ref=f2e133] [cursor=pointer]:
+                  - /url: "#"
+                  - img "【EC-CUBE公式】Amazon Pay V2プラグイン(4.2/4.3系)" [ref=f2e134]
+                - generic [ref=f2e135]:
+                  - link "【EC-CUBE公式】Amazon Pay V2プラグイン(4.2/4.3系)" [ref=f2e136] [cursor=pointer]:
+                    - /url: "#"
+                  - paragraph [ref=f2e137]: 【新規顧客獲得・リピート購入率向上に期待】 「マーケティング効果」の見込めるAmazon Payの魅力
+              - generic [ref=f2e138]:
+                - link [ref=f2e140] [cursor=pointer]:
+                  - /url: "#"
+                  - img "EC-CUBEセキュリティチェックプラグイン(4.2/4.3系)" [ref=f2e141]
+                - generic [ref=f2e142]:
+                  - link "EC-CUBEセキュリティチェックプラグイン(4.2/4.3系)" [ref=f2e143] [cursor=pointer]:
+                    - /url: "#"
+                  - paragraph [ref=f2e144]: 「EC-CUBE バージョン別運用環境セキュリティチェックリスト」内の対応必須項目を中心に、利用環境のチェックを自動でおこなうことができるツールです。
+              - generic [ref=f2e145]:
+                - link [ref=f2e147] [cursor=pointer]:
+                  - /url: "#"
+                  - img "メルマガ管理プラグイン(4.2/4.3系)" [ref=f2e148]
+                - generic [ref=f2e149]:
+                  - link "メルマガ管理プラグイン(4.2/4.3系)" [ref=f2e150] [cursor=pointer]:
+                    - /url: "#"
+                  - paragraph [ref=f2e151]: メールマガジンの配信を行います。
+              - generic [ref=f2e152]:
+                - link [ref=f2e154] [cursor=pointer]:
+                  - /url: "#"
+                  - img "売上集計プラグイン(4.2/4.3系)" [ref=f2e155]
+                - generic [ref=f2e156]:
+                  - link "売上集計プラグイン(4.2/4.3系)" [ref=f2e157] [cursor=pointer]:
+                    - /url: "#"
+                  - paragraph [ref=f2e158]: 売上集計機能を追加します。
+              - generic [ref=f2e159]:
+                - link [ref=f2e161] [cursor=pointer]:
+                  - /url: "#"
+                  - img "商品レビュー管理プラグイン(4.2/4.3系)" [ref=f2e162]
+                - generic [ref=f2e163]:
+                  - link "商品レビュー管理プラグイン(4.2/4.3系)" [ref=f2e164] [cursor=pointer]:
+                    - /url: "#"
+                  - paragraph [ref=f2e165]: 商品レビュー機能を追加します。
+              - generic [ref=f2e166]:
+                - link [ref=f2e168] [cursor=pointer]:
+                  - /url: "#"
+                  - img "関連商品プラグイン(4.2/4.3系)" [ref=f2e169]
+                - generic [ref=f2e170]:
+                  - link "関連商品プラグイン(4.2/4.3系)" [ref=f2e171] [cursor=pointer]:
+                    - /url: "#"
+                  - paragraph [ref=f2e172]: 関連商品の登録を行うことができます。
+              - generic [ref=f2e173]:
+                - link [ref=f2e175] [cursor=pointer]:
+                  - /url: "#"
+                  - img "おすすめ商品管理プラグイン(4.2/4.3系)" [ref=f2e176]
+                - generic [ref=f2e177]:
+                  - link "おすすめ商品管理プラグイン(4.2/4.3系)" [ref=f2e178] [cursor=pointer]:
+                    - /url: "#"
+                  - paragraph [ref=f2e179]: おすすめ商品の表示をブロックとして追加することができるプラグインです。
+            - generic [ref=f2e180]:
+              - text: ">"
+              - link "オーナーズストア" [ref=f2e181] [cursor=pointer]:
+                - /url: http://localhost:8080/admin/store/plugin/api/search/page
+          - generic [ref=f2e183]:
+            - generic [ref=f2e184]: お知らせ
+            - iframe [ref=f2e187]:
+              - generic [ref=f3e6]:
+                - generic [ref=f3e7]:
+                  - term [ref=f3e8]:
+                    - link "セキュリティ対策まとめ" [ref=f3e9] [cursor=pointer]:
+                      - /url: https://www.ec-cube.net/info/security/?argument=2qpV46CP&dmai=a5f1154a4b3f68
+                  - definition [ref=f3e10]: より安全に利用いただくために必ずお読みください
+                - generic [ref=f3e11]:
+                  - term [ref=f3e12]:
+                    - link "セキュリティへの取り組み" [ref=f3e13] [cursor=pointer]:
+                      - /url: https://www.ec-cube.net/info/security/efforts.php?argument=2qpV46CP&dmai=20220210_effort
+                  - definition [ref=f3e14]: 取り組みについてご理解いただき、適切にセキュリティ対応をしていただきますようお願いいたします
+                - generic [ref=f3e15]:
+                  - term [ref=f3e16]:
+                    - link "管理・運用マニュアル" [ref=f3e17] [cursor=pointer]:
+                      - /url: https://www.ec-cube.net/manual/ec-cube4/
+                  - definition [ref=f3e18]: EC-CUBEの管理画面の使い方にお困りの方へ
+                - generic [ref=f3e19]:
+                  - term [ref=f3e20]:
+                    - link "EC-CUBE公式メルマガ" [ref=f3e21] [cursor=pointer]:
+                      - /url: https://www.ec-cube.net/mail/?argument=2qpV46CP&dmai=a5f1155de3b0bd
+                  - definition [ref=f3e22]: ニュースやECのノウハウ・セキュリティ情報をお届け
+  - region "Symfony Web Debug Toolbar" [ref=f2e189]:
+    - generic [ref=f2e192]:
+      - link "200 Redirect @ admin_homepage" [ref=f2e194] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/d249b7?panel=request
+        - generic [ref=f2e195]:
+          - generic [ref=f2e196]: "200"
+          - img "Redirect" [ref=f2e198]
+          - generic [ref=f2e201]: "@"
+          - generic [ref=f2e202]: admin_homepage
+      - link "-93 ms" [ref=f2e204] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/d249b7?panel=time
+        - generic [ref=f2e205]:
+          - generic [ref=f2e206]: "-93"
+          - generic [ref=f2e207]: ms
+      - link "8.0 MiB" [ref=f2e209] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/d249b7?panel=time
+        - generic [ref=f2e210]:
+          - generic [ref=f2e211]: "8.0"
+          - generic [ref=f2e212]: MiB
+      - generic [ref=f2e213]: "1"
+      - link "Logger 477" [ref=f2e221] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/d249b7?panel=logger
+        - generic [ref=f2e222]:
+          - img "Logger" [ref=f2e223]
+          - generic [ref=f2e227]: "477"
+      - link "Cache 10 in 0.07 ms" [ref=f2e229] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/d249b7?panel=cache
+        - generic [ref=f2e230]:
+          - img "Cache" [ref=f2e231]
+          - generic [ref=f2e236]: "10"
+          - generic [ref=f2e237]: in 0.07 ms
+      - link "1" [ref=f2e239] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/d249b7?panel=translation
+      - link "Security admin" [ref=f2e248] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/d249b7?panel=security
+        - generic [ref=f2e249]:
+          - img "Security" [ref=f2e250]
+          - generic [ref=f2e254]: admin
+      - link "Twig 53 ms" [ref=f2e256] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/d249b7?panel=twig
+        - generic [ref=f2e257]:
+          - img "Twig" [ref=f2e258]
+          - generic [ref=f2e262]: "53"
+          - generic [ref=f2e263]: ms
+      - link "15 in 2.21 ms" [ref=f2e265] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/d249b7?panel=db
+        - generic [ref=f2e266]:
+          - generic [ref=f2e272]: "15"
+          - generic [ref=f2e273]: in 2.21 ms
+      - link "22" [ref=f2e275] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/d249b7?panel=doctrine_migrations
+      - link "Symfony 7.4.13" [ref=f2e282] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/d249b7?panel=config
+        - generic [ref=f2e283]:
+          - img "Symfony" [ref=f2e285]
+          - generic [ref=f2e287]: 7.4.13
+      - generic [ref=f2e289]:
+        - img "eccube_logo_basic" [ref=f2e290]
+        - generic [ref=f2e295]: 4.3.1-p1
+      - button "Toggle Symfony Toolbar" [expanded] [ref=f2e296] [cursor=pointer]:
+        - generic "Close Toolbar" [ref=f2e297]

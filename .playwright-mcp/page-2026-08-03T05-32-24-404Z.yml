@@ -1,0 +1,208 @@
+- generic [active] [ref=f20e1]:
+  - generic [ref=f20e2]: デバッグモードが有効になっています。
+  - generic [ref=f20e6]:
+    - banner [ref=f20e7]:
+      - generic [ref=f20e8]:
+        - generic [ref=f20e9]:
+          - generic [ref=f20e11]:
+            - generic:
+              - combobox [ref=f20e14] [cursor=pointer]:
+                - option "全ての商品" [selected]
+                - option "新入荷"
+                - option "ジェラート"
+                - option "彩のデザート"
+                - option "CUBE"
+                - option "アイスサンド"
+                - option "フルーツ"
+              - generic [ref=f20e16]:
+                - searchbox "キーワードを入力" [ref=f20e17]
+                - button [ref=f20e18] [cursor=pointer]
+          - generic: 
+        - generic [ref=f20e20]:
+          - generic [ref=f20e22]:
+            - link " 新規会員登録" [ref=f20e24] [cursor=pointer]:
+              - /url: http://localhost:8080/entry
+              - generic [ref=f20e25]: 
+              - generic [ref=f20e26]: 新規会員登録
+            - link " お気に入り" [ref=f20e28] [cursor=pointer]:
+              - /url: http://localhost:8080/mypage/favorite
+              - generic [ref=f20e29]: 
+              - generic [ref=f20e30]: お気に入り
+            - link " ログイン" [ref=f20e32] [cursor=pointer]:
+              - /url: http://localhost:8080/mypage/login
+              - generic [ref=f20e33]: 
+              - generic [ref=f20e34]: ログイン
+          - generic [ref=f20e37] [cursor=pointer]:
+            - generic [ref=f20e38]:
+              - text: 
+              - generic [ref=f20e39]: "2"
+            - generic [ref=f20e40]: ￥6,160
+      - heading [level=1] [ref=f20e46]:
+        - link "EC-CUBE SHOP" [ref=f20e47] [cursor=pointer]:
+          - /url: http://localhost:8080/
+      - list [ref=f20e50]:
+        - listitem [ref=f20e51]:
+          - link "新入荷" [ref=f20e52] [cursor=pointer]:
+            - /url: http://localhost:8080/products/list?category_id=2
+        - listitem [ref=f20e53]:
+          - link "ジェラート" [ref=f20e54] [cursor=pointer]:
+            - /url: http://localhost:8080/products/list?category_id=1
+          - list:
+            - listitem:
+              - link "彩のデザート" [ref=f20e55] [cursor=pointer]:
+                - /url: http://localhost:8080/products/list?category_id=3
+              - list:
+                - text: 
+                - listitem:
+                  - link "CUBE" [ref=f20e56] [cursor=pointer]:
+                    - /url: http://localhost:8080/products/list?category_id=4
+        - listitem [ref=f20e57]:
+          - link "アイスサンド" [ref=f20e58] [cursor=pointer]:
+            - /url: http://localhost:8080/products/list?category_id=5
+          - list:
+            - listitem:
+              - link "フルーツ" [ref=f20e59] [cursor=pointer]:
+                - /url: http://localhost:8080/products/list?category_id=6
+    - main [ref=f20e61]:
+      - heading "ご注文手続き" [level=1] [ref=f20e64]
+      - list [ref=f20e67]:
+        - listitem [ref=f20e68]:
+          - generic [ref=f20e69]: "1"
+          - generic [ref=f20e70]: カートの商品
+        - listitem [ref=f20e71]:
+          - generic [ref=f20e72]: "2"
+          - generic [ref=f20e73]: お客様情報
+        - listitem [ref=f20e74]:
+          - generic [ref=f20e75]: "3"
+          - generic [ref=f20e76]: ご注文手続き
+        - listitem [ref=f20e77]:
+          - generic [ref=f20e78]: "4"
+          - generic [ref=f20e79]: ご注文内容確認
+        - listitem [ref=f20e80]:
+          - generic [ref=f20e81]: "5"
+          - generic [ref=f20e82]: 完了
+      - generic [ref=f20e84]:
+        - generic [ref=f20e85]:
+          - generic [ref=f20e86]:
+            - heading "お客様情報" [level=2] [ref=f20e88]
+            - button "変更" [ref=f20e90] [cursor=pointer]
+            - generic [ref=f20e91]:
+              - paragraph [ref=f20e92]: 検証 太郎 様
+              - paragraph [ref=f20e93]: ケンショウ タロウ
+              - paragraph
+              - paragraph [ref=f20e94]:
+                - text: 〒
+                - generic [ref=f20e95]: "5300001"
+              - paragraph [ref=f20e96]: 大阪府大阪市北区梅田1-1-1
+              - paragraph [ref=f20e97]: "0669999999"
+              - paragraph [ref=f20e98]: test197@example.com
+          - generic [ref=f20e99]:
+            - heading "配送情報" [level=2] [ref=f20e101]
+            - generic [ref=f20e102]:
+              - text: お届け先
+              - button "変更" [ref=f20e104] [cursor=pointer]
+            - generic [ref=f20e105]:
+              - list [ref=f20e106]:
+                - listitem [ref=f20e107]:
+                  - generic [ref=f20e108]:
+                    - img "チェリーアイスサンド" [ref=f20e110]
+                    - generic [ref=f20e111]:
+                      - paragraph [ref=f20e112]: チェリーアイスサンド
+                      - paragraph [ref=f20e113]: ￥3,080 × 2小計：￥6,160
+              - paragraph
+            - generic [ref=f20e114]:
+              - paragraph [ref=f20e115]: 検証 太郎 (ケンショウ タロウ) 様
+              - paragraph [ref=f20e116]: 〒5300001 大阪府大阪市北区梅田1-1-1
+              - paragraph [ref=f20e117]: "0669999999"
+            - generic [ref=f20e119]:
+              - generic [ref=f20e120]:
+                - generic [ref=f20e121]: 配送方法
+                - combobox [ref=f20e122]:
+                  - option "サンプル業者" [selected]
+              - generic [ref=f20e123]:
+                - generic [ref=f20e124]: お届け日
+                - combobox [ref=f20e125]:
+                  - option "指定なし" [selected]
+              - generic [ref=f20e126]:
+                - generic [ref=f20e127]: お届け時間
+                - combobox [ref=f20e128]:
+                  - option "指定なし" [selected]
+                  - option "午前"
+                  - option "午後"
+            - button "お届け先を追加する" [ref=f20e130] [cursor=pointer]
+          - generic [ref=f20e131]:
+            - heading "お支払方法" [level=2] [ref=f20e133]
+            - generic [ref=f20e134]:
+              - generic [ref=f20e135]:
+                - radio "郵便振替" [checked] [ref=f20e136]
+                - generic [ref=f20e137]: 郵便振替
+              - generic [ref=f20e138]:
+                - radio "現金書留" [ref=f20e139]
+                - generic [ref=f20e140]: 現金書留
+              - generic [ref=f20e141]:
+                - radio "銀行振込" [ref=f20e142]
+                - generic [ref=f20e143]: 銀行振込
+              - generic [ref=f20e144]:
+                - radio "代金引換" [ref=f20e145]
+                - generic [ref=f20e146]: 代金引換
+          - generic [ref=f20e147]:
+            - heading "クーポン" [level=2] [ref=f20e149]
+            - generic [ref=f20e150]:
+              - strong [ref=f20e151]: クーポンコード TESTCOUPON197 を利用しています。
+              - paragraph [ref=f20e152]:
+                - link "クーポンを変更する" [ref=f20e153] [cursor=pointer]:
+                  - /url: http://localhost:8080/plugin/coupon/shopping/shopping_coupon
+          - generic [ref=f20e154]:
+            - heading "お問い合わせ" [level=2] [ref=f20e156]
+            - textbox "お問い合わせ事項がございましたら、こちらにご入力ください。(3000文字まで)" [ref=f20e158]
+        - generic [ref=f20e160]:
+          - generic [ref=f20e161]:
+            - term [ref=f20e162]: 小計
+            - definition [ref=f20e163]: ￥6,160
+          - generic [ref=f20e164]:
+            - term [ref=f20e165]: 手数料
+            - definition [ref=f20e166]: ￥0
+          - generic [ref=f20e167]:
+            - term [ref=f20e168]: 送料
+            - definition [ref=f20e169]: ￥1,000
+          - generic [ref=f20e170]: 合計￥7,160税込
+          - generic [ref=f20e171]:
+            - term [ref=f20e172]: 検証用クーポン197
+            - definition [ref=f20e173]: "-￥500"
+          - generic [ref=f20e174]: お支払い合計￥6,660税込
+          - generic [ref=f20e175]:
+            - term [ref=f20e176]: "[ 税率 10 %対象"
+            - definition [ref=f20e177]: ￥6,660 (内消費税 ￥605) ]
+          - generic [ref=f20e178]:
+            - button "確認する" [ref=f20e179] [cursor=pointer]
+            - link "カートに戻る" [ref=f20e180] [cursor=pointer]:
+              - /url: http://localhost:8080/cart
+    - contentinfo [ref=f20e181]:
+      - generic [ref=f20e183]:
+        - list [ref=f20e184]:
+          - listitem [ref=f20e185]:
+            - link "当サイトについて" [ref=f20e186] [cursor=pointer]:
+              - /url: http://localhost:8080/help/about
+          - listitem [ref=f20e187]:
+            - link "プライバシーポリシー" [ref=f20e188] [cursor=pointer]:
+              - /url: http://localhost:8080/help/privacy
+          - listitem [ref=f20e189]:
+            - link "特定商取引法に基づく表記" [ref=f20e190] [cursor=pointer]:
+              - /url: http://localhost:8080/help/tradelaw
+          - listitem [ref=f20e191]:
+            - link "お問い合わせ" [ref=f20e192] [cursor=pointer]:
+              - /url: http://localhost:8080/contact
+        - generic [ref=f20e193]:
+          - link "EC-CUBE SHOP" [ref=f20e195] [cursor=pointer]:
+            - /url: http://localhost:8080/
+          - generic [ref=f20e196]: copyright (c) EC-CUBE SHOP all rights reserved.
+  - text:       
+  - region "Symfony Web Debug Toolbar" [ref=f20e197]:
+    - generic [ref=f20e200]:
+      - link "Symfony Loading…" [ref=f20e202] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/b0bee8?panel=request
+        - generic [ref=f20e203]:
+          - img "Symfony" [ref=f20e204]
+          - generic [ref=f20e206]: Loading…
+      - button "Toggle Symfony Toolbar" [expanded] [ref=f20e207] [cursor=pointer]:
+        - generic "Close Toolbar" [ref=f20e208]

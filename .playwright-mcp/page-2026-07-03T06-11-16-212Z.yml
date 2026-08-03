@@ -1,0 +1,182 @@
+- generic [ref=f3e1]:
+  - generic [ref=f3e3]:
+    - img [ref=f3e5]
+    - text: デバッグモードが有効になっています。
+  - generic [ref=f3e6]:
+    - banner [ref=f3e7]:
+      - generic [ref=f3e8]:
+        - generic [ref=f3e9]:
+          - generic [ref=f3e11]:
+            - generic:
+              - combobox [ref=f3e14] [cursor=pointer]:
+                - option "全ての商品" [selected]
+                - option "新入荷"
+                - option "ジェラート"
+                - option "彩のデザート"
+                - option "CUBE"
+                - option "アイスサンド"
+                - option "フルーツ"
+              - generic [ref=f3e16]:
+                - searchbox "キーワードを入力" [ref=f3e17]
+                - button [ref=f3e18] [cursor=pointer]
+          - generic: 
+        - generic [ref=f3e20]:
+          - generic [ref=f3e22]:
+            - link " 新規会員登録" [ref=f3e24] [cursor=pointer]:
+              - /url: http://localhost:8080/entry
+              - generic [ref=f3e25]: 
+              - generic [ref=f3e26]: 新規会員登録
+            - link " お気に入り" [ref=f3e28] [cursor=pointer]:
+              - /url: http://localhost:8080/mypage/favorite
+              - generic [ref=f3e29]: 
+              - generic [ref=f3e30]: お気に入り
+            - link " ログイン" [ref=f3e32] [cursor=pointer]:
+              - /url: http://localhost:8080/mypage/login
+              - generic [ref=f3e33]: 
+              - generic [ref=f3e34]: ログイン
+          - generic [ref=f3e37] [cursor=pointer]:
+            - generic [ref=f3e38]:
+              - text: 
+              - generic [ref=f3e39]: "1"
+            - generic [ref=f3e41]: ￥3,080
+      - heading "EC-CUBE SHOP" [level=1] [ref=f3e46]:
+        - link "EC-CUBE SHOP" [ref=f3e47] [cursor=pointer]:
+          - /url: http://localhost:8080/
+      - list [ref=f3e50]:
+        - listitem [ref=f3e51]:
+          - link "新入荷" [ref=f3e52] [cursor=pointer]:
+            - /url: http://localhost:8080/products/list?category_id=2
+        - listitem [ref=f3e53]:
+          - link "ジェラート" [ref=f3e54] [cursor=pointer]:
+            - /url: http://localhost:8080/products/list?category_id=1
+          - list:
+            - listitem:
+              - link "彩のデザート" [ref=f3e55] [cursor=pointer]:
+                - /url: http://localhost:8080/products/list?category_id=3
+              - list:
+                - text: 
+                - listitem:
+                  - link "CUBE" [ref=f3e56] [cursor=pointer]:
+                    - /url: http://localhost:8080/products/list?category_id=4
+        - listitem [ref=f3e57]:
+          - link "アイスサンド" [ref=f3e58] [cursor=pointer]:
+            - /url: http://localhost:8080/products/list?category_id=5
+          - list:
+            - listitem:
+              - link "フルーツ" [ref=f3e59] [cursor=pointer]:
+                - /url: http://localhost:8080/products/list?category_id=6
+    - main [ref=f3e61]:
+      - heading "ログイン" [level=1] [ref=f3e64]
+      - generic [ref=f3e66]:
+        - generic [ref=f3e69]:
+          - generic [ref=f3e72]:
+            - generic [ref=f3e73]:
+              - textbox "メールアドレス" [active] [ref=f3e74]
+              - textbox "パスワード" [ref=f3e75]
+            - generic [ref=f3e78]:
+              - checkbox "次回から自動的にログインする" [ref=f3e79]
+              - generic [ref=f3e80]: 次回から自動的にログインする
+          - generic [ref=f3e81]:
+            - button "ログイン" [ref=f3e84] [cursor=pointer]
+            - generic [ref=f3e85]:
+              - link "ログイン情報をお忘れですか？" [ref=f3e87] [cursor=pointer]:
+                - /url: http://localhost:8080/forgot
+              - link "新規会員登録" [ref=f3e89] [cursor=pointer]:
+                - /url: http://localhost:8080/entry
+        - generic [ref=f3e92]:
+          - paragraph [ref=f3e93]: 会員登録をせずに購入手続きをされたい方は、下記よりお進みください。
+          - link "ゲスト購入" [ref=f3e95] [cursor=pointer]:
+            - /url: http://localhost:8080/shopping/nonmember
+    - contentinfo [ref=f3e96]:
+      - generic [ref=f3e98]:
+        - list [ref=f3e99]:
+          - listitem [ref=f3e100]:
+            - link "当サイトについて" [ref=f3e101] [cursor=pointer]:
+              - /url: http://localhost:8080/help/about
+          - listitem [ref=f3e102]:
+            - link "プライバシーポリシー" [ref=f3e103] [cursor=pointer]:
+              - /url: http://localhost:8080/help/privacy
+          - listitem [ref=f3e104]:
+            - link "特定商取引法に基づく表記" [ref=f3e105] [cursor=pointer]:
+              - /url: http://localhost:8080/help/tradelaw
+          - listitem [ref=f3e106]:
+            - link "お問い合わせ" [ref=f3e107] [cursor=pointer]:
+              - /url: http://localhost:8080/contact
+        - generic [ref=f3e108]:
+          - link "EC-CUBE SHOP" [ref=f3e110] [cursor=pointer]:
+            - /url: http://localhost:8080/
+          - generic [ref=f3e111]: copyright (c) EC-CUBE SHOP all rights reserved.
+  - text:       
+  - region "Symfony Web Debug Toolbar" [ref=f3e112]:
+    - generic [ref=f3e115]:
+      - link "200 Redirect @ shopping_login" [ref=f3e117] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/7a8ead?panel=request
+        - generic [ref=f3e118]:
+          - generic [ref=f3e119]: "200"
+          - img "Redirect" [ref=f3e121]
+          - generic [ref=f3e124]: "@"
+          - generic [ref=f3e125]: shopping_login
+      - link "98 ms" [ref=f3e127] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/7a8ead?panel=time
+        - generic [ref=f3e128]:
+          - generic [ref=f3e129]: "98"
+          - generic [ref=f3e130]: ms
+      - link "12.0 MiB" [ref=f3e132] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/7a8ead?panel=time
+        - generic [ref=f3e133]:
+          - generic [ref=f3e134]: "12.0"
+          - generic [ref=f3e135]: MiB
+      - link "Cache 1" [ref=f3e137] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/7a8ead?panel=form
+        - generic [ref=f3e138]:
+          - img "Cache" [ref=f3e139]
+          - generic [ref=f3e145]: "1"
+      - link "Logger 483" [ref=f3e147] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/7a8ead?panel=logger
+        - generic [ref=f3e148]:
+          - img "Logger" [ref=f3e149]
+          - generic [ref=f3e153]: "483"
+      - link "Cache 20 in 0.25 ms" [ref=f3e155] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/7a8ead?panel=cache
+        - generic [ref=f3e156]:
+          - img "Cache" [ref=f3e157]
+          - generic [ref=f3e162]: "20"
+          - generic [ref=f3e163]: in 0.25 ms
+      - link "3" [ref=f3e165] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/7a8ead?panel=translation
+        - generic [ref=f3e166]:
+          - img [ref=f3e167]
+          - generic [ref=f3e172]: "3"
+      - link "Security n/a" [ref=f3e174] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/7a8ead?panel=security
+        - generic [ref=f3e175]:
+          - img "Security" [ref=f3e176]
+          - generic [ref=f3e180]: n/a
+      - link "Twig 37 ms" [ref=f3e182] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/7a8ead?panel=twig
+        - generic [ref=f3e183]:
+          - img "Twig" [ref=f3e184]
+          - generic [ref=f3e188]: "37"
+          - generic [ref=f3e189]: ms
+      - link "19 in 3.21 ms" [ref=f3e191] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/7a8ead?panel=db
+        - generic [ref=f3e192]:
+          - img [ref=f3e193]
+          - generic [ref=f3e198]: "19"
+          - generic [ref=f3e199]: in 3.21 ms
+      - link "22" [ref=f3e201] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/7a8ead?panel=doctrine_migrations
+        - generic [ref=f3e202]:
+          - img [ref=f3e203]
+          - generic [ref=f3e206]: "22"
+      - link "Symfony 7.4.13" [ref=f3e208] [cursor=pointer]:
+        - /url: http://localhost:8080/_profiler/7a8ead?panel=config
+        - generic [ref=f3e209]:
+          - img "Symfony" [ref=f3e211]
+          - generic [ref=f3e213]: 7.4.13
+      - generic [ref=f3e215]:
+        - img "eccube_logo_basic" [ref=f3e216]
+        - generic [ref=f3e221]: 4.3.1-p1
+      - button "Toggle Symfony Toolbar" [expanded] [ref=f3e222] [cursor=pointer]:
+        - generic "Close Toolbar" [ref=f3e223]:
+          - img [ref=f3e224]

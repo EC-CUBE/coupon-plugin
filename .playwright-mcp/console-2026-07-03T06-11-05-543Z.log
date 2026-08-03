@@ -1,0 +1,2 @@
+[   10132ms] [VERBOSE] [DOM] Input elements should have autocomplete attributes (suggested: "current-password"): (More info: https://goo.gl/9p2vKq) %o @ http://localhost:8080/shopping/login:0
+[   65007ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8080/_wdt/1bea7e?XDEBUG_IGNORE=1:0
