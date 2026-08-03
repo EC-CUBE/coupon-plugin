@@ -387,7 +387,8 @@ class CouponServiceTest extends EccubeTestCase
 
         $this->actual = $discount;
         $this->expected = (int) round(round($total) * $discountRate / 100);
-        $this->verify();
+        // decimal カラムは Doctrine が文字列で返すため数値等価で比較する
+        self::assertEquals($this->expected, $this->actual);
     }
 
     /**
@@ -449,7 +450,8 @@ class CouponServiceTest extends EccubeTestCase
 
         $this->actual = $discount;
         $this->expected = (int) round(round($total) * $discountRate / 100);
-        $this->verify();
+        // decimal カラムは Doctrine が文字列で返すため数値等価で比較する
+        self::assertEquals($this->expected, $this->actual);
     }
 
     /**
