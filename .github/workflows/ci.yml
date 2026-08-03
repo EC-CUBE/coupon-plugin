@@ -222,7 +222,9 @@ jobs:
       - name: Setup EC-CUBE
         working-directory: 'ec-cube'
         run: |
-          bin/console doctrine:database:create
+          # SQLite はファイルベースで CREATE DATABASE が無く, DBAL 4 では
+          # SQLitePlatform::getCreateDatabaseSQL が未サポートで例外になるため
+          # doctrine:database:create は実行しない (schema:create が DB ファイルを生成する)。
           bin/console doctrine:schema:create
           # プラグイン有効化時に DeviceType 等のマスタデータを参照するため fixtures を投入する
           bin/console eccube:fixtures:load
