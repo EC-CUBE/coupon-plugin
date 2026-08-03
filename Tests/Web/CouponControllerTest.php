@@ -164,7 +164,8 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
 
         $this->expected = round(0 - $Coupon->getDiscountPrice(), 2);
         $this->actual = $Order->getItems()->getDiscounts()->first()->getPrice();
-        $this->verify();
+        // decimal カラムは Doctrine が文字列で返すため数値等価で比較する
+        self::assertEquals($this->expected, $this->actual);
     }
 
     /**
@@ -259,7 +260,8 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
 
         $this->actual = $Coupon->getDiscountPrice();
         $this->expected = 0 - $Order->getItems()->getDiscounts()->first()->getPrice();
-        $this->verify();
+        // decimal カラムは Doctrine が文字列で返すため数値等価で比較する
+        self::assertEquals($this->expected, $this->actual);
     }
 
     /**
@@ -300,7 +302,8 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
 
         $this->actual = $CouponOrder->getDiscount();
         $this->expected = 0 - $Order->getItems()->getDiscounts()->first()->getPrice();
-        $this->verify();
+        // decimal カラムは Doctrine が文字列で返すため数値等価で比較する
+        self::assertEquals($this->expected, $this->actual);
     }
 
     /**
@@ -358,7 +361,8 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
 
         $this->actual = $Coupon->getDiscountPrice();
         $this->expected = 0 - $Order->getItems()->getDiscounts()->first()->getPrice();
-        $this->verify();
+        // decimal カラムは Doctrine が文字列で返すため数値等価で比較する
+        self::assertEquals($this->expected, $this->actual);
     }
 
     /**
