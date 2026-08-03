@@ -58,7 +58,12 @@ class CouponShoppingController extends AbstractController
      * @see https://github.com/EC-CUBE/coupon-plugin/issues/128
      */
     #[Route(path: '/plugin/coupon/shopping/shopping_coupon', name: 'plugin_coupon_shopping')]
-    #[Template('@Coupon44/default/shopping_coupon.twig')]
+    // dtb_page.file_name (PluginManager::createPage で登録) と一致させるため, あえて名前空間
+    // (@Coupon44) を使わない。名前空間なしの場合はテーマ側 (app/template/default/...) が
+    // プラグイン本体 (app/Plugin) より優先して解決されるため, 管理画面のページ管理で編集した
+    // 内容が反映される。@Coupon44 にするとプラグイン本体に固定解決され, ページ管理での編集が
+    // 無視されてしまうので変更しないこと。
+    #[Template('Coupon44/Resource/template/default/shopping_coupon.twig')]
     public function shoppingCoupon(Request $request)
     {
         $preOrderId = $this->cartService->getPreOrderId();

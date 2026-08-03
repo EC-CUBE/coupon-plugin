@@ -151,6 +151,8 @@ class CouponProcessorTest extends EccubeTestCase
         $this->assertEquals($Coupon->getCouponName(), $OrderItem->getProductName());
         // クーポン値引き明細は不課税で追加される
         $this->assertSame(TaxType::NON_TAXABLE, $OrderItem->getTaxType()->getId());
+        // OrderItemType が「値引き」で追加される (受注金額の集計に影響する)
+        $this->assertTrue($OrderItem->isDiscount(), '値引き明細として追加されている');
     }
 
     public function testRemoveCouponDiscountItem(): void
@@ -206,6 +208,8 @@ class CouponProcessorTest extends EccubeTestCase
         $this->assertEquals($Coupon->getCouponName(), $OrderItem->getProductName());
         // クーポン値引き明細は不課税で追加される
         $this->assertSame(TaxType::NON_TAXABLE, $OrderItem->getTaxType()->getId());
+        // OrderItemType が「値引き」で追加される (受注金額の集計に影響する)
+        $this->assertTrue($OrderItem->isDiscount(), '値引き明細として追加されている');
     }
 
     public function testProcessWithNotExistsOrderItem(): void
@@ -232,6 +236,8 @@ class CouponProcessorTest extends EccubeTestCase
         $this->assertEquals($Coupon->getCouponName(), $OrderItem->getProductName());
         // クーポン値引き明細は不課税で追加される
         $this->assertSame(TaxType::NON_TAXABLE, $OrderItem->getTaxType()->getId());
+        // OrderItemType が「値引き」で追加される (受注金額の集計に影響する)
+        $this->assertTrue($OrderItem->isDiscount(), '値引き明細として追加されている');
     }
 
     public function testProcessWithCouponOrderIsNotFound(): void
@@ -265,6 +271,42 @@ class CouponProcessorTest extends EccubeTestCase
             )
         );
         $products = $this->couponService->existsCouponProduct($Coupon, $this->Order);
+        $discount = $this->couponService->recalcOrder($Coupon, $products);
+        $this->couponService->saveCouponOrder($this->Order, $Coupon, $Coupon->getCouponCd(), $this->Customer, $discount);
+
+        try {
+            $this->wrapperOfValidate($this->processor, $this->Order, $this->context);
+            $this->addToAssertionCount(1);
+        } catch (InvalidItemException $e) {
+            $this->fail($e->getMessage());
+        }
+    }
+
+    /**
+     * RoundingType 未設定の明細でも validate() が失敗しないこと.
+     *
+     * 複数配送の確定時 (ShippingMultipleController) は RoundingType を設定せずに OrderItem が
+     * 作り直され, 本体の TaxProcessor より先に itemHolderValidator が走る。フォールバックが
+     * 無いと CouponService::isLowerLimitCoupon() で TypeError になり購入フローが 500 になる。
+     */
+    public function testValidateWithoutRoundingType(): void
+    {
+        $Coupon = $this->getCoupon();
+        self::getContainer()->get('security.token_storage')->setToken(
+            new UsernamePasswordToken(
+                $this->Customer, 'customer', $this->Customer->getRoles()
+            )
+        );
+
+        // 複数配送の確定時と同じ状態 (RoundingType 未設定) にする
+        foreach ($this->Order->getProductOrderItems() as $OrderItem) {
+            $OrderItem->setRoundingType(null);
+        }
+        $this->entityManager->flush();
+
+        $products = $this->couponService->existsCouponProduct($Coupon, $this->Order);
+        self::assertNull(current($products)['rounding_type_id']);
+
         $discount = $this->couponService->recalcOrder($Coupon, $products);
         $this->couponService->saveCouponOrder($this->Order, $Coupon, $Coupon->getCouponCd(), $this->Customer, $discount);
 

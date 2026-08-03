@@ -41,17 +41,15 @@ class CouponOrderRepository extends AbstractRepository
     /**
      * クーポン受注情報を保存する.
      *
-     * 本体の AbstractRepository::save() は persist のみだが、呼び出し側
-     * (CouponService::saveCouponOrder 等) は save() 後に flush しないため、
-     * ここで flush まで行う。シグネチャは親と互換にする。
+     * 本体の AbstractRepository::save() と同じく persist のみを行う。ORM 3 で
+     * スコープ付き flush が廃止され flush() が UnitOfWork 全体に波及するため,
+     * flush の実行タイミングは呼び出し側で明示する。
      *
      * @param CouponOrder $CouponOrder
      */
     public function save(AbstractEntity $CouponOrder): void
     {
-        $em = $this->getEntityManager();
-        $em->persist($CouponOrder);
-        $em->flush();
+        $this->getEntityManager()->persist($CouponOrder);
     }
 
     /**

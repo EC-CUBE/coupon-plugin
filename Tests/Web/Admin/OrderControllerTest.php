@@ -195,9 +195,11 @@ class OrderControllerTest extends AbstractEditControllerTestCase
         // テストハーネス制約。本番の実リクエストでは発生しない）。
         // 本プラグイン起因ではないことを CouponStateProcessor を無効化しても同例外が出る
         // ことで確認済みのため、このケースはスキップする。
-        // TODO 本体側 (EC-CUBE/ec-cube) で DAMA DoctrineTestBundle と StockReduceProcessor の
-        //      悲観ロックの非互換が解消され次第、markTestSkipped を外して再有効化する。
-        //      追跡: https://github.com/EC-CUBE/ec-cube （StockReduceProcessor / EntityManager::lock）
+        // TODO 本体側で DAMA DoctrineTestBundle と StockReduceProcessor の悲観ロックの
+        //      非互換が解消され次第、markTestSkipped を外して再有効化する。
+        //      追跡: EC-CUBE/ec-cube#7016
+        //      キャンセル時のクーポン枚数戻しは Web リクエストを介さないユニットテスト
+        //      (Tests/Service/PurchaseFlow/Processor/CouponStateProcessorTest) で代替している。
         $this->markTestSkipped('本体 StockReduceProcessor の悲観ロックが DAMA テストトランザクションと非互換のためスキップ（プラグイン非依存）');
 
         // @phpstan-ignore deadCode.unreachable (markTestSkipped 以降は再有効化用に残した到達不能コード)

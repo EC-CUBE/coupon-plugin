@@ -15,7 +15,6 @@ namespace Plugin\Coupon44;
 
 use Eccube\Entity\Order;
 use Eccube\Event\TemplateEvent;
-use Plugin\Coupon44\Entity\Coupon;
 use Plugin\Coupon44\Repository\CouponOrderRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 

@@ -459,6 +459,72 @@ class CouponServiceTest extends EccubeTestCase
     }
 
     /**
+     * RoundingType 未設定の OrderItem でも isLowerLimitCoupon() が計算できること.
+     *
+     * 複数配送の確定時 (ShippingMultipleController) は RoundingType を設定せずに OrderItem が
+     * 作り直されるため rounding_type_id が null で渡ってくる。本体 4.4 の
+     * TaxRuleService::calcTax() は第3引数が非 nullable な int なので, フォールバックが無いと
+     * TypeError で購入フローが 500 になる。
+     */
+    public function testIsLowerLimitCouponWithoutRoundingType(): void
+    {
+        /** @var Coupon $Coupon */
+        $Coupon = $this->getCoupon(Coupon::PRODUCT);
+
+        $Customer = $this->createCustomer();
+        $Order = $this->createOrder($Customer);
+
+        $details = $Coupon->getCouponDetails();
+        /** @var CouponDetail $CouponDetail */
+        $CouponDetail = $details[0];
+        $Product = $CouponDetail->getProduct();
+        $ProductClasses = $Product->getProductClasses();
+        $ProductClass = $ProductClasses[0];
+
+        // remove old item
+        foreach ($Order->getOrderItems() as $orderItem) {
+            $Order->removeOrderItem($orderItem);
+            $this->entityManager->remove($orderItem);
+        }
+
+        // デフォルト課税規則
+        $TaxRule = $this->taxRuleRepository->getByRule();
+        $orderItem = new OrderItem();
+        $OrderItemTypeProduct = $this->orderItemTypeRepository->find(OrderItemType::PRODUCT);
+        $orderItem->setProduct($Product)
+            ->setProductClass($ProductClass)
+            ->setProductName($Product->getName())
+            ->setProductCode($ProductClass->getCode())
+            ->setOrderItemType($OrderItemTypeProduct)
+            ->setPrice($ProductClass->getPrice02())
+            ->setQuantity('1')
+            ->setTaxRate($TaxRule->getTaxRate());
+        // 丸め規則は設定しない (複数配送確定時と同じ状態)
+        $this->entityManager->persist($orderItem);
+        $orderItem->setOrder($Order);
+        $Order->addOrderItem($orderItem);
+        $this->entityManager->flush();
+
+        $products = $this->couponService->existsCouponProduct($Coupon, $Order);
+        self::assertCount(1, $products);
+        // rounding_type_id が null のまま渡ってくることを確認する
+        self::assertNull(current($products)['rounding_type_id']);
+
+        // デフォルト課税規則で計算した税込金額
+        $price = (string) $ProductClass->getPrice02();
+        $tax = $this->taxRuleService->calcTax(
+            $price,
+            (string) $TaxRule->getTaxRate(),
+            $TaxRule->getRoundingType()->getId(),
+            (string) $TaxRule->getTaxAdjust()
+        );
+        $subTotal = (int) ((float) $price + (float) $tax);
+
+        self::assertTrue($this->couponService->isLowerLimitCoupon($products, $subTotal));
+        self::assertFalse($this->couponService->isLowerLimitCoupon($products, $subTotal + 1));
+    }
+
+    /**
      * @dataProvider roundingTypeProvider
      *
      * https://github.com/EC-CUBE/coupon-plugin/issues/120

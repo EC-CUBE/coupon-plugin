@@ -70,6 +70,8 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
         $preOrderId = sha1(StringUtil::random(32));
         $CouponOrder = $this->getCouponOrder($Coupon, $discount, $preOrderId);
         $this->couponOrderRepository->save($CouponOrder);
+        // save() は persist のみ行うため, 検索前に flush する
+        $this->entityManager->flush();
 
         $CouponOrder1 = $this->couponOrderRepository->findOneBy(['pre_order_id' => $preOrderId]);
 
@@ -95,6 +97,8 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
         $CouponOrder->setOrderDate(new \DateTime());
 
         $this->couponOrderRepository->save($CouponOrder);
+        // save() は persist のみ行うため, 検索前に flush する
+        $this->entityManager->flush();
 
         $CouponOrder1 = $this->couponOrderRepository->findUseCoupon($Coupon->getCouponCd(), $this->Customer->getEmail());
 
@@ -115,6 +119,8 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
 
         $CouponOrder = $this->getCouponOrder($Coupon, $discount, $preOrderId);
         $this->couponOrderRepository->save($CouponOrder);
+        // save() は persist のみ行うため, 検索前に flush する
+        $this->entityManager->flush();
 
         $CouponOrder1 = $this->couponOrderRepository->getCouponOrder($preOrderId);
 

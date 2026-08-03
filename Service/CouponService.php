@@ -149,6 +149,7 @@ class CouponService
         // 割引金額をセット
         $CouponOrder->setDiscount($discount);
         $repository->save($CouponOrder);
+        $this->entityManager->flush();
     }
 
     /**
@@ -174,14 +175,8 @@ class CouponService
             $total = 0;
             // include tax
             foreach ($couponProducts as $productClassId => $value) {
-                // 税率が取得できない場合は TaxRule から取得し直す
-                if ($value['tax_rate'] < 1 || $value['rounding_type_id'] === null) {
-                    /** @var ProductClass $ProductClass */
-                    $ProductClass = $this->productClassRepository->find($productClassId);
-                    $TaxRule = $this->taxRuleRepository->getByRule($ProductClass->getProduct(), $ProductClass);
-                    $value['tax_rate'] = $TaxRule->getTaxRate();
-                    $value['rounding_type_id'] = $TaxRule->getRoundingType()->getId();
-                }
+                // 税率・丸め規則が取得できない場合は TaxRule から取得し直す
+                $value = $this->resolveTaxValues($productClassId, $value);
                 $total += ($value['price'] + $this->taxRuleService->calcTax($value['price'], $value['tax_rate'], $value['rounding_type_id'])) * $value['quantity'];
             }
             /** @var TaxRule $DefaultTaxRule */
@@ -210,7 +205,10 @@ class CouponService
     {
         $subTotal = 0;
         // price inc tax
-        foreach ($productCoupon as $key => $value) {
+        foreach ($productCoupon as $productClassId => $value) {
+            // 税率・丸め規則が取得できない場合は TaxRule から取得し直す
+            // (複数配送の確定時など, RoundingType 未設定の OrderItem が渡されるため)
+            $value = $this->resolveTaxValues($productClassId, $value);
             $subTotal += ($value['price'] + $this->taxRuleService->calcTax($value['price'], $value['tax_rate'], $value['rounding_type_id'])) * $value['quantity'];
         }
 
@@ -396,7 +394,7 @@ class CouponService
             $couponProducts[$orderItem->getProductClass()->getId()] = [
                 'price' => $orderItem->getPrice(),
                 'quantity' => $orderItem->getQuantity(),
-                // tax_rate, rounding_type_idは複数配送の個数変更時に取得できない. recalcOrderで取得し直している
+                // tax_rate, rounding_type_idは複数配送の個数変更時に取得できない. resolveTaxValues()で取得し直している
                 // https://github.com/EC-CUBE/coupon-plugin/pull/106/commits/d47f60745b283023cd7a990c609e6399701ddce1
                 'tax_rate' => $orderItem->getTaxRate(),
                 'rounding_type_id' => $orderItem->getRoundingType() ? $orderItem->getRoundingType()->getId() : null,
@@ -404,5 +402,34 @@ class CouponService
         }
 
         return $couponProducts;
+    }
+
+    /**
+     * 税率・丸め規則が OrderItem から取得できない場合に TaxRule から解決する.
+     *
+     * 複数配送の確定時 (ShippingMultipleController) は RoundingType を設定せずに OrderItem が
+     * 作り直され, 本体の TaxProcessor (ItemHolderPreprocessor) より先に itemHolderValidator が
+     * 走るため, rounding_type_id が null のまま渡ってくる. 本体 4.4 の
+     * TaxRuleService::calcTax() は第3引数が非 nullable な int のため, ここで解決しないと
+     * TypeError になる.
+     *
+     * @param int|string $productClassId
+     * @param array<string, mixed> $value
+     *
+     * @return array<string, mixed>
+     */
+    private function resolveTaxValues(int|string $productClassId, array $value): array
+    {
+        if ($value['tax_rate'] < 1 || $value['rounding_type_id'] === null) {
+            $ProductClass = $this->productClassRepository->find($productClassId);
+            // ProductClass が解決できない場合はデフォルトの課税規則にフォールバックする
+            $TaxRule = $ProductClass instanceof ProductClass
+                ? $this->taxRuleRepository->getByRule($ProductClass->getProduct(), $ProductClass)
+                : $this->taxRuleRepository->getByRule();
+            $value['tax_rate'] = $TaxRule->getTaxRate();
+            $value['rounding_type_id'] = $TaxRule->getRoundingType()->getId();
+        }
+
+        return $value;
     }
 }
