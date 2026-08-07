@@ -151,7 +151,6 @@ class CouponCouponOrderRepositoryTest extends EccubeTestCase
             ->setProductName('discount')
             ->setPrice((string) (0 - $discount))
             ->setQuantity('1')
-            ->setTaxRuleId($TaxRule->getId())
             ->setTaxRate($TaxRule->getTaxRate());
         $this->entityManager->persist($orderItem);
         $this->entityManager->flush();
