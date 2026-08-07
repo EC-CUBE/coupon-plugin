@@ -5,18 +5,17 @@
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon42\Form\Type;
+namespace Plugin\Coupon44\Form\Type;
 
 use Carbon\Carbon;
 use Eccube\Form\Type\PriceType;
-use Plugin\Coupon42\Entity\Coupon;
-use Plugin\Coupon42\Repository\CouponRepository;
+use Plugin\Coupon44\Entity\Coupon;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -40,41 +39,24 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class CouponType extends AbstractType
 {
     /**
-     * @var CouponRepository
-     */
-    private $couponRepository;
-
-    /**
-     * @var ValidatorInterface
-     */
-    private $validator;
-
-    /**
-     * @var ContainerBagInterface
-     */
-    private $container;
-
-    /**
      * CouponType constructor.
      *
-     * @param CouponRepository $couponRepository
      * @param ValidatorInterface $validator
      * @param ContainerBagInterface $container
      */
-    public function __construct(CouponRepository $couponRepository, ValidatorInterface $validator, ContainerBagInterface $container)
-    {
-        $this->couponRepository = $couponRepository;
-        $this->validator = $validator;
-        $this->container = $container;
+    public function __construct(
+        private readonly ValidatorInterface $validator,
+        private readonly ContainerBagInterface $container,
+    ) {
     }
 
     /**
      * buildForm.
      *
      * @param FormBuilderInterface $builder
-     * @param array                $options
+     * @param array<string, mixed> $options
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $currency = $this->container->get('currency');
         $builder
@@ -84,7 +66,7 @@ class CouponType extends AbstractType
                 'trim' => true,
                 'constraints' => [
                     new Assert\NotBlank(),
-                    new Assert\Regex(['pattern' => '/^[a-zA-Z0-9]+$/i']),
+                    new Assert\Regex(pattern: '/^[a-zA-Z0-9]+$/i'),
                 ],
             ])
             ->add('coupon_name', TextType::class, [
@@ -140,9 +122,7 @@ class CouponType extends AbstractType
                 'required' => false,
                 'currency' => $currency,
                 'constraints' => [
-                    new Assert\Range([
-                        'min' => 0,
-                    ]),
+                    new Assert\Range(min: 0),
                 ],
             ])
             ->add('discount_price', PriceType::class, [
@@ -150,19 +130,14 @@ class CouponType extends AbstractType
                 'required' => false,
                 'currency' => $currency,
                 'constraints' => [
-                    new Assert\Range([
-                        'min' => 0,
-                    ]),
+                    new Assert\Range(min: 0),
                 ],
             ])
             ->add('discount_rate', IntegerType::class, [
                 'label' => 'plugin_coupon.admin.label.discount_rate',
                 'required' => false,
                 'constraints' => [
-                    new Assert\Range([
-                        'min' => 1,
-                        'max' => 100,
-                    ]),
+                    new Assert\Range(min: 1, max: 100),
                 ],
             ])
             // 有効期間(FROM)
@@ -190,10 +165,7 @@ class CouponType extends AbstractType
                 'required' => true,
                 'constraints' => [
                     new Assert\NotBlank(),
-                    new Assert\Range([
-                        'min' => 1,
-                        'max' => 1000000,
-                    ]),
+                    new Assert\Range(min: 1, max: 1000000),
                 ],
             ])
             ->add('coupon_use_time', HiddenType::class, [])
@@ -248,20 +220,18 @@ class CouponType extends AbstractType
      * configureOptions
      * {@inheritdoc}
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => 'Plugin\Coupon42\Entity\Coupon',
+            'data_class' => Coupon::class,
         ]);
     }
 
     /**
-     * getName.
-     *
-     * @return string
+     * getBlockPrefix.
      */
-    public function getName()
+    public function getBlockPrefix(): string
     {
-        return 'admin_plugin_coupon';
+        return 'coupon';
     }
 }

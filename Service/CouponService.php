@@ -5,38 +5,31 @@
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon42\Service;
+namespace Plugin\Coupon44\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Eccube\Common\Constant;
+use Eccube\Entity\Category;
 use Eccube\Entity\Customer;
 use Eccube\Entity\ItemHolderInterface;
-use Eccube\Entity\Master\RoundingType;
 use Eccube\Entity\Order;
 use Eccube\Entity\OrderItem;
 use Eccube\Entity\ProductClass;
 use Eccube\Entity\TaxRule;
-use Eccube\Repository\CategoryRepository;
-use Eccube\Repository\Master\OrderItemTypeRepository;
-use Eccube\Repository\Master\TaxDisplayTypeRepository;
-use Eccube\Repository\Master\TaxTypeRepository;
 use Eccube\Repository\OrderItemRepository;
 use Eccube\Repository\ProductClassRepository;
 use Eccube\Repository\TaxRuleRepository;
 use Eccube\Service\TaxRuleService;
-use Plugin\Coupon42\Entity\Coupon;
-use Plugin\Coupon42\Entity\CouponOrder;
-use Eccube\Entity\Category;
-use Plugin\Coupon42\Repository\CouponOrderRepository;
-use Plugin\Coupon42\Repository\CouponRepository;
-use Plugin\Coupon42\Service\PurchaseFlow\Processor\CouponProcessor;
-use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
+use Plugin\Coupon44\Entity\Coupon;
+use Plugin\Coupon44\Entity\CouponOrder;
+use Plugin\Coupon44\Repository\CouponOrderRepository;
+use Plugin\Coupon44\Service\PurchaseFlow\Processor\CouponProcessor;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
@@ -45,116 +38,18 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 class CouponService
 {
     /**
-     * @var AuthorizationCheckerInterface
-     */
-    private $authorizationChecker;
-
-    /**
-     * @var CouponRepository
-     */
-    private $couponRepository;
-
-    /**
-     * @var CouponOrderRepository
-     */
-    private $couponOrderRepository;
-
-    /**
-     * @var CategoryRepository
-     */
-    private $categoryRepository;
-
-    /**
-     * @var TaxRuleService
-     */
-    private $taxRuleService;
-
-    /**
-     * @var TaxRuleRepository
-     */
-    private $taxRuleRepository;
-
-    /**
-     * @var TaxTypeRepository
-     */
-    private $taxTypeRepository;
-
-    /**
-     * @var TaxDisplayTypeRepository
-     */
-    private $taxDisplayTypeRepository;
-
-    /**
-     * @var OrderItemTypeRepository
-     */
-    private $orderItemTypeRepository;
-
-    /**
-     * @var ContainerBagInterface
-     */
-    private $container;
-
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
-    /**
-     * @var OrderItemRepository
-     */
-    private $orderItemRepository;
-
-    /**
-     * @var ProductClassRepository
-     */
-    private $productClassRepository;
-
-    /**
      * CouponService constructor.
      *
      * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param CouponRepository $couponRepository
      * @param CouponOrderRepository $couponOrderRepository
-     * @param CategoryRepository $categoryRepository
      * @param TaxRuleService $taxRuleService
      * @param TaxRuleRepository $taxRuleRepository
-     * @param TaxTypeRepository $taxTypeRepository
-     * @param TaxDisplayTypeRepository $taxDisplayTypeRepository
-     * @param OrderItemTypeRepository $orderItemTypeRepository
-     * @param ContainerBagInterface $container
      * @param EntityManagerInterface $entityManager
      * @param OrderItemRepository $orderItemRepository
      * @param ProductClassRepository $productClassRepository
-     *
      */
-    public function __construct(
-        AuthorizationCheckerInterface $authorizationChecker,
-        CouponRepository $couponRepository,
-        CouponOrderRepository $couponOrderRepository,
-        CategoryRepository $categoryRepository,
-        TaxRuleService $taxRuleService,
-        TaxRuleRepository $taxRuleRepository,
-        TaxTypeRepository $taxTypeRepository,
-        TaxDisplayTypeRepository $taxDisplayTypeRepository,
-        OrderItemTypeRepository $orderItemTypeRepository,
-        ContainerBagInterface $container,
-        EntityManagerInterface $entityManager,
-        OrderItemRepository $orderItemRepository,
-        ProductClassRepository $productClassRepository
-    ) {
-        $this->authorizationChecker = $authorizationChecker;
-        $this->couponRepository = $couponRepository;
-        $this->couponOrderRepository = $couponOrderRepository;
-        $this->categoryRepository = $categoryRepository;
-        $this->taxRuleService = $taxRuleService;
-        $this->taxRuleRepository = $taxRuleRepository;
-        $this->taxTypeRepository = $taxTypeRepository;
-        $this->taxDisplayTypeRepository = $taxDisplayTypeRepository;
-        $this->orderItemTypeRepository = $orderItemTypeRepository;
-        $this->container = $container;
-        $this->entityManager = $entityManager;
-        $this->orderItemRepository = $orderItemRepository;
-        $this->productClassRepository = $productClassRepository;
+    public function __construct(private readonly AuthorizationCheckerInterface $authorizationChecker, private readonly CouponOrderRepository $couponOrderRepository, private readonly TaxRuleService $taxRuleService, private readonly TaxRuleRepository $taxRuleRepository, private readonly EntityManagerInterface $entityManager, private readonly OrderItemRepository $orderItemRepository, private readonly ProductClassRepository $productClassRepository)
+    {
     }
 
     /**
@@ -164,7 +59,7 @@ class CouponService
      *
      * @return string
      */
-    public function generateCouponCd($length = 12)
+    public function generateCouponCd(int $length = 12): string
     {
         $couponCd = substr(base_convert(md5(uniqid()), 16, 36), 0, $length);
 
@@ -177,26 +72,24 @@ class CouponService
      * @param Coupon $Coupon
      * @param ItemHolderInterface  $Order
      *
-     * @return array
+     * @return array<int, mixed>
      */
-    public function existsCouponProduct(Coupon $Coupon, ItemHolderInterface $Order)
+    public function existsCouponProduct(Coupon $Coupon, ItemHolderInterface $Order): array
     {
         $couponProducts = [];
-        if (!is_null($Coupon)) {
-            // 対象商品の存在確認
-            if ($Coupon->getCouponType() == Coupon::PRODUCT) {
-                // 商品の場合
-                $couponProducts = $this->containsProduct($Coupon, $Order);
-            } elseif ($Coupon->getCouponType() == Coupon::CATEGORY) {
-                // カテゴリの場合
-                $couponProducts = $this->containsCategory($Coupon, $Order);
-            } elseif ($Coupon->getCouponType() == Coupon::ALL) {
-                // all product
-                // 一致する商品IDがあればtrueを返す
-                /** @var OrderItem $detail */
-                foreach ($Order->getItems()->getProductClasses() as $detail) {
-                    $couponProducts = $this->getCouponProducts($detail, $couponProducts);
-                }
+        // 対象商品の存在確認
+        if ($Coupon->getCouponType() == Coupon::PRODUCT) {
+            // 商品の場合
+            $couponProducts = $this->containsProduct($Coupon, $Order);
+        } elseif ($Coupon->getCouponType() == Coupon::CATEGORY) {
+            // カテゴリの場合
+            $couponProducts = $this->containsCategory($Coupon, $Order);
+        } elseif ($Coupon->getCouponType() == Coupon::ALL) {
+            // all product
+            // 一致する商品IDがあればtrueを返す
+            /** @var OrderItem $detail */
+            foreach ($Order->getItems()->getProductClasses() as $detail) {
+                $couponProducts = $this->getCouponProducts($detail, $couponProducts);
             }
         }
 
@@ -210,17 +103,13 @@ class CouponService
      * @param Coupon   $Coupon
      * @param string   $couponCd
      * @param Customer $Customer
-     * @param int      $discount
+     * @param string|int|float $discount recalcOrder() の戻り値。小数通貨(scale>0)では小数を含むため int で受けない
      */
-    public function saveCouponOrder(Order $Order, Coupon $Coupon, $couponCd, Customer $Customer, $discount)
+    public function saveCouponOrder(Order $Order, Coupon $Coupon, string $couponCd, Customer $Customer, string|int|float $discount): void
     {
-        if (is_null($Order)) {
-            return;
-        }
-
         $repository = $this->couponOrderRepository;
         // クーポン受注情報を取得する
-        /** @var CouponOrder $CouponOrder */
+        /** @var CouponOrder|null $CouponOrder */
         $CouponOrder = $repository->findOneBy([
             'pre_order_id' => $Order->getPreOrderId(),
         ]);
@@ -234,8 +123,8 @@ class CouponService
         }
 
         // 更新対象データ
-        if (is_null($Coupon) || (is_null($couponCd) || strlen($couponCd) == 0)) {
-            // クーポンがない または クーポンコードが空の場合
+        if (strlen($couponCd) == 0) {
+            // クーポンコードが空の場合
             $CouponOrder->setCouponCd($couponCd);
             $CouponOrder->setCouponId(null);
 
@@ -247,7 +136,7 @@ class CouponService
             $this->setOrderCompleteMailMessage($Order, $Coupon->getCouponCd(), $Coupon->getCouponName());
         }
 
-        $this->entityManager->flush($Order);
+        $this->entityManager->flush();
         $CouponOrder->setCouponName($Coupon->getCouponName());
         $CouponOrder->setOrderChangeStatus(Constant::DISABLED);
         // ログイン済みの場合は, user_id取得
@@ -260,6 +149,7 @@ class CouponService
         // 割引金額をセット
         $CouponOrder->setDiscount($discount);
         $repository->save($CouponOrder);
+        $this->entityManager->flush();
     }
 
     /**
@@ -268,44 +158,36 @@ class CouponService
      * 税率が 0 以下の場合は、TaxRule から取得し直して再計算する
      *
      * @param Coupon $Coupon
-     * @param array  $couponProducts ProductClass::id をキーにした単価, 数量, 税率の連想配列
+     * @param array<int, mixed> $couponProducts ProductClass::id をキーにした単価, 数量, 税率の連想配列
+     *
      * @return float|int|string
      */
-    public function recalcOrder(Coupon $Coupon, $couponProducts)
+    public function recalcOrder(Coupon $Coupon, array $couponProducts): float|int|string
     {
         $discount = 0;
-        // クーポンコードが存在する場合カートに入っている商品の値引き額を設定する
-        if ($Coupon) {
-            // 対象商品の存在確認.
-            // 割引対象商品が存在する場合は値引き額を取得する
-            // 割引対象商品がある場合は値引き額を計算する
-            if ($Coupon->getDiscountType() == Coupon::DISCOUNT_PRICE) {
-                $discount = $Coupon->getDiscountPrice();
-            } else {
-                // 値引き前の金額で割引率を算出する
-                $total = 0;
-                // include tax
-                foreach ($couponProducts as $productClassId => $value) {
-                    // 税率が取得できない場合は TaxRule から取得し直す
-                    if ($value['tax_rate'] < 1 || $value['rounding_type_id'] === null) {
-                        /** @var ProductClass $ProductClass */
-                        $ProductClass = $this->productClassRepository->find($productClassId);
-                        $TaxRule = $this->taxRuleRepository->getByRule($ProductClass->getProduct(), $ProductClass);
-                        $value['tax_rate'] = $TaxRule->getTaxRate();
-                        $value['rounding_type_id'] = $TaxRule->getRoundingType()->getId();
-                    }
-                    $total += ($value['price'] + $this->taxRuleService->calcTax($value['price'], $value['tax_rate'], $value['rounding_type_id'])) * $value['quantity'];
-                }
-                /** @var TaxRule $DefaultTaxRule */
-                $DefaultTaxRule = $this->taxRuleRepository->getByRule();
-                // 丸め規則はデフォルトの課税規則に従う
-                $discount = $this->taxRuleService->calcTax(
-                    $total,
-                    $Coupon->getDiscountRate(),
-                    $DefaultTaxRule->getRoundingType()->getId(),
-                    $DefaultTaxRule->getTaxAdjust()
-                );
+        // 対象商品の存在確認.
+        // 割引対象商品が存在する場合は値引き額を取得する
+        // 割引対象商品がある場合は値引き額を計算する
+        if ($Coupon->getDiscountType() == Coupon::DISCOUNT_PRICE) {
+            $discount = $Coupon->getDiscountPrice();
+        } else {
+            // 値引き前の金額で割引率を算出する
+            $total = 0;
+            // include tax
+            foreach ($couponProducts as $productClassId => $value) {
+                // 税率・丸め規則が取得できない場合は TaxRule から取得し直す
+                $value = $this->resolveTaxValues($productClassId, $value);
+                $total += ($value['price'] + $this->taxRuleService->calcTax($value['price'], $value['tax_rate'], $value['rounding_type_id'])) * $value['quantity'];
             }
+            /** @var TaxRule $DefaultTaxRule */
+            $DefaultTaxRule = $this->taxRuleRepository->getByRule();
+            // 丸め規則はデフォルトの課税規則に従う
+            $discount = $this->taxRuleService->calcTax(
+                (string) $total,
+                $Coupon->getDiscountRate(),
+                $DefaultTaxRule->getRoundingType()->getId(),
+                $DefaultTaxRule->getTaxAdjust()
+            );
         }
 
         return $discount;
@@ -314,16 +196,19 @@ class CouponService
     /**
      * check coupon lower limit.
      *
-     * @param array $productCoupon
+     * @param array<int, mixed> $productCoupon
      * @param int   $lowerLimitMoney
      *
      * @return bool
      */
-    public function isLowerLimitCoupon($productCoupon, $lowerLimitMoney)
+    public function isLowerLimitCoupon(array $productCoupon, int $lowerLimitMoney): bool
     {
         $subTotal = 0;
         // price inc tax
-        foreach ($productCoupon as $key => $value) {
+        foreach ($productCoupon as $productClassId => $value) {
+            // 税率・丸め規則が取得できない場合は TaxRule から取得し直す
+            // (複数配送の確定時など, RoundingType 未設定の OrderItem が渡されるため)
+            $value = $this->resolveTaxValues($productClassId, $value);
             $subTotal += ($value['price'] + $this->taxRuleService->calcTax($value['price'], $value['tax_rate'], $value['rounding_type_id'])) * $value['quantity'];
         }
 
@@ -342,7 +227,7 @@ class CouponService
      *
      * @return bool
      */
-    public function checkCouponUsedOrNot($couponCd, Customer $Customer)
+    public function checkCouponUsedOrNot(string $couponCd, Customer $Customer): bool
     {
         $repository = $this->couponOrderRepository;
 
@@ -365,23 +250,20 @@ class CouponService
      *
      * @param ItemHolderInterface       $Order
      */
-    public function removeCouponOrder(ItemHolderInterface $Order)
+    public function removeCouponOrder(ItemHolderInterface $Order): void
     {
-        /** @var CouponOrder $CouponOrder */
+        assert($Order instanceof Order);
         $CouponOrder = $this->couponOrderRepository->getCouponOrder($Order->getPreOrderId());
         if ($CouponOrder) {
             $OrderItems = $this->orderItemRepository->findBy(['processor_name' => CouponProcessor::class, 'Order' => $Order]);
             foreach ($OrderItems as $OrderItem) {
                 $Order->removeOrderItem($OrderItem);
                 $this->entityManager->remove($OrderItem);
-                $this->entityManager->flush($OrderItem);
             }
 
             $this->entityManager->remove($CouponOrder);
-            $this->entityManager->flush($CouponOrder);
-
             $this->setOrderCompleteMailMessage($Order, null, null);
-            $this->entityManager->flush($Order);
+            $this->entityManager->flush();
         }
     }
 
@@ -394,7 +276,7 @@ class CouponService
      * @param string $couponCd
      * @param string $couponName
      */
-    public function setOrderCompleteMailMessage(Order $Order, $couponCd = null, $couponName = null)
+    public function setOrderCompleteMailMessage(Order $Order, ?string $couponCd = null, ?string $couponName = null): void
     {
         $snippet = '***********************************************'.PHP_EOL;
         $snippet .= '　クーポン情報                                 '.PHP_EOL;
@@ -404,7 +286,7 @@ class CouponService
 
         $message = $Order->getCompleteMailMessage();
         if ($message) {
-            $message = preg_replace('/'.preg_quote($snippet).'.*$/m', '', $message);
+            $message = preg_replace('/'.preg_quote($snippet, '/').'.*$/m', '', $message);
             $Order->setCompleteMailMessage($message ? trim($message) : null);
             $snippet = PHP_EOL.$snippet; // 行頭に改行コードを追加
         }
@@ -421,9 +303,9 @@ class CouponService
      * @param Coupon $Coupon
      * @param ItemHolderInterface  $Order
      *
-     * @return array
+     * @return array<int, mixed>
      */
-    private function containsProduct(Coupon $Coupon, ItemHolderInterface $Order)
+    private function containsProduct(Coupon $Coupon, ItemHolderInterface $Order): array
     {
         // クーポンの対象商品IDを配列にする
         $targetProductIds = [];
@@ -450,9 +332,9 @@ class CouponService
      * @param Coupon $Coupon
      * @param ItemHolderInterface  $Order
      *
-     * @return array
+     * @return array<int, mixed>
      */
-    private function containsCategory(Coupon $Coupon, ItemHolderInterface $Order)
+    private function containsCategory(Coupon $Coupon, ItemHolderInterface $Order): array
     {
         // クーポンの対象カテゴリIDを配列にする
         $targetCategoryIds = [];
@@ -477,12 +359,12 @@ class CouponService
     /**
      * クーポン対象のカテゴリが存在するか確認にする.
      *
-     * @param array      $targetCategoryIds
-     * @param Category $Category
+     * @param array<int, mixed> $targetCategoryIds
+     * @param Category|null $Category
      *
      * @return bool
      */
-    private function existsDepthCategory(&$targetCategoryIds, Category $Category)
+    private function existsDepthCategory(array &$targetCategoryIds, ?Category $Category): bool
     {
         // Categoryがnullならfalse
         if (is_null($Category)) {
@@ -494,28 +376,17 @@ class CouponService
             return true;
         }
 
-        // Categoryをテーブルから取得
-        if (is_null($Category->getParent())) {
-            return false;
-        }
-
-        // 親カテゴリをテーブルから取得
-        /** @var Category $ParentCategory */
-        $ParentCategory = $this->categoryRepository->find($Category->getParent());
-        if ($ParentCategory) {
-            return false;
-        }
-
-        return $this->existsDepthCategory($targetCategoryIds, $ParentCategory);
+        // 上位カテゴリを辿って対象か判定する（getParent() は親カテゴリを返す。ルートなら null）
+        return $this->existsDepthCategory($targetCategoryIds, $Category->getParent());
     }
 
     /**
      * @param OrderItem $orderItem
-     * @param array $couponProducts
+     * @param array<int, mixed> $couponProducts
      *
-     * @return mixed
+     * @return array<int, mixed>
      */
-    private function getCouponProducts(OrderItem $orderItem, array $couponProducts = [])
+    private function getCouponProducts(OrderItem $orderItem, array $couponProducts = []): array
     {
         if (array_key_exists($orderItem->getProductClass()->getId(), $couponProducts)) {
             $couponProducts[$orderItem->getProductClass()->getId()]['quantity'] += $orderItem->getQuantity();
@@ -523,7 +394,7 @@ class CouponService
             $couponProducts[$orderItem->getProductClass()->getId()] = [
                 'price' => $orderItem->getPrice(),
                 'quantity' => $orderItem->getQuantity(),
-                // tax_rate, rounding_type_idは複数配送の個数変更時に取得できない. recalcOrderで取得し直している
+                // tax_rate, rounding_type_idは複数配送の個数変更時に取得できない. resolveTaxValues()で取得し直している
                 // https://github.com/EC-CUBE/coupon-plugin/pull/106/commits/d47f60745b283023cd7a990c609e6399701ddce1
                 'tax_rate' => $orderItem->getTaxRate(),
                 'rounding_type_id' => $orderItem->getRoundingType() ? $orderItem->getRoundingType()->getId() : null,
@@ -531,5 +402,34 @@ class CouponService
         }
 
         return $couponProducts;
+    }
+
+    /**
+     * 税率・丸め規則が OrderItem から取得できない場合に TaxRule から解決する.
+     *
+     * 複数配送の確定時 (ShippingMultipleController) は RoundingType を設定せずに OrderItem が
+     * 作り直され, 本体の TaxProcessor (ItemHolderPreprocessor) より先に itemHolderValidator が
+     * 走るため, rounding_type_id が null のまま渡ってくる. 本体 4.4 の
+     * TaxRuleService::calcTax() は第3引数が非 nullable な int のため, ここで解決しないと
+     * TypeError になる.
+     *
+     * @param int|string $productClassId
+     * @param array<string, mixed> $value
+     *
+     * @return array<string, mixed>
+     */
+    private function resolveTaxValues(int|string $productClassId, array $value): array
+    {
+        if ($value['tax_rate'] < 1 || $value['rounding_type_id'] === null) {
+            $ProductClass = $this->productClassRepository->find($productClassId);
+            // ProductClass が解決できない場合はデフォルトの課税規則にフォールバックする
+            $TaxRule = $ProductClass instanceof ProductClass
+                ? $this->taxRuleRepository->getByRule($ProductClass->getProduct(), $ProductClass)
+                : $this->taxRuleRepository->getByRule();
+            $value['tax_rate'] = $TaxRule->getTaxRate();
+            $value['rounding_type_id'] = $TaxRule->getRoundingType()->getId();
+        }
+
+        return $value;
     }
 }

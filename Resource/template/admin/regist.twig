@@ -390,7 +390,7 @@
                                 <div class="text-center">
                                     <a id="showSearchProductModal" class="btn btn-ec-regular me-2 add" data-bs-toggle="modal" data-bs-target="#searchProductModal">商品の追加</a>
                                 </div>
-                                <div class="tableish" id="coupon_detail_list" data-prototype="{{ include('Coupon42/Resource/template/admin/regist_product_list_prototype.twig') }}">
+                                <div class="tableish" id="coupon_detail_list" data-prototype="{{ include('Coupon44/Resource/template/admin/regist_product_list_prototype.twig') }}">
                                     {% set i = 0 %}
                                     {% for couponDetailForm in form.CouponDetails %}
                                         {% if couponDetailForm.vars.value.Product is not null %}
@@ -408,7 +408,7 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-1 icon_edit">
-                                                        <a class="btn btn-ec-actionIcon mr-3 delete-item" data-bs-toggle="modal" data-bs-toggle="tooltip" data-bs-target="#confirmModal" data-bs-placement="top" title="{{ 'admin.common.delete'|trans }}">
+                                                        <a class="btn btn-ec-actionIcon me-3 delete-item" data-bs-toggle="modal" data-bs-toggle="tooltip" data-bs-target="#confirmModal" data-bs-placement="top" title="{{ 'admin.common.delete'|trans }}">
                                                             <i class="fa fa-close fa-lg text-secondary"></i>
                                                         </a>
                                                     </div>
@@ -447,11 +447,11 @@
                         <div class="collapse show ec-cardCollapse" style="display: block;" id="categoryArea">
                             <div class="card-body">
                                 <div class="text-center">
-                                    <a id="showSearchCategoryModal" class="btn btn-ec-regular mr-2 add" data-bs-toggle="modal" data-bs-target="#searchCategoryModal">カテゴリの追加</a>
+                                    <a id="showSearchCategoryModal" class="btn btn-ec-regular me-2 add" data-bs-toggle="modal" data-bs-target="#searchCategoryModal">カテゴリの追加</a>
                                 </div>
                                 <div class="tableish"
                                      id="coupon_detail_list2"
-                                     data-prototype="{{ include('Coupon42/Resource/template/admin/regist_category_list_prototype.twig') }}">
+                                     data-prototype="{{ include('Coupon44/Resource/template/admin/regist_category_list_prototype.twig') }}">
                                     {% set i = 0 %}
                                     {% for couponDetailForm in form.CouponDetails %}
                                         {% if couponDetailForm.vars.value.Category is not null %}
@@ -470,7 +470,7 @@
                                                     </div>
 
                                                     <div class="col-1 icon_edit">
-                                                        <a class="btn btn-ec-actionIcon mr-3 delete-item" data-bs-toggle="modal" data-bs-toggle="tooltip" data-bs-target="#confirmModal" data-bs-placement="top" title="{{ 'admin.common.delete'|trans }}">
+                                                        <a class="btn btn-ec-actionIcon me-3 delete-item" data-bs-toggle="modal" data-bs-toggle="tooltip" data-bs-target="#confirmModal" data-bs-placement="top" title="{{ 'admin.common.delete'|trans }}">
                                                             <i class="fa fa-close fa-lg text-secondary"></i>
                                                         </a>
                                                     </div>

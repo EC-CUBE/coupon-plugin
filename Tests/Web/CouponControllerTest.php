@@ -5,28 +5,24 @@
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon42\Tests\Web;
+namespace Plugin\Coupon44\Tests\Web;
 
 use Eccube\Entity\BaseInfo;
 use Eccube\Entity\Customer;
 use Eccube\Entity\Order;
-use Eccube\Entity\Product;
 use Eccube\Repository\BaseInfoRepository;
 use Eccube\Repository\OrderRepository;
-use Eccube\Repository\ProductRepository;
-use Eccube\Service\CartService;
 use Eccube\Tests\Web\AbstractShoppingControllerTestCase;
-use Plugin\Coupon42\Entity\Coupon;
-use Plugin\Coupon42\Entity\CouponOrder;
-use Plugin\Coupon42\Tests\Fixtures\CreateCouponTrait;
-use Plugin\Coupon42\Repository\CouponOrderRepository;
-use Plugin\Coupon42\Repository\CouponRepository;
+use Plugin\Coupon44\Entity\Coupon;
+use Plugin\Coupon44\Entity\CouponOrder;
+use Plugin\Coupon44\Repository\CouponOrderRepository;
+use Plugin\Coupon44\Tests\Fixtures\CreateCouponTrait;
 use Symfony\Component\DomCrawler\Crawler;
 
 /**
@@ -35,21 +31,6 @@ use Symfony\Component\DomCrawler\Crawler;
 class CouponControllerTest extends AbstractShoppingControllerTestCase
 {
     use CreateCouponTrait;
-
-    /**
-     * @var CartService
-     */
-    private $cartService;
-
-    /**
-     * @var CouponRepository
-     */
-    private $couponRepository;
-
-    /**
-     * @var ProductRepository
-     */
-    private $productRepository;
 
     /**
      * @var Customer
@@ -77,9 +58,6 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->couponRepository = $this->entityManager->getRepository(Coupon::class);
-        $this->productRepository = $this->entityManager->getRepository(Product::class);
-        $this->cartService = self::getContainer()->get(CartService::class);
         $this->Customer = $this->createCustomer();
         $this->baseInfoRepository = $this->entityManager->getRepository(BaseInfo::class);
         $this->couponOrderRepository = $this->entityManager->getRepository(CouponOrder::class);
@@ -89,7 +67,7 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
     /**
      * test routing shopping coupon.
      */
-    public function testRoutingShoppingCoupon()
+    public function testRoutingShoppingCoupon(): void
     {
         $this->routingShopping();
 
@@ -106,7 +84,7 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
     /**
      * testShoppingCouponPostError.
      */
-    public function testShoppingCouponPostError()
+    public function testShoppingCouponPostError(): void
     {
         $this->routingShopping();
         $crawler = $this->client->request('GET', $this->generateUrl('plugin_coupon_shopping'));
@@ -119,7 +97,7 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
     /**
      * testShoppingCoupon.
      */
-    public function testShoppingCoupon()
+    public function testShoppingCoupon(): void
     {
         $this->routingShopping();
         $crawler = $this->client->request('GET', $this->generateUrl('plugin_coupon_shopping'));
@@ -144,7 +122,7 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
 
         $BaseInfo = $this->baseInfoRepository->get();
         $this->assertEmailCount(1);
-        /** @var Email $Message */
+        /** @var \Symfony\Component\Mime\Email $Message */
         $Message = $this->getMailerMessage(0);
 
         $this->expected = '['.$BaseInfo->getShopName().'] ご注文ありがとうございます';
@@ -164,13 +142,14 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
 
         $this->expected = round(0 - $Coupon->getDiscountPrice(), 2);
         $this->actual = $Order->getItems()->getDiscounts()->first()->getPrice();
-        $this->verify();
+        // decimal カラムは Doctrine が文字列で返すため数値等価で比較する
+        self::assertEquals($this->expected, $this->actual);
     }
 
     /**
      * testRenderMypage.
      */
-    public function testRenderMypage()
+    public function testRenderMypage(): void
     {
         $this->routingShopping();
         $crawler = $this->client->request('GET', $this->generateUrl('plugin_coupon_shopping'));
@@ -206,7 +185,7 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
     /**
      * testCouponLowerLimit.
      */
-    public function testCouponLowerLimit()
+    public function testCouponLowerLimit(): void
     {
         $this->routingShopping();
         $crawler = $this->client->request('GET', $this->generateUrl('plugin_coupon_shopping'));
@@ -214,7 +193,7 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
         $Coupon->setCouponLowerLimit(9999999999);
         // クーポン情報を登録する
         $this->entityManager->persist($Coupon);
-        $this->entityManager->flush($Coupon);
+        $this->entityManager->flush();
         $form = $this->getForm($crawler, $Coupon->getCouponCd());
 
         $this->client->submit($form);
@@ -228,7 +207,7 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
     /**
      * testShoppingCouponDiscountType1.
      */
-    public function testShoppingCouponDiscountTypePrice()
+    public function testShoppingCouponDiscountTypePrice(): void
     {
         $this->routingShopping();
         $crawler = $this->client->request('GET', $this->generateUrl('plugin_coupon_shopping'));
@@ -259,13 +238,14 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
 
         $this->actual = $Coupon->getDiscountPrice();
         $this->expected = 0 - $Order->getItems()->getDiscounts()->first()->getPrice();
-        $this->verify();
+        // decimal カラムは Doctrine が文字列で返すため数値等価で比較する
+        self::assertEquals($this->expected, $this->actual);
     }
 
     /**
      * testShoppingCouponDiscountType2.
      */
-    public function testShoppingCouponDiscountTypeRate()
+    public function testShoppingCouponDiscountTypeRate(): void
     {
         $this->routingShopping();
 
@@ -300,13 +280,14 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
 
         $this->actual = $CouponOrder->getDiscount();
         $this->expected = 0 - $Order->getItems()->getDiscounts()->first()->getPrice();
-        $this->verify();
+        // decimal カラムは Doctrine が文字列で返すため数値等価で比較する
+        self::assertEquals($this->expected, $this->actual);
     }
 
     /**
      * 非会員情報入力→注文手続画面→購入確認画面→完了画面
      */
-    public function testCompleteWithNonmember()
+    public function testCompleteWithNonmember(): void
     {
         $this->scenarioCartIn();
 
@@ -320,12 +301,12 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
         $this->verify();
 
         $crawler = $this->scenarioComplete(null, $this->generateUrl('shopping_confirm'),
-                                           [
-                                               [
-                                                   'Delivery' => 1,
-                                                   'DeliveryTime' => '',
-                                               ],
-                                           ]);
+            [
+                [
+                    'Delivery' => 1,
+                    'DeliveryTime' => '',
+                ],
+            ]);
         // $this->expected = 'ご注文内容のご確認';
         // $this->actual = $crawler->filter('.ec-pageHeader h1')->text();
         // $this->verify();
@@ -345,26 +326,27 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
         $this->assertTrue($this->client->getResponse()->isRedirect($this->generateUrl('shopping_complete')));
 
         $this->assertEmailCount(1);
-        /** @var Email $Message */
+        /** @var \Symfony\Component\Mime\Email $Message */
         $Message = $this->getMailerMessage(0);
         $this->expected = 'ご注文ありがとうございます';
         $this->actual = $Message->getSubject();
 
         $this->assertStringContainsString($this->expected, $this->actual);
         preg_match('/ご注文番号：([0-9]+)/u', $Message->getTextBody(), $matched);
-        list(, $order_id) =  $matched;
+        list(, $order_id) = $matched;
         /** @var Order $Order */
         $Order = $this->orderRepository->find($order_id);
 
         $this->actual = $Coupon->getDiscountPrice();
         $this->expected = 0 - $Order->getItems()->getDiscounts()->first()->getPrice();
-        $this->verify();
+        // decimal カラムは Doctrine が文字列で返すため数値等価で比較する
+        self::assertEquals($this->expected, $this->actual);
     }
 
     /**
      * 重複利用チェック(会員)
      */
-    public function testDuplicateCouponWithCustomer()
+    public function testDuplicateCouponWithCustomer(): void
     {
         $this->routingShopping();
         $crawler = $this->client->request('GET', $this->generateUrl('plugin_coupon_shopping'));
@@ -399,7 +381,7 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
     /**
      * 重複利用チェック(非会員)
      */
-    public function testDuplicateCouponWithNonmember()
+    public function testDuplicateCouponWithNonmember(): void
     {
         $this->scenarioCartIn();
 
@@ -413,12 +395,12 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
         $this->verify();
 
         $crawler = $this->scenarioComplete(null, $this->generateUrl('shopping_confirm'),
-                                           [
-                                               [
-                                                   'Delivery' => 1,
-                                                   'DeliveryTime' => '',
-                                               ],
-                                           ]);
+            [
+                [
+                    'Delivery' => 1,
+                    'DeliveryTime' => '',
+                ],
+            ]);
 
         $crawler = $this->client->request('GET', $this->generateUrl('plugin_coupon_shopping'));
         $Coupon = $this->getCoupon();
@@ -446,12 +428,12 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
         $this->verify();
 
         $crawler = $this->scenarioComplete(null, $this->generateUrl('shopping_confirm'),
-                                           [
-                                               [
-                                                   'Delivery' => 1,
-                                                   'DeliveryTime' => '',
-                                               ],
-                                           ]);
+            [
+                [
+                    'Delivery' => 1,
+                    'DeliveryTime' => '',
+                ],
+            ]);
 
         $crawler = $this->client->request('GET', $this->generateUrl('plugin_coupon_shopping'));
 
@@ -466,7 +448,7 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
     /**
      * routingShopping.
      */
-    private function routingShopping()
+    private function routingShopping(): Crawler
     {
         // カート画面
         $this->scenarioCartIn($this->Customer);
@@ -485,7 +467,7 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
      *
      * @return \Symfony\Component\DomCrawler\Form
      */
-    private function getForm(Crawler $crawler, $couponCd = '')
+    private function getForm(Crawler $crawler, string $couponCd = ''): \Symfony\Component\DomCrawler\Form
     {
         $form = $crawler->selectButton('登録する')->form();
         $form['coupon_use[_token]'] = 'dummy';
@@ -495,7 +477,10 @@ class CouponControllerTest extends AbstractShoppingControllerTestCase
         return $form;
     }
 
-    private function createNonmemberFormData()
+    /**
+     * @return array<string, mixed>
+     */
+    private function createNonmemberFormData(): array
     {
         $faker = $this->getFaker();
         $email = $faker->safeEmail;

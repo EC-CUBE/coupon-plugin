@@ -5,13 +5,13 @@
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon42\Form\Type;
+namespace Plugin\Coupon44\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -30,9 +30,9 @@ class CouponUseType extends AbstractType
      * buildForm.
      *
      * @param FormBuilderInterface $builder
-     * @param array                $options
+     * @param array<string, mixed> $options
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('coupon_cd', TextType::class, [
@@ -48,7 +48,7 @@ class CouponUseType extends AbstractType
                 'multiple' => false,
                 'data' => 1, // default choice
             ])
-            ->addEventListener(FormEvents::POST_SUBMIT, function(FormEvent $event) {
+            ->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
                 $form = $event->getForm();
                 $data = $form->getData();
                 if ($data['coupon_use'] == 1 && empty($form['coupon_cd']->getData())) {
@@ -58,12 +58,10 @@ class CouponUseType extends AbstractType
     }
 
     /**
-     * getName.
-     *
-     * @return string
+     * getBlockPrefix.
      */
-    public function getName()
+    public function getBlockPrefix(): string
     {
-        return 'front_plugin_coupon_shopping';
+        return 'coupon_use';
     }
 }

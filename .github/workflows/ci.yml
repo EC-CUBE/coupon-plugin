@@ -1,4 +1,4 @@
-name: CI for Coupon42
+name: CI for Coupon44
 on:
   push:
     branches:
@@ -14,50 +14,34 @@ on:
     paths:
       - '**'
       - '!*.md'
+
+# GITHUB_TOKEN は最小権限（読み取りのみ）にする
+permissions:
+  contents: read
+
 jobs:
   run-on-linux:
     name: Run on Linux
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
-        eccube_version: [ '4.2', '4.3' ]
-        php: [ '7.4', '8.0', '8.1', '8.2', '8.3']
-        db: [ 'mysql', 'mysql8', 'pgsql' ]
-        plugin_code: [ 'Coupon42' ]
+        eccube_version: [ '4.4' ]
+        php: [ '8.2', '8.3', '8.4', '8.5' ]
+        db: [ 'mysql8', 'pgsql' ]
+        plugin_code: [ 'Coupon44' ]
         include:
-          - db: mysql
-            database_url: mysql://root:password@127.0.0.1:3306/eccube_db
-            database_server_version: 5.7
-            database_charset: utf8mb4
           - db: mysql8
             database_url: mysql://root:password@127.0.0.1:3308/eccube_db
             database_server_version: 8
             database_charset: utf8mb4
           - db: pgsql
             database_url: postgres://postgres:password@127.0.0.1:5432/eccube_db
-            database_server_version: 14
+            database_server_version: 18
             database_charset: utf8
-        exclude:
-          -   eccube_version: 4.2
-              php: 8.2
-          -   eccube_version: 4.2
-              php: 8.3
-          -   eccube_version: 4.3
-              php: 7.4
-          -   eccube_version: 4.3
-              php: 8.0
     services:
-      mysql:
-        image: mysql:5.7
-        env:
-          MYSQL_ROOT_PASSWORD: password
-          MYSQL_DATABASE: ${{ matrix.dbname }}
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
       mysql8:
-        image: mysql:8
+        image: mysql:8.4
         env:
           MYSQL_ROOT_PASSWORD: password
           MYSQL_DATABASE: ${{ matrix.dbname }}
@@ -65,7 +49,7 @@ jobs:
           - 3308:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
       postgres:
-        image: postgres:14
+        image: postgres:18
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: password
@@ -81,30 +65,34 @@ jobs:
           - 1025:1025
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+        uses: nanasess/setup-php@master
         with:
           php-version: ${{ matrix.php }}
-          extensions: :xdebug
+          # xdebug が有効だとテスト実行が大幅に遅くなるため無効化する
+          extensions: ':xdebug'
       - name: Archive Plugin
         env:
           PLUGIN_CODE: ${{ matrix.plugin_code }}
         run: |
           tar cvzf ${GITHUB_WORKSPACE}/${PLUGIN_CODE}.tar.gz ./*
       - name: Checkout EC-CUBE
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           repository: 'EC-CUBE/ec-cube'
           ref: ${{ matrix.eccube_version }}
           path: 'ec-cube'
+          persist-credentials: false
 
       - name: Get Composer Cache Directory
         id: composer-cache
         run: |
-          echo "::set-output name=dir::$(composer config cache-files-dir)"
-      - uses: actions/cache@v1
+          echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
@@ -112,7 +100,9 @@ jobs:
             ${{ runner.os }}-composer-
       - name: Install to composer
         working-directory: 'ec-cube'
-        run: composer install --no-interaction -o --apcu-autoloader
+        # Symfony 7.4 の symfony/cache が ext-redis <6.1 と衝突するが、ランナーには
+        # 古い php-redis が入っている。本プラグイン/本体テストは redis 未使用のため無視する。
+        run: composer install --no-interaction -o --apcu-autoloader --ignore-platform-req=ext-redis
 
       - name: Setup EC-CUBE
         env:
@@ -137,8 +127,8 @@ jobs:
         working-directory: 'ec-cube'
         run: |
           bin/console eccube:plugin:install --code=${PLUGIN_CODE} --path=${GITHUB_WORKSPACE}/${PLUGIN_CODE}.tar.gz
-          bin/console cache:clear --no-warmup
           bin/console eccube:plugin:enable --code=${PLUGIN_CODE}
+          bin/console cache:clear --no-warmup
       - name: Run PHPUnit
         env:
           APP_ENV: 'test'
@@ -149,7 +139,11 @@ jobs:
           PLUGIN_CODE: ${{ matrix.plugin_code }}
         working-directory: 'ec-cube'
         run: |
+          # 有効化したプラグインのルーティングはコンテナのコンパイル時に確定する。
+          # phpunit プロセスでの遅延コンパイルに任せると DB/タイミングで有効プラグイン一覧を
+          # 取りこぼし RouteNotFound になることがあるため、クリーンなプロセスで warmup して確定させる。
           bin/console cache:clear --no-warmup
+          bin/console cache:warmup
           ./vendor/bin/phpunit -c app/Plugin/${PLUGIN_CODE}/phpunit.xml.dist app/Plugin/${PLUGIN_CODE}/Tests
 
       - name: Disable Plugin
@@ -173,3 +167,84 @@ jobs:
           PLUGIN_CODE: ${{ matrix.plugin_code }}
         working-directory: 'ec-cube'
         run: bin/console eccube:plugin:uninstall --code=${PLUGIN_CODE}
+
+  static-analysis:
+    name: Static Analysis
+    runs-on: ubuntu-24.04
+    # 静的解析は DB 種別に依存しないため、SQLite 1 構成で一度だけ実行する。
+    # （php-cs-fixer / rector は DB 不要だが、phpstan は objectManagerLoader が
+    #   カーネルを起動し EccubeExtension が dtb_plugin を読むため本体+DBが必要）
+    env:
+      PLUGIN_CODE: Coupon44
+      APP_ENV: 'test'
+      APP_DEBUG: 0
+      DATABASE_URL: 'sqlite:///var/eccube.db'
+      DATABASE_SERVER_VERSION: 3
+      DATABASE_CHARSET: 'utf8'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup PHP
+        uses: nanasess/setup-php@master
+        with:
+          php-version: '8.5'
+          # xdebug が有効だと解析が大幅に遅くなるため無効化する
+          extensions: ':xdebug'
+
+      - name: Archive Plugin
+        run: |
+          tar cvzf ${GITHUB_WORKSPACE}/${PLUGIN_CODE}.tar.gz ./*
+      - name: Checkout EC-CUBE
+        uses: actions/checkout@v4
+        with:
+          repository: 'EC-CUBE/ec-cube'
+          ref: '4.4'
+          path: 'ec-cube'
+          persist-credentials: false
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+      - name: Install to composer
+        working-directory: 'ec-cube'
+        run: composer install --no-interaction -o --apcu-autoloader --ignore-platform-req=ext-redis
+
+      - name: Setup EC-CUBE
+        working-directory: 'ec-cube'
+        run: |
+          # SQLite はファイルベースで CREATE DATABASE が無く, DBAL 4 では
+          # SQLitePlatform::getCreateDatabaseSQL が未サポートで例外になるため
+          # doctrine:database:create は実行しない (schema:create が DB ファイルを生成する)。
+          bin/console doctrine:schema:create
+          # プラグイン有効化時に DeviceType 等のマスタデータを参照するため fixtures を投入する
+          bin/console eccube:fixtures:load
+      - name: Setup Plugin
+        working-directory: 'ec-cube'
+        run: |
+          bin/console eccube:plugin:install --code=${PLUGIN_CODE} --path=${GITHUB_WORKSPACE}/${PLUGIN_CODE}.tar.gz
+          bin/console eccube:plugin:enable --code=${PLUGIN_CODE}
+          bin/console cache:clear --no-warmup
+
+      - name: Run php-cs-fixer
+        working-directory: 'ec-cube'
+        run: ./vendor/bin/php-cs-fixer fix --config=app/Plugin/${PLUGIN_CODE}/Resource/.php-cs-fixer.dist.php --dry-run --diff
+
+      - name: Run Rector
+        working-directory: 'ec-cube'
+        run: ./vendor/bin/rector process --config=app/Plugin/${PLUGIN_CODE}/Resource/rector.php --dry-run
+
+      - name: Run PHPStan
+        working-directory: 'ec-cube'
+        run: |
+          bin/console cache:clear --no-warmup
+          ./vendor/bin/phpstan analyse -c app/Plugin/${PLUGIN_CODE}/phpstan.neon.dist --no-progress

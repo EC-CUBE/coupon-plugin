@@ -5,40 +5,37 @@
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon42\Service\PurchaseFlow\Processor;
+namespace Plugin\Coupon44\Service\PurchaseFlow\Processor;
 
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Eccube\Annotation\OrderFlow;
+use Eccube\Attribute\OrderFlow;
+use Eccube\Entity\ItemHolderInterface;
 use Eccube\Entity\Master\OrderStatus;
 use Eccube\Entity\Order;
-use Eccube\Entity\ItemHolderInterface;
 use Eccube\Service\PurchaseFlow\ItemHolderPreprocessor;
 use Eccube\Service\PurchaseFlow\ItemHolderValidator;
 use Eccube\Service\PurchaseFlow\PurchaseContext;
 use Eccube\Service\PurchaseFlow\PurchaseProcessor;
-use Plugin\Coupon42\Entity\Coupon;
-use Plugin\Coupon42\Service\CouponService;
-use Plugin\Coupon42\Repository\CouponRepository;
-use Plugin\Coupon42\Repository\CouponOrderRepository;
+use Plugin\Coupon44\Repository\CouponOrderRepository;
+use Plugin\Coupon44\Repository\CouponRepository;
+use Plugin\Coupon44\Service\CouponService;
 
 /**
  * クーポンの状態を制御する.
  *
  * TODO Event::onOrderEditComplete を移植する
- *
- * @OrderFlow
  */
+#[OrderFlow]
 class CouponStateProcessor extends ItemHolderValidator implements ItemHolderPreprocessor, PurchaseProcessor
 {
     /**
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     protected $entityManager;
 
@@ -66,7 +63,7 @@ class CouponStateProcessor extends ItemHolderValidator implements ItemHolderPrep
         EntityManagerInterface $entityManager,
         CouponService $couponService,
         CouponRepository $couponRepository,
-        CouponOrderRepository $couponOrderRepository
+        CouponOrderRepository $couponOrderRepository,
     ) {
         $this->entityManager = $entityManager;
         $this->couponService = $couponService;
@@ -82,12 +79,16 @@ class CouponStateProcessor extends ItemHolderValidator implements ItemHolderPrep
      * クーポン利用の場合は明細を追加する.
      * {@inheritdoc}
      */
-    public function process(ItemHolderInterface $itemHolder, PurchaseContext $context)
+    public function process(ItemHolderInterface $itemHolder, PurchaseContext $context): void
     {
         if (!$this->supports($itemHolder)) {
             return;
         }
+        assert($itemHolder instanceof Order);
         $CouponOrder = $this->couponOrderRepository->getCouponOrder($itemHolder->getPreOrderId());
+        if (!$CouponOrder) {
+            return;
+        }
 
         $orderStatusId = $itemHolder->getOrderStatus()->getId();
         $isChanged = $CouponOrder->getOrderChangeStatus(); // 変更されたかどうか？
@@ -95,21 +96,20 @@ class CouponStateProcessor extends ItemHolderValidator implements ItemHolderPrep
             || $orderStatusId == OrderStatus::PROCESSING
             || $orderStatusId == OrderStatus::RETURNED) { // TODO Order が取得できない場合も考慮する？
             if (!$isChanged) {
-                /** @var Coupon $Coupon */
                 $Coupon = $this->couponRepository->find($CouponOrder->getCouponId());
                 if ($Coupon) {
                     $CouponOrder->setOrderDate(null);
                     $CouponOrder->setOrderChangeStatus(true);
                     $this->couponOrderRepository->save($CouponOrder);
-                    $couponUseTime = $Coupon->getCouponUseTime() + 1;
-                    $couponRelease = $Coupon->getCouponRelease();
+                    $couponUseTime = ($Coupon->getCouponUseTime() ?? 0) + 1;
+                    $couponRelease = $Coupon->getCouponRelease() ?? 0;
                     if ($couponUseTime <= $couponRelease) {
                         $Coupon->setCouponUseTime($couponUseTime);
                     } else {
                         $Coupon->setCouponUseTime($couponRelease);
                     }
                     $this->entityManager->persist($Coupon);
-                    $this->entityManager->flush($Coupon);
+                    $this->entityManager->flush();
                 }
             }
         }
@@ -117,15 +117,14 @@ class CouponStateProcessor extends ItemHolderValidator implements ItemHolderPrep
             && $orderStatusId != OrderStatus::PROCESSING
             && $orderStatusId != OrderStatus::RETURNED) {
             if ($isChanged) {
-                /** @var Coupon $Coupon */
                 $Coupon = $this->couponRepository->find($CouponOrder->getCouponId());
                 if ($Coupon) {
                     $CouponOrder->setOrderDate(new \DateTime());
                     $CouponOrder->setOrderChangeStatus(false);
                     $this->couponOrderRepository->save($CouponOrder);
-                    $Coupon->setCouponUseTime($Coupon->getCouponUseTime() - 1);
+                    $Coupon->setCouponUseTime(($Coupon->getCouponUseTime() ?? 0) - 1);
                     $this->entityManager->persist($Coupon);
-                    $this->entityManager->flush($Coupon);
+                    $this->entityManager->flush();
                 }
             }
         }
@@ -139,7 +138,7 @@ class CouponStateProcessor extends ItemHolderValidator implements ItemHolderPrep
      * クーポン利用可否判定.
      * {@inheritdoc}
      */
-    protected function validate(ItemHolderInterface $itemHolder, PurchaseContext $context)
+    protected function validate(ItemHolderInterface $itemHolder, PurchaseContext $context): void
     {
         if (!$this->supports($itemHolder)) {
             return;
@@ -153,7 +152,7 @@ class CouponStateProcessor extends ItemHolderValidator implements ItemHolderPrep
     /**
      * {@inheritdoc}
      */
-    public function prepare(ItemHolderInterface $itemHolder, PurchaseContext $context)
+    public function prepare(ItemHolderInterface $itemHolder, PurchaseContext $context): void
     {
         if (!$this->supports($itemHolder)) {
             return;
@@ -163,7 +162,7 @@ class CouponStateProcessor extends ItemHolderValidator implements ItemHolderPrep
     /**
      * {@inheritdoc}
      */
-    public function commit(ItemHolderInterface $target, PurchaseContext $context)
+    public function commit(ItemHolderInterface $target, PurchaseContext $context): void
     {
         // quiet.
     }
@@ -172,7 +171,7 @@ class CouponStateProcessor extends ItemHolderValidator implements ItemHolderPrep
      * クーポンを取り消す.
      * {@inheritdoc}
      */
-    public function rollback(ItemHolderInterface $itemHolder, PurchaseContext $context)
+    public function rollback(ItemHolderInterface $itemHolder, PurchaseContext $context): void
     {
         // 利用したポイントをユーザに戻す.
         if (!$this->supports($itemHolder)) {
@@ -195,7 +194,7 @@ class CouponStateProcessor extends ItemHolderValidator implements ItemHolderPrep
      *
      * @return bool
      */
-    private function supports(ItemHolderInterface $itemHolder)
+    private function supports(ItemHolderInterface $itemHolder): bool
     {
         if (!$itemHolder instanceof Order) {
             return false;

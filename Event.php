@@ -5,21 +5,17 @@
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Coupon42;
+namespace Plugin\Coupon44;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Eccube\Entity\Order;
 use Eccube\Event\TemplateEvent;
-use Eccube\Repository\OrderRepository;
-use Plugin\Coupon42\Entity\Coupon;
-use Plugin\Coupon42\Repository\CouponOrderRepository;
-use Plugin\Coupon42\Repository\CouponRepository;
+use Plugin\Coupon44\Repository\CouponOrderRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -28,54 +24,20 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class Event implements EventSubscriberInterface
 {
     /**
-     * @var CouponOrderRepository
-     */
-    private $couponOrderRepository;
-
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
-    /**
-     * @var CouponRepository
-     */
-    private $couponRepository;
-
-    /**
-     * @var OrderRepository
-     */
-    private $orderRepository;
-
-    /**
-     * @var \Twig\Environment
-     */
-    private $twig;
-
-    /**
      * Event constructor.
      *
      * @param CouponOrderRepository $couponOrderRepository
-     * @param EntityManagerInterface $entityManager
-     * @param CouponRepository $couponRepository
-     * @param OrderRepository $orderRepository
-     * @param \Twig\Environment $twig
      */
-    public function __construct(CouponOrderRepository $couponOrderRepository, EntityManagerInterface $entityManager, CouponRepository $couponRepository, OrderRepository $orderRepository, \Twig\Environment $twig)
+    public function __construct(private readonly CouponOrderRepository $couponOrderRepository)
     {
-        $this->couponOrderRepository = $couponOrderRepository;
-        $this->entityManager = $entityManager;
-        $this->couponRepository = $couponRepository;
-        $this->orderRepository = $orderRepository;
-        $this->twig = $twig;
     }
 
     /**
      * Todo: admin.order.delete.complete has been deleted.
      *
-     * @return array
+     * @return array<string, string>
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             'Shopping/index.twig' => 'index',
@@ -88,7 +50,7 @@ class Event implements EventSubscriberInterface
     /**
      * @param TemplateEvent $event
      */
-    public function index(TemplateEvent $event)
+    public function index(TemplateEvent $event): void
     {
         $parameters = $event->getParameters();
         // 登録がない、レンダリングをしない
@@ -99,10 +61,10 @@ class Event implements EventSubscriberInterface
         $parameters['CouponOrder'] = $CouponOrder;
         $event->setParameters($parameters);
 
-        if (strpos($event->getView(), 'index.twig') !== false) {
-            $event->addSnippet('@Coupon42/default/coupon_shopping_item.twig');
+        if (str_contains((string) $event->getView(), 'index.twig')) {
+            $event->addSnippet('@Coupon44/default/coupon_shopping_item.twig');
         } else {
-            $event->addSnippet('@Coupon42/default/coupon_shopping_item_confirm.twig');
+            $event->addSnippet('@Coupon44/default/coupon_shopping_item_confirm.twig');
         }
     }
 
@@ -111,7 +73,7 @@ class Event implements EventSubscriberInterface
      *
      * @param TemplateEvent $event
      */
-    public function onRenderMypageHistory(TemplateEvent $event)
+    public function onRenderMypageHistory(TemplateEvent $event): void
     {
         log_info('Coupon trigger onRenderMypageHistory start');
         $parameters = $event->getParameters();
@@ -131,7 +93,7 @@ class Event implements EventSubscriberInterface
         $parameters['coupon_cd'] = $CouponOrder->getCouponCd();
         $parameters['coupon_name'] = $CouponOrder->getCouponName();
         $event->setParameters($parameters);
-        $event->addSnippet('@Coupon42/default/mypage_history_coupon.twig');
+        $event->addSnippet('@Coupon44/default/mypage_history_coupon.twig');
         log_info('Coupon trigger onRenderMypageHistory finish');
     }
 
@@ -141,7 +103,7 @@ class Event implements EventSubscriberInterface
      *
      * @param TemplateEvent $event
      */
-    public function onRenderAdminOrderEdit(TemplateEvent $event)
+    public function onRenderAdminOrderEdit(TemplateEvent $event): void
     {
         log_info('Coupon trigger onRenderAdminOrderEdit start');
         $parameters = $event->getParameters();
@@ -161,7 +123,7 @@ class Event implements EventSubscriberInterface
         $event->setParameters($parameters);
 
         // add twig
-        $event->addSnippet('@Coupon42/admin/order_edit_coupon.twig');
+        $event->addSnippet('@Coupon44/admin/order_edit_coupon.twig');
 
         log_info('Coupon trigger onRenderAdminOrderEdit finish');
     }
