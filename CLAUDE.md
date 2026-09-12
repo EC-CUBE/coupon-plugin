@@ -86,8 +86,10 @@ docker compose exec ec-cube bash -lc \
   "cd app/Plugin/Coupon44 && /var/www/html/vendor/bin/php-cs-fixer fix --config=Resource/.php-cs-fixer.dist.php --dry-run --diff"
 
 # rector（再移行・検証用）
+# composer-based セットが vendor/composer/installed.json を読むため、本体のルートで実行する
+# （プラグインディレクトリに cd すると "The installed package json not found" で失敗する）
 docker compose exec ec-cube bash -lc \
-  "cd app/Plugin/Coupon44 && /var/www/html/vendor/bin/rector process --config=Resource/rector.php --dry-run"
+  "cd /var/www/html && ./vendor/bin/rector process --config=app/Plugin/Coupon44/Resource/rector.php --dry-run"
 
 # phpstan
 docker compose exec ec-cube bash -lc \
