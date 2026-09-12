@@ -5,6 +5,7 @@ services:
     #    （eccube:composer:require はパッケージ API が必要なため path プラグインでは使えない）
     #    PharData は先頭の "./" エントリで失敗するため、プラグインディレクトリ内で
     #    "./*" を対象に tar 化する（ドットファイル/docker 関連は除外される）
+    #    E2E (Playwright) の資産はプラグインの配布物ではないため除外する
     # 3. プラグインを有効化してから Apache を起動
     #    eccube:plugin:enable は内部でキャッシュ再生成を行うが、その直後の cache:clear
     #    だけではプラグイン由来の TemplateEvent が確定しない
@@ -15,7 +16,9 @@ services:
       docker-php-entrypoint ls &&
       ( cd /var/www/plugin && tar czf /tmp/Coupon44.tar.gz
       --exclude='./dockerbuild' --exclude='./docker-compose*'
-      --exclude='./var' --exclude='./vendor' --exclude='./node_modules' ./* ) &&
+      --exclude='./var' --exclude='./vendor' --exclude='./node_modules'
+      --exclude='./e2e' --exclude='./playwright.config.ts' --exclude='./playwright-report'
+      --exclude='./test-results' --exclude='./package.json' --exclude='./package-lock.json' ./* ) &&
       bin/console eccube:plugin:install --code=Coupon44 --path=/tmp/Coupon44.tar.gz --if-not-exists &&
       bin/console eccube:plugin:enable --code=Coupon44 &&
       bin/console cache:clear &&

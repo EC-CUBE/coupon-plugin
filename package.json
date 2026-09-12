@@ -1,0 +1,12 @@
+{
+  "name": "ec-cube-coupon44",
+  "version": "4.4.0",
+  "private": true,
+  "description": "E2E tests (Playwright) for EC-CUBE 4.4 Coupon plugin",
+  "scripts": {
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0"
+  }
+}

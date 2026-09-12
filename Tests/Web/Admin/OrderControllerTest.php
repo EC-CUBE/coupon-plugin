@@ -198,8 +198,10 @@ class OrderControllerTest extends AbstractEditControllerTestCase
         // TODO 本体側で DAMA DoctrineTestBundle と StockReduceProcessor の悲観ロックの
         //      非互換が解消され次第、markTestSkipped を外して再有効化する。
         //      追跡: EC-CUBE/ec-cube#7016
+        //      キャンセル遷移そのものは E2E (e2e/admin_order_cancel_coupon.test.ts) で検証する。
+        //      TransactionListener が有効な実リクエストで動くため本制約を受けない。
         //      キャンセル時のクーポン枚数戻しは Web リクエストを介さないユニットテスト
-        //      (Tests/Service/PurchaseFlow/Processor/CouponStateProcessorTest) で代替している。
+        //      (Tests/Service/PurchaseFlow/Processor/CouponStateProcessorTest) でも代替している。
         $this->markTestSkipped('本体 StockReduceProcessor の悲観ロックが DAMA テストトランザクションと非互換のためスキップ（プラグイン非依存）');
 
         // @phpstan-ignore deadCode.unreachable (markTestSkipped 以降は再有効化用に残した到達不能コード)
