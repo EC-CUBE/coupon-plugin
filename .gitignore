@@ -10,3 +10,8 @@ composer.lock
 
 # Playwright MCP の一時生成物
 /.playwright-mcp/
+
+# E2E (Playwright) の依存・生成物
+/node_modules/
+/playwright-report/
+/test-results/

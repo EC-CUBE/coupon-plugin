@@ -1,6 +1,7 @@
 # クーポンプラグイン
 
 [![CI for Coupon44](https://github.com/EC-CUBE/coupon-plugin/actions/workflows/ci.yml/badge.svg)](https://github.com/EC-CUBE/coupon-plugin/actions/workflows/ci.yml)
+[![E2E for Coupon44](https://github.com/EC-CUBE/coupon-plugin/actions/workflows/playwright.yml/badge.svg)](https://github.com/EC-CUBE/coupon-plugin/actions/workflows/playwright.yml)
 
 ## 概要
 

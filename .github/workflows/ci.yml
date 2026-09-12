@@ -79,7 +79,10 @@ jobs:
         env:
           PLUGIN_CODE: ${{ matrix.plugin_code }}
         run: |
-          tar cvzf ${GITHUB_WORKSPACE}/${PLUGIN_CODE}.tar.gz ./*
+          # E2E (Playwright) の資産はプラグインの配布物ではないため除外する
+          tar cvzf ${GITHUB_WORKSPACE}/${PLUGIN_CODE}.tar.gz \
+            --exclude='./e2e' --exclude='./playwright.config.ts' \
+            --exclude='./package.json' --exclude='./package-lock.json' ./*
       - name: Checkout EC-CUBE
         uses: actions/checkout@v4
         with:
@@ -196,7 +199,9 @@ jobs:
 
       - name: Archive Plugin
         run: |
-          tar cvzf ${GITHUB_WORKSPACE}/${PLUGIN_CODE}.tar.gz ./*
+          tar cvzf ${GITHUB_WORKSPACE}/${PLUGIN_CODE}.tar.gz \
+            --exclude='./e2e' --exclude='./playwright.config.ts' \
+            --exclude='./package.json' --exclude='./package-lock.json' ./*
       - name: Checkout EC-CUBE
         uses: actions/checkout@v4
         with:

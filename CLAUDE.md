@@ -46,6 +46,36 @@ docker compose exec ec-cube bash -lc \
 
 **注意（コンパイル済みキャッシュ）**: 有効化したプラグインのルーティングは、コンテナのコンパイル時に `dtb_plugin` を読む `EccubeExtension` で確定する。有効化直後の test キャッシュには反映されていないことがあるため、**PHPUnit 実行前に `APP_ENV=test` でキャッシュをクリアする**。これを怠るとコントローラのルートが `RouteNotFoundException` になる。
 
+### E2E（Playwright）
+
+`Tests/` の PHPUnit とは別に、`e2e/` に Playwright の E2E テストがある。`docker compose` で起動した
+EC-CUBE（プラグイン有効化済み・`APP_ENV=dev`）に実ブラウザでアクセスして検証する。CI は
+`.github/workflows/playwright.yml`（PHPUnit の `ci.yml` とは別ワークフロー）。
+
+```bash
+# EC-CUBE を起動しておく（上記の開発環境と同じ）
+export COMPOSE_FILE=docker-compose.yml:docker-compose.dev.yml
+docker compose up -d --wait
+
+npm ci
+npx playwright install chromium
+npx playwright test              # ヘッドレス実行
+npx playwright test --headed     # ブラウザを表示して実行
+```
+
+接続先は `ECCUBE_BASE_URL`（既定 `http://localhost:8080`）で切り替えられる。
+
+**PHPUnit で書けないケースの受け皿**: 受注ステータスを「注文取消し」へ遷移させると本体の
+`StockReduceProcessor` が `EntityManager::lock(PESSIMISTIC_WRITE)` を行うが、`APP_ENV=test` では
+dama/doctrine-test-bundle のトランザクションが DBAL `Connection` 上で開いていないため
+`TransactionRequiredException` になる（EC-CUBE/ec-cube#7016。`Tests/Web/Admin/OrderControllerTest::testOrderEditWithCouponCancel`
+はこのためスキップしている）。E2E は prod と同じく `TransactionListener` が有効な実リクエストのため
+この制約を受けない。**受注ステータス遷移を伴う検証は E2E に書くこと。**
+
+E2E は 1 つの EC-CUBE インスタンスを共有し、クーポンの発行枚数や受注ステータスというグローバルな
+状態を書き換えるため、`playwright.config.ts` で `workers: 1` / `fullyParallel: false` にしている。
+クーポンコードはテストごとに `E2E${Date.now()}` で一意にし、テスト間の干渉を避ける。
+
 ### 静的解析・整形（任意）
 
 EC-CUBE 本体（コンテナ内）の vendor を使って実行する。
@@ -101,6 +131,11 @@ Plugin\:
 ### プラグイン有効化後は `cache:clear` を 2 回実行する（TemplateEvent 対策）
 
 本プラグインは `Event.php` が `TemplateEvent` で core テンプレート（購入画面・マイページ・受注編集）にスニペットを注入する。これらプラグイン由来のフックは、**`eccube:plugin:enable` 直後の 1 回の `cache:clear` では確定しない**ことがある。検証の結果、enable とは別パスで **`cache:clear` をもう一度実行**すると確定するため、`docker-compose.dev.yml` の entrypoint は有効化後に `bin/console cache:clear` を **2 回** 実行する。
+
+### E2E の資産はプラグインの配布物に含めない
+
+`e2e/` `playwright.config.ts` `package.json` `package-lock.json` は開発用で、プラグインの配布物では
+ないため、`docker-compose.dev.yml` と `.github/workflows/ci.yml` の tar から `--exclude` する。
 
 ### プラグインの導入方法（tar + plugin:install）
 
