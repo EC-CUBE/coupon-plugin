@@ -35,3 +35,6 @@ services:
       interval: 3s
       timeout: 3s
       retries: 3
+      # 初期化 (ユーザー作成・init スクリプト) に数十秒かかることがあり、
+      # start_period が無いと CI で unhealthy 扱いになって起動に失敗する
+      start_period: 60s

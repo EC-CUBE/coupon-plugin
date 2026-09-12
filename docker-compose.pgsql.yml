@@ -34,3 +34,5 @@ services:
       interval: 3s
       timeout: 3s
       retries: 3
+      # 初期化に時間がかかると unhealthy 扱いになるため猶予を設ける
+      start_period: 60s
