@@ -132,7 +132,8 @@ class CouponShoppingController extends AbstractController
             // ----------------------------------
             // 値引き項目追加 / 合計金額上書き
             // ----------------------------------
-            if (!$error && $Coupon) {
+            // $Coupon が null の場合は上で $error = true にしているため、!$error なら非 null
+            if (!$error) {
                 $couponProducts = $service->existsCouponProduct($Coupon, $Order);
                 $discount = $service->recalcOrder($Coupon, $couponProducts);
 
