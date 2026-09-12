@@ -17,7 +17,9 @@ services:
     environment:
       POSTGRES_USER: dbuser
       POSTGRES_PASSWORD: secret
-      POSTGRES_DB: eccubedb
+      # POSTGRES_DB は指定しない。データベースが既にあると本体イメージの entrypoint が
+      # 実行する installer-scripts の doctrine:database:create が失敗するため、
+      # データベースは EC-CUBE のインストーラに作らせる (dbuser はスーパーユーザー)
       # postgres:18 で PGDATA のデフォルトレイアウトが変わり、従来の volume
       # マウント先 (/var/lib/postgresql/data) だけでは起動に失敗するため明示する
       PGDATA: /var/lib/postgresql/data
