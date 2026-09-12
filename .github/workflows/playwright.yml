@@ -9,8 +9,10 @@ on:
       - '**'
       - '!*.md'
   pull_request:
+    # '*' はスラッシュにマッチしないため、'feature/xxx' を base にしたスタック PR で
+    # ワークフローが起動しなくなる。base ブランチは '**' で受ける
     branches:
-      - '*'
+      - '**'
     paths:
       - '**'
       - '!*.md'
