@@ -1,25 +1,42 @@
 services:
   ec-cube:
     # 1. EC-CUBE 本体を初回起動時に自動インストール（installer-scripts で fixtures も投入）
+    #    インストール直後は var/build のコンパイル済みコンテナが未完成なことがあり、そのまま
+    #    bin/console を実行すると getRuntimeCachePoolClearListenerService.php が無いと言われて
+    #    失敗するため、eccube:cache:build でコンテナを確定させてから後続を実行する
     # 2. マウントしたプラグインを tar 化し eccube:plugin:install でインストール
     #    （eccube:composer:require はパッケージ API が必要なため path プラグインでは使えない）
     #    PharData は先頭の "./" エントリで失敗するため、プラグインディレクトリ内で
     #    "./*" を対象に tar 化する（ドットファイル/docker 関連は除外される）
+    #    E2E (Playwright) の資産はプラグインの配布物ではないため除外する
     # 3. プラグインを有効化してから Apache を起動
     #    eccube:plugin:enable は内部でキャッシュ再生成を行うが、その直後の cache:clear
     #    だけではプラグイン由来の TemplateEvent が確定しない
     #    （購入画面・マイページ・受注編集画面にクーポン項目が描画されない）。enable とは
     #    別パスで cache:clear をもう一度実行すると確定するため、cache:clear を 2 回流す。
+    # 4. cache:clear 後にウォームアップを明示的に実行する。
+    #    var/cache/dev/htmlpurifier は cache:warmup で生成されるが、cache:clear だけでは
+    #    残らないことがあり、無いと Block/news.twig のレンダリングが
+    #    "Base directory .../htmlpurifier does not exist" で 500 になる。
+    # 5. 上記の bin/console は root で実行するため、生成物 (var/build 等) が root 所有になる。
+    #    Apache は www-data で動き、Doctrine は var/build/dev/doctrine/orm/Proxies に
+    #    プロキシを書き出すため、所有者を www-data に戻してから起動する。
+    #    （戻さないと ORMInvalidArgumentException "proxy directory must be writable" で 500）
     entrypoint: >
       /bin/bash -c "
       docker-php-entrypoint ls &&
+      bin/console eccube:cache:build &&
       ( cd /var/www/plugin && tar czf /tmp/Coupon44.tar.gz
       --exclude='./dockerbuild' --exclude='./docker-compose*'
-      --exclude='./var' --exclude='./vendor' --exclude='./node_modules' ./* ) &&
+      --exclude='./var' --exclude='./vendor' --exclude='./node_modules'
+      --exclude='./e2e' --exclude='./playwright.config.ts' --exclude='./playwright-report'
+      --exclude='./test-results' --exclude='./package.json' --exclude='./package-lock.json' ./* ) &&
       bin/console eccube:plugin:install --code=Coupon44 --path=/tmp/Coupon44.tar.gz --if-not-exists &&
       bin/console eccube:plugin:enable --code=Coupon44 &&
       bin/console cache:clear &&
       bin/console cache:clear &&
+      bin/console cache:warmup &&
+      chown -R www-data: var app html &&
       apache2-foreground
       "
     environment:

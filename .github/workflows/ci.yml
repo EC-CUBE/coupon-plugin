@@ -9,8 +9,10 @@ on:
       - '**'
       - '!*.md'
   pull_request:
+    # '*' はスラッシュにマッチしないため、'feature/xxx' を base にしたスタック PR で
+    # ワークフローが起動しなくなる。base ブランチは '**' で受ける
     branches:
-      - '*'
+      - '**'
     paths:
       - '**'
       - '!*.md'
@@ -79,7 +81,10 @@ jobs:
         env:
           PLUGIN_CODE: ${{ matrix.plugin_code }}
         run: |
-          tar cvzf ${GITHUB_WORKSPACE}/${PLUGIN_CODE}.tar.gz ./*
+          # E2E (Playwright) の資産はプラグインの配布物ではないため除外する
+          tar cvzf ${GITHUB_WORKSPACE}/${PLUGIN_CODE}.tar.gz \
+            --exclude='./e2e' --exclude='./playwright.config.ts' \
+            --exclude='./package.json' --exclude='./package-lock.json' ./*
       - name: Checkout EC-CUBE
         uses: actions/checkout@v4
         with:
@@ -196,7 +201,9 @@ jobs:
 
       - name: Archive Plugin
         run: |
-          tar cvzf ${GITHUB_WORKSPACE}/${PLUGIN_CODE}.tar.gz ./*
+          tar cvzf ${GITHUB_WORKSPACE}/${PLUGIN_CODE}.tar.gz \
+            --exclude='./e2e' --exclude='./playwright.config.ts' \
+            --exclude='./package.json' --exclude='./package-lock.json' ./*
       - name: Checkout EC-CUBE
         uses: actions/checkout@v4
         with:
@@ -222,7 +229,9 @@ jobs:
       - name: Setup EC-CUBE
         working-directory: 'ec-cube'
         run: |
-          bin/console doctrine:database:create
+          # SQLite はファイルベースで CREATE DATABASE が無く, DBAL 4 では
+          # SQLitePlatform::getCreateDatabaseSQL が未サポートで例外になるため
+          # doctrine:database:create は実行しない (schema:create が DB ファイルを生成する)。
           bin/console doctrine:schema:create
           # プラグイン有効化時に DeviceType 等のマスタデータを参照するため fixtures を投入する
           bin/console eccube:fixtures:load

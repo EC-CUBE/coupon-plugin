@@ -18,7 +18,11 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_USER: dbuser
       MYSQL_PASSWORD: secret
-      MYSQL_DATABASE: eccubedb
+      # MYSQL_DATABASE は指定しない。データベースが既にあると本体イメージの entrypoint が
+      # 実行する installer-scripts の doctrine:database:create が
+      # "Can't create database 'eccubedb'; database exists" で失敗するため、
+      # データベースは EC-CUBE のインストーラに作らせる
+      # (dbuser には grant_to_dbuser.sql で CREATE 権限を与えている)
     volumes:
       - mysql-database:/var/lib/mysql
       - ./dockerbuild/grant_to_dbuser.sql:/docker-entrypoint-initdb.d/grant_to_dbuser.sql
@@ -31,3 +35,6 @@ services:
       interval: 3s
       timeout: 3s
       retries: 3
+      # 初期化 (ユーザー作成・init スクリプト) に数十秒かかることがあり、
+      # start_period が無いと CI で unhealthy 扱いになって起動に失敗する
+      start_period: 60s

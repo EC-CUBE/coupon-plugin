@@ -41,11 +41,14 @@ return RectorConfig::configure()
     ->withSets([
         LevelSetList::UP_TO_PHP_82,
         // Symfony 7.4 対応 (@Route → #[Route], @Template, buildForm(): void 等)
-        SymfonySetList::SYMFONY_74,
+        // 各ルールが composer.json / installed.json を見てインストール済みバージョンに合うものだけ
+        // 実行する。rector 2.6.2 でバージョン別のセット定数 (SYMFONY_74 等) は撤去された
+        // (本体の対応: EC-CUBE/ec-cube#7099)
+        SymfonySetList::COMPOSER_BASED,
         SymfonySetList::SYMFONY_CODE_QUALITY,
         // Doctrine ORM 3.0 / DBAL 3.0 対応 (@ORM → #[ORM], 型付きプロパティ)
         DoctrineSetList::DOCTRINE_CODE_QUALITY,
-        DoctrineSetList::DOCTRINE_DBAL_30,
+        DoctrineSetList::COMPOSER_BASED,
         DoctrineSetList::ANNOTATIONS_TO_ATTRIBUTES,
     ])
     // Symfony/Doctrine 等のアノテーション → アトリビュート変換を有効化

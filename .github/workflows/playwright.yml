@@ -1,0 +1,87 @@
+name: E2E for Coupon44
+on:
+  push:
+    branches:
+      - '*'
+    tags:
+      - '*'
+    paths:
+      - '**'
+      - '!*.md'
+  pull_request:
+    # '*' はスラッシュにマッチしないため、'feature/xxx' を base にしたスタック PR で
+    # ワークフローが起動しなくなる。base ブランチは '**' で受ける
+    branches:
+      - '**'
+    paths:
+      - '**'
+      - '!*.md'
+
+# GITHUB_TOKEN は最小権限（読み取りのみ）にする
+permissions:
+  contents: read
+
+jobs:
+  playwright:
+    name: Playwright (${{ matrix.tag }} / ${{ matrix.db }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        # PHPUnit の CI (ci.yml) が全 PHP バージョンを網羅するため、E2E は下限と上限のみ実行する。
+        # DB は 3 種類とも回す（キャンセル遷移は悲観ロックを伴い DB による差異が出るため）。
+        tag: [ '8.2-apache-4.4', '8.5-apache-4.4' ]
+        db: [ 'sqlite3', 'mysql', 'pgsql' ]
+    env:
+      TAG: ${{ matrix.tag }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup COMPOSE_FILE
+        env:
+          DB: ${{ matrix.db }}
+        run: |
+          if [ "${DB}" = 'sqlite3' ]; then
+            echo "COMPOSE_FILE=docker-compose.yml:docker-compose.dev.yml" >> "${GITHUB_ENV}"
+          else
+            echo "COMPOSE_FILE=docker-compose.yml:docker-compose.${DB}.yml:docker-compose.dev.yml" >> "${GITHUB_ENV}"
+          fi
+
+      - name: Setup EC-CUBE
+        # docker-compose.dev.yml の entrypoint が本体のインストールとプラグインの
+        # インストール・有効化まで行う
+        run: docker compose up -d --wait
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Playwright tests
+        env:
+          CI: 1
+          FORCE_COLOR: 1
+        run: npx playwright test
+
+      - name: Show EC-CUBE log
+        if: failure()
+        run: docker compose logs ec-cube
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report-${{ matrix.tag }}-${{ matrix.db }}
+          path: playwright-report/
+          retention-days: 7

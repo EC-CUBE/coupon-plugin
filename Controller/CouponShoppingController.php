@@ -18,7 +18,6 @@ use Eccube\Entity\Customer;
 use Eccube\Entity\Order;
 use Eccube\Service\CartService;
 use Eccube\Service\OrderHelper;
-use Plugin\Coupon44\Entity\Coupon;
 use Plugin\Coupon44\Form\Type\CouponUseType;
 use Plugin\Coupon44\Repository\CouponOrderRepository;
 use Plugin\Coupon44\Repository\CouponRepository;
@@ -103,8 +102,7 @@ class CouponShoppingController extends AbstractController
             // クーポンを利用する
             $discount = 0;
             $error = false;
-            // クーポン情報を取得
-            /* @var $Coupon Coupon */
+            // クーポン情報を取得 (findActiveCoupon が ?Coupon を返すため @var は不要)
             $Coupon = $this->couponRepository->findActiveCoupon($formCouponCd);
             if (!$Coupon) {
                 $form->get('coupon_cd')->addError(new FormError(trans('plugin_coupon.front.shopping.notexists')));
@@ -134,7 +132,8 @@ class CouponShoppingController extends AbstractController
             // ----------------------------------
             // 値引き項目追加 / 合計金額上書き
             // ----------------------------------
-            if (!$error && $Coupon) {
+            // $Coupon が null の場合は上で $error = true にしているため、!$error なら非 null
+            if (!$error) {
                 $couponProducts = $service->existsCouponProduct($Coupon, $Order);
                 $discount = $service->recalcOrder($Coupon, $couponProducts);
 
