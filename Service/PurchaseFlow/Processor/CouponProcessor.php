@@ -27,7 +27,6 @@ use Eccube\Service\PurchaseFlow\ItemHolderValidator;
 use Eccube\Service\PurchaseFlow\PurchaseContext;
 use Eccube\Service\PurchaseFlow\PurchaseProcessor;
 use Eccube\Service\TaxRuleService;
-use Plugin\Coupon44\Entity\Coupon;
 use Plugin\Coupon44\Entity\CouponOrder;
 use Plugin\Coupon44\Repository\CouponOrderRepository;
 use Plugin\Coupon44\Repository\CouponRepository;
