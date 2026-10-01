@@ -35,6 +35,7 @@ use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
  *
  * キャンセル遷移を含む受注編集の Web テスト (OrderControllerTest::testOrderEditWithCouponCancel)
  * は本体のテストハーネス制約 (EC-CUBE/ec-cube#7016) で実行できないため, 本テストで代替する。
+ * 画面を通したキャンセル遷移は E2E (e2e/admin_order_cancel_coupon.test.ts) で検証する。
  */
 class CouponStateProcessorTest extends EccubeTestCase
 {
