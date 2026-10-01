@@ -283,19 +283,19 @@ class CouponProcessor extends ItemHolderValidator implements ItemHolderPreproces
         $taxType = TaxType::NON_TAXABLE; // 不課税
         $tax = 0;
         $taxRate = 0;
-        $taxRuleId = null;
         $roundingType = null;
         $DiscountType = $this->entityManager->find(OrderItemType::class, OrderItemType::DISCOUNT);
         $TaxInclude = $this->entityManager->find(TaxDisplayType::class, $taxDisplayType);
         $Taxation = $this->entityManager->find(TaxType::class, $taxType);
 
         $OrderItem = new OrderItem();
+        // 課税規則 ID は設定しない。OrderItem::setTaxRuleId() は EC-CUBE 4.4 で削除されており
+        // (税率設定は受注作成時に決定するため)、書き込んだ値の読み手も本体・プラグインに存在しない
         $OrderItem->setProductName($CouponOrder->getCouponName())
             ->setPrice((string) ($CouponOrder->getDiscount() * -1))
             ->setQuantity('1')
             ->setTax((string) $tax)
             ->setTaxRate((string) $taxRate)
-            ->setTaxRuleId($taxRuleId)
             ->setRoundingType($roundingType)
             ->setOrderItemType($DiscountType)
             ->setTaxDisplayType($TaxInclude)
