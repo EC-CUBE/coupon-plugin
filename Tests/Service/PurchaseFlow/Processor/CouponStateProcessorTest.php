@@ -163,6 +163,22 @@ class CouponStateProcessorTest extends EccubeTestCase
     }
 
     /**
+     * 受注ステータスが null の受注 (管理画面で存在しない受注ステータスが送られた場合) では何もしない.
+     */
+    public function testProcessWithoutOrderStatus(): void
+    {
+        $Coupon = $this->createCouponOrderForOrder();
+        $Coupon->setCouponUseTime(99);
+        $this->entityManager->flush();
+
+        $this->Order->setOrderStatus(null);
+
+        $this->processor->process($this->Order, $this->context);
+
+        self::assertSame(99, $Coupon->getCouponUseTime(), 'クーポンの利用枚数は変わらない');
+    }
+
+    /**
      * 利用枚数の戻しは発行枚数を超えない.
      */
     public function testProcessDoesNotExceedCouponRelease(): void

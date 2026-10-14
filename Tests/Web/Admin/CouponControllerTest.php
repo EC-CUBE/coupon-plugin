@@ -15,6 +15,7 @@ namespace Plugin\Coupon44\Tests\Web\Admin;
 
 use Eccube\Entity\Customer;
 use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Plugin\Coupon44\Entity\Coupon;
 use Plugin\Coupon44\Tests\Fixtures\CreateCouponTrait;
 use Symfony\Component\DomCrawler\Crawler;
@@ -88,6 +89,33 @@ class CouponControllerTest extends AbstractAdminWebTestCase
         $form = $this->getForm($crawler);
         $this->client->submit($form);
         $this->assertTrue($this->client->getResponse()->isRedirect($this->generateUrl('plugin_coupon_list')));
+    }
+
+    /**
+     * 想定外の値は入力エラーの画面を返す (500 にしない).
+     */
+    #[DataProvider('invalidFormValueProvider')]
+    public function testEditNewWithInvalidValue(string $field, string $value): void
+    {
+        $crawler = $this->client->request('GET', $this->generateUrl('plugin_coupon_new'));
+        $form = $this->getForm($crawler);
+        $values = $form->getPhpValues();
+        $values['coupon'][$field] = $value;
+
+        $this->client->request('POST', $form->getUri(), $values);
+        self::assertSame(200, $this->client->getResponse()->getStatusCode());
+    }
+
+    /**
+     * @return array<string, array<string>>
+     */
+    public static function invalidFormValueProvider(): array
+    {
+        return [
+            '利用回数が数値でない' => ['coupon_use_time', 'abc'],
+            'クーポンコードが 21 文字' => ['coupon_cd', str_repeat('a', 21)],
+            'クーポン名が 51 文字' => ['coupon_name', str_repeat('あ', 51)],
+        ];
     }
 
     public function testEditWithNotFound(): void

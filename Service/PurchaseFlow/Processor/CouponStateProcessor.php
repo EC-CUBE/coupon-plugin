@@ -200,7 +200,13 @@ class CouponStateProcessor extends ItemHolderValidator implements ItemHolderPrep
             return false;
         }
 
-        switch ($itemHolder->getOrderStatus()->getId()) {
+        // 管理画面の受注編集で存在しない受注ステータスが送られると null になる
+        $OrderStatus = $itemHolder->getOrderStatus();
+        if ($OrderStatus === null) {
+            return false;
+        }
+
+        switch ($OrderStatus->getId()) {
             case OrderStatus::NEW:
             case OrderStatus::PAID:
             case OrderStatus::IN_PROGRESS:

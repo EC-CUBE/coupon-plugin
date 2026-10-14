@@ -18,6 +18,8 @@ use Eccube\Form\Type\PriceType;
 use Plugin\Coupon44\Entity\Coupon;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\CallbackTransformer;
+use Symfony\Component\Form\Exception\TransformationFailedException;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -67,6 +69,7 @@ class CouponType extends AbstractType
                 'constraints' => [
                     new Assert\NotBlank(),
                     new Assert\Regex(pattern: '/^[a-zA-Z0-9]+$/i'),
+                    new Assert\Length(max: 20),
                 ],
             ])
             ->add('coupon_name', TextType::class, [
@@ -75,6 +78,7 @@ class CouponType extends AbstractType
                 'trim' => true,
                 'constraints' => [
                     new Assert\NotBlank(),
+                    new Assert\Length(max: 50),
                 ],
             ])
             ->add('coupon_type', ChoiceType::class, [
@@ -214,6 +218,21 @@ class CouponType extends AbstractType
                     }
                 }
             });
+
+        // 数値以外が送られると Coupon::setCouponUseTime() の型宣言で 500 になるため、入力エラーにする
+        $builder->get('coupon_use_time')->addModelTransformer(new CallbackTransformer(
+            fn (?int $value): ?int => $value,
+            function (mixed $value): ?int {
+                if ($value === null || $value === '') {
+                    return null;
+                }
+                if (!is_string($value) || preg_match('/\A[0-9]{1,9}\z/', $value) !== 1) {
+                    throw new TransformationFailedException();
+                }
+
+                return (int) $value;
+            }
+        ));
     }
 
     /**

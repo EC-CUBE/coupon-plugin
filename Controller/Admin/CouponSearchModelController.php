@@ -21,6 +21,7 @@ use Knp\Component\Pager\Pagination\SlidingPagination;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
 /**
@@ -67,6 +68,9 @@ class CouponSearchModelController extends AbstractController
                 'id' => $request->get('id'),
             ];
             if ($categoryId = $request->get('category_id')) {
+                if (!$this->isValidId($categoryId)) {
+                    throw new BadRequestHttpException();
+                }
                 $searchData['category_id'] = $categoryId;
             }
             $session->set('eccube.plugin.coupon.product.search', $searchData);
@@ -81,15 +85,18 @@ class CouponSearchModelController extends AbstractController
         }
 
         if (!empty($searchData['category_id'])) {
-            $searchData['category_id'] = $this->categoryRepository->find($searchData['category_id']);
+            // セッションに残った以前の検索条件も、不正な ID なら条件から外す
+            $searchData['category_id'] = $this->isValidId($searchData['category_id'])
+                ? $this->categoryRepository->find($searchData['category_id'])
+                : null;
         }
 
         $qb = $this->productRepository->getQueryBuilderBySearchDataForAdmin($searchData);
         // 除外するproduct_idを設定する
-        $existProductId = $request->get('exist_product_id');
-        if (strlen((string) $existProductId) > 0) {
+        $existProductIds = $this->parseIds($request->get('exist_product_id'));
+        if (count($existProductIds) > 0) {
             $qb->andWhere($qb->expr()->notin('p.id', ':existProductId'))
-                ->setParameter('existProductId', explode(',', (string) $existProductId));
+                ->setParameter('existProductId', $existProductIds);
         }
 
         /** @var SlidingPagination<int, mixed> $pagination */
@@ -121,12 +128,14 @@ class CouponSearchModelController extends AbstractController
             $existCategoryId = $request->get('exist_category_id');
 
             $existCategoryIds = [0];
-            if (strlen((string) $existCategoryId) > 0) {
-                $existCategoryIds = explode(',', (string) $existCategoryId);
+            if (is_string($existCategoryId) && strlen($existCategoryId) > 0) {
+                $existCategoryIds = explode(',', $existCategoryId);
             }
 
             if (empty($categoryId)) {
                 $categoryId = 0;
+            } elseif (!$this->isValidId($categoryId)) {
+                throw new BadRequestHttpException();
             }
 
             $Category = $this->categoryRepository->find($categoryId);
@@ -201,5 +210,46 @@ class CouponSearchModelController extends AbstractController
         }
 
         return $fulName;
+    }
+
+    /**
+     * 整数の ID として扱える値か (DB の integer の範囲に収まる正の整数).
+     */
+    private function isValidId(mixed $value): bool
+    {
+        if (!is_int($value) && !is_string($value)) {
+            return false;
+        }
+
+        return preg_match('/\A[1-9][0-9]{0,9}\z/', (string) $value) === 1 && (int) $value <= 2147483647;
+    }
+
+    /**
+     * カンマ区切りの ID を配列にする. 空の要素は読み飛ばし、不正な ID を含む場合は 400 を返す.
+     *
+     * @return array<int, int>
+     */
+    private function parseIds(mixed $value): array
+    {
+        if ($value === null || $value === '') {
+            return [];
+        }
+        if (!is_string($value)) {
+            throw new BadRequestHttpException();
+        }
+
+        $ids = [];
+        foreach (explode(',', $value) as $id) {
+            // 末尾のカンマなどによる空の要素は読み飛ばす
+            if ($id === '') {
+                continue;
+            }
+            if (!$this->isValidId($id)) {
+                throw new BadRequestHttpException();
+            }
+            $ids[] = (int) $id;
+        }
+
+        return $ids;
     }
 }
